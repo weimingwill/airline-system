@@ -5,6 +5,7 @@
  */
 package mas.common.session;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -18,22 +19,27 @@ import mas.common.entity.SystemUser;
  */
 @Stateless
 public class SystemUserSession implements SystemUserSessionLocal {
+    @EJB
+    private AccessControlSessionLocal accessControlSession;
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @PersistenceContext
     private EntityManager entityManager;
-
+    
     @Override
     public SystemUser getSystemUser(String userName) {
-        Query query = entityManager.createQuery("SELECT u FROM SystemUser u WHERE u.username = :inUserName");
-        query.setParameter("inUserName", userName);
-        SystemUser systemUser = null;
-        try {
-            systemUser = (SystemUser) query.getSingleResult();
-        } catch (NoResultException ex) {
-            ex.printStackTrace();
+        return accessControlSession.getSystemUserByName(userName);
+    }
+    
+    @Override
+    public Boolean verifySystemUserPassword(String userName, String inputPassword){
+        SystemUser user = getSystemUser(userName);
+        String userPassword = user.getPassword();
+        if(userPassword.equals(inputPassword)){
+            return true;
+        } else {
+            return false;
         }
-        return systemUser;
     }
 }

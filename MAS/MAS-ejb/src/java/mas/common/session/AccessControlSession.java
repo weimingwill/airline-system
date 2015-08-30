@@ -132,11 +132,21 @@ public class AccessControlSession implements AccessControlSessionLocal {
             }
         }
         systemRole.setPermissions(permissionList);
-        entityManager.persist(systemRole);
+        entityManager.merge(systemRole);
     }
 
     @Override
     public void assignUserToRole(String username, ArrayList<String> roles) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SystemUser systemUser = getSystemUserByName(username);
+        List<SystemRole> roleList = new ArrayList<SystemRole>();
+        for(String roleName: roles){
+            try{
+                roleList.add(getSystemRoleByName(roleName));
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        systemUser.setRoles(roleList);
+        entityManager.merge(systemUser);
     }
 }

@@ -29,7 +29,6 @@ public class SystemUser implements Serializable {
     private String username;
     private String password;
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @JoinTable(name="SYSTEMUSERUNI_ROLEUNI")
     private List<SystemRole> roles = new ArrayList<SystemRole>();
     
     public Long getId() {

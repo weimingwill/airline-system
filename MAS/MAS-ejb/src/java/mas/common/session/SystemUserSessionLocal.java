@@ -15,5 +15,6 @@ import mas.common.entity.SystemUser;
 @Local
 public interface SystemUserSessionLocal {
     public SystemUser getSystemUser(String userName);
+    public Boolean verifySystemUserPassword(String userName, String inputPassword);
     
 }
