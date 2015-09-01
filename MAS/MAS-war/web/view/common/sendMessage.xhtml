@@ -9,10 +9,13 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form>
+        <h:form id="sendMessage">
             <h:outputText>Send Message</h:outputText>
             <h:inputText id="message" value="#{internalComManagedBean.message}"></h:inputText>
-            <h:commandButton action="receiveMessage.xhtml" value="send message" actionListener="#{internalComMessagedBean.sendMessage}" ></h:commandButton>
+            <h:commandButton action="recieveMessage.xhtml" value="send message" actionListener="#{internalComManagedBean.saveNewMessage}" ></h:commandButton>
+        </h:form>
+        <h:form>
+            <h:commandButton action="recieveMessage.xhtml" value="view message"></h:commandButton>
         </h:form>
     </ui:define>
 

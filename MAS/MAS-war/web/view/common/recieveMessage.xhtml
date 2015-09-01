@@ -8,8 +8,9 @@
     <ui:define name="top">
         top
     </ui:define>
-
+    
     <ui:define name="content">
+        
         <h:dataTable value="#{internalComManagedBean.allMessages}" var="message">
             <h:column>
                 <f:facet name="header">
@@ -24,6 +25,10 @@
                 <h:outputText value="#{message.message}" />
             </h:column>            
         </h:dataTable>
+        
+        <h:form id="sendMessage">
+            <h:inputText value="#{internalComManagedBean.message}"></h:inputText>
+        </h:form>
     </ui:define>
 
 </ui:composition>

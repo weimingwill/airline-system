@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.EJB;
 //import javax.faces.bean.ManagedBean;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -20,8 +21,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import mas.common.entity.PlainTextMessage;
-import mas.common.session.InternalComSession;
-import mas.common.session.InternalComSessionLocal;
+import mas.common.session.InternalComSessionBean;
 
 /**
  *
@@ -33,12 +33,19 @@ import mas.common.session.InternalComSessionLocal;
 public class InternalComManagedBean {
 
     @EJB
-    private Long plainTextMessageId;
+    private InternalComSessionBean internalComSessionBean;
     private String message;
-
-    private InternalComSessionLocal internalComSessionLocal;
     
     public InternalComManagedBean() {
+        message = "Initialize message";
+    }
+
+    public InternalComSessionBean getInternalComSessionBean() {
+        return internalComSessionBean;
+    }
+
+    public void setInternalComSessionBean(InternalComSessionBean internalComSessionBean) {
+        this.internalComSessionBean = internalComSessionBean;
     }
 
     public String getMessage() {
@@ -50,9 +57,18 @@ public class InternalComManagedBean {
     }
     
     public List<PlainTextMessage> getAllMessages(){
-        return internalComSessionLocal.getAllPlainTextMessage();
+        return internalComSessionBean.getAllPlainTextMessage();
     }
-            
+    
+    public void saveNewMessage(ActionEvent event) {
+        String messageContent = String.valueOf(message);
+        try {
+            sendMessage(messageContent);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }    
+    
     public void sendMessage(String message) {
         try {
             Context c = new InitialContext();

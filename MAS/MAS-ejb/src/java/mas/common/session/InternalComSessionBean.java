@@ -7,6 +7,7 @@ package mas.common.session;
 
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -17,13 +18,12 @@ import mas.common.entity.PlainTextMessage;
  * @author winga_000
  */
 @Stateless
-public class InternalComSession implements InternalComSessionLocal {
-    
+@LocalBean
+public class InternalComSessionBean {
+
     @PersistenceContext(unitName = "MAS-ejbPU")
     private EntityManager em;
-    
-    
-    @Override
+
     public List<PlainTextMessage> getAllPlainTextMessage() {
         Query query = em.createQuery("SELECT m FROM PlainTextMessage m");
         return query.getResultList();
