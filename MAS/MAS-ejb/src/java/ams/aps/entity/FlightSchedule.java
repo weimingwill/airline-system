@@ -6,14 +6,17 @@
 package ams.aps.entity;
 
 import java.io.Serializable;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.sql.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -21,16 +24,28 @@ import javax.persistence.OneToMany;
  * @author ChuningLiu
  */
 @Entity
-public class Country implements Serializable {
+public class FlightSchedule implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String contryCode;
-    private String countryName;
+    Date departureDate;
+    Time departureTime;
+    Date arrivalDate;
+    Time arrivalTime;
+    Integer deTerminal;
+    Integer arTerminal;
+    Integer boardingGate;
+    Integer arrivalGate;
     
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="country")
-    private Collection<City> cities = new ArrayList<City>();
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="flightSchedule")
+    private Collection<Aircraft> aircraft = new ArrayList<Aircraft>();
+   
+    
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Leg leg;
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Flight flight;
     
     public Long getId() {
         return id;
@@ -38,30 +53,6 @@ public class Country implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-    
-    public String getContryCode() {
-        return contryCode;
-    }
-    
-    public void setContryCode(String contryCode) {
-        this.contryCode = contryCode;
-    }
-    
-    public String getCountryName() {
-        return countryName;
-    }
-    
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-    
-    public Collection<City> getCities() {
-        return cities;
-    }
-
-    public void setCities(Collection<City> cities) {
-        this.cities = cities;
     }
 
     @Override
@@ -74,10 +65,10 @@ public class Country implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Country)) {
+        if (!(object instanceof FlightSchedule)) {
             return false;
         }
-        Country other = (Country) object;
+        FlightSchedule other = (FlightSchedule) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -86,7 +77,7 @@ public class Country implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.Country[ id=" + id + " ]";
+        return "ams.aps.entity.FlightSchedule[ id=" + id + " ]";
     }
-
+    
 }

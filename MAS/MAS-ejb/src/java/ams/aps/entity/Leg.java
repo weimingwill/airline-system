@@ -14,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -22,20 +24,21 @@ import javax.persistence.OneToMany;
  * @author ChuningLiu
  */
 @Entity
-public class City implements Serializable {
+public class Leg implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String cityCode;
-    private String cityName; 
-    private Integer utc;
     
+    @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @JoinTable
+    private Collection<Route> routes = new ArrayList<Route>();
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private Country country;
-    
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="city")
-    private Collection<Airport> airports = new ArrayList<Airport>();
+    private Airport departure;
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Airport destination;
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="leg")
+    private Collection<FlightSchedule> flightSchdules = new ArrayList<FlightSchedule>();
     
     public Long getId() {
         return id;
@@ -45,46 +48,38 @@ public class City implements Serializable {
         this.id = id;
     }
 
-    public String getCityCode() {
-        return cityCode;
+    public Collection<Route> getRoutes() {
+        return routes;
+    }
+
+    public Airport getDeparture() {
+        return departure;
+    }
+
+    public Airport getDestination() {
+        return destination;
+    }
+
+    public Collection<FlightSchedule> getFlightSchdules() {
+        return flightSchdules;
+    }
+
+    public void setRoutes(Collection<Route> routes) {
+        this.routes = routes;
+    }
+
+    public void setDeparture(Airport departure) {
+        this.departure = departure;
+    }
+
+    public void setDestination(Airport destination) {
+        this.destination = destination;
+    }
+
+    public void setFlightSchdules(Collection<FlightSchedule> flightSchdules) {
+        this.flightSchdules = flightSchdules;
     }
     
-    public void setCityCode(String cityCode) {
-        this.cityCode = cityCode;
-    }
-
-    public String getCityName() {
-        return cityName;
-    }
-    
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
-    public Integer getUTC() {
-        return utc;
-    }
-
-    public void setUTC(Integer utc){
-        this.utc = utc;
-    }
-    
-    public Country getCountry() {
-        return country;
-    }
-    
-    public void setCountry(Country country) {
-        this.country = country;
-    }
-
-    public Collection<Airport> getAirports() {
-        return airports;
-    }
-
-    public void setAirports(Collection<Airport> airports) {
-        this.airports = airports;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -95,10 +90,10 @@ public class City implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof City)) {
+        if (!(object instanceof Leg)) {
             return false;
         }
-        City other = (City) object;
+        Leg other = (Leg) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -107,7 +102,7 @@ public class City implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.City[ id=" + id + " ]";
+        return "ams.aps.entity.Leg[ id=" + id + " ]";
     }
     
 }

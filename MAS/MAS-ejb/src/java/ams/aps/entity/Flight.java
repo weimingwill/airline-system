@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -21,17 +22,19 @@ import javax.persistence.OneToMany;
  * @author ChuningLiu
  */
 @Entity
-public class Country implements Serializable {
+public class Flight implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String contryCode;
-    private String countryName;
+    private String flightNo;
     
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="country")
-    private Collection<City> cities = new ArrayList<City>();
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Route route;
     
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="flight")
+    private Collection<FlightSchedule> flightSchedule = new ArrayList<FlightSchedule>();
+
     public Long getId() {
         return id;
     }
@@ -39,29 +42,29 @@ public class Country implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public String getContryCode() {
-        return contryCode;
-    }
-    
-    public void setContryCode(String contryCode) {
-        this.contryCode = contryCode;
-    }
-    
-    public String getCountryName() {
-        return countryName;
-    }
-    
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-    
-    public Collection<City> getCities() {
-        return cities;
+
+    public String getFlightNo() {
+        return flightNo;
     }
 
-    public void setCities(Collection<City> cities) {
-        this.cities = cities;
+    public Route getRoute() {
+        return route;
+    }
+
+    public Collection<FlightSchedule> getFlightSchedule() {
+        return flightSchedule;
+    }
+
+    public void setFlightNo(String flightNo) {
+        this.flightNo = flightNo;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
+    }
+
+    public void setFlightSchedule(Collection<FlightSchedule> flightSchedule) {
+        this.flightSchedule = flightSchedule;
     }
 
     @Override
@@ -74,10 +77,10 @@ public class Country implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Country)) {
+        if (!(object instanceof Flight)) {
             return false;
         }
-        Country other = (Country) object;
+        Flight other = (Flight) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -86,7 +89,7 @@ public class Country implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.Country[ id=" + id + " ]";
+        return "ams.aps.entity.Flight[ id=" + id + " ]";
     }
-
+    
 }

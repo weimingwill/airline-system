@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -21,16 +22,19 @@ import javax.persistence.OneToMany;
  * @author ChuningLiu
  */
 @Entity
-public class Country implements Serializable {
+public class SeatConfig implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String contryCode;
-    private String countryName;
+    private String cabinClassType;
+    private Integer count;
     
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="country")
-    private Collection<City> cities = new ArrayList<City>();
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private AircraftType aircraftType;
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="seatConfig")
+    private Collection<Aircraft> aircraft = new ArrayList<Aircraft>();
+    
     
     public Long getId() {
         return id;
@@ -39,29 +43,37 @@ public class Country implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public String getContryCode() {
-        return contryCode;
-    }
-    
-    public void setContryCode(String contryCode) {
-        this.contryCode = contryCode;
-    }
-    
-    public String getCountryName() {
-        return countryName;
-    }
-    
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-    
-    public Collection<City> getCities() {
-        return cities;
+
+    public String getCabinClassType() {
+        return cabinClassType;
     }
 
-    public void setCities(Collection<City> cities) {
-        this.cities = cities;
+    public Integer getCount() {
+        return count;
+    }
+
+    public AircraftType getAircraftType() {
+        return aircraftType;
+    }
+
+    public Collection<Aircraft> getAircraft() {
+        return aircraft;
+    }
+
+    public void setAircraft(Collection<Aircraft> aircraft) {
+        this.aircraft = aircraft;
+    }
+
+    public void setCabinClassType(String cabinClassType) {
+        this.cabinClassType = cabinClassType;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public void setAircraftType(AircraftType aircraftType) {
+        this.aircraftType = aircraftType;
     }
 
     @Override
@@ -74,10 +86,10 @@ public class Country implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Country)) {
+        if (!(object instanceof SeatConfig)) {
             return false;
         }
-        Country other = (Country) object;
+        SeatConfig other = (SeatConfig) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -86,7 +98,7 @@ public class Country implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.Country[ id=" + id + " ]";
+        return "ams.aps.entity.SeatConfig[ id=" + id + " ]";
     }
-
+    
 }
