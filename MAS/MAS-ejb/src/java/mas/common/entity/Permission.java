@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mas.aps.entity;
+package mas.common.entity;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -13,14 +13,16 @@ import javax.persistence.Id;
 
 /**
  *
- * @author winga_000
+ * @author Lewis
  */
 @Entity
-public class Aircraft implements Serializable {
+public class Permission implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String systemModule;
+    private String title;
 
     public Long getId() {
         return id;
@@ -40,10 +42,10 @@ public class Aircraft implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Aircraft)) {
+        if (!(object instanceof Permission)) {
             return false;
         }
-        Aircraft other = (Aircraft) object;
+        Permission other = (Permission) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -52,7 +54,34 @@ public class Aircraft implements Serializable {
 
     @Override
     public String toString() {
-        return "mas.aps.entity.Aircraft[ id=" + id + " ]";
+        return "mas.common.entity.Access[ id=" + id + " ]";
     }
-    
+
+    /**
+     * @return the systemModule
+     */
+    public String getSystemModule() {
+        return systemModule;
+    }
+
+    /**
+     * @param systemModule the systemModule to set
+     */
+    public void setSystemModule(String systemModule) {
+        this.systemModule = systemModule;
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }
