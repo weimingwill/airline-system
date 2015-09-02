@@ -5,6 +5,7 @@
  */
 package mas.common.session;
 
+import java.util.Map;
 import javax.ejb.Local;
 import mas.common.entity.SystemUser;
 
@@ -15,6 +16,6 @@ import mas.common.entity.SystemUser;
 @Local
 public interface SystemUserSessionLocal {
     public SystemUser getSystemUser(String userName);
-    public Boolean verifySystemUserPassword(String userName, String inputPassword);
+    public Map<Boolean,String> verifySystemUserPassword(String userName, String inputPassword);
     
 }

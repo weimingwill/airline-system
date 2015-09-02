@@ -14,11 +14,13 @@
     <cc:implementation>
         <f:view>
             <h:form id="loginForm">
-                <h:outputLabel value="#{cc.attrs.formName}"/>
-                <h:outputText value="Username"/>
-                <h:inputText required="true" requiredMessage="Please enter your username" id="username" value="#{loginManagedBean.username}"/>
-                <h:inputText required="true" requiredMessage="Please enter your password" id="password" value="#{loginManagedBean.password}"/>
-                <h:commandButton action="#{loginManagedBean.varifyUserLogin(username, password)}" value="Login"/>
+                <h4><h:outputLabel value="#{cc.attrs.formName}"/></h4>
+                <h:outputLabel value="#{loginManagedBean.loginMsg}" style="color:red"/>
+                <br/><h:outputText value="Username"/>
+                <br/><h:inputText required="true" requiredMessage="Please enter your username" id="username" value="#{loginManagedBean.username}"/>
+                <br/><h:outputText value="Password"/>
+                <br/><h:inputSecret required="true" requiredMessage="Please enter your password" id="password" value="#{loginManagedBean.password}"/>
+                <br/><h:commandButton action="#{loginManagedBean.varifyUserLogin()}" value="Login"/>
             </h:form>
         </f:view>
     </cc:implementation>
