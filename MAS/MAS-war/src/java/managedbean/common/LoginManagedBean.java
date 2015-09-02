@@ -5,23 +5,24 @@
  */
 package managedbean.common;
 
+import java.util.Map;
 import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.inject.Named;
 import mas.common.session.SystemUserSessionLocal;
 
 /**
  *
  * @author winga_000
  */
-@ManagedBean
+@Named(value = "loginManagedBean")
 @RequestScoped
 public class LoginManagedBean {
     @EJB
     private SystemUserSessionLocal systemUserSession;
     private String username;
     private String password;
-    
+    private String loginMsg;
     
     /**
      * Creates a new instance of LoginManagedBean
@@ -49,7 +50,7 @@ public class LoginManagedBean {
     public String getPassword() {
         return password;
     }
-
+   
     /**
      * @param password the password to set
      */
@@ -57,8 +58,29 @@ public class LoginManagedBean {
         this.password = password;
     }
     
-    public void varifyUserLogin(String userName, String password){
-        systemUserSession.verifySystemUserPassword(userName, password);
+        /**
+     * @return the loginMsg
+     */
+    public String getLoginMsg() {
+        return loginMsg;
+    }
+
+    /**
+     * @param loginMsg the loginMsg to set
+     */
+    public void setLoginMsg(String loginMsg) {
+        this.loginMsg = loginMsg;
+    }
+    
+    public String varifyUserLogin(){
+        Map<Boolean, String> result = systemUserSession.verifySystemUserPassword(username, password);
+        if(result.containsKey(Boolean.TRUE)){
+            setLoginMsg(result.get(Boolean.TRUE));
+            return "views/common/systemAdminWorkspace.xhtml";
+        } else {
+            setLoginMsg(result.get(Boolean.FALSE));
+            return "";
+        }
     }
     
 }
