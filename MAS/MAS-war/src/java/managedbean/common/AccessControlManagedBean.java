@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 import javax.ejb.EJB;
-import javax.faces.bean.RequestScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import mas.common.session.AccessControlSessionLocal;
 
