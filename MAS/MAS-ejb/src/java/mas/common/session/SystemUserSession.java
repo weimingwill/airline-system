@@ -5,14 +5,14 @@
  */
 package mas.common.session;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import mas.common.entity.SystemUser;
 import mas.common.util.helper.UserMsg;
+import mas.common.util.exception.InvalidPasswordException;
+import mas.common.util.exception.UserDoesNotExistException;
 
 /**
  *
@@ -29,26 +29,21 @@ public class SystemUserSession implements SystemUserSessionLocal {
     @PersistenceContext
     private EntityManager entityManager;
 
-    
     @Override
     public SystemUser getSystemUser(String userName) {
         return accessControlSession.getSystemUserByName(userName);
     }
 
     @Override
-    public Map<Boolean,String> verifySystemUserPassword(String userName, String inputPassword) {
+    public void verifySystemUserPassword(String userName, String inputPassword) throws UserDoesNotExistException, InvalidPasswordException {
         SystemUser user = getSystemUser(userName);
-        Map<Boolean, String> resultMap = new HashMap<>();
         if (user == null) {
-            resultMap.put(Boolean.FALSE, UserMsg.WRONG_USERNAME_ERROR);
+            throw new UserDoesNotExistException(UserMsg.WRONG_USERNAME_ERROR);
         } else {
             String userPassword = user.getPassword();
-            if (userPassword.equals(inputPassword)) {
-                resultMap.put(Boolean.TRUE, UserMsg.LOGIN_SUCCESS_MSG);
-            } else {
-                resultMap.put(Boolean.FALSE, UserMsg.WRONG_PASSWORD_ERROR);
+            if (!userPassword.equals(inputPassword)) {
+                throw new InvalidPasswordException(UserMsg.WRONG_PASSWORD_ERROR);
             }
         }
-        return resultMap;
     }
 }
