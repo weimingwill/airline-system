@@ -5,11 +5,12 @@
  */
 package managedbean.common;
 
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import mas.common.session.SystemUserSessionLocal;
+import mas.common.util.exception.*;
+import mas.common.util.helper.UserMsg;
 
 /**
  *
@@ -72,15 +73,15 @@ public class LoginManagedBean {
         this.loginMsg = loginMsg;
     }
     
-    public String varifyUserLogin(){
-        Map<Boolean, String> result = systemUserSession.verifySystemUserPassword(username, password);
-        if(result.containsKey(Boolean.TRUE)){
-            setLoginMsg(result.get(Boolean.TRUE));
-            return "views/common/systemAdminWorkspace.xhtml";
-        } else {
-            setLoginMsg(result.get(Boolean.FALSE));
+    public String varifyUserLogin() throws UserDoesNotExistException, InvalidPasswordException{
+        try{
+            systemUserSession.verifySystemUserPassword(username, password);
+        } catch (UserDoesNotExistException | InvalidPasswordException ex){
+            setLoginMsg(ex.getMessage());
             return "";
         }
+        setLoginMsg(UserMsg.LOGIN_SUCCESS_MSG);
+        return "views/common/systemAdminWorkspace.xhtml";
     }
     
 }
