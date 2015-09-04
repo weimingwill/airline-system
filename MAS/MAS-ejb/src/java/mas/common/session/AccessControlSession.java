@@ -8,6 +8,7 @@ package mas.common.session;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -28,20 +29,15 @@ public class AccessControlSession implements AccessControlSessionLocal {
     // "Insert Code > Add Business Method")
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @EJB
+    private SystemUserSessionLocal systemUsersSession;
 
     @Override
-    public SystemUser getSystemUserByName(String userName) {
-        Query query = entityManager.createQuery("SELECT u FROM SystemUser u WHERE u.username = :inUserName");
-        query.setParameter("inUserName", userName);
-        SystemUser user = null;
-        try {
-            user = (SystemUser) query.getSingleResult();
-        } catch (NoResultException ex) {
-            ex.printStackTrace();
-        }
-        return user;
+    public SystemUser getSystemUser(String username) {
+        return systemUsersSession.getSystemUserByName(username);
     }
-
+    
     @Override
     public SystemRole getSystemRoleByName(String roleName) {
         Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName");
@@ -90,10 +86,9 @@ public class AccessControlSession implements AccessControlSessionLocal {
     }
 
     @Override
-    public List<SystemRole> getUserRoles(String userName) {
-        SystemUser user = getSystemUserByName(userName);
-        List<SystemRole> roles = user.getRoles();
-        return roles;
+    public List<SystemRole> getUserRoles(String username) {
+        SystemUser user = getSystemUser(username);
+        return user.getRoles();
     }
 
     @Override
@@ -137,7 +132,7 @@ public class AccessControlSession implements AccessControlSessionLocal {
 
     @Override
     public void assignUserToRole(String username, ArrayList<String> roles) {
-        SystemUser systemUser = getSystemUserByName(username);
+        SystemUser systemUser = getSystemUser(username);
         List<SystemRole> roleList = new ArrayList<SystemRole>();
         for(String roleName: roles){
             try{

@@ -5,8 +5,9 @@
  */
 package mas.common.session;
 
-import java.util.Map;
+import java.util.List;
 import javax.ejb.Local;
+import mas.common.entity.SystemMsg;
 import mas.common.entity.SystemUser;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.UserDoesNotExistException;
@@ -17,7 +18,7 @@ import mas.common.util.exception.UserDoesNotExistException;
  */
 @Local
 public interface SystemUserSessionLocal {
-    public SystemUser getSystemUser(String userName);
-    public void verifySystemUserPassword(String userName, String inputPassword) throws UserDoesNotExistException, InvalidPasswordException;
-    
+    public void verifySystemUserPassword(String username, String inputPassword) throws UserDoesNotExistException, InvalidPasswordException;
+    public List<SystemMsg> getUserMessages(String username);
+    public SystemUser getSystemUserByName(String username);
 }

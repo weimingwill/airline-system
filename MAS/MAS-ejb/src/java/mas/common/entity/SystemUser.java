@@ -14,7 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 /**
@@ -30,6 +29,13 @@ public class SystemUser implements Serializable {
     private String password;
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemRole> roles = new ArrayList<SystemRole>();
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<SystemMsg> systemMsgs = new ArrayList<SystemMsg>();
+    
+    public void create(String username, String password){
+        this.setUsername(username);
+        this.setPassword(password);
+    }
     
     public Long getId() {
         return id;
@@ -38,6 +44,15 @@ public class SystemUser implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public List<SystemMsg> getSystemMsgs() {
+        return systemMsgs;
+    }
+
+    public void setSystemMsgs(List<SystemMsg> systemMsgs) {
+        this.systemMsgs = systemMsgs;
+    }
+
 
     @Override
     public int hashCode() {

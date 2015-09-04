@@ -18,16 +18,16 @@ import mas.common.session.AccessControlSessionLocal;
  *
  * @author Lewis
  */
-@Named(value = "accessControlManagedBean")
+@Named(value = "accessControlBean")
 @RequestScoped
-public class AccessControlManagedBean implements Serializable{
+public class AccessControlBean implements Serializable{
     @EJB
     private AccessControlSessionLocal accessControlSession;
     
     /**
      * Creates a new instance of AccessControlManagedBean
      */
-    public AccessControlManagedBean() {
+    public AccessControlBean() {
     }
     
     public void createSystemRole(String roleName){

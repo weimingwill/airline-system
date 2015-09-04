@@ -15,39 +15,50 @@ import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import mas.common.entity.PlainTextMessage;
-import mas.common.session.InternalComSessionBean;
+import mas.common.entity.SystemMsg;
+import mas.common.session.InternalMsgSessionLocal;
+import mas.common.session.SystemUserSessionLocal;
 
 /**
  *
  * @author winga_000
  */
 //@ManagedBean
-@Named(value = "internalComManagedBean")
+@Named(value = "internalMsgBean")
 @RequestScoped
-public class InternalComManagedBean {
+public class InternalMsgBean {
 
     @EJB
-    private InternalComSessionBean internalComSessionBean;
+    private InternalMsgSessionLocal internalMsgSession;
+    private SystemUserSessionLocal systemUserSession;
+    private LoginBean loginManagedBean;
     private String message;
+    private String receiver;
+    private String username;
     
-    public InternalComManagedBean() {
+    public void getUsername(){
+        username = loginManagedBean.getUsername();
+    }
+    
+    public InternalMsgBean() {
         message = "Initialize message";
+        receiver = "user1";
     }
 
-    public InternalComSessionBean getInternalComSessionBean() {
-        return internalComSessionBean;
+    public InternalMsgSessionLocal getInternalMsgSession() {
+        return internalMsgSession;
     }
 
-    public void setInternalComSessionBean(InternalComSessionBean internalComSessionBean) {
-        this.internalComSessionBean = internalComSessionBean;
+    public void setInternalMsgSession(InternalMsgSessionLocal internalMsgSession) {
+        this.internalMsgSession = internalMsgSession;
     }
-
+    
     public String getMessage() {
         return message;
     }
@@ -56,32 +67,52 @@ public class InternalComManagedBean {
         this.message = message;
     }
     
-    public List<PlainTextMessage> getAllMessages(){
-        return internalComSessionBean.getAllPlainTextMessage();
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+    
+    public List<SystemMsg> getAllMessages(){
+        return internalMsgSession.getAllInternalMessages();
+    }
+    
+    public List<SystemMsg> getUserMessages(String username){
+        return systemUserSession.getUserMessages(username);
     }
     
     public void saveNewMessage(ActionEvent event) {
         String messageContent = String.valueOf(message);
+        String receiverContent = String.valueOf(receiver);
         try {
-            sendMessage(messageContent);
+            sendMessage(messageContent, receiverContent);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }    
     
-    public void sendMessage(String message) {
+    //send message
+    public void sendMessage(String message, String receiver) {
         try {
             Context c = new InitialContext();
             ConnectionFactory cf = (ConnectionFactory) c.lookup("jms/topicInternalComConnectionFactory");
             Connection connection = null;
             Session session = null;
-
+            MapMessage mapMessage = null;
+            Destination destination = null;
+            MessageProducer messageProducer = null;
+            
             try {
                 connection = cf.createConnection();
                 session = connection.createSession(false, session.AUTO_ACKNOWLEDGE);
-                Destination destination = (Destination) c.lookup("jms/topicInternalCom");
-                MessageProducer messageProducer = session.createProducer(destination);
-                messageProducer.send(session.createTextMessage(message));
+                destination = (Destination) c.lookup("jms/topicInternalCom");
+                messageProducer = session.createProducer(destination);
+                mapMessage = session.createMapMessage();
+                mapMessage.setString("message", message);
+                mapMessage.setString("receiver", receiver);
+                messageProducer.send(mapMessage);
             } catch (JMSException jmsEx) {
                 jmsEx.printStackTrace();
             } finally {

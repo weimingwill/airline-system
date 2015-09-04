@@ -7,25 +7,23 @@ package mas.common.session;
 
 import java.util.List;
 import javax.ejb.Stateless;
-import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import mas.common.entity.PlainTextMessage;
+import mas.common.entity.SystemMsg;
 
 /**
  *
  * @author winga_000
  */
 @Stateless
-@LocalBean
-public class InternalComSessionBean {
-
-    @PersistenceContext(unitName = "MAS-ejbPU")
+public class InternalMsgSession implements InternalMsgSessionLocal {
+    @PersistenceContext
     private EntityManager em;
-
-    public List<PlainTextMessage> getAllPlainTextMessage() {
-        Query query = em.createQuery("SELECT m FROM PlainTextMessage m");
+    
+    @Override
+    public List<SystemMsg> getAllInternalMessages() {
+        Query query = em.createQuery("SELECT m FROM SystemMsg m");
         return query.getResultList();
     }
 }

@@ -5,17 +5,22 @@
  */
 package mas.common.message;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.ejb.MessageDrivenContext;
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.jms.TextMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import mas.common.entity.PlainTextMessage;
+import mas.common.entity.SystemMsg;
+import mas.common.entity.SystemUser;
+import mas.common.session.SystemUserSessionLocal;
 
 /**
  *
@@ -29,30 +34,38 @@ import mas.common.entity.PlainTextMessage;
     //@ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "jms/topicInternalCom"),
     @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic")
 })
-public class InternalCom implements MessageListener {
+public class InternalMsgMDB implements MessageListener {
     @Resource
     private MessageDrivenContext messageDrivenContext;
     
-    @PersistenceContext(unitName = "MAS-ejbPU")
-    private EntityManager em;
+    @PersistenceContext
+    private EntityManager entityManager;
     
+    @EJB
+    private SystemUserSessionLocal systemUserSession;
+    private SystemMsg systemMsg;
+    private SystemUser systemUser;
     
-    
-    public InternalCom() {
+    public InternalMsgMDB() {
     }
     
     @Override
     public void onMessage(Message message) {
-        TextMessage textMessage = null;
+        MapMessage mapMessage = null;
         try{
-            if(message instanceof TextMessage){
-                textMessage = (TextMessage) message;
-                PlainTextMessage plainTextMessage = new PlainTextMessage();
-                plainTextMessage.setMessage(textMessage.getText());
-                em.persist(plainTextMessage);
-                System.out.println("********** MessageMe: Message received and saved: " + textMessage.getText());
+            if(message instanceof MapMessage){
+                mapMessage = (MapMessage) message;
+                String messageContent = mapMessage.getString("message");
+                String username = mapMessage.getString("receiver");
+                systemMsg = new SystemMsg();
+                systemMsg.create(messageContent);//create a new systemMsg record
+                systemUser = systemUserSession.getSystemUserByName(username);
+                systemUser.getSystemMsgs().add(systemMsg);
+                systemMsg.getSystemUsers().add(systemUser);
+                entityManager.persist(systemUser);
+                System.out.println("********** InternalMsgMDB: Message " + messageContent + " send to : " + username);
             } else {
-                System.out.println("********** MessageMe: Message received has wrong type.");
+                System.out.println("********** InternalMsgMDB: Message received has wrong type.");
             }
         } catch(JMSException jmsEx){
             jmsEx.printStackTrace();

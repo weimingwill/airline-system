@@ -19,9 +19,9 @@ import mas.common.entity.SystemUser;
  */
 @Local
 public interface AccessControlSessionLocal {
-    public SystemUser getSystemUserByName(String userName);
+    public SystemUser getSystemUser(String username);
     public SystemRole getSystemRoleByName(String roleName);
-    public List<SystemRole> getUserRoles(String userName);
+    public List<SystemRole> getUserRoles(String username);
     public Permission getPermission(String module, String title);
     public List<Permission> getPermissionsByModule(String module);
     public List<Permission> getRolePermissions(String roleName);
