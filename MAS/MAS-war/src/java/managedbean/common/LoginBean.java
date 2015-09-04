@@ -48,12 +48,10 @@ public class LoginBean implements Serializable {
         } catch (UserDoesNotExistException | InvalidPasswordException ex){
             setLoginMsg(ex.getMessage());
             return navigationBean.toLogin();
-            //return "/views/users/login.xhtml";
         }
         loggedIn = true;
         setLoginMsg(UserMsg.LOGIN_SUCCESS_MSG);
-        //return navigationBean.redirectToWorkplace();
-        return "/views/users/userWorkplace.xhtml";
+        return navigationBean.redirectToWorkplace();
     }
     
     public String doLogout(){
@@ -61,8 +59,7 @@ public class LoginBean implements Serializable {
         FacesMessage msg = new FacesMessage("Logout successfully!", "INFO MSG");
         msg.setSeverity(FacesMessage.SEVERITY_INFO);
         FacesContext.getCurrentInstance().addMessage(null, msg);
-        //return navigationBean.toLogin();
-        return "/views/users/login.xhtml";
+        return navigationBean.toLogin();
     }
     
     //Getter and Setter

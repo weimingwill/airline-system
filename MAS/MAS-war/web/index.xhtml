@@ -16,11 +16,11 @@
             <br/>
             <h:commandButton action="#{navigationBean.toLogin()}" value="Login"></h:commandButton>
             <h:commandButton action="#{loginBean.doLogout()}" value="Logout"></h:commandButton>
-            <h:commandButton action="/views/common/test.xhtml" value="Test"></h:commandButton>
+            <h:commandButton action="#{navigationBean.redirectToTest()}" value="Test"></h:commandButton>
         </h:form>
-        
+
     </ui:define>
-    
+
     <ui:define name="bottom">
         Powered by Kent Ridge Technology
     </ui:define>

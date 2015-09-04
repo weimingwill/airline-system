@@ -21,7 +21,7 @@ import managedbean.common.LoginBean;
  *
  * @author winga_000
  */
-@WebFilter(filterName = "LoginFilter", urlPatterns = {"*.xhtml"})
+@WebFilter(filterName = "LoginFilter", urlPatterns = {"/views/secured/*"})
 public class LoginFilter implements Filter{
     
     @Override
@@ -31,15 +31,19 @@ public class LoginFilter implements Filter{
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
             throws IOException, ServletException{
+        System.out.println("Begin LoginFilther doFilther");
         
         LoginBean loginBean = (LoginBean)((HttpServletRequest)request).getSession().getAttribute("loginBean");
-        
+        System.out.println(loginBean);
+        //System.out.println(loginBean.isLoggedIn());
         if (loginBean == null || !loginBean.isLoggedIn()) {
             String contextPath = ((HttpServletRequest)request).getContextPath();
-            ((HttpServletResponse)response).sendRedirect(contextPath + "/views/users/login.xhtml");
-        } else {
-            chain.doFilter(request, response);             
+            ((HttpServletResponse)response).sendRedirect(contextPath + "/views/unsecured/login.xhtml");
+            System.out.println("SendRedirect LoginFilther doFilther");
         }
+        System.out.println("End LoginFilther doFilther");
+        chain.doFilter(request, response);
+        
     }
     
     @Override

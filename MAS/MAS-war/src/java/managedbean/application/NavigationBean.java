@@ -24,7 +24,7 @@ public class NavigationBean implements Serializable {
     }
     
     public String toLogin(){
-        return "/views/users/login.xhtml";
+        return "/views/secured/users/login.xhtml";
     }
     
     public String redirectToHome(){
@@ -32,11 +32,15 @@ public class NavigationBean implements Serializable {
     }
     
     public String toSendMessage(){
-        return "/views/common/sendMessage.xhtml";
+        return "/views/secured/common/sendMessage.xhtml";
     }
     
     public String redirectToWorkplace(){
-        return "/views/users/userWorkplace.xhtml";
+        return "/views/secured/users/userWorkplace.xhtml?faces-redirect=true";
+    }
+    
+    public String redirectToTest(){
+        return "/views/secured/common/test.xhtml?faces-redirect=true";
     }
     
 }
