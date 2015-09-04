@@ -34,9 +34,9 @@ public class LoginBean implements Serializable {
     private String username;
     private String password;
     private String loginMsg;
-    private boolean loggedIn = false;
+    private boolean loggedIn;
     
-    /**
+    /** 
      * Creates a new instance of LoginManagedBean
      */
     public LoginBean() {
@@ -47,6 +47,10 @@ public class LoginBean implements Serializable {
             systemUserSession.verifySystemUserPassword(username, password);
         } catch (UserDoesNotExistException | InvalidPasswordException ex){
             setLoginMsg(ex.getMessage());
+            
+            FacesMessage msg = new FacesMessage("Login error!", "ERROR MSG");
+            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            FacesContext.getCurrentInstance().addMessage(null, msg);            
             return navigationBean.toLogin();
         }
         loggedIn = true;
