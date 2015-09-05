@@ -54,16 +54,23 @@ public class InternalMsgMDB implements MessageListener {
         MapMessage mapMessage = null;
         try{
             if(message instanceof MapMessage){
+                
                 mapMessage = (MapMessage) message;
                 String messageContent = mapMessage.getString("message");
-                String username = mapMessage.getString("receiver");
                 systemMsg = new SystemMsg();
                 systemMsg.create(messageContent);//create a new systemMsg record
-                systemUser = systemUserSession.getSystemUserByName(username);
-                systemUser.getSystemMsgs().add(systemMsg);
-                systemMsg.getSystemUsers().add(systemUser);
-                entityManager.persist(systemUser);
-                System.out.println("********** InternalMsgMDB: Message " + messageContent + " send to : " + username);
+                
+                List<String> receivers = new ArrayList<String>();
+                int receiverNumber = mapMessage.getInt("receiverNumber");
+                for(int i = 0; i < receiverNumber; i++){
+                    String receiver = mapMessage.getString("receiver" + i);
+                    receivers.add(receiver);
+                    systemUser = systemUserSession.getSystemUserByName(receiver);
+                    systemUser.getSystemMsgs().add(systemMsg);
+                    systemMsg.getSystemUsers().add(systemUser);  
+                    entityManager.persist(systemUser);                
+                }
+                System.out.println("********** InternalMsgMDB: Message " + messageContent + " send to : " + receivers);
             } else {
                 System.out.println("********** InternalMsgMDB: Message received has wrong type.");
             }

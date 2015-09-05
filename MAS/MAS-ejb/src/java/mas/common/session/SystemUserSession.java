@@ -5,6 +5,7 @@
  */
 package mas.common.session;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -32,8 +33,8 @@ public class SystemUserSession implements SystemUserSessionLocal {
     // "Insert Code > Add Business Method")
     @PersistenceContext
     private EntityManager entityManager;
-
-    private SystemMsg systemMsg;
+    
+    private SystemMsg systemMsg;    
     
     @Override
     public SystemUser getSystemUserByName(String username) {
@@ -66,4 +67,43 @@ public class SystemUserSession implements SystemUserSessionLocal {
         SystemUser user = getSystemUserByName(username);
         return user.getSystemMsgs();
     }
+
+    @Override
+    public List<SystemMsg> getUserUnreadMessages(String username) {
+        SystemUser user = getSystemUserByName(username);
+        List<SystemMsg> unreadMsg = new ArrayList<SystemMsg>();
+        try {
+            for(SystemMsg msg : user.getSystemMsgs()){
+                if(!msg.isReaded()){
+                    unreadMsg.add(msg);
+                }
+            }
+            return unreadMsg;            
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public void readUnreadMessages(String username) {
+        List<SystemMsg> unreadMsgs = getUserMessages(username);
+        for(SystemMsg msg : unreadMsgs){
+            msg.setReaded(true);
+            entityManager.merge(msg);
+        }
+    }
+
+    @Override
+    public List<SystemUser> getAllUsers() {
+        Query query = entityManager.createQuery("SELECT u FROM SystemUser u");
+        return query.getResultList();          
+    }
+
+    @Override
+    public List<SystemUser> getAllOtherUsers(String username) {
+        Query query = entityManager.createQuery("SELECT u FROM SystemUser u where u.username <> :username");
+        query.setParameter("username", username);
+        return query.getResultList();
+    }
+
 }

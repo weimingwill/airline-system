@@ -14,7 +14,10 @@
 
     <ui:define name="left">
         <h:form>
-            <h:commandButton action="#{navigationBean.toSendMessage()}" value="send message"></h:commandButton>        
+            <h:commandButton action="#{navigationBean.toSendMessage()}" value="send message"></h:commandButton> 
+            <h:commandButton action="#{navigationBean.toViewMessages()}" value="view message" actionListener="#{internalMsgBean.readUnreadMessages}"></h:commandButton> 
+            <br/>
+            <h:outputLabel value="Unread Message number: #{internalMsgBean.unreadMessagesNumber}"></h:outputLabel>
         </h:form>
     </ui:define>
 

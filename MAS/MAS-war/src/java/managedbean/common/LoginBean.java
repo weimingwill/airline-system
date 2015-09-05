@@ -9,8 +9,10 @@ import managedbean.application.NavigationBean;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import mas.common.session.SystemUserSessionLocal;
@@ -54,6 +56,9 @@ public class LoginBean implements Serializable {
             return navigationBean.toLogin();
         }
         loggedIn = true;
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        Map<String, Object> sessionMap = externalContext.getSessionMap();
+        sessionMap.put("username", username);        
         setLoginMsg(UserMsg.LOGIN_SUCCESS_MSG);
         return navigationBean.redirectToWorkplace();
     }

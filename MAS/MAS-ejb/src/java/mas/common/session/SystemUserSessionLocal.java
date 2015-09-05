@@ -20,5 +20,9 @@ import mas.common.util.exception.UserDoesNotExistException;
 public interface SystemUserSessionLocal {
     public void verifySystemUserPassword(String username, String inputPassword) throws UserDoesNotExistException, InvalidPasswordException;
     public List<SystemMsg> getUserMessages(String username);
+    public List<SystemMsg> getUserUnreadMessages(String username);
     public SystemUser getSystemUserByName(String username);
+    public void readUnreadMessages(String username);
+    public List<SystemUser> getAllUsers();
+    public List<SystemUser> getAllOtherUsers(String username);
 }
