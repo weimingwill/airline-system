@@ -43,4 +43,12 @@ public class NavigationBean implements Serializable {
         return "/views/secured/common/test.xhtml?faces-redirect=true";
     }
     
+    public String toAssignUserRole(){
+        return "/views/secured/access_control/assignUserRole.xhtml";
+    }
+    
+    public String redirectToAdminWorkplace(){
+        return "/views/secured/users/systemAdminWorkspace.xhtml?faces-redirect=true";
+    }
+    
 }

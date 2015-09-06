@@ -13,4 +13,6 @@ public class UserMsg {
     public static final String WRONG_PASSWORD_ERROR = "The password you entered is incorrect!";
     public static final String LOGIN_SUCCESS_MSG = "You have logged in successfully!";
     public static final String WRONG_USERNAME_ERROR = "User does not exist!";
+    public static final String NO_SUCH_ROLE_ERROR = "Role does not exist!";
+    public static final String NO_PERMISSION_ERROR = "There is no permission assigned to the role";
 }

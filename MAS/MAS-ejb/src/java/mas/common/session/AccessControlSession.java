@@ -17,6 +17,9 @@ import javax.persistence.Query;
 import mas.common.entity.SystemRole;
 import mas.common.entity.Permission;
 import mas.common.entity.SystemUser;
+import mas.common.util.exception.PermissionDoesNotExistException;
+import mas.common.util.exception.RoleDoesNotExistException;
+import mas.common.util.helper.UserMsg;
 
 /**
  *
@@ -39,14 +42,14 @@ public class AccessControlSession implements AccessControlSessionLocal {
     }
     
     @Override
-    public SystemRole getSystemRoleByName(String roleName) {
+    public SystemRole getSystemRoleByName(String roleName) throws RoleDoesNotExistException{
         Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName");
         query.setParameter("inRoleName", roleName);
         SystemRole systemRole = null;
         try {
             systemRole = (SystemRole) query.getSingleResult();
         } catch (NoResultException ex) {
-            ex.printStackTrace();
+            throw new RoleDoesNotExistException(UserMsg.NO_SUCH_ROLE_ERROR);
         }
         return systemRole;
     }
@@ -79,10 +82,16 @@ public class AccessControlSession implements AccessControlSessionLocal {
     }
 
     @Override
-    public List<Permission> getRolePermissions(String roleName) {
-        SystemRole role = getSystemRoleByName(roleName);
-        List<Permission> permissions = role.getPermissions();
-        return permissions;
+    public List<Permission> getRolePermissions(String roleName) 
+            throws RoleDoesNotExistException, PermissionDoesNotExistException{
+        try{
+            SystemRole role = getSystemRoleByName(roleName);
+            List<Permission> permissions = null;
+            permissions = role.getPermissions();
+            return permissions;
+        } catch(NullPointerException e){
+            throw new PermissionDoesNotExistException(UserMsg.NO_PERMISSION_ERROR);
+        }
     }
 
     @Override
@@ -111,7 +120,7 @@ public class AccessControlSession implements AccessControlSessionLocal {
     }
 
     @Override
-    public void assignRoleToPermissions(String roleName, Map<String, ArrayList<String>> permissions) {
+    public void assignRoleToPermissions(String roleName, Map<String, ArrayList<String>> permissions) throws RoleDoesNotExistException{
         SystemRole systemRole = getSystemRoleByName(roleName);
         String module;
         List<Permission> permissionList = new ArrayList<Permission>();
@@ -144,4 +153,10 @@ public class AccessControlSession implements AccessControlSessionLocal {
         systemUser.setRoles(roleList);
         entityManager.merge(systemUser);
     }
+    
+    @Override
+    public List<String> getRolesNameList(){
+        Query query = entityManager.createQuery("SELECT r.roleName FROM SystemRole r");
+        return (List<String>) query.getResultList();
+    }    
 }
