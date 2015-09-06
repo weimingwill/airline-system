@@ -13,4 +13,5 @@ public class UserMsg {
     public static final String WRONG_PASSWORD_ERROR = "The password you entered is incorrect!";
     public static final String LOGIN_SUCCESS_MSG = "You have logged in successfully!";
     public static final String WRONG_USERNAME_ERROR = "User does not exist!";
+    public static final String WRONG_USERNAME_EXIST_ERROR = "Username has already existed";
 }

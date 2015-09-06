@@ -27,4 +27,18 @@
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
+    
+    <!--Set SSL Protection-->
+    <security-constraint>
+        <display-name>SSL Protection</display-name>
+        <web-resource-collection>
+            <web-resource-name>Default Secure Pages</web-resource-name>
+            <description>Default Secure Pages</description>
+            <url-pattern>/views/secured/users/login.xhtml</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <description/>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>    
 </web-app>

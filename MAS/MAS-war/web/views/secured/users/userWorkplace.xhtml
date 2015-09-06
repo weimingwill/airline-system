@@ -9,7 +9,7 @@
     </ui:define>
 
     <ui:define name="top">
-        
+
     </ui:define>
 
     <ui:define name="left">
@@ -18,18 +18,20 @@
             <h:commandButton action="#{navigationBean.toViewMessages()}" value="view message" actionListener="#{internalMsgBean.readUnreadMessages}"></h:commandButton> 
             <br/>
             <h:outputLabel value="Unread Message number: #{internalMsgBean.unreadMessagesNumber}"></h:outputLabel>
-        </h:form>
+            <br/>
+            <h:commandButton action="#{navigationBean.toCreateUser()}" value="create user"></h:commandButton>
+        </h:form>        
     </ui:define>
 
     <ui:define name="content">
         <h:form>
-            <h2>Welcome</h2>
+            <h2>Welcome #{userBean.username} </h2>
             <br/>
             <h:outputText value="This is a place you start to work"></h:outputText>
             <br/>
             <h:commandLink action="#{navigationBean.redirectToHome()}"></h:commandLink>
         </h:form>
-        
+
     </ui:define>
 
     <ui:define name="bottom">

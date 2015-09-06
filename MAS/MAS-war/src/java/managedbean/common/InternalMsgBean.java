@@ -48,7 +48,7 @@ public class InternalMsgBean implements Serializable {
     private String[] receivers;
 
     @Inject
-    private LoginBean loginBean;
+    private UserBean loginBean;
 
     //Initialization
     public InternalMsgBean() {
@@ -179,11 +179,11 @@ public class InternalMsgBean implements Serializable {
         this.username = username;
     }
 
-    public LoginBean getLoginBean() {
+    public UserBean getLoginBean() {
         return loginBean;
     }
 
-    public void setLoginBean(LoginBean loginBean) {
+    public void setLoginBean(UserBean loginBean) {
         this.loginBean = loginBean;
     }
 

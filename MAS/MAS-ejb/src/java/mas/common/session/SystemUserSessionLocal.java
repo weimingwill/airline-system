@@ -11,6 +11,8 @@ import mas.common.entity.SystemMsg;
 import mas.common.entity.SystemUser;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.UserDoesNotExistException;
+import mas.common.util.exception.UserExistException;
+import org.omg.CORBA.UserException;
 
 /**
  *
@@ -25,4 +27,5 @@ public interface SystemUserSessionLocal {
     public void readUnreadMessages(String username);
     public List<SystemUser> getAllUsers();
     public List<SystemUser> getAllOtherUsers(String username);
+    public void createUser(String username, String password) throws UserExistException;
 }

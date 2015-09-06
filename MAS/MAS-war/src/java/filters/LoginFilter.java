@@ -17,7 +17,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import managedbean.application.NavigationBean;
-import managedbean.common.LoginBean;
+import managedbean.common.UserBean;
 
 /**
  *
@@ -27,7 +27,7 @@ import managedbean.common.LoginBean;
 public class LoginFilter implements Filter{
  
     @Inject
-    LoginBean loginBean;
+    UserBean loginBean;
     @Inject
     NavigationBean navigationBean;
     

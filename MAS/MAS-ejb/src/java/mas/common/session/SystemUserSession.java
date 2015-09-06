@@ -18,6 +18,7 @@ import mas.common.entity.SystemUser;
 import mas.common.util.helper.UserMsg;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.UserDoesNotExistException;
+import mas.common.util.exception.UserExistException;
 
 /**
  *
@@ -106,4 +107,16 @@ public class SystemUserSession implements SystemUserSessionLocal {
         return query.getResultList();
     }
 
+    @Override
+    public void createUser(String username, String password) throws UserExistException{
+        SystemUser user = getSystemUserByName(username);
+        if(user != null){
+            throw new UserExistException(UserMsg.WRONG_USERNAME_EXIST_ERROR);
+        } else{
+            SystemUser systemUser = new SystemUser();
+            systemUser.setUsername(username);
+            systemUser.setPassword(password);
+            entityManager.persist(systemUser);
+        }
+    }
 }

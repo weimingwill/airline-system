@@ -11,22 +11,23 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.Map;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import mas.common.session.SystemUserSessionLocal;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.UserDoesNotExistException;
+import mas.common.util.exception.UserExistException;
 import mas.common.util.helper.UserMsg;
+import util.security.CryptographicHelper;
 
 /**
  *
  * @author winga_000
  */
-@Named(value = "loginBean")
+@Named(value = "userBean")
 @SessionScoped
-public class LoginBean implements Serializable {
+public class UserBean implements Serializable {
     
     @Inject
     private NavigationBean navigationBean;
@@ -36,12 +37,10 @@ public class LoginBean implements Serializable {
     private String username;
     private String password;
     private String loginMsg;
+    private String msg;
     private boolean loggedIn;
     
-    /** 
-     * Creates a new instance of LoginManagedBean
-     */
-    public LoginBean() {
+    public UserBean() {
     }
     
     public String doLogin() throws UserDoesNotExistException, InvalidPasswordException{
@@ -49,10 +48,9 @@ public class LoginBean implements Serializable {
             systemUserSession.verifySystemUserPassword(username, password);
         } catch (UserDoesNotExistException | InvalidPasswordException ex){
             setLoginMsg(ex.getMessage());
-            
-            FacesMessage msg = new FacesMessage("Login error!", "ERROR MSG");
-            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            FacesContext.getCurrentInstance().addMessage(null, msg);            
+            //FacesMessage msg = new FacesMessage("Login error!", "ERROR MSG");
+            //msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            //FacesContext.getCurrentInstance().addMessage(null, msg);         
             return navigationBean.toLogin();
         }
         loggedIn = true;
@@ -62,14 +60,26 @@ public class LoginBean implements Serializable {
         setLoginMsg(UserMsg.LOGIN_SUCCESS_MSG);
         return navigationBean.redirectToWorkplace();
     }
-    
+
     public String doLogout(){
         loggedIn = false;
-        FacesMessage msg = new FacesMessage("Logout successfully!", "INFO MSG");
-        msg.setSeverity(FacesMessage.SEVERITY_INFO);
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        //FacesMessage msg = new FacesMessage("Logout successfully!", "INFO MSG");
+        //msg.setSeverity(FacesMessage.SEVERITY_INFO);
+        //FacesContext.getCurrentInstance().addMessage(null, msg);
         return navigationBean.toLogin();
     }
+    
+    public String createUser() throws UserExistException, InvalidPasswordException, UserDoesNotExistException{
+        try {
+            CryptographicHelper cryptographicHelper = new CryptographicHelper();
+            password = cryptographicHelper.doMD5Hashing(password);
+            systemUserSession.createUser(username, password);
+            return doLogin();
+        } catch (UserExistException ex) {
+            setMsg(ex.getMessage());
+            return navigationBean.toCreateUser();
+        }
+    }    
     
     //Getter and Setter
     
@@ -138,7 +148,12 @@ public class LoginBean implements Serializable {
     public void setNavigationBean(NavigationBean navigationBean) {
         this.navigationBean = navigationBean;
     }
-    
-    
-    
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }    
 }

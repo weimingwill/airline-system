@@ -10,14 +10,13 @@
     </ui:define>
 
     <ui:define name="content">
-        <h2>Welcome #{loginBean.username}</h2>
+        <h2>Welcome #{userBean.username}</h2>
         <h:form>
             <h:outputText value="Welcome to Merline Airline"></h:outputText>
             <br/>
             <h:commandButton action="#{navigationBean.toLogin()}" value="Login"></h:commandButton>
-            <h:commandButton action="#{loginBean.doLogout()}" value="Logout"></h:commandButton>
+            <h:commandButton action="#{userBean.doLogout()}" value="Logout"></h:commandButton>
             <h:commandButton action="#{navigationBean.redirectToWorkplace()}" value="Workplace"></h:commandButton>
-            <h:commandButton action="#{navigationBean.redirectToTest()}" value="Test"></h:commandButton>
         </h:form>
 
     </ui:define>

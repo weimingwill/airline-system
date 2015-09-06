@@ -39,12 +39,12 @@ public class NavigationBean implements Serializable {
         return "/views/secured/users/userWorkplace.xhtml?faces-redirect=true";
     }
     
-    public String redirectToTest(){
-        return "/views/secured/common/test.xhtml?faces-redirect=true";
-    }
-    
     public String toViewMessages(){
         return "/views/secured/common/viewMessages.xhtml";
+    }
+    
+    public String toCreateUser(){
+        return "/views/secured/users/createUser.xhtml";
     }
 
 }
