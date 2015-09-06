@@ -34,9 +34,9 @@ public class SystemUserSession implements SystemUserSessionLocal {
     // "Insert Code > Add Business Method")
     @PersistenceContext
     private EntityManager entityManager;
-    
-    private SystemMsg systemMsg;    
-    
+
+    private SystemMsg systemMsg;
+
     @Override
     public SystemUser getSystemUserByName(String username) {
         Query query = entityManager.createQuery("SELECT u FROM SystemUser u WHERE u.username = :inUserName");
@@ -49,7 +49,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
         }
         return user;
     }
-    
+
     @Override
     public void verifySystemUserPassword(String username, String inputPassword) throws UserDoesNotExistException, InvalidPasswordException {
         SystemUser user = getSystemUserByName(username);
@@ -74,12 +74,12 @@ public class SystemUserSession implements SystemUserSessionLocal {
         SystemUser user = getSystemUserByName(username);
         List<SystemMsg> unreadMsg = new ArrayList<SystemMsg>();
         try {
-            for(SystemMsg msg : user.getSystemMsgs()){
-                if(!msg.isReaded()){
+            for (SystemMsg msg : user.getSystemMsgs()) {
+                if (!msg.isReaded()) {
                     unreadMsg.add(msg);
                 }
             }
-            return unreadMsg;            
+            return unreadMsg;
         } catch (Exception e) {
             return null;
         }
@@ -88,7 +88,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     @Override
     public void readUnreadMessages(String username) {
         List<SystemMsg> unreadMsgs = getUserMessages(username);
-        for(SystemMsg msg : unreadMsgs){
+        for (SystemMsg msg : unreadMsgs) {
             msg.setReaded(true);
             entityManager.merge(msg);
         }
@@ -97,7 +97,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     @Override
     public List<SystemUser> getAllUsers() {
         Query query = entityManager.createQuery("SELECT u FROM SystemUser u");
-        return query.getResultList();          
+        return query.getResultList();
     }
 
     @Override
@@ -108,15 +108,21 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void createUser(String username, String password) throws UserExistException{
+    public void createUser(String username, String password) throws UserExistException {
         SystemUser user = getSystemUserByName(username);
-        if(user != null){
+        if (user != null) {
             throw new UserExistException(UserMsg.WRONG_USERNAME_EXIST_ERROR);
-        } else{
+        } else {
             SystemUser systemUser = new SystemUser();
             systemUser.setUsername(username);
             systemUser.setPassword(password);
             entityManager.persist(systemUser);
         }
+    }
+
+    @Override
+    public List<String> getSystemUsernameList() {
+        Query query = entityManager.createQuery("SELECT u.username FROM SystemUser u");
+        return (List<String>) query.getResultList();
     }
 }

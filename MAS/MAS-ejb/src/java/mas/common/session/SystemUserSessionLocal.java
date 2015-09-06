@@ -28,4 +28,5 @@ public interface SystemUserSessionLocal {
     public List<SystemUser> getAllUsers();
     public List<SystemUser> getAllOtherUsers(String username);
     public void createUser(String username, String password) throws UserExistException;
+    public List<String> getSystemUsernameList();
 }

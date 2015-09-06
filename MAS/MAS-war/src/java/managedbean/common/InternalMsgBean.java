@@ -45,7 +45,7 @@ public class InternalMsgBean implements Serializable {
     private String message;
     private String receiver;
     private String username;
-    private String[] receivers;
+    private String[] receivers; 
 
     @Inject
     private UserBean loginBean;
