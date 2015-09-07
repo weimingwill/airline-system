@@ -15,6 +15,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import mas.common.entity.SystemMsg;
 import mas.common.entity.SystemUser;
+import mas.common.util.exception.EmailDoesNotExistException;
 import mas.common.util.helper.UserMsg;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.UserDoesNotExistException;
@@ -48,6 +49,19 @@ public class SystemUserSession implements SystemUserSessionLocal {
             ex.printStackTrace();
         }
         return user;
+    }
+
+    @Override
+    public SystemUser getSystemUserByEmail(String email) {
+        Query query = entityManager.createQuery("SELECT u FROM SystemUser u WHERE u.email = :email");
+        query.setParameter("email", email);
+        SystemUser user = null;
+        try {
+            user = (SystemUser) query.getSingleResult();
+        } catch (NoResultException ex) {
+            ex.printStackTrace();
+        }
+        return user;   
     }
 
     @Override
@@ -125,4 +139,28 @@ public class SystemUserSession implements SystemUserSessionLocal {
         Query query = entityManager.createQuery("SELECT u.username FROM SystemUser u");
         return (List<String>) query.getResultList();
     }
+
+    @Override
+    public void verifySystemUserEmail(String email) throws EmailDoesNotExistException{
+        SystemUser user = getSystemUserByEmail(email);
+        if(user == null){
+            throw new EmailDoesNotExistException(UserMsg.NO_SUCH_EMAIL_ERROR);
+        }
+    }
+
+    @Override
+    public void resetPassword(String email, String password) {
+        SystemUser user = getSystemUserByEmail(email);
+        user.setPassword(password);
+        entityManager.merge(user);
+    }
+
+    @Override
+    public void setResetDigest(String email, String resetDigest) {
+        SystemUser user = getSystemUserByEmail(email);
+        user.setResetDigest(resetDigest);
+        entityManager.merge(user);
+    }
+    
+    
 }

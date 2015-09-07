@@ -36,22 +36,23 @@ public class LoginFilter implements Filter{
     }
     
     @Override
-    public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain chain) 
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
             throws IOException, ServletException{
         
-        HttpServletRequest request = (HttpServletRequest)req;
-        HttpServletResponse response = (HttpServletResponse)rsp;
-        String contextPath = request.getContextPath();
-        String uri = request.getRequestURI();
-        boolean inLoginPage = uri.equals(contextPath + navigationBean.toLogin());   
+        HttpServletRequest req = (HttpServletRequest)request;
+        HttpServletResponse rsp = (HttpServletResponse)response;
+        String contextPath = req.getContextPath();
+        String uri = req.getRequestURI();
+        String loginUrl = contextPath + navigationBean.toLogin();
+        String redirectUrl = contextPath + navigationBean.redirectToWorkplace();
+        boolean inLoginPage = uri.equals(loginUrl);   
         
         if (!loginBean.isLoggedIn() && !inLoginPage) {
-            response.sendRedirect(contextPath + navigationBean.toLogin());
+            rsp.sendRedirect(loginUrl);
         } else if (loginBean.isLoggedIn() && inLoginPage) {
-            response.sendRedirect(contextPath + navigationBean.redirectToWorkplace());
-        }
-        
-        chain.doFilter(request, response);
+            rsp.sendRedirect(redirectUrl);
+        }        
+        chain.doFilter(req, rsp);
     }
     
     @Override
