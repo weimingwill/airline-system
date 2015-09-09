@@ -27,7 +27,7 @@ import managedbean.common.UserBean;
 public class LoginFilter implements Filter{
  
     @Inject
-    UserBean loginBean;
+    UserBean userBean;
     @Inject
     NavigationBean navigationBean;
     
@@ -47,9 +47,9 @@ public class LoginFilter implements Filter{
         String redirectUrl = contextPath + navigationBean.redirectToWorkplace();
         boolean inLoginPage = uri.equals(loginUrl);   
         
-        if (!loginBean.isLoggedIn() && !inLoginPage) {
+        if (!userBean.isLoggedIn() && !inLoginPage) {
             rsp.sendRedirect(loginUrl);
-        } else if (loginBean.isLoggedIn() && inLoginPage) {
+        } else if (userBean.isLoggedIn() && inLoginPage) {
             rsp.sendRedirect(redirectUrl);
         }        
         chain.doFilter(req, rsp);

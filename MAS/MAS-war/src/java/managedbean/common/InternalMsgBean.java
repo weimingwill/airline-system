@@ -26,6 +26,7 @@ import javax.jms.Session;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import managedbean.application.NavigationBean;
 import mas.common.entity.SystemMsg;
 import mas.common.session.InternalMsgSessionLocal;
 import mas.common.session.SystemUserSessionLocal;
@@ -49,10 +50,11 @@ public class InternalMsgBean implements Serializable {
 
     @Inject
     private UserBean loginBean;
+    @Inject
+    private NavigationBean navigationBean;
 
     //Initialization
     public InternalMsgBean() {
-        this.message = "Initialize message";
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         this.username = (String) sessionMap.get("username");
@@ -67,13 +69,16 @@ public class InternalMsgBean implements Serializable {
         return systemUserSession.getUserMessages(username);
     }
 
-    public void saveMessage() {
+    public String saveMessage() {
         String messageContent = String.valueOf(message);
         try {
             sendMessage(messageContent, receivers);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        message = null;
+        receivers = null;
+        return navigationBean.toSendMessage();
     }
 
     //send message

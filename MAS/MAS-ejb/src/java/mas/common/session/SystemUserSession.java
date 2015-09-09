@@ -15,11 +15,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import mas.common.entity.SystemMsg;
 import mas.common.entity.SystemUser;
-import mas.common.util.exception.EmailDoesNotExistException;
+import mas.common.util.exception.NoSuchEmailException;
 import mas.common.util.helper.UserMsg;
 import mas.common.util.exception.InvalidPasswordException;
-import mas.common.util.exception.UserDoesNotExistException;
+import mas.common.util.exception.NoSuchUsernameException;
 import mas.common.util.exception.UserExistException;
+import mas.common.util.helper.CreateToken;
 
 /**
  *
@@ -61,14 +62,14 @@ public class SystemUserSession implements SystemUserSessionLocal {
         } catch (NoResultException ex) {
             ex.printStackTrace();
         }
-        return user;   
+        return user;
     }
 
     @Override
-    public void verifySystemUserPassword(String username, String inputPassword) throws UserDoesNotExistException, InvalidPasswordException {
+    public void verifySystemUserPassword(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException {
         SystemUser user = getSystemUserByName(username);
         if (user == null) {
-            throw new UserDoesNotExistException(UserMsg.WRONG_USERNAME_ERROR);
+            throw new NoSuchUsernameException(UserMsg.WRONG_USERNAME_ERROR);
         } else {
             String userPassword = user.getPassword();
             if (!userPassword.equals(inputPassword)) {
@@ -80,7 +81,11 @@ public class SystemUserSession implements SystemUserSessionLocal {
     @Override
     public List<SystemMsg> getUserMessages(String username) {
         SystemUser user = getSystemUserByName(username);
-        return user.getSystemMsgs();
+        try {
+            return user.getSystemMsgs();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -141,16 +146,17 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void verifySystemUserEmail(String email) throws EmailDoesNotExistException{
+    public void verifySystemUserEmail(String email) throws NoSuchEmailException {
         SystemUser user = getSystemUserByEmail(email);
-        if(user == null){
-            throw new EmailDoesNotExistException(UserMsg.NO_SUCH_EMAIL_ERROR);
+        if (user == null) {
+            throw new NoSuchEmailException(UserMsg.NO_SUCH_EMAIL_ERROR);
         }
     }
 
     @Override
-    public void resetPassword(String email, String password) {
+    public void resetPassword(String email, String password) throws NoSuchEmailException {
         SystemUser user = getSystemUserByEmail(email);
+        verifySystemUserEmail(email);
         user.setPassword(password);
         entityManager.merge(user);
     }
@@ -161,6 +167,12 @@ public class SystemUserSession implements SystemUserSessionLocal {
         user.setResetDigest(resetDigest);
         entityManager.merge(user);
     }
-    
-    
+
+    @Override
+    public void expireResetPassword(String email) {
+        SystemUser user = getSystemUserByEmail(email);
+        user.setResetDigest("");
+        entityManager.merge(user);
+    }
+
 }

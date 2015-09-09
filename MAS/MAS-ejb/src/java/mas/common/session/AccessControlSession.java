@@ -17,8 +17,8 @@ import javax.persistence.Query;
 import mas.common.entity.SystemRole;
 import mas.common.entity.Permission;
 import mas.common.entity.SystemUser;
-import mas.common.util.exception.PermissionDoesNotExistException;
-import mas.common.util.exception.RoleDoesNotExistException;
+import mas.common.util.exception.NoSuchPermissionException;
+import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.helper.UserMsg;
 
 /**
@@ -42,14 +42,14 @@ public class AccessControlSession implements AccessControlSessionLocal {
     }
     
     @Override
-    public SystemRole getSystemRoleByName(String roleName) throws RoleDoesNotExistException{
+    public SystemRole getSystemRoleByName(String roleName) throws NoSuchRoleException{
         Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName");
         query.setParameter("inRoleName", roleName);
         SystemRole systemRole = null;
         try {
             systemRole = (SystemRole) query.getSingleResult();
         } catch (NoResultException ex) {
-            throw new RoleDoesNotExistException(UserMsg.NO_SUCH_ROLE_ERROR);
+            throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
         }
         return systemRole;
     }
@@ -83,14 +83,14 @@ public class AccessControlSession implements AccessControlSessionLocal {
 
     @Override
     public List<Permission> getRolePermissions(String roleName) 
-            throws RoleDoesNotExistException, PermissionDoesNotExistException{
+            throws NoSuchRoleException, NoSuchPermissionException{
         try{
             SystemRole role = getSystemRoleByName(roleName);
             List<Permission> permissions = null;
             permissions = role.getPermissions();
             return permissions;
         } catch(NullPointerException e){
-            throw new PermissionDoesNotExistException(UserMsg.NO_PERMISSION_ERROR);
+            throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
         }
     }
 
@@ -120,7 +120,7 @@ public class AccessControlSession implements AccessControlSessionLocal {
     }
 
     @Override
-    public void assignRoleToPermissions(String roleName, Map<String, ArrayList<String>> permissions) throws RoleDoesNotExistException{
+    public void assignRoleToPermissions(String roleName, Map<String, ArrayList<String>> permissions) throws NoSuchRoleException{
         SystemRole systemRole = getSystemRoleByName(roleName);
         String module;
         List<Permission> permissionList = new ArrayList<Permission>();

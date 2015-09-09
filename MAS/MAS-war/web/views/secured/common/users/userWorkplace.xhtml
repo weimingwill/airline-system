@@ -2,40 +2,18 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/WorkplaceTemplate.xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="title">
         User Workplace
     </ui:define>
 
-    <ui:define name="top">
-
-    </ui:define>
-
-    <ui:define name="left">
-        <h:form>
-            <h:commandButton action="#{navigationBean.toSendMessage()}" value="send message"></h:commandButton> 
-            <h:commandButton action="#{navigationBean.toViewMessages()}" value="view message" actionListener="#{internalMsgBean.readUnreadMessages}"></h:commandButton> 
-            <br/>
-            <h:outputLabel value="Unread Message number: #{internalMsgBean.unreadMessagesNumber}"></h:outputLabel>
-            <br/>
-            <h:commandButton action="#{navigationBean.toCreateUser()}" value="create user"></h:commandButton>
-        </h:form>        
-    </ui:define>
-
     <ui:define name="content">
         <h:form>
-            <h2>Welcome #{userBean.username} </h2>
-            <br/>
-            <h:outputText value="This is a place you start to work"></h:outputText>
-            <br/>
-            <h:commandLink action="#{navigationBean.redirectToHome()}"></h:commandLink>
+            <p:outputLabel style="font-size:20px;"> Welcome #{userBean.username}</p:outputLabel>
+
         </h:form>
 
     </ui:define>
-
-    <ui:define name="bottom">
-        bottom
-    </ui:define>
-
 </ui:composition>

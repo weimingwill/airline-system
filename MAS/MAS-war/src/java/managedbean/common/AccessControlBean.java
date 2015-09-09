@@ -18,8 +18,8 @@ import mas.common.session.AccessControlSessionLocal;
 import mas.common.session.SystemUserSessionLocal;
 import javax.faces.model.SelectItem;
 import mas.common.entity.Permission;
-import mas.common.util.exception.PermissionDoesNotExistException;
-import mas.common.util.exception.RoleDoesNotExistException;
+import mas.common.util.exception.NoSuchPermissionException;
+import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.helper.UserMsg;
 
 /**
@@ -68,7 +68,7 @@ public class AccessControlBean implements Serializable{
         accessControlSession.addNewPermission(module, title);
     }
     
-    public void updateRolePermission(String roleName, Map<String, ArrayList<String>> permissions) throws RoleDoesNotExistException{
+    public void updateRolePermission(String roleName, Map<String, ArrayList<String>> permissions) throws NoSuchRoleException{
         accessControlSession.assignRoleToPermissions(roleName, permissions);
     }
     
@@ -81,12 +81,12 @@ public class AccessControlBean implements Serializable{
     }
     
     public void displayRolePermission() 
-            throws RoleDoesNotExistException, PermissionDoesNotExistException{
+            throws NoSuchRoleException, NoSuchPermissionException{
         try {
             setRolePermissions(accessControlSession.getRolePermissions(inputRoleName));
-        } catch (RoleDoesNotExistException ex){
+        } catch (NoSuchRoleException ex){
             setMsg(ex.getMessage());
-        } catch (PermissionDoesNotExistException ex){
+        } catch (NoSuchPermissionException ex){
             setMsg(ex.getMessage());
             setRolePermissions(null);
         }

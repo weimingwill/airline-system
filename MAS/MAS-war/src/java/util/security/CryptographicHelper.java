@@ -12,20 +12,18 @@ import java.security.MessageDigest;
  * @author winga_000
  */
 public class CryptographicHelper {
-    
+
     private final String DEFAULT_HASH_ALGORITHM_NAME = "MD5";
     private static CryptographicHelper cryptographicHelper = null;
-    
-    public static CryptographicHelper getInstanceOf()
-    {
-        if (cryptographicHelper == null)
-        {
+
+    public static CryptographicHelper getInstanceOf() {
+        if (cryptographicHelper == null) {
             cryptographicHelper = new CryptographicHelper();
         }
 
         return cryptographicHelper;
-    }    
-    
+    }
+
     public String doMD5Hashing(String stringToHash) {
         MessageDigest md = null;
         byte[] hashSum = null;

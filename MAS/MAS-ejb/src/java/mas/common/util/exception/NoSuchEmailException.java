@@ -9,13 +9,13 @@ package mas.common.util.exception;
  *
  * @author winga_000
  */
-public class EmailDoesNotExistException extends Exception {
+public class NoSuchEmailException extends Exception {
 
     /**
      * Creates a new instance of <code>EmailDoesNotExistException</code> without
      * detail message.
      */
-    public EmailDoesNotExistException() {
+    public NoSuchEmailException() {
     }
 
     /**
@@ -24,7 +24,7 @@ public class EmailDoesNotExistException extends Exception {
      *
      * @param msg the detail message.
      */
-    public EmailDoesNotExistException(String msg) {
+    public NoSuchEmailException(String msg) {
         super(msg);
     }
 }

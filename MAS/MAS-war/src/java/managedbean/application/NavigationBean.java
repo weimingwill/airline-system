@@ -28,7 +28,7 @@ public class NavigationBean implements Serializable {
     }
     
     public String redirectToHome(){
-        return "/views/index.xhtml";
+        return "/index.xhtml";
     }
     
     public String redirectToWorkplace(){
@@ -45,16 +45,16 @@ public class NavigationBean implements Serializable {
     }
 
     public String toViewMessages(){
-        return "/views/secured/message/viewMessages.xhtml";
+        return "/views/secured/common/message/viewMessages.xhtml";
     }    
     
     //Password reset
     public String toPasswordReset(){
-        return "/views/secured/common/users/resetPassword.xhtml";
+        return "/views/unsecured/common/users/resetPassword.xhtml";
     }
 
     public String toPasswordResetSendEmail(){
-        return "/views/secured/common/users/resetPasswordSendEmail.xhtml";
+        return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml";
     }    
     
     public String toUnsecuredUsersFolder(){

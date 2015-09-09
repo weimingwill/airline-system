@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -21,19 +22,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import managedbean.application.NavigationBean;
 import managedbean.common.UserBean;
+import mas.common.entity.SystemUser;
+import mas.common.util.exception.NoSuchEmailException;
 
 /**
  *
  * @author winga_000
  */
-@WebFilter(filterName = "ResetPasswordFilter", urlPatterns = {"/views/unsecured/common/users/resetPassword.xhtml"})
+//@WebFilter(filterName = "ResetPasswordFilter", urlPatterns = {"/views/unsecured/common/users/resetPassword.xhtml"})
 public class ResetPasswordFilter implements Filter {
-    
+
     @Inject
     private UserBean userBean;
     @Inject
     private NavigationBean navigationBean;
-    
+
     private static final boolean debug = true;
 
     // The filter configuration object we are associated with.  If
@@ -44,34 +47,41 @@ public class ResetPasswordFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-        
+
         if (debug) {
             log("ResetPasswordFilter:doFilter()");
         }
-        
-        HttpServletRequest req = (HttpServletRequest)request;
-        HttpServletResponse rsp = (HttpServletResponse)response;
+
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse rsp = (HttpServletResponse) response;
         String contextPath = req.getContextPath();
         StringBuffer url = req.getRequestURL();
-        String resetDigest =  request.getParameter("resetDigest");
+        String resetDigest = request.getParameter("resetDigest");
         String email = request.getParameter("email");
-        
-        if (email == null || resetDigest ==null || !resetDigest.equals(userBean.getUserByEmail(email).getResetDigest())) {
+        try {
+            SystemUser user = userBean.getUserByEmail(email);
+            
+            if (resetDigest == null || !resetDigest.equals(user.getResetDigest())) {
+                rsp.sendRedirect(contextPath + navigationBean.toPasswordResetSendEmail());
+            }
+        } catch (NoResultException ex) {
+            rsp.sendRedirect(contextPath + navigationBean.toPasswordResetSendEmail());
+        } catch (NoSuchEmailException ex) {
             rsp.sendRedirect(contextPath + navigationBean.toPasswordResetSendEmail());
         }
+
         Throwable problem = null;
         try {
             chain.doFilter(request, response);
         } catch (Throwable t) {
-	    // If an exception is thrown somewhere down the filter chain,
+            // If an exception is thrown somewhere down the filter chain,
             // we still want to execute our after processing, and then
             // rethrow the problem after that.
             problem = t;
             t.printStackTrace();
         }
-        
-       
-	// If there was a problem, we want to rethrow it if it is
+
+        // If there was a problem, we want to rethrow it if it is
         // a known type, otherwise log it.
         if (problem != null) {
             if (problem instanceof ServletException) {
@@ -103,16 +113,16 @@ public class ResetPasswordFilter implements Filter {
     /**
      * Destroy method for this filter
      */
-    public void destroy() {        
+    public void destroy() {
     }
 
     /**
      * Init method for this filter
      */
-    public void init(FilterConfig filterConfig) {        
+    public void init(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
-            if (debug) {                
+            if (debug) {
                 log("ResetPasswordFilter:Initializing filter");
             }
         }
@@ -131,20 +141,20 @@ public class ResetPasswordFilter implements Filter {
         sb.append(")");
         return (sb.toString());
     }
-    
+
     private void sendProcessingError(Throwable t, ServletResponse response) {
-        String stackTrace = getStackTrace(t);        
-        
+        String stackTrace = getStackTrace(t);
+
         if (stackTrace != null && !stackTrace.equals("")) {
             try {
                 response.setContentType("text/html");
                 PrintStream ps = new PrintStream(response.getOutputStream());
-                PrintWriter pw = new PrintWriter(ps);                
+                PrintWriter pw = new PrintWriter(ps);
                 pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); //NOI18N
 
                 // PENDING! Localize this for next official release
-                pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");                
-                pw.print(stackTrace);                
+                pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");
+                pw.print(stackTrace);
                 pw.print("</pre></body>\n</html>"); //NOI18N
                 pw.close();
                 ps.close();
@@ -161,7 +171,7 @@ public class ResetPasswordFilter implements Filter {
             }
         }
     }
-    
+
     public static String getStackTrace(Throwable t) {
         String stackTrace = null;
         try {
@@ -175,9 +185,9 @@ public class ResetPasswordFilter implements Filter {
         }
         return stackTrace;
     }
-    
+
     public void log(String msg) {
-        filterConfig.getServletContext().log(msg);        
+        filterConfig.getServletContext().log(msg);
     }
-    
+
 }

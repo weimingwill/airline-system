@@ -23,11 +23,17 @@
         </session-timeout>
     </session-config>
     
+    <!--Primefaces Theme-->
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>primefaces-theme</param-value>
+    </context-param>
+        
     <!--Default page-->
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
-    
+
     <!--Set SSL Protection-->
     <security-constraint>
         <display-name>SSL Protection</display-name>

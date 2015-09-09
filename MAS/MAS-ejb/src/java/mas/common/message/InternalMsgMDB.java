@@ -57,14 +57,13 @@ public class InternalMsgMDB implements MessageListener {
                 
                 mapMessage = (MapMessage) message;
                 String messageContent = mapMessage.getString("message");
-                systemMsg = new SystemMsg();
-                systemMsg.create(messageContent);//create a new systemMsg record
-                
                 List<String> receivers = new ArrayList<String>();
                 int receiverNumber = mapMessage.getInt("receiverNumber");
                 for(int i = 0; i < receiverNumber; i++){
                     String receiver = mapMessage.getString("receiver" + i);
                     receivers.add(receiver);
+                    systemMsg = new SystemMsg();
+                    systemMsg.create(messageContent);//create a new systemMsg record
                     systemUser = systemUserSession.getSystemUserByName(receiver);
                     systemUser.getSystemMsgs().add(systemMsg);
                     systemMsg.getSystemUsers().add(systemUser);  
