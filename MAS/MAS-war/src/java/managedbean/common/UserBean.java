@@ -17,14 +17,16 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import mas.common.entity.SystemUser;
 import mas.common.session.SystemUserSessionLocal;
-//import mas.common.session.TimerSession;
 import mas.common.util.exception.NoSuchEmailException;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.NoSuchUsernameException;
 import mas.common.util.exception.UserExistException;
 import mas.common.util.helper.CreateToken;
 import mas.common.util.helper.UserMsg;
+import util.helper.CountdownHelper;
 import util.security.CryptographicHelper;
+import botdetect.web.jsf.JsfCaptcha;
+import org.jboss.weld.context.beanstore.LockedBean;
 
 /**
  *
@@ -50,27 +52,50 @@ public class UserBean implements Serializable {
     private String newUsername;
     private String newPassword;
     private boolean loggedIn;
-    //@EJB
-    //private TimerSession timerSession;
+    private JsfCaptcha captcha;
+    private String captchaCode;
+   private int countTrial = 0;
 
     public UserBean() {
     }
 
-    public String doLogin() throws NoSuchUsernameException, InvalidPasswordException {
+    public String doLogin() throws NoSuchUsernameException, InvalidPasswordException, InterruptedException {
+        CountdownHelper countdownHelper = new CountdownHelper(systemUserSession);
+        boolean isHuman = captcha.validate(captchaCode);
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
+        if (systemUserSession.getSystemUserByName(username).isLocked()) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Your account has been locked, please reset password or wait 30mins to try again"));
+            return navigationBean.toLogin();
+        }
+        if (!isHuman) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Captcha code entered is incorrect"));
+            return navigationBean.toLogin();
+        }
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
         try {
             systemUserSession.verifySystemUserPassword(username, cryptographicHelper.doMD5Hashing(password));
         } catch (NoSuchUsernameException | InvalidPasswordException ex) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
+            countTrial++;
+            if (countTrial > 2) {
+                systemUserSession.lockUser(username);
+                System.out.println("locked user " + username);
+                
+                countdownHelper.unlockUserCountDown(1800 * 1000, username); //Unlock user after 30mins
+                countTrial = 0;
+            }
+            
+            System.out.println("Count Trial: " + countTrial);
             return navigationBean.toLogin();
         }
         loggedIn = true;
+        countTrial = 0;
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         sessionMap.put("username", username);
         externalContext.getFlash().setKeepMessages(true);
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Successful", UserMsg.LOGIN_SUCCESS_MSG));
+        captchaCode = null;
         return navigationBean.redirectToWorkplace();
     }
 
@@ -79,7 +104,7 @@ public class UserBean implements Serializable {
         username = null;
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null, new FacesMessage("Successful", UserMsg.LOGIN_OUT_MSG));
-        return navigationBean.toLogin();
+        return navigationBean.redirectToWorkplace();
     }
 
     public String createUser() throws UserExistException, InvalidPasswordException, NoSuchUsernameException {
@@ -99,18 +124,19 @@ public class UserBean implements Serializable {
         }
     }
 
-    public String resetPasswordSendEmail() {
-
+    public String resetPasswordSendEmail() throws InterruptedException {
+        CountdownHelper countdownHelper = new CountdownHelper(systemUserSession);
         try {
             systemUserSession.verifySystemUserEmail(email);
             String resetDigest = createNewToken();
             String subject = "Reset Password";
             String mailContent = navigationBean.toUnsecuredUsersFolder() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + resetDigest + "&email=" + email;
-            String receiver = "Weiming<a0119405@u.nus.edu>";
+            String receiver = "Weimin g<a0119405@u.nus.edu>";
             emailBean.sendEmail(subject, mailContent, receiver);
             systemUserSession.setResetDigest(email, resetDigest);
-            email = null;
-            //timerSession.createTimers(50000, 50000, TIMER_NAME_RESET_PASSWORD);
+            
+            countdownHelper.expireResetPasswoordCountDown(1800 * 1000, email);//Auto expire password after 30mins
+            
             FacesContext context = FacesContext.getCurrentInstance();
             context.getExternalContext().getFlash().setKeepMessages(true);
             context.addMessage(null, new FacesMessage("Successful", "Please check your email to reset password"));
@@ -131,11 +157,15 @@ public class UserBean implements Serializable {
         String userEmail = params.get("email");
         String resetDigest = params.get("resetDigest");
         SystemUser user = systemUserSession.getSystemUserByEmail(userEmail);
-        if (userEmail == null || resetDigest == null || user == null || !user.getResetDigest().equals(resetDigest)) {
+        if (userEmail == null || resetDigest == null || user == null) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "You are not authorised to reset password. Send reset email again"));
+            return navigationBean.toPasswordResetSendEmail() + "?faces-redirect=true";
+        } else if (!user.getResetDigest().equals(resetDigest)) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Password reset expired. Send reset email again"));
             return navigationBean.toPasswordResetSendEmail() + "?faces-redirect=true";
         }
         systemUserSession.resetPassword(userEmail, cryptographicHelper.doMD5Hashing(newPassword));
+        systemUserSession.expireResetPassword(email);//expire reset digest if it has been used;
         newPassword = null;
         context.addMessage(null, new FacesMessage("Successful", "Password reset successfully, you can login with new password now"));
         return navigationBean.toLogin() + "?faces-redirect=true";
@@ -153,6 +183,7 @@ public class UserBean implements Serializable {
             return systemUserSession.getSystemUserByEmail(email);
         }
     }
+    
 
 //
 //Getter and Setter
@@ -248,4 +279,22 @@ public class UserBean implements Serializable {
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
+
+    public JsfCaptcha getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(JsfCaptcha captcha) {
+        this.captcha = captcha;
+    }
+
+    public String getCaptchaCode() {
+        return captchaCode;
+    }
+
+    public void setCaptchaCode(String captchaCode) {
+        this.captchaCode = captchaCode;
+    }
+
+
 }

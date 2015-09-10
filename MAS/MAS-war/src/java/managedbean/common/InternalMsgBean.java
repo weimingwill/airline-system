@@ -30,6 +30,7 @@ import managedbean.application.NavigationBean;
 import mas.common.entity.SystemMsg;
 import mas.common.session.InternalMsgSessionLocal;
 import mas.common.session.SystemUserSessionLocal;
+import mas.common.util.exception.NoMessageException;
 
 /**
  *
@@ -133,14 +134,18 @@ public class InternalMsgBean implements Serializable {
 
     public int getUnreadMessagesNumber() {
         try {
+            systemUserSession.getUserUnreadMessages(username);
             return systemUserSession.getUserUnreadMessages(username).size();
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             return 0;
         }
     }
 
     public void readUnreadMessages(ActionEvent event) {
-        systemUserSession.readUnreadMessages(username);
+        try {
+            systemUserSession.readUnreadMessages(username);
+        } catch (NoMessageException e) {
+        }
     }
 
     //Getter and Setter

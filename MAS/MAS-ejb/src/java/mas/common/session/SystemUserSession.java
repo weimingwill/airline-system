@@ -18,6 +18,7 @@ import mas.common.entity.SystemUser;
 import mas.common.util.exception.NoSuchEmailException;
 import mas.common.util.helper.UserMsg;
 import mas.common.util.exception.InvalidPasswordException;
+import mas.common.util.exception.NoMessageException;
 import mas.common.util.exception.NoSuchUsernameException;
 import mas.common.util.exception.UserExistException;
 import mas.common.util.helper.CreateToken;
@@ -47,7 +48,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
         try {
             user = (SystemUser) query.getSingleResult();
         } catch (NoResultException ex) {
-            ex.printStackTrace();
+            user = null;
         }
         return user;
     }
@@ -89,27 +90,35 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public List<SystemMsg> getUserUnreadMessages(String username) {
+    public List<SystemMsg> getUserUnreadMessages(String username) throws NoSuchUsernameException{
         SystemUser user = getSystemUserByName(username);
-        List<SystemMsg> unreadMsg = new ArrayList<SystemMsg>();
-        try {
-            for (SystemMsg msg : user.getSystemMsgs()) {
-                if (!msg.isReaded()) {
-                    unreadMsg.add(msg);
+        if (user == null) {
+            throw new NoSuchUsernameException(UserMsg.WRONG_USERNAME_ERROR);
+        } else {
+            List<SystemMsg> unreadMsg = new ArrayList<SystemMsg>();
+            try {
+                for (SystemMsg msg : user.getSystemMsgs()) {
+                    if (!msg.isReaded()) {
+                        unreadMsg.add(msg);
+                    }
                 }
+                return unreadMsg;
+            } catch (Exception e) {
+                return null;
             }
-            return unreadMsg;
-        } catch (Exception e) {
-            return null;
         }
     }
 
     @Override
-    public void readUnreadMessages(String username) {
+    public void readUnreadMessages(String username) throws NoMessageException{
         List<SystemMsg> unreadMsgs = getUserMessages(username);
-        for (SystemMsg msg : unreadMsgs) {
-            msg.setReaded(true);
-            entityManager.merge(msg);
+        if(unreadMsgs == null){
+            throw new NoMessageException(UserMsg.NO_MESSAGE_ERROR);
+        } else {
+            for (SystemMsg msg : unreadMsgs) {
+                msg.setReaded(true);
+                entityManager.merge(msg);
+            }            
         }
     }
 
@@ -169,10 +178,24 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void expireResetPassword(String email) {
+    public void expireResetPassword(String email) {       
         SystemUser user = getSystemUserByEmail(email);
-        user.setResetDigest("");
+        String resetDigest = CreateToken.createNewToken();
+        user.setResetDigest(resetDigest);
         entityManager.merge(user);
     }
 
+    @Override
+    public void lockUser(String username) {
+        SystemUser user = getSystemUserByName(username);
+        user.setLocked(true);
+        entityManager.merge(user);
+    }
+
+    @Override
+    public void unlockUser(String username) {
+        SystemUser user = getSystemUserByName(username);
+        user.setLocked(false);
+        entityManager.merge(user);
+    }
 }

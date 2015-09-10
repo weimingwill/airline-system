@@ -45,8 +45,7 @@ public class LoginFilter implements Filter{
         String uri = req.getRequestURI();
         String loginUrl = contextPath + navigationBean.toLogin();
         String redirectUrl = contextPath + navigationBean.redirectToWorkplace();
-        boolean inLoginPage = uri.equals(loginUrl);   
-        
+        boolean inLoginPage = uri.equals(loginUrl);
         if (!userBean.isLoggedIn() && !inLoginPage) {
             rsp.sendRedirect(loginUrl);
         } else if (userBean.isLoggedIn() && inLoginPage) {
