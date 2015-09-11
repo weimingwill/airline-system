@@ -6,8 +6,6 @@
 package ams.aps.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 /**
  *
@@ -31,9 +28,7 @@ public class Flight implements Serializable {
     
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Route route;
-    
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="flight")
-    private Collection<FlightSchedule> flightSchedule = new ArrayList<FlightSchedule>();
+
 
     public Long getId() {
         return id;
@@ -41,30 +36,6 @@ public class Flight implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getFlightNo() {
-        return flightNo;
-    }
-
-    public Route getRoute() {
-        return route;
-    }
-
-    public Collection<FlightSchedule> getFlightSchedule() {
-        return flightSchedule;
-    }
-
-    public void setFlightNo(String flightNo) {
-        this.flightNo = flightNo;
-    }
-
-    public void setRoute(Route route) {
-        this.route = route;
-    }
-
-    public void setFlightSchedule(Collection<FlightSchedule> flightSchedule) {
-        this.flightSchedule = flightSchedule;
     }
 
     @Override
@@ -90,6 +61,34 @@ public class Flight implements Serializable {
     @Override
     public String toString() {
         return "ams.aps.entity.Flight[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the flightNo
+     */
+    public String getFlightNo() {
+        return flightNo;
+    }
+
+    /**
+     * @param flightNo the flightNo to set
+     */
+    public void setFlightNo(String flightNo) {
+        this.flightNo = flightNo;
+    }
+
+    /**
+     * @return the route
+     */
+    public Route getRoute() {
+        return route;
+    }
+
+    /**
+     * @param route the route to set
+     */
+    public void setRoute(Route route) {
+        this.route = route;
     }
     
 }

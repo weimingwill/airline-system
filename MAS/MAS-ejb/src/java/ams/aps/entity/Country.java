@@ -26,7 +26,7 @@ public class Country implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String contryCode;
+    private String isoCode;
     private String countryName;
     
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="country")
@@ -39,13 +39,13 @@ public class Country implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public String getContryCode() {
-        return contryCode;
+
+    public String getIsoCode() {
+        return isoCode;
     }
-    
-    public void setContryCode(String contryCode) {
-        this.contryCode = contryCode;
+
+    public void setIsoCode(String isoCode) {
+        this.isoCode = isoCode;
     }
     
     public String getCountryName() {

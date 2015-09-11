@@ -51,70 +51,6 @@ public class Aircraft implements Serializable {
         this.id = id;
     }
 
-    public FlightSchedule getFlightSchedule() {
-        return flightSchedule;
-    }
-
-    public AircraftType getAircraftType() {
-        return aircraftType;
-    }
-
-    public SeatConfig getSeatConfig() {
-        return seatConfig;
-    }
-
-    public String getTailNo() {
-        return tailNo;
-    }
-
-    public Float getLifeTime() {
-        return lifeTime;
-    }
-
-    public Date getBoughtOn() {
-        return boughtOn;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setTailNo(String tailNo) {
-        this.tailNo = tailNo;
-    }
-
-    public void setLifeTime(Float lifeTime) {
-        this.lifeTime = lifeTime;
-    }
-
-    public void setBoughtOn(Date boughtOn) {
-        this.boughtOn = boughtOn;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public void setFlightSchedule(FlightSchedule flightSchedule) {
-        this.flightSchedule = flightSchedule;
-    }
-
-    public void setAircraftType(AircraftType aircraftType) {
-        this.aircraftType = aircraftType;
-    }
-
-    public void setSeatConfig(SeatConfig seatConfig) {
-        this.seatConfig = seatConfig;
-    }
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -138,6 +74,146 @@ public class Aircraft implements Serializable {
     @Override
     public String toString() {
         return "ams.aps.entity.Aircraft[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the tailNo
+     */
+    public String getTailNo() {
+        return tailNo;
+    }
+
+    /**
+     * @param tailNo the tailNo to set
+     */
+    public void setTailNo(String tailNo) {
+        this.tailNo = tailNo;
+    }
+
+    /**
+     * @return the lifetime
+     */
+    public Float getLifetime() {
+        return lifetime;
+    }
+
+    /**
+     * @param lifetime the lifetime to set
+     */
+    public void setLifetime(Float lifetime) {
+        this.lifetime = lifetime;
+    }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the source
+     */
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * @param source the source to set
+     */
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    /**
+     * @return the cost
+     */
+    public Float getCost() {
+        return cost;
+    }
+
+    /**
+     * @param cost the cost to set
+     */
+    public void setCost(Float cost) {
+        this.cost = cost;
+    }
+
+    /**
+     * @return the addOnDate
+     */
+    public Date getAddOnDate() {
+        return addOnDate;
+    }
+
+    /**
+     * @param addOnDate the addOnDate to set
+     */
+    public void setAddOnDate(Date addOnDate) {
+        this.addOnDate = addOnDate;
+    }
+
+    /**
+     * @return the avgUnitOilUsage
+     */
+    public Float getAvgUnitOilUsage() {
+        return avgUnitOilUsage;
+    }
+
+    /**
+     * @param avgUnitOilUsage the avgUnitOilUsage to set
+     */
+    public void setAvgUnitOilUsage(Float avgUnitOilUsage) {
+        this.avgUnitOilUsage = avgUnitOilUsage;
+    }
+
+    /**
+     * @return the flightSchedules
+     */
+    public Collection<FlightSchedule> getFlightSchedules() {
+        return flightSchedules;
+    }
+
+    /**
+     * @param flightSchedules the flightSchedules to set
+     */
+    public void setFlightSchedules(Collection<FlightSchedule> flightSchedules) {
+        this.flightSchedules = flightSchedules;
+    }
+
+    /**
+     * @return the aircraftType
+     */
+    public AircraftType getAircraftType() {
+        return aircraftType;
+    }
+
+    /**
+     * @param aircraftType the aircraftType to set
+     */
+    public void setAircraftType(AircraftType aircraftType) {
+        this.aircraftType = aircraftType;
+    }
+
+    /**
+     * @return the seatConfig
+     */
+    public SeatConfig getSeatConfig() {
+        return seatConfig;
+    }
+
+    /**
+     * @param seatConfig the seatConfig to set
+     */
+    public void setSeatConfig(SeatConfig seatConfig) {
+        this.seatConfig = seatConfig;
     }
     
 }

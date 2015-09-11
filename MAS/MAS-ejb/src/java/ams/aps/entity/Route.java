@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -33,9 +34,11 @@ public class Route implements Serializable {
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
     private Collection<Flight> flights = new ArrayList<Flight>();
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private Airport departure;
+    private Airport originAirport;
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private Airport destination;
+    private Airport destAirport;
+    @OneToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Route returnRoute;
     
     
 
@@ -45,38 +48,6 @@ public class Route implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setLegs(Collection<Leg> legs) {
-        this.legs = legs;
-    }
-
-    public void setFlights(Collection<Flight> flights) {
-        this.flights = flights;
-    }
-
-    public void setDeparture(Airport departure) {
-        this.departure = departure;
-    }
-
-    public void setDestination(Airport destination) {
-        this.destination = destination;
-    }
-
-    public Collection<Leg> getLegs() {
-        return legs;
-    }
-
-    public Collection<Flight> getFlights() {
-        return flights;
-    }
-
-    public Airport getDeparture() {
-        return departure;
-    }
-
-    public Airport getDestination() {
-        return destination;
     }
 
     @Override
@@ -102,6 +73,76 @@ public class Route implements Serializable {
     @Override
     public String toString() {
         return "ams.aps.entity.Route[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the legs
+     */
+    public Collection<Leg> getLegs() {
+        return legs;
+    }
+
+    /**
+     * @param legs the legs to set
+     */
+    public void setLegs(Collection<Leg> legs) {
+        this.legs = legs;
+    }
+
+    /**
+     * @return the flights
+     */
+    public Collection<Flight> getFlights() {
+        return flights;
+    }
+
+    /**
+     * @param flights the flights to set
+     */
+    public void setFlights(Collection<Flight> flights) {
+        this.flights = flights;
+    }
+
+    /**
+     * @return the originAirport
+     */
+    public Airport getOriginAirport() {
+        return originAirport;
+    }
+
+    /**
+     * @param originAirport the originAirport to set
+     */
+    public void setOriginAirport(Airport originAirport) {
+        this.originAirport = originAirport;
+    }
+
+    /**
+     * @return the destAirport
+     */
+    public Airport getDestAirport() {
+        return destAirport;
+    }
+
+    /**
+     * @param destAirport the destAirport to set
+     */
+    public void setDestAirport(Airport destAirport) {
+        this.destAirport = destAirport;
+    }
+
+    /**
+     * @return the returnRoute
+     */
+    public Route getReturnRoute() {
+        return returnRoute;
+    }
+
+    /**
+     * @param returnRoute the returnRoute to set
+     */
+    public void setReturnRoute(Route returnRoute) {
+        this.returnRoute = returnRoute;
     }
     
 }

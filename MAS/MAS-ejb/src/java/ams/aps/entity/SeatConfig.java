@@ -6,16 +6,10 @@
 package ams.aps.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 /**
  *
@@ -27,13 +21,10 @@ public class SeatConfig implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String cabinClassType;
-    private Integer count;
-    
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private AircraftType aircraftType;
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="seatConfig")
-    private Collection<Aircraft> aircraft = new ArrayList<Aircraft>();
+    private Integer firstClassCount;
+    private Integer bizClassCount;
+    private Integer preEconClassCount;
+    private Integer econClassCount;
     
     
     public Long getId() {
@@ -42,38 +33,6 @@ public class SeatConfig implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCabinClassType() {
-        return cabinClassType;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public AircraftType getAircraftType() {
-        return aircraftType;
-    }
-
-    public Collection<Aircraft> getAircraft() {
-        return aircraft;
-    }
-
-    public void setAircraft(Collection<Aircraft> aircraft) {
-        this.aircraft = aircraft;
-    }
-
-    public void setCabinClassType(String cabinClassType) {
-        this.cabinClassType = cabinClassType;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
-    }
-
-    public void setAircraftType(AircraftType aircraftType) {
-        this.aircraftType = aircraftType;
     }
 
     @Override
@@ -99,6 +58,62 @@ public class SeatConfig implements Serializable {
     @Override
     public String toString() {
         return "ams.aps.entity.SeatConfig[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the firstClassCount
+     */
+    public Integer getFirstClassCount() {
+        return firstClassCount;
+    }
+
+    /**
+     * @param firstClassCount the firstClassCount to set
+     */
+    public void setFirstClassCount(Integer firstClassCount) {
+        this.firstClassCount = firstClassCount;
+    }
+
+    /**
+     * @return the bizClassCount
+     */
+    public Integer getBizClassCount() {
+        return bizClassCount;
+    }
+
+    /**
+     * @param bizClassCount the bizClassCount to set
+     */
+    public void setBizClassCount(Integer bizClassCount) {
+        this.bizClassCount = bizClassCount;
+    }
+
+    /**
+     * @return the preEconClassCount
+     */
+    public Integer getPreEconClassCount() {
+        return preEconClassCount;
+    }
+
+    /**
+     * @param preEconClassCount the preEconClassCount to set
+     */
+    public void setPreEconClassCount(Integer preEconClassCount) {
+        this.preEconClassCount = preEconClassCount;
+    }
+
+    /**
+     * @return the econClassCount
+     */
+    public Integer getEconClassCount() {
+        return econClassCount;
+    }
+
+    /**
+     * @param econClassCount the econClassCount to set
+     */
+    public void setEconClassCount(Integer econClassCount) {
+        this.econClassCount = econClassCount;
     }
     
 }

@@ -27,7 +27,6 @@ public class City implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String cityCode;
     private String cityName; 
     private Integer utc;
     
@@ -43,14 +42,6 @@ public class City implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCityCode() {
-        return cityCode;
-    }
-    
-    public void setCityCode(String cityCode) {
-        this.cityCode = cityCode;
     }
 
     public String getCityName() {

@@ -29,19 +29,17 @@ public class FlightSchedule implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    Date departureDate;
-    Time departureTime;
-    Date arrivalDate;
-    Time arrivalTime;
-    Integer deTerminal;
-    Integer arTerminal;
-    Integer boardingGate;
-    Integer arrivalGate;
-    
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="flightSchedule")
-    private Collection<Aircraft> aircraft = new ArrayList<Aircraft>();
+    private String departTerminal;
+    private String departGate;
+    private Date departDatel;
+    private Time departTime;
+    private String arrivalTerminal;
+    private String arrivalGate;
+    private Date arrivalDatel;
+    private Time arrivalTime;
    
-    
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Aircraft aircraft;
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Leg leg;
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
@@ -78,6 +76,160 @@ public class FlightSchedule implements Serializable {
     @Override
     public String toString() {
         return "ams.aps.entity.FlightSchedule[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the departTerminal
+     */
+    public String getDepartTerminal() {
+        return departTerminal;
+    }
+
+    /**
+     * @param departTerminal the departTerminal to set
+     */
+    public void setDepartTerminal(String departTerminal) {
+        this.departTerminal = departTerminal;
+    }
+
+    /**
+     * @return the departGate
+     */
+    public String getDepartGate() {
+        return departGate;
+    }
+
+    /**
+     * @param departGate the departGate to set
+     */
+    public void setDepartGate(String departGate) {
+        this.departGate = departGate;
+    }
+
+    /**
+     * @return the departDatel
+     */
+    public Date getDepartDatel() {
+        return departDatel;
+    }
+
+    /**
+     * @param departDatel the departDatel to set
+     */
+    public void setDepartDatel(Date departDatel) {
+        this.departDatel = departDatel;
+    }
+
+    /**
+     * @return the departTime
+     */
+    public Time getDepartTime() {
+        return departTime;
+    }
+
+    /**
+     * @param departTime the departTime to set
+     */
+    public void setDepartTime(Time departTime) {
+        this.departTime = departTime;
+    }
+
+    /**
+     * @return the arrivalTerminal
+     */
+    public String getArrivalTerminal() {
+        return arrivalTerminal;
+    }
+
+    /**
+     * @param arrivalTerminal the arrivalTerminal to set
+     */
+    public void setArrivalTerminal(String arrivalTerminal) {
+        this.arrivalTerminal = arrivalTerminal;
+    }
+
+    /**
+     * @return the arrivalGate
+     */
+    public String getArrivalGate() {
+        return arrivalGate;
+    }
+
+    /**
+     * @param arrivalGate the arrivalGate to set
+     */
+    public void setArrivalGate(String arrivalGate) {
+        this.arrivalGate = arrivalGate;
+    }
+
+    /**
+     * @return the arrivalDatel
+     */
+    public Date getArrivalDatel() {
+        return arrivalDatel;
+    }
+
+    /**
+     * @param arrivalDatel the arrivalDatel to set
+     */
+    public void setArrivalDatel(Date arrivalDatel) {
+        this.arrivalDatel = arrivalDatel;
+    }
+
+    /**
+     * @return the arrivalTime
+     */
+    public Time getArrivalTime() {
+        return arrivalTime;
+    }
+
+    /**
+     * @param arrivalTime the arrivalTime to set
+     */
+    public void setArrivalTime(Time arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+
+    /**
+     * @return the aircraft
+     */
+    public Aircraft getAircraft() {
+        return aircraft;
+    }
+
+    /**
+     * @param aircraft the aircraft to set
+     */
+    public void setAircraft(Aircraft aircraft) {
+        this.aircraft = aircraft;
+    }
+
+    /**
+     * @return the leg
+     */
+    public Leg getLeg() {
+        return leg;
+    }
+
+    /**
+     * @param leg the leg to set
+     */
+    public void setLeg(Leg leg) {
+        this.leg = leg;
+    }
+
+    /**
+     * @return the flight
+     */
+    public Flight getFlight() {
+        return flight;
+    }
+
+    /**
+     * @param flight the flight to set
+     */
+    public void setFlight(Flight flight) {
+        this.flight = flight;
     }
     
 }

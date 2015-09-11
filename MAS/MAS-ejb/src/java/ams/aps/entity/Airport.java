@@ -27,18 +27,22 @@ public class Airport implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String airportCode;
+    private String icaoCode;
+    private String iataCode;
     private String airportName;
     private Boolean isHub;
     
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="departure")
-    private Collection<Leg> departures = new ArrayList<Leg>();
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="departAirport")
+    private Collection<Leg> outLegs = new ArrayList<Leg>();
     
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="destination")
-    private Collection<Leg> arrivals = new ArrayList<Leg>();
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="arrivalAirport")
+    private Collection<Leg> inLegs = new ArrayList<Leg>();
     
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private City city;
+    
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Country country;
 
     public Long getId() {
         return id;
@@ -46,54 +50,6 @@ public class Airport implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getAirportCode() {
-        return airportCode;
-    }
-
-    public String getAirportName() {
-        return airportName;
-    }
-
-    public Boolean getIsHub() {
-        return isHub;
-    }
-
-    public City getCity() {
-        return city;
-    }
-
-    public Collection<Leg> getDepartures() {
-        return departures;
-    }
-
-    public Collection<Leg> getArrivals() {
-        return arrivals;
-    }
-
-    public void setDepartures(Collection<Leg> departures) {
-        this.departures = departures;
-    }
-
-    public void setArrivals(Collection<Leg> arrivals) {
-        this.arrivals = arrivals;
-    }
-
-    public void setAirportCode(String airportCode) {
-        this.airportCode = airportCode;
-    }
-
-    public void setAirportName(String airportName) {
-        this.airportName = airportName;
-    }
-
-    public void setIsHub(Boolean isHub) {
-        this.isHub = isHub;
-    }
-
-    public void setCity(City city) {
-        this.city = city;
     }
     
     @Override
@@ -119,6 +75,118 @@ public class Airport implements Serializable {
     @Override
     public String toString() {
         return "ams.aps.entity.Airport[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the icaoCode
+     */
+    public String getIcaoCode() {
+        return icaoCode;
+    }
+
+    /**
+     * @param icaoCode the icaoCode to set
+     */
+    public void setIcaoCode(String icaoCode) {
+        this.icaoCode = icaoCode;
+    }
+
+    /**
+     * @return the iataCode
+     */
+    public String getIataCode() {
+        return iataCode;
+    }
+
+    /**
+     * @param iataCode the iataCode to set
+     */
+    public void setIataCode(String iataCode) {
+        this.iataCode = iataCode;
+    }
+
+    /**
+     * @return the airportName
+     */
+    public String getAirportName() {
+        return airportName;
+    }
+
+    /**
+     * @param airportName the airportName to set
+     */
+    public void setAirportName(String airportName) {
+        this.airportName = airportName;
+    }
+
+    /**
+     * @return the isHub
+     */
+    public Boolean getIsHub() {
+        return isHub;
+    }
+
+    /**
+     * @param isHub the isHub to set
+     */
+    public void setIsHub(Boolean isHub) {
+        this.isHub = isHub;
+    }
+
+    /**
+     * @return the outLegs
+     */
+    public Collection<Leg> getOutLegs() {
+        return outLegs;
+    }
+
+    /**
+     * @param outLegs the outLegs to set
+     */
+    public void setOutLegs(Collection<Leg> outLegs) {
+        this.outLegs = outLegs;
+    }
+
+    /**
+     * @return the inLegs
+     */
+    public Collection<Leg> getInLegs() {
+        return inLegs;
+    }
+
+    /**
+     * @param inLegs the inLegs to set
+     */
+    public void setInLegs(Collection<Leg> inLegs) {
+        this.inLegs = inLegs;
+    }
+
+    /**
+     * @return the city
+     */
+    public City getCity() {
+        return city;
+    }
+
+    /**
+     * @param city the city to set
+     */
+    public void setCity(City city) {
+        this.city = city;
+    }
+
+    /**
+     * @return the country
+     */
+    public Country getCountry() {
+        return country;
+    }
+
+    /**
+     * @param country the country to set
+     */
+    public void setCountry(Country country) {
+        this.country = country;
     }
     
 }
