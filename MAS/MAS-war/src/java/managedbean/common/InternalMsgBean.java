@@ -5,12 +5,17 @@
  */
 package managedbean.common;
 
-import java.util.List;
-import javax.ejb.EJB;
-//import javax.faces.bean.ManagedBean;
-import javax.enterprise.context.RequestScoped;
-import javax.faces.event.ActionEvent;
 import javax.inject.Named;
+import javax.enterprise.context.SessionScoped;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -21,80 +26,64 @@ import javax.jms.Session;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import managedbean.application.NavigationBean;
 import mas.common.entity.SystemMsg;
 import mas.common.session.InternalMsgSessionLocal;
 import mas.common.session.SystemUserSessionLocal;
+import mas.common.util.exception.NoMessageException;
 
 /**
  *
  * @author winga_000
  */
-//@ManagedBean
 @Named(value = "internalMsgBean")
-@RequestScoped
-public class InternalMsgBean {
+@SessionScoped
+public class InternalMsgBean implements Serializable {
 
     @EJB
     private InternalMsgSessionLocal internalMsgSession;
+    @EJB
     private SystemUserSessionLocal systemUserSession;
-    private LoginBean loginManagedBean;
     private String message;
     private String receiver;
     private String username;
-    
-    public void getUsername(){
-        username = loginManagedBean.getUsername();
-    }
-    
+    private String[] receivers; 
+
+    @Inject
+    private UserBean loginBean;
+    @Inject
+    private NavigationBean navigationBean;
+
+    //Initialization
     public InternalMsgBean() {
-        message = "Initialize message";
-        receiver = "user1";
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        Map<String, Object> sessionMap = externalContext.getSessionMap();
+        this.username = (String) sessionMap.get("username");
+//        this.username = loginBean.getUsername();
     }
 
-    public InternalMsgSessionLocal getInternalMsgSession() {
-        return internalMsgSession;
-    }
-
-    public void setInternalMsgSession(InternalMsgSessionLocal internalMsgSession) {
-        this.internalMsgSession = internalMsgSession;
-    }
-    
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-    
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
-    
-    public List<SystemMsg> getAllMessages(){
+    public List<SystemMsg> getAllMessages() {
         return internalMsgSession.getAllInternalMessages();
     }
-    
-    public List<SystemMsg> getUserMessages(String username){
+
+    public List<SystemMsg> getUserMessages() {
         return systemUserSession.getUserMessages(username);
     }
-    
-    public void saveNewMessage(ActionEvent event) {
+
+    public String saveMessage() {
         String messageContent = String.valueOf(message);
-        String receiverContent = String.valueOf(receiver);
         try {
-            sendMessage(messageContent, receiverContent);
+            sendMessage(messageContent, receivers);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }    
-    
+        message = null;
+        receivers = null;
+        return navigationBean.toSendMessage();
+    }
+
     //send message
-    public void sendMessage(String message, String receiver) {
+    public void sendMessage(String message, String[] receivers) {
         try {
             Context c = new InitialContext();
             ConnectionFactory cf = (ConnectionFactory) c.lookup("jms/topicInternalComConnectionFactory");
@@ -103,7 +92,7 @@ public class InternalMsgBean {
             MapMessage mapMessage = null;
             Destination destination = null;
             MessageProducer messageProducer = null;
-            
+
             try {
                 connection = cf.createConnection();
                 session = connection.createSession(false, session.AUTO_ACKNOWLEDGE);
@@ -111,8 +100,13 @@ public class InternalMsgBean {
                 messageProducer = session.createProducer(destination);
                 mapMessage = session.createMapMessage();
                 mapMessage.setString("message", message);
-                mapMessage.setString("receiver", receiver);
+                mapMessage.setInt("receiverNumber", receivers.length);
+                for (int i = 0; i < receivers.length; i++) {
+                    mapMessage.setString("receiver" + i, receivers[i]);
+                }
                 messageProducer.send(mapMessage);
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null, new FacesMessage("Successful", "Your message: " + message + " have been sent"));
             } catch (JMSException jmsEx) {
                 jmsEx.printStackTrace();
             } finally {
@@ -129,4 +123,86 @@ public class InternalMsgBean {
             ex.printStackTrace();
         }
     }
+
+    public List<SystemMsg> getUneadMessages() {
+        try {
+            return systemUserSession.getUserMessages(username);
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+    public int getUnreadMessagesNumber() {
+        try {
+            systemUserSession.getUserUnreadMessages(username);
+            return systemUserSession.getUserUnreadMessages(username).size();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public void readUnreadMessages(ActionEvent event) {
+        try {
+            systemUserSession.readUnreadMessages(username);
+        } catch (NoMessageException e) {
+        }
+    }
+
+    //Getter and Setter
+    public InternalMsgSessionLocal getInternalMsgSession() {
+        return internalMsgSession;
+    }
+
+    public void setInternalMsgSession(InternalMsgSessionLocal internalMsgSession) {
+        this.internalMsgSession = internalMsgSession;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public SystemUserSessionLocal getSystemUserSession() {
+        return systemUserSession;
+    }
+
+    public void setSystemUserSession(SystemUserSessionLocal systemUserSession) {
+        this.systemUserSession = systemUserSession;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public UserBean getLoginBean() {
+        return loginBean;
+    }
+
+    public void setLoginBean(UserBean loginBean) {
+        this.loginBean = loginBean;
+    }
+
+    public String[] getReceivers() {
+        return receivers;
+    }
+
+    public void setReceivers(String[] receivers) {
+        this.receivers = receivers;
+    }
+
 }

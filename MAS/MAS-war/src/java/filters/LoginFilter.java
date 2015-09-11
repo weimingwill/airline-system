@@ -17,7 +17,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import managedbean.application.NavigationBean;
-import managedbean.common.LoginBean;
+import managedbean.common.UserBean;
 
 /**
  *
@@ -27,7 +27,7 @@ import managedbean.common.LoginBean;
 public class LoginFilter implements Filter{
  
     @Inject
-    LoginBean loginBean;
+    UserBean userBean;
     @Inject
     NavigationBean navigationBean;
     
@@ -36,22 +36,22 @@ public class LoginFilter implements Filter{
     }
     
     @Override
-    public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain chain) 
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
             throws IOException, ServletException{
         
-        HttpServletRequest request = (HttpServletRequest)req;
-        HttpServletResponse response = (HttpServletResponse)rsp;
-        String contextPath = request.getContextPath();
-        String uri = request.getRequestURI();
-        boolean inLoginPage = uri.equals(contextPath + navigationBean.toLogin());   
-        
-        if (!loginBean.isLoggedIn() && !inLoginPage) {
-            response.sendRedirect(contextPath + navigationBean.toLogin());
-        } else if (loginBean.isLoggedIn() && inLoginPage) {
-            response.sendRedirect(contextPath + navigationBean.redirectToWorkplace());
-        }
-        
-        chain.doFilter(request, response);
+        HttpServletRequest req = (HttpServletRequest)request;
+        HttpServletResponse rsp = (HttpServletResponse)response;
+        String contextPath = req.getContextPath();
+        String uri = req.getRequestURI();
+        String loginUrl = contextPath + navigationBean.toLogin();
+        String redirectUrl = contextPath + navigationBean.redirectToWorkplace();
+        boolean inLoginPage = uri.equals(loginUrl);
+        if (!userBean.isLoggedIn() && !inLoginPage) {
+            rsp.sendRedirect(loginUrl);
+        } else if (userBean.isLoggedIn() && inLoginPage) {
+            rsp.sendRedirect(redirectUrl);
+        }        
+        chain.doFilter(req, rsp);
     }
     
     @Override

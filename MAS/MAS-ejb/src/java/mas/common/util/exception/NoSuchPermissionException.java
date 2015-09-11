@@ -9,13 +9,13 @@ package mas.common.util.exception;
  *
  * @author Lewis
  */
-public class PermissionDoesNotExistException extends Exception {
+public class NoSuchPermissionException extends Exception {
 
     /**
      * Creates a new instance of <code>PermissionDoesNotExistException</code>
      * without detail message.
      */
-    public PermissionDoesNotExistException() {
+    public NoSuchPermissionException() {
     }
 
     /**
@@ -24,7 +24,7 @@ public class PermissionDoesNotExistException extends Exception {
      *
      * @param msg the detail message.
      */
-    public PermissionDoesNotExistException(String msg) {
+    public NoSuchPermissionException(String msg) {
         super(msg);
     }
 }

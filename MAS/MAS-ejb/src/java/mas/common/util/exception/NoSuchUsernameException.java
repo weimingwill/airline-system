@@ -9,22 +9,22 @@ package mas.common.util.exception;
  *
  * @author Lewis
  */
-public class RoleDoesNotExistException extends Exception {
+public class NoSuchUsernameException extends Exception {
 
     /**
-     * Creates a new instance of <code>RoleDoesNotExistException</code> without
+     * Creates a new instance of <code>UserDoesNotExistException</code> without
      * detail message.
      */
-    public RoleDoesNotExistException() {
+    public NoSuchUsernameException() {
     }
 
     /**
-     * Constructs an instance of <code>RoleDoesNotExistException</code> with the
+     * Constructs an instance of <code>UserDoesNotExistException</code> with the
      * specified detail message.
      *
      * @param msg the detail message.
      */
-    public RoleDoesNotExistException(String msg) {
+    public NoSuchUsernameException(String msg) {
         super(msg);
     }
 }

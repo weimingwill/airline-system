@@ -7,24 +7,24 @@ package mas.common.util.exception;
 
 /**
  *
- * @author Lewis
+ * @author winga_000
  */
-public class UserDoesNotExistException extends Exception {
+public class NoMessageException extends Exception {
 
     /**
-     * Creates a new instance of <code>UserDoesNotExistException</code> without
-     * detail message.
+     * Creates a new instance of <code>NoMessageException</code> without detail
+     * message.
      */
-    public UserDoesNotExistException() {
+    public NoMessageException() {
     }
 
     /**
-     * Constructs an instance of <code>UserDoesNotExistException</code> with the
+     * Constructs an instance of <code>NoMessageException</code> with the
      * specified detail message.
      *
      * @param msg the detail message.
      */
-    public UserDoesNotExistException(String msg) {
+    public NoMessageException(String msg) {
         super(msg);
     }
 }

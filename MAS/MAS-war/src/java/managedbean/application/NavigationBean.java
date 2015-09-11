@@ -24,31 +24,50 @@ public class NavigationBean implements Serializable {
     }
     
     public String toLogin(){
-        return "/views/secured/users/login.xhtml";
+        return "/views/secured/common/users/login.xhtml";
     }
     
     public String redirectToHome(){
-        return "/views/index.xhtml";
-    }
-    
-    public String toSendMessage(){
-        return "/views/secured/common/sendMessage.xhtml";
+        return "/index.xhtml";
     }
     
     public String redirectToWorkplace(){
-        return "/views/secured/users/userWorkplace.xhtml?faces-redirect=true";
+        return "/views/secured/common/users/userWorkplace.xhtml?faces-redirect=true";
     }
     
-    public String redirectToTest(){
-        return "/views/secured/common/test.xhtml?faces-redirect=true";
+    public String toCreateUser(){
+        return "/views/secured/common/users/createUser.xhtml";
+    }    
+    
+    //Message
+    public String toSendMessage(){
+        return "/views/secured/common/message/sendMessage.xhtml";
+    }
+
+    public String toViewMessages(){
+        return "/views/secured/common/message/viewMessages.xhtml";
+    }    
+    
+    //Password reset
+    public String toPasswordReset(){
+        return "/views/unsecured/common/users/resetPassword.xhtml";
+    }
+
+    public String toPasswordResetSendEmail(){
+        return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml";
+    }    
+    
+    public String toUnsecuredUsersFolder(){
+        return "http://localhost:8080/MAS-war/views/unsecured/common/users/";
     }
     
+    //Access control
     public String toAssignUserRole(){
-        return "/views/secured/access_control/assignUserRole.xhtml";
+        return "/views/secured/common/access_control/assignUserRole.xhtml";
     }
     
     public String redirectToAdminWorkplace(){
-        return "/views/secured/users/systemAdminWorkspace.xhtml?faces-redirect=true";
+        return "/views/secured/common/users/systemAdminWorkspace.xhtml?faces-redirect=true";
     }
     
 }

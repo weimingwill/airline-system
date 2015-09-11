@@ -27,6 +27,10 @@ public class SystemUser implements Serializable {
     private Long id;
     private String username;
     private String password;
+    private String email;
+    private String resetDigest;
+    private boolean locked;
+    private boolean activated;
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemRole> roles = new ArrayList<SystemRole>();
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
@@ -120,5 +124,36 @@ public class SystemUser implements Serializable {
     public List<SystemRole> getRoles() {
         return roles;
     }
-    
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getResetDigest() {
+        return resetDigest;
+    }
+
+    public void setResetDigest(String resetDigest) {
+        this.resetDigest = resetDigest;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
 }

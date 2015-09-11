@@ -26,11 +26,21 @@ public class SystemMsg implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long systemMsgId;
     private String message;
+    private boolean readed;
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "systemMsgs")
     private List<SystemUser> systemUsers = new ArrayList<SystemUser>();    
 
     public void create(String message){
         this.setMessage(message);
+        this.readed = false;
+    }
+
+    public boolean isReaded() {
+        return readed;
+    }
+
+    public void setReaded(boolean readed) {
+        this.readed = readed;
     }
     
     public Long getSystemMsgId() {
