@@ -28,7 +28,7 @@ public class City implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String cityName; 
-    private Integer utc;
+    private Float utc;
     
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Country country;
@@ -52,11 +52,11 @@ public class City implements Serializable {
         this.cityName = cityName;
     }
 
-    public Integer getUTC() {
+    public Float getUTC() {
         return utc;
     }
 
-    public void setUTC(Integer utc){
+    public void setUTC(Float utc){
         this.utc = utc;
     }
     

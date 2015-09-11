@@ -31,6 +31,9 @@ public class Airport implements Serializable {
     private String iataCode;
     private String airportName;
     private Boolean isHub;
+    private Float latitude;
+    private Float altitude;
+    private Float longitude;
     
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="departAirport")
     private Collection<Leg> outLegs = new ArrayList<Leg>();
@@ -75,6 +78,30 @@ public class Airport implements Serializable {
     @Override
     public String toString() {
         return "ams.aps.entity.Airport[ id=" + id + " ]";
+    }
+
+    public Float getLatitude() {
+        return latitude;
+    }
+
+    public Float getAltitude() {
+        return altitude;
+    }
+
+    public Float getLongitude() {
+        return longitude;
+    }
+
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setAltitude(Float altitude) {
+        this.altitude = altitude;
+    }
+
+    public void setLongitude(Float longitude) {
+        this.longitude = longitude;
     }
 
     /**
