@@ -14,23 +14,23 @@
         <h:form>
             <p:panelMenu style="width:240px;">
                 <p:submenu label="Message">
-                    <p:menuitem action="#{navigationBean.toSendMessage()}" value="send message" />
-                    <p:menuitem action="#{navigationBean.toViewMessages()}" value="view message (unread  #{internalMsgBean.unreadMessagesNumber})" actionListener="#{internalMsgBean.readUnreadMessages}"/>
+                    <p:menuitem action="#{navigationController.redirectToSendMessages()}" value="send message" />
+                    <p:menuitem action="#{navigationController.redirectToViewMessages()}" value="view message (unread  #{internalMsgController.unreadMessagesNumber})" actionListener="#{internalMsgController.readUnreadMessages}"/>
                 </p:submenu>
                 <p:submenu label="Access Control">
                     <p:submenu label="User management">
-                        <p:menuitem  action="#{navigationBean.redirectToCreateUser()}" value="create user"/>
+                        <p:menuitem  action="#{navigationController.redirectToCreateUser()}" value="create user"/>
                         <p:menuitem value="Manage users"></p:menuitem>
                     </p:submenu>
                     <p:submenu label="Role management">
-                        <p:menuitem value="Create role" action="#{navigationBean.redirectToCreateRole()}"></p:menuitem>
+                        <p:menuitem value="Create role" action="#{navigationController.redirectToCreateRole()}"></p:menuitem>
                         <p:menuitem value="Manage roles"></p:menuitem>   
                     </p:submenu>                    
                     <p:submenu label="Permission management">
-                        <p:menuitem value="Create permission" action="#{navigationBean.redirectToCreatePermission()}"></p:menuitem>
+                        <p:menuitem value="Create permission" action="#{navigationController.redirectToCreatePermission()}"></p:menuitem>
                     </p:submenu>             
                     
-                    <p:menuitem action="#{navigationBean.toAssignUserRole()}" value="Access control" />
+                    <p:menuitem action="#{navigationController.toAssignUserRole()}" value="Access control" />
                         
                 </p:submenu>
             </p:panelMenu>

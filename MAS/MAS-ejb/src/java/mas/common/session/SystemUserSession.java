@@ -20,7 +20,7 @@ import mas.common.util.helper.UserMsg;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.NoMessageException;
 import mas.common.util.exception.NoSuchUsernameException;
-import mas.common.util.exception.UserExistException;
+import mas.common.util.exception.ExistSuchUserException;
 import mas.common.util.helper.CreateToken;
 
 /**
@@ -31,7 +31,7 @@ import mas.common.util.helper.CreateToken;
 public class SystemUserSession implements SystemUserSessionLocal {
 
     @EJB
-    private AccessControlSessionLocal accessControlSession;
+    private PermissionSessionLocal accessControlSession;
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
@@ -136,10 +136,10 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void createUser(String username, String password) throws UserExistException {
+    public void createUser(String username, String password) throws ExistSuchUserException {
         SystemUser user = getSystemUserByName(username);
         if (user != null) {
-            throw new UserExistException(UserMsg.WRONG_USERNAME_EXIST_ERROR);
+            throw new ExistSuchUserException(UserMsg.WRONG_USERNAME_EXIST_ERROR);
         } else {
             SystemUser systemUser = new SystemUser();
             systemUser.setUsername(username);

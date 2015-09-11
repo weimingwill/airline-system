@@ -13,7 +13,7 @@ import mas.common.util.exception.NoSuchEmailException;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.NoMessageException;
 import mas.common.util.exception.NoSuchUsernameException;
-import mas.common.util.exception.UserExistException;
+import mas.common.util.exception.ExistSuchUserException;
 
 /**
  *
@@ -28,7 +28,7 @@ public interface SystemUserSessionLocal {
     public void readUnreadMessages(String username)  throws NoMessageException;
     public List<SystemUser> getAllUsers();
     public List<SystemUser> getAllOtherUsers(String uresetPasswordsername);
-    public void createUser(String username, String password) throws UserExistException;
+    public void createUser(String username, String password) throws ExistSuchUserException;
     public List<String> getSystemUsernameList();
     public void verifySystemUserEmail(String email) throws NoSuchEmailException;
     public SystemUser getSystemUserByEmail(String email);

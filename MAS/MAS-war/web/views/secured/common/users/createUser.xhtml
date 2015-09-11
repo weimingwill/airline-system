@@ -3,7 +3,8 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/WorkspaceTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
         Create new user
@@ -12,12 +13,25 @@
     <ui:define name="content">
         <h:form id="createUserForm">
             <h:panelGrid columns="2" columnClasses="label, value">
-                
+
                 <h:outputText value="Username"/>
-                <p:inputText required="true" requiredMessage="Please enter username" id="username" value="#{userBean.newUsername}"/>
+                <p:inputText required="true" requiredMessage="Please enter username" id="username" value="#{userController.newUsername}"/>
                 <h:outputText value="Password"/>
-                <p:password required="true" requiredMessage="Please enter password" id="password" value="#{userBean.newPassword}"/>
-                <p:commandButton action="#{userBean.createUser()}" value="Create" update="messages"/>    
+                <p:password required="true" requiredMessage="Please enter password" id="password" value="#{userController.newPassword}"/>
+
+                <p:selectCheckboxMenu id="menu" binding="#{roles}" label="Roles"
+                                      filter="true" filterMatchMode="startsWith" panelStyle="width:250px"> 
+                    <f:selectItems value="#{roleController.roleNameList}" />
+                    <p:ajax update ="display"/>
+                </p:selectCheckboxMenu>
+
+                <p:outputPanel id="display" style="width:250px;">
+                    <p:dataList value="#{roles.value}" var="role" emptyMessage="No role selected">
+                        #{role}
+                    </p:dataList>
+                </p:outputPanel>
+                
+                <p:commandButton action="#{userController.createUser()}" value="Create" update="messages"/>    
             </h:panelGrid>
         </h:form>
     </ui:define>

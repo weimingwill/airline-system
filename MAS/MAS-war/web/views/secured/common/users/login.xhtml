@@ -12,24 +12,24 @@
                 
                 <h:outputText value="Username"/>
 
-                <p:inputText required="true" requiredMessage="Please enter your username" id="username" value="#{userBean.username}"/>
+                <p:inputText required="true" requiredMessage="Please enter your username" id="username" value="#{userController.username}"/>
 
                 <h:outputText value="Password"/>
 
-                <p:password required="true" requiredMessage="Please enter your password" id="password" value="#{userBean.password}"/>
+                <p:password required="true" requiredMessage="Please enter your password" id="password" value="#{userController.password}"/>
                 <ui:remove>
                 <h:outputText value="Remember me: " />
                 <h:selectBooleanCheckbox />
                 <p:row>
                     <p:column><p:outputLabel for="loginCaptcha" value="Retype the code from the picture:"/></p:column>
                     <p:column>
-                        <botDetect:jsfCaptcha id="loginCaptcha" binding="#{userBean.captcha}"/>
+                        <botDetect:jsfCaptcha id="loginCaptcha" binding="#{userController.captcha}"/>
                     </p:column>
                 </p:row>
 
-                <p:inputText id="captchaCodeTextBox" value="#{userBean.captchaCode}"/> 
+                <p:inputText id="captchaCodeTextBox" value="#{userController.captchaCode}"/> 
                 </ui:remove>
-                <p:commandButton action="#{userBean.doLogin()}" value="Login" update="messages" ></p:commandButton>
+                <p:commandButton action="#{userController.doLogin()}" value="Login" update="messages" ></p:commandButton>
 
             </h:panelGrid>
 
@@ -37,7 +37,7 @@
         <h:form id="resetPassword">
             <h:panelGrid columns="2" columnClasses="label, value">
                 <h:outputText value="Forget password?"></h:outputText>
-                <h:commandLink action="#{navigationBean.toPasswordResetSendEmail()}" value="reset password"></h:commandLink>
+                <h:commandLink action="#{navigationController.toPasswordResetSendEmail()}" value="reset password"></h:commandLink>
             </h:panelGrid>
 
         </h:form>

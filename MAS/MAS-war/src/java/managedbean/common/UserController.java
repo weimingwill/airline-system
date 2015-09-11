@@ -5,7 +5,7 @@
  */
 package managedbean.common;
 
-import managedbean.application.NavigationBean;
+import managedbean.application.NavigationController;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -20,28 +20,27 @@ import mas.common.session.SystemUserSessionLocal;
 import mas.common.util.exception.NoSuchEmailException;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.NoSuchUsernameException;
-import mas.common.util.exception.UserExistException;
+import mas.common.util.exception.ExistSuchUserException;
 import mas.common.util.helper.CreateToken;
 import mas.common.util.helper.UserMsg;
 import util.helper.CountdownHelper;
 import util.security.CryptographicHelper;
 import botdetect.web.jsf.JsfCaptcha;
-import org.jboss.weld.context.beanstore.LockedBean;
 
 /**
  *
  * @author winga_000
  */
-@Named(value = "userBean")
+@Named(value = "userController")
 @SessionScoped
-public class UserBean implements Serializable {
+public class UserController implements Serializable {
 
     private final String TIMER_NAME_RESET_PASSWORD = "RESET_PASSWORD_TIMER";
 
     @Inject
-    private NavigationBean navigationBean;
+    private NavigationController navigationController;
     @Inject
-    private EmailBean emailBean;
+    private EmailController emailController;
 
     @EJB
     private SystemUserSessionLocal systemUserSession;
@@ -56,7 +55,7 @@ public class UserBean implements Serializable {
     private String captchaCode;
    private int countTrial = 0;
 
-    public UserBean() {
+    public UserController() {
     }
 
     public String doLogin() throws NoSuchUsernameException, InvalidPasswordException, InterruptedException {
@@ -66,11 +65,11 @@ public class UserBean implements Serializable {
         ExternalContext externalContext = context.getExternalContext();
         if (systemUserSession.getSystemUserByName(username).isLocked()) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Your account has been locked, please reset password or wait 30mins to try again"));
-            return navigationBean.toLogin();
+            return navigationController.toLogin();
         }
 //        if (!isHuman) {
 //            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Captcha code entered is incorrect"));
-//            return navigationBean.toLogin();
+//            return navigationController.toLogin();
 //        }
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
         try {
@@ -87,7 +86,7 @@ public class UserBean implements Serializable {
             }
             
             System.out.println("Count Trial: " + countTrial);
-            return navigationBean.toLogin();
+            return navigationController.toLogin();
         }
         loggedIn = true;
         countTrial = 0;
@@ -96,7 +95,7 @@ public class UserBean implements Serializable {
         externalContext.getFlash().setKeepMessages(true);
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Successful", UserMsg.LOGIN_SUCCESS_MSG));
         captchaCode = null;
-        return navigationBean.redirectToWorkplace();
+        return navigationController.redirectToWorkspace();
     }
 
     public String doLogout() {
@@ -104,25 +103,7 @@ public class UserBean implements Serializable {
         username = null;
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null, new FacesMessage("Successful", UserMsg.LOGIN_OUT_MSG));
-        return navigationBean.redirectToWorkplace();
-    }
-
-    public String createUser() throws UserExistException, InvalidPasswordException, NoSuchUsernameException {
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.getExternalContext().getFlash().setKeepMessages(true);
-        try {
-            CryptographicHelper cryptographicHelper = new CryptographicHelper();
-            newPassword = cryptographicHelper.doMD5Hashing(newPassword);
-            systemUserSession.createUser(newUsername, newPassword);
-            context.getExternalContext().getFlash().setKeepMessages(true);
-            context.addMessage(null, new FacesMessage("Successful", "New user " + newUsername + " is created successfuly!"));
-            newUsername = null;
-            newPassword = null;
-            return navigationBean.redirectToCreateUser();
-        } catch (UserExistException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
-            return navigationBean.toCreateUser();
-        }
+        return navigationController.redirectToWorkspace();
     }
 
     public String resetPasswordSendEmail() throws InterruptedException {
@@ -131,9 +112,9 @@ public class UserBean implements Serializable {
             systemUserSession.verifySystemUserEmail(email);
             String resetDigest = createNewToken();
             String subject = "Reset Password";
-            String mailContent = navigationBean.toUnsecuredUsersFolder() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + resetDigest + "&email=" + email;
+            String mailContent = navigationController.toUnsecuredUsersFolder() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + resetDigest + "&email=" + email;
             String receiver = "Weimin g<a0119405@u.nus.edu>";
-            emailBean.sendEmail(subject, mailContent, receiver);
+            emailController.sendEmail(subject, mailContent, receiver);
             systemUserSession.setResetDigest(email, resetDigest);
             
             countdownHelper.expireResetPasswoordCountDown(1800 * 1000, email);//Auto expire password after 30mins
@@ -141,11 +122,11 @@ public class UserBean implements Serializable {
             FacesContext context = FacesContext.getCurrentInstance();
             context.getExternalContext().getFlash().setKeepMessages(true);
             context.addMessage(null, new FacesMessage("Successful", "Please check your email to reset password"));
-            return navigationBean.redirectToHome() + "?faces-redirect=true";
+            return navigationController.redirectToHome() + "?faces-redirect=true";
         } catch (NoSuchEmailException ex) {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
-            return navigationBean.toPasswordResetSendEmail();
+            return navigationController.toPasswordResetSendEmail();
         }
     }
 
@@ -160,16 +141,16 @@ public class UserBean implements Serializable {
         SystemUser user = systemUserSession.getSystemUserByEmail(userEmail);
         if (userEmail == null || resetDigest == null || user == null) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "You are not authorised to reset password. Send reset email again"));
-            return navigationBean.toPasswordResetSendEmail() + "?faces-redirect=true";
+            return navigationController.toPasswordResetSendEmail() + "?faces-redirect=true";
         } else if (!user.getResetDigest().equals(resetDigest)) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Password reset expired. Send reset email again"));
-            return navigationBean.toPasswordResetSendEmail() + "?faces-redirect=true";
+            return navigationController.toPasswordResetSendEmail() + "?faces-redirect=true";
         }
         systemUserSession.resetPassword(userEmail, cryptographicHelper.doMD5Hashing(newPassword));
         systemUserSession.expireResetPassword(email);//expire reset digest if it has been used;
         newPassword = null;
         context.addMessage(null, new FacesMessage("Successful", "Password reset successfully, you can login with new password now"));
-        return navigationBean.toLogin() + "?faces-redirect=true";
+        return navigationController.toLogin() + "?faces-redirect=true";
     }
 
     public String createNewToken() {
@@ -184,7 +165,24 @@ public class UserBean implements Serializable {
             return systemUserSession.getSystemUserByEmail(email);
         }
     }
-    
+
+    public String createUser() throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.getExternalContext().getFlash().setKeepMessages(true);
+        try {
+            CryptographicHelper cryptographicHelper = new CryptographicHelper();
+            newPassword = cryptographicHelper.doMD5Hashing(newPassword);
+            systemUserSession.createUser(newUsername, newPassword);
+            context.getExternalContext().getFlash().setKeepMessages(true);
+            context.addMessage(null, new FacesMessage("Successful", "New user " + newUsername + " is created successfuly!"));
+            newUsername = null;
+            newPassword = null;
+            return navigationController.redirectToCreateUser();
+        } catch (ExistSuchUserException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
+            return navigationController.toCreateUser();
+        }
+    }
 
 //
 //Getter and Setter
@@ -225,12 +223,12 @@ public class UserBean implements Serializable {
         this.systemUserSession = systemUserSession;
     }
 
-    public NavigationBean getNavigationBean() {
-        return navigationBean;
+    public NavigationController getNavigationController() {
+        return navigationController;
     }
 
-    public void setNavigationBean(NavigationBean navigationBean) {
-        this.navigationBean = navigationBean;
+    public void setNavigationController(NavigationController navigationController) {
+        this.navigationController = navigationController;
     }
 
     public String getEmail() {
@@ -249,14 +247,14 @@ public class UserBean implements Serializable {
         this.resetDigest = resetDigest;
     }
 
-    public EmailBean getEmailBean() {
-        return emailBean;
+    public EmailController getEmailController() {
+        return emailController;
     }
 
-    public void setEmailBean(EmailBean emailBean) {
-        this.emailBean = emailBean;
+    public void setEmailController(EmailController emailController) {
+        this.emailController = emailController;
     }
-
+    
     public String getNewUsername() {
         return newUsername;
     }

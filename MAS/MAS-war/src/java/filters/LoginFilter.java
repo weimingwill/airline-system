@@ -16,8 +16,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import managedbean.application.NavigationBean;
-import managedbean.common.UserBean;
+import managedbean.application.NavigationController;
+import managedbean.common.UserController;
 
 /**
  *
@@ -27,9 +27,9 @@ import managedbean.common.UserBean;
 public class LoginFilter implements Filter{
  
     @Inject
-    UserBean userBean;
+    UserController userController;
     @Inject
-    NavigationBean navigationBean;
+    NavigationController navigationController;
     
     @Override
     public void init(FilterConfig config) throws ServletException{
@@ -43,12 +43,12 @@ public class LoginFilter implements Filter{
         HttpServletResponse rsp = (HttpServletResponse)response;
         String contextPath = req.getContextPath();
         String uri = req.getRequestURI();
-        String loginUrl = contextPath + navigationBean.toLogin();
-        String redirectUrl = contextPath + navigationBean.redirectToWorkplace();
+        String loginUrl = contextPath + navigationController.toLogin();
+        String redirectUrl = contextPath + navigationController.redirectToWorkspace();
         boolean inLoginPage = uri.equals(loginUrl);
-        if (!userBean.isLoggedIn() && !inLoginPage) {
+        if (!userController.isLoggedIn() && !inLoginPage) {
             rsp.sendRedirect(loginUrl);
-        } else if (userBean.isLoggedIn() && inLoginPage) {
+        } else if (userController.isLoggedIn() && inLoginPage) {
             rsp.sendRedirect(redirectUrl);
         }        
         chain.doFilter(req, rsp);

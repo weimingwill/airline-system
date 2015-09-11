@@ -9,22 +9,22 @@ package mas.common.util.exception;
  *
  * @author winga_000
  */
-public class UserExistException extends Exception {
+public class ExistSuchPermissionException extends Exception {
 
     /**
-     * Creates a new instance of <code>UserExistException</code> without detail
-     * message.
+     * Creates a new instance of <code>PermissionExistException</code> without
+     * detail message.
      */
-    public UserExistException() {
+    public ExistSuchPermissionException() {
     }
 
     /**
-     * Constructs an instance of <code>UserExistException</code> with the
+     * Constructs an instance of <code>PermissionExistException</code> with the
      * specified detail message.
      *
      * @param msg the detail message.
      */
-    public UserExistException(String msg) {
+    public ExistSuchPermissionException(String msg) {
         super(msg);
     }
 }

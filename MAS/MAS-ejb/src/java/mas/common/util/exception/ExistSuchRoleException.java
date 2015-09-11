@@ -9,22 +9,22 @@ package mas.common.util.exception;
  *
  * @author winga_000
  */
-public class PermissionExistException extends Exception {
+public class ExistSuchRoleException extends Exception {
 
     /**
-     * Creates a new instance of <code>PermissionExistException</code> without
-     * detail message.
+     * Creates a new instance of <code>RoleExistException</code> without detail
+     * message.
      */
-    public PermissionExistException() {
+    public ExistSuchRoleException() {
     }
 
     /**
-     * Constructs an instance of <code>PermissionExistException</code> with the
+     * Constructs an instance of <code>RoleExistException</code> with the
      * specified detail message.
      *
      * @param msg the detail message.
      */
-    public PermissionExistException(String msg) {
+    public ExistSuchRoleException(String msg) {
         super(msg);
     }
 }

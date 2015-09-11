@@ -14,34 +14,29 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import mas.common.entity.SystemRole;
 import mas.common.entity.Permission;
+import mas.common.entity.SystemRole;
 import mas.common.entity.SystemUser;
 import mas.common.util.exception.NoSuchPermissionException;
 import mas.common.util.exception.NoSuchRoleException;
-import mas.common.util.exception.PermissionExistException;
-import mas.common.util.exception.RoleExistException;
+import mas.common.util.exception.ExistSuchRoleException;
 import mas.common.util.helper.UserMsg;
 
 /**
  *
- * @author Lewis
+ * @author winga_000
  */
 @Stateless
-public class AccessControlSession implements AccessControlSessionLocal {
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+public class RoleSession implements RoleSessionLocal {
+    
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @EJB
     private SystemUserSessionLocal systemUsersSession;
-
-    @Override
-    public SystemUser getSystemUser(String username) {
-        return systemUsersSession.getSystemUserByName(username);
-    }
+    @EJB
+    private PermissionSessionLocal permissionSession;
+    
     
     @Override
     public SystemRole getSystemRolesByName(String roleName) throws NoSuchRoleException{
@@ -54,39 +49,6 @@ public class AccessControlSession implements AccessControlSessionLocal {
             throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
         }
         return systemRole;
-    }
-
-    @Override
-    public List<Permission> getPermissionsByModule(String module) {
-        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.module = :inModule");
-        query.setParameter("inModule", module);
-        List<Permission> permissions = null;
-        try {
-            permissions = (List<Permission>) query.getResultList();
-        } catch (NoResultException ex) {
-            ex.printStackTrace();
-        }
-        return permissions;
-    }
-
-    @Override
-    public List<Permission> getAllPermissions() {
-        Query query = entityManager.createQuery("SELECT p FROM Permission p");
-        return query.getResultList();        
-    }
-
-    @Override
-    public Permission getPermissions(String module, String title) {
-        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.module = :inModule AND p.title = :inTitle");
-        query.setParameter("inModule", module);
-        query.setParameter("inTitle", title);
-        Permission permission = null;
-        try {
-            permission = (Permission) query.getSingleResult();
-        } catch (NoResultException ex) {
-            ex.printStackTrace();
-        }
-        return permission;
     }
 
     @Override
@@ -110,29 +72,19 @@ public class AccessControlSession implements AccessControlSessionLocal {
     
     @Override
     public List<SystemRole> getUserRoles(String username) {
-        SystemUser user = getSystemUser(username);
+        SystemUser user = systemUsersSession.getSystemUserByName(username);
         return user.getSystemRoles();
     }
-
+    
     @Override
-    public void createPermission(String module, String title) throws PermissionExistException{
-        verifyPermission(module, title);
-        Permission permission = new Permission();
-        permission.setModule(module);
-        permission.setTitle(title);
-        entityManager.persist(permission);
-        entityManager.flush();
-    }
-
-    @Override
-    public void createSystemRole(String roleName, String[] permissions) throws RoleExistException{
+    public void createSystemRole(String roleName, String[] permissions) throws ExistSuchRoleException{
         verifySystemRole(roleName);
         SystemRole role = new SystemRole();
         List<Permission> permissionList = new ArrayList<Permission>();
         for (String permission : permissions) {
             String module = permission.split(":")[0];
             String title = permission.split(":")[1];
-            Permission p = getPermissions(module, title);
+            Permission p = permissionSession.getPermissions(module, title);
             permissionList.add(p);
         }
         role.setRoleName(roleName);
@@ -151,7 +103,7 @@ public class AccessControlSession implements AccessControlSessionLocal {
             module = entry.getKey();
             for(String title: entry.getValue()){
                 try {
-                    permissionList.add(getPermissions(module,title));
+                    permissionList.add(permissionSession.getPermissions(module,title));
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -162,28 +114,18 @@ public class AccessControlSession implements AccessControlSessionLocal {
     }
 
     @Override
-    public void verifySystemRole(String roleName) throws RoleExistException {
+    public void verifySystemRole(String roleName) throws ExistSuchRoleException {
         List<SystemRole> roles = getAllRoles();
         for (SystemRole role : roles) {
             if (role.getRoleName().equals(roleName)) {
-                throw new RoleExistException(UserMsg.EXIST_ROLE_ERROR);
-            }
-        }
-    }
-
-    @Override
-    public void verifyPermission(String module, String title) throws PermissionExistException {
-        List<Permission> permissions = getAllPermissions();
-        for (Permission permission : permissions) {
-            if (permission.getModule().equals(module) && permission.getTitle().equals(title)) {
-                throw new PermissionExistException(UserMsg.EXIST_PERMISSION_ERROR);
+                throw new ExistSuchRoleException(UserMsg.EXIST_ROLE_ERROR);
             }
         }
     }
     
     @Override
     public void assignUserToRole(String username, ArrayList<String> roles) {
-        SystemUser systemUser = getSystemUser(username);
+        SystemUser user = systemUsersSession.getSystemUserByName(username);
         List<SystemRole> roleList = new ArrayList<SystemRole>();
         for(String roleName: roles){
             try{
@@ -192,13 +134,14 @@ public class AccessControlSession implements AccessControlSessionLocal {
                 e.printStackTrace();
             }
         }
-        systemUser.setSystemRoles(roleList);
-        entityManager.merge(systemUser);
+        user.setSystemRoles(roleList);
+        entityManager.merge(user);
     }
     
     @Override
     public List<String> getRolesNameList(){
         Query query = entityManager.createQuery("SELECT r.roleName FROM SystemRole r");
         return (List<String>) query.getResultList();
-    }    
+    }        
+
 }

@@ -16,7 +16,7 @@
                 <p:inputText binding="#{module}"/>
                 <p:outputLabel value="Permission title: "/>
                 <p:inputText binding="#{title}"/>
-                <p:commandButton action="#{accessControlBean.createPermission(module.value, title.value)}" value="create" update="messages"/>
+                <p:commandButton action="#{permissionController.createPermission(module.value, title.value)}" value="create" update="messages"/>
             </h:panelGrid>
         </h:form>
     </ui:define>

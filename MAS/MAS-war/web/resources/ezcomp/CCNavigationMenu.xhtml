@@ -14,13 +14,13 @@
     <cc:implementation>
         <h:form id="navigationMenu">
             <p:menubar>
-                <p:menuitem value="Merline Airline" url="#{navigationBean.redirectToHome()}"></p:menuitem>
+                <p:menuitem value="Merline Airline" url="#{navigationController.redirectToHome()}"></p:menuitem>
                 
-                <p:menuitem value="User Workspace" url="#{navigationBean.redirectToWorkplace()}" icon="ui-icon-home"></p:menuitem>
+                <p:menuitem value="User Workspace" url="#{navigationController.redirectToWorkspace()}" icon="ui-icon-home"></p:menuitem>
                 <f:facet name="options">
                     <p:inputText style="margin-right:10px" placeholder="Search"/>
-                    <p:commandButton action="#{navigationBean.toLogin()}" value="Login" rendered="#{not userBean.loggedIn}" icon="ui-icon-extlink"></p:commandButton>
-                    <p:commandButton action="#{userBean.doLogout()}" value="Logout" rendered="#{userBean.loggedIn}" icon="ui-icon-extlink"></p:commandButton>                    
+                    <p:commandButton action="#{navigationController.toLogin()}" value="Login" rendered="#{not userController.loggedIn}" icon="ui-icon-extlink"></p:commandButton>
+                    <p:commandButton action="#{userController.doLogout()}" value="Logout" rendered="#{userController.loggedIn}" icon="ui-icon-extlink"></p:commandButton>                    
 
                 </f:facet>
             </p:menubar>

@@ -18,22 +18,19 @@
                     <p:inputText binding="#{roleName}"/>
                 </p:row>
 
-                <!--test whether binding works here-->
-                
                 <p:selectCheckboxMenu id="menu" binding="#{permissions}" label="Permissions"
                                       filter="true" filterMatchMode="startsWith" panelStyle="width:250px"> 
-                    <f:selectItems value="#{accessControlBean.permissionList}" />
+                    <f:selectItems value="#{permissionController.permissionList}" />
                     <p:ajax update ="display"/>
                 </p:selectCheckboxMenu>
 
-
                 <p:outputPanel id="display" style="width:250px;">
-                    <p:dataList value="#{permissions.value}" var="receiver" emptyMessage="No receiver selected">
-                        #{receiver}
+                    <p:dataList value="#{permissions.value}" var="permission" emptyMessage="No permission selected">
+                        #{permission}
                     </p:dataList>
                 </p:outputPanel>
 
-                <p:commandButton action="#{accessControlBean.createSystemRole(roleName.value, permissions.value)}"  value="create" update="messages"/>
+                <p:commandButton action="#{roleController.createSystemRole(roleName.value, permissions.value)}"  value="create" update="messages"/>
 
             </h:panelGrid>
         </h:form>

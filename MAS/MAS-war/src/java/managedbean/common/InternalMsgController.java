@@ -26,9 +26,8 @@ import javax.jms.Session;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import managedbean.application.NavigationBean;
+import managedbean.application.NavigationController;
 import mas.common.entity.SystemMsg;
-import mas.common.session.InternalMsgSessionLocal;
 import mas.common.session.SystemUserSessionLocal;
 import mas.common.util.exception.NoMessageException;
 
@@ -36,12 +35,10 @@ import mas.common.util.exception.NoMessageException;
  *
  * @author winga_000
  */
-@Named(value = "internalMsgBean")
+@Named(value = "internalMsgController")
 @SessionScoped
-public class InternalMsgBean implements Serializable {
+public class InternalMsgController implements Serializable {
 
-    @EJB
-    private InternalMsgSessionLocal internalMsgSession;
     @EJB
     private SystemUserSessionLocal systemUserSession;
     private String message;
@@ -50,36 +47,29 @@ public class InternalMsgBean implements Serializable {
     private String[] receivers; 
 
     @Inject
-    private UserBean userBean;
+    private UserController userController;
     @Inject
-    private NavigationBean navigationBean;
+    private NavigationController navigationController;
 
     //Initialization
-    public InternalMsgBean() {
+    public InternalMsgController() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         this.username = (String) sessionMap.get("username");
-//        this.username = userBean.getUsername();
-    }
-
-    public List<SystemMsg> getAllMessages() {
-        return internalMsgSession.getAllInternalMessages();
     }
 
     public List<SystemMsg> getUserMessages() {
         return systemUserSession.getUserMessages(username);
     }
 
-    public String saveMessage() {
+    public String saveMessage(String message, String[] receivers) {
         String messageContent = String.valueOf(message);
         try {
             sendMessage(messageContent, receivers);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        message = null;
-        receivers = null;
-        return navigationBean.toSendMessage();
+        return navigationController.redirectToSendMessages();
     }
 
     //send message
@@ -106,6 +96,7 @@ public class InternalMsgBean implements Serializable {
                 }
                 messageProducer.send(mapMessage);
                 FacesContext context = FacesContext.getCurrentInstance();
+                context.getExternalContext().getFlash().setKeepMessages(true);
                 context.addMessage(null, new FacesMessage("Successful", "Your message: " + message + " have been sent"));
             } catch (JMSException jmsEx) {
                 jmsEx.printStackTrace();
@@ -149,14 +140,6 @@ public class InternalMsgBean implements Serializable {
     }
 
     //Getter and Setter
-    public InternalMsgSessionLocal getInternalMsgSession() {
-        return internalMsgSession;
-    }
-
-    public void setInternalMsgSession(InternalMsgSessionLocal internalMsgSession) {
-        this.internalMsgSession = internalMsgSession;
-    }
-
     public String getMessage() {
         return message;
     }
@@ -189,12 +172,12 @@ public class InternalMsgBean implements Serializable {
         this.username = username;
     }
 
-    public UserBean getUserBean() {
-        return userBean;
+    public UserController getUserController() {
+        return userController;
     }
 
-    public void setUserBean(UserBean userBean) {
-        this.userBean = userBean;
+    public void setUserController(UserController userController) {
+        this.userController = userController;
     }
 
     public String[] getReceivers() {

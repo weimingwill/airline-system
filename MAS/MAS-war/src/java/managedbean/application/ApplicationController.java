@@ -23,14 +23,14 @@ import mas.common.session.SystemUserSessionLocal;
  */
 @Named(value = "applicationBean")
 @RequestScoped
-public class ApplicationBean {
+public class ApplicationController {
 
     @EJB
     private SystemUserSessionLocal systemUserSession;
     private String username;
     private List<String> otherUsernames;
     
-    public ApplicationBean() {
+    public ApplicationController() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, Object> sessionMap = externalContext.getSessionMap();        
         this.username = (String) sessionMap.get("username");    

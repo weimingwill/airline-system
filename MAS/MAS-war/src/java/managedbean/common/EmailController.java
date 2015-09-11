@@ -22,9 +22,9 @@ import util.security.SMTPAuthenticator;
  *
  * @author winga_000
  */
-@Named(value = "emailBean")
+@Named(value = "emailController")
 @RequestScoped
-public class EmailBean {
+public class EmailController {
 
     private String emailServerName;
     private String sender;
@@ -32,9 +32,9 @@ public class EmailBean {
     private String mailer;
     
     /**
-     * Creates a new instance of EmailBean
+     * Creates a new instance of emailController
      */
-    public EmailBean() {
+    public EmailController() {
     }
     
     @PostConstruct
