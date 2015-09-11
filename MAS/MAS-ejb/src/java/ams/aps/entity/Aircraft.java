@@ -7,6 +7,8 @@ package ams.aps.entity;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -26,13 +29,15 @@ public class Aircraft implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String tailNo;
-    private Float lifeTime;
-    private Date boughtOn;
+    private Float lifetime;
     private String status;
     private String source;
+    private Float cost;
+    private Date addOnDate;
+    private Float avgUnitOilUsage;
     
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private FlightSchedule flightSchedule;
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraft")
+    private Collection<FlightSchedule> flightSchedules = new ArrayList<FlightSchedule>();
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private AircraftType aircraftType;
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
