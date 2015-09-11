@@ -12,15 +12,28 @@
     <!-- IMPLEMENTATION -->
     <cc:implementation id="leftMenu">
         <h:form>
-            <p:menu toggleable="true" style="width:200px;">
+            <p:panelMenu style="width:240px;">
                 <p:submenu label="Message">
                     <p:menuitem action="#{navigationBean.toSendMessage()}" value="send message" />
                     <p:menuitem action="#{navigationBean.toViewMessages()}" value="view message (unread  #{internalMsgBean.unreadMessagesNumber})" actionListener="#{internalMsgBean.readUnreadMessages}"/>
                 </p:submenu>
-                <p:submenu label="User Management">
-                    <p:menuitem  action="#{navigationBean.toCreateUser()}" value="create user"/>
+                <p:submenu label="Access Control">
+                    <p:submenu label="User management">
+                        <p:menuitem  action="#{navigationBean.redirectToCreateUser()}" value="create user"/>
+                        <p:menuitem value="Manage users"></p:menuitem>
+                    </p:submenu>
+                    <p:submenu label="Role management">
+                        <p:menuitem value="Create role" action="#{navigationBean.redirectToCreateRole()}"></p:menuitem>
+                        <p:menuitem value="Manage roles"></p:menuitem>   
+                    </p:submenu>                    
+                    <p:submenu label="Permission management">
+                        <p:menuitem value="Create permission" action="#{navigationBean.redirectToCreatePermission()}"></p:menuitem>
+                    </p:submenu>             
+                    
+                    <p:menuitem action="#{navigationBean.toAssignUserRole()}" value="Access control" />
+                        
                 </p:submenu>
-            </p:menu>
+            </p:panelMenu>
         </h:form>    
     </cc:implementation>
 </html>

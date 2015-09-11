@@ -61,17 +61,17 @@ public class UserBean implements Serializable {
 
     public String doLogin() throws NoSuchUsernameException, InvalidPasswordException, InterruptedException {
         CountdownHelper countdownHelper = new CountdownHelper(systemUserSession);
-        boolean isHuman = captcha.validate(captchaCode);
+//        boolean isHuman = captcha.validate(captchaCode);
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         if (systemUserSession.getSystemUserByName(username).isLocked()) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Your account has been locked, please reset password or wait 30mins to try again"));
             return navigationBean.toLogin();
         }
-        if (!isHuman) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Captcha code entered is incorrect"));
-            return navigationBean.toLogin();
-        }
+//        if (!isHuman) {
+//            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Captcha code entered is incorrect"));
+//            return navigationBean.toLogin();
+//        }
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
         try {
             systemUserSession.verifySystemUserPassword(username, cryptographicHelper.doMD5Hashing(password));
@@ -109,6 +109,7 @@ public class UserBean implements Serializable {
 
     public String createUser() throws UserExistException, InvalidPasswordException, NoSuchUsernameException {
         FacesContext context = FacesContext.getCurrentInstance();
+        context.getExternalContext().getFlash().setKeepMessages(true);
         try {
             CryptographicHelper cryptographicHelper = new CryptographicHelper();
             newPassword = cryptographicHelper.doMD5Hashing(newPassword);
@@ -117,7 +118,7 @@ public class UserBean implements Serializable {
             context.addMessage(null, new FacesMessage("Successful", "New user " + newUsername + " is created successfuly!"));
             newUsername = null;
             newPassword = null;
-            return navigationBean.toCreateUser() + "?faces-redirect=true";
+            return navigationBean.redirectToCreateUser();
         } catch (UserExistException ex) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
             return navigationBean.toCreateUser();

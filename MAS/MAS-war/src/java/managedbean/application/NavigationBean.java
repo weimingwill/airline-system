@@ -17,6 +17,8 @@ import java.io.Serializable;
 @SessionScoped
 public class NavigationBean implements Serializable {
 
+    private final String REDIRECT = "?faces-redirect=true";
+    
     /**
      * Creates a new instance of NavigationBean
      */
@@ -32,11 +34,15 @@ public class NavigationBean implements Serializable {
     }
     
     public String redirectToWorkplace(){
-        return "/views/secured/common/users/userWorkplace.xhtml?faces-redirect=true";
+        return "/views/secured/common/users/userWorkspace.xhtml?faces-redirect=true";
     }
     
     public String toCreateUser(){
         return "/views/secured/common/users/createUser.xhtml";
+    }
+    
+    public String redirectToCreateUser(){
+        return "/views/secured/common/users/createUser.xhtml?faces-redirect=true";
     }    
     
     //Message
@@ -66,8 +72,25 @@ public class NavigationBean implements Serializable {
         return "/views/secured/common/access_control/assignUserRole.xhtml";
     }
     
-    public String redirectToAdminWorkplace(){
-        return "/views/secured/common/users/systemAdminWorkspace.xhtml?faces-redirect=true";
+    public String redirectToAdminWorkspace(){
+        return "/views/secured/common/users/adminWorkspace.xhtml?faces-redirect=true";
     }
     
+        //Role
+    public String toCreateRole(){
+        return "/views/secured/common/access_control/createRole.xhtml";
+    }
+
+    public String redirectToCreateRole(){
+        return "/views/secured/common/access_control/createRole.xhtml" + REDIRECT;
+    }
+    
+        //Permission
+    public String toCreatePermission(){
+        return "/views/secured/common/access_control/createPermission.xhtml";
+    }
+    
+    public String redirectToCreatePermission(){
+        return "/views/secured/common/access_control/createPermission.xhtml?" + REDIRECT;
+    }    
 }

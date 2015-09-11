@@ -17,6 +17,7 @@
                 <h:outputText value="Password"/>
 
                 <p:password required="true" requiredMessage="Please enter your password" id="password" value="#{userBean.password}"/>
+                <ui:remove>
                 <h:outputText value="Remember me: " />
                 <h:selectBooleanCheckbox />
                 <p:row>
@@ -27,7 +28,7 @@
                 </p:row>
 
                 <p:inputText id="captchaCodeTextBox" value="#{userBean.captchaCode}"/> 
-                
+                </ui:remove>
                 <p:commandButton action="#{userBean.doLogin()}" value="Login" update="messages" ></p:commandButton>
 
             </h:panelGrid>

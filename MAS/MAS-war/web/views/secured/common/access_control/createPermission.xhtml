@@ -6,18 +6,17 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="title">
-        Create new user
+        Create Permission
     </ui:define>
 
     <ui:define name="content">
-        <h:form id="createUserForm">
+        <h:form>
             <h:panelGrid columns="2" columnClasses="label, value">
-                
-                <h:outputText value="Username"/>
-                <p:inputText required="true" requiredMessage="Please enter username" id="username" value="#{userBean.newUsername}"/>
-                <h:outputText value="Password"/>
-                <p:password required="true" requiredMessage="Please enter password" id="password" value="#{userBean.newPassword}"/>
-                <p:commandButton action="#{userBean.createUser()}" value="Create" update="messages"/>    
+                <p:outputLabel value="Permission module: "/>
+                <p:inputText binding="#{module}"/>
+                <p:outputLabel value="Permission title: "/>
+                <p:inputText binding="#{title}"/>
+                <p:commandButton action="#{accessControlBean.createPermission(module.value, title.value)}" value="create" update="messages"/>
             </h:panelGrid>
         </h:form>
     </ui:define>

@@ -14,7 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 /**
@@ -25,24 +24,35 @@ import javax.persistence.ManyToMany;
 public class SystemRole implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long systemRoleId;
     private String roleName;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "systemRoles")
+    private List<SystemUser> systemUsers = new ArrayList<SystemUser>();   
     @ManyToMany(cascade={CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<Permission> permissions = new ArrayList<Permission>();
 
-            
-    public Long getId() {
-        return id;
+    public Long getSystemRoleId() {
+        return systemRoleId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setSystemRoleId(Long systemRoleId) {
+        this.systemRoleId = systemRoleId;
     }
 
+    public List<SystemUser> getSystemUsers() {
+        return systemUsers;
+    }
+
+    public void setSystemUsers(List<SystemUser> systemUsers) {
+        this.systemUsers = systemUsers;
+    }
+    
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (systemRoleId != null ? systemRoleId.hashCode() : 0);
         return hash;
     }
 
@@ -53,7 +63,7 @@ public class SystemRole implements Serializable {
             return false;
         }
         SystemRole other = (SystemRole) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.systemRoleId == null && other.systemRoleId != null) || (this.systemRoleId != null && !this.systemRoleId.equals(other.systemRoleId))) {
             return false;
         }
         return true;
@@ -61,7 +71,7 @@ public class SystemRole implements Serializable {
 
     @Override
     public String toString() {
-        return "mas.common.entity.SystemRole[ id=" + id + " ]";
+        return "mas.common.entity.SystemRole[ systemRoleId=" + systemRoleId + " ]";
     }
 
     /**

@@ -50,7 +50,7 @@ public class InternalMsgBean implements Serializable {
     private String[] receivers; 
 
     @Inject
-    private UserBean loginBean;
+    private UserBean userBean;
     @Inject
     private NavigationBean navigationBean;
 
@@ -59,7 +59,7 @@ public class InternalMsgBean implements Serializable {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         this.username = (String) sessionMap.get("username");
-//        this.username = loginBean.getUsername();
+//        this.username = userBean.getUsername();
     }
 
     public List<SystemMsg> getAllMessages() {
@@ -189,12 +189,12 @@ public class InternalMsgBean implements Serializable {
         this.username = username;
     }
 
-    public UserBean getLoginBean() {
-        return loginBean;
+    public UserBean getUserBean() {
+        return userBean;
     }
 
-    public void setLoginBean(UserBean loginBean) {
-        this.loginBean = loginBean;
+    public void setUserBean(UserBean userBean) {
+        this.userBean = userBean;
     }
 
     public String[] getReceivers() {

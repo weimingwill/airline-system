@@ -19,4 +19,6 @@ public class UserMsg {
     public static final String NO_PERMISSION_ERROR = "There is no permission assigned to the role";
     public static final String NO_SUCH_EMAIL_ERROR = "Email does not exist";
     public static final String NO_MESSAGE_ERROR = "User does not have messages";
+    public static final String EXIST_ROLE_ERROR = "Role already exist";
+    public static final String EXIST_PERMISSION_ERROR = "Permission already exist";
 }
