@@ -70,4 +70,7 @@ public class NavigationBean implements Serializable {
         return "/views/secured/common/users/systemAdminWorkspace.xhtml?faces-redirect=true";
     }
     
+    public String redirectToAPS(){
+        return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
+    }
 }

@@ -17,6 +17,7 @@
                 <p:menuitem value="Merline Airline" url="#{navigationBean.redirectToHome()}"></p:menuitem>
                 
                 <p:menuitem value="User Workspace" url="#{navigationBean.redirectToWorkplace()}" icon="ui-icon-home"></p:menuitem>
+                <p:menuitem value="Airline Planning System" url="#{navigationBean.redirectToAPS()}" icon="ui-icon-pencil"></p:menuitem>
                 <f:facet name="options">
                     <p:inputText style="margin-right:10px" placeholder="Search"/>
                     <p:commandButton action="#{navigationBean.toLogin()}" value="Login" rendered="#{not userBean.loggedIn}" icon="ui-icon-extlink"></p:commandButton>
