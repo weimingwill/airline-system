@@ -73,4 +73,12 @@ public class NavigationBean implements Serializable {
     public String redirectToAPS(){
         return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
     }
+    
+    public String toAddHub(){
+        return "/views/secured/aps/route/addHub.xhtml?faces-redirect=true";
+    }
+    
+    public String toCancelHub(){
+        return "/views/secured/aps/route/cancelHub.xhtml?faces-redirect=true";
+    }
 }
