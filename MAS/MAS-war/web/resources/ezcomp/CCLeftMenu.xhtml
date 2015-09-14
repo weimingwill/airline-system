@@ -19,19 +19,21 @@
                 </p:submenu>
                 <p:submenu label="Access Control">
                     <p:submenu label="User management">
-                        <p:menuitem  action="#{navigationController.redirectToCreateUser()}" value="create user"/>
-                        <p:menuitem value="Manage users"></p:menuitem>
+                        <p:menuitem  value="Create user" action="#{navigationController.redirectToCreateUser()}" />
+                        <p:menuitem  value="Assign user roles" action="#{navigationController.redirectToAssignUserRoles()}" />
+                        <p:menuitem value="View all users" action="#{navigationController.redirectToViewAllUsers()}" />
                     </p:submenu>
                     <p:submenu label="Role management">
-                        <p:menuitem value="Create role" action="#{navigationController.redirectToCreateRole()}"></p:menuitem>
-                        <p:menuitem value="Manage roles"></p:menuitem>   
+                        <p:menuitem value="Create role" action="#{navigationController.redirectToCreateRole()}"/>
+                        <p:menuitem value="Grant role permissions" action="#{navigationController.redirectToGrantRolePermissions()}"/>
+                        <p:menuitem value="View all roles" action="#{navigationController.redirectToViewAllRoles()}"/>
+
                     </p:submenu>                    
                     <p:submenu label="Permission management">
-                        <p:menuitem value="Create permission" action="#{navigationController.redirectToCreatePermission()}"></p:menuitem>
+                        <p:menuitem value="Create permission" action="#{navigationController.redirectToCreatePermission()}"/>
+                        <p:menuitem value="View all permissions" action="#{navigationController.redirectToViewAllPermission()}"/>
                     </p:submenu>             
-                    
-                    <p:menuitem action="#{navigationController.toAssignUserRole()}" value="Access control" />
-                        
+
                 </p:submenu>
             </p:panelMenu>
         </h:form>    

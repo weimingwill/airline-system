@@ -29,7 +29,7 @@ import javax.naming.NamingException;
 import managedbean.application.NavigationController;
 import mas.common.entity.SystemMsg;
 import mas.common.session.SystemUserSessionLocal;
-import mas.common.util.exception.NoMessageException;
+import mas.common.util.exception.NoSuchMessageException;
 
 /**
  *
@@ -135,7 +135,7 @@ public class InternalMsgController implements Serializable {
     public void readUnreadMessages(ActionEvent event) {
         try {
             systemUserSession.readUnreadMessages(username);
-        } catch (NoMessageException e) {
+        } catch (NoSuchMessageException e) {
         }
     }
 

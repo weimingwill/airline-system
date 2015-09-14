@@ -29,7 +29,7 @@ public class PermissionSession implements PermissionSessionLocal {
     
     @Override
     public List<Permission> getPermissionsByModule(String module) {
-        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.module = :inModule");
+        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.systemModule = :inModule");
         query.setParameter("inModule", module);
         List<Permission> permissions = null;
         try {
@@ -47,8 +47,8 @@ public class PermissionSession implements PermissionSessionLocal {
     }
 
     @Override
-    public Permission getPermissions(String module, String title) {
-        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.module = :inModule AND p.title = :inTitle");
+    public Permission getPermission(String module, String title) {
+        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.systemModule = :inModule AND p.title = :inTitle");
         query.setParameter("inModule", module);
         query.setParameter("inTitle", title);
         Permission permission = null;
@@ -64,7 +64,7 @@ public class PermissionSession implements PermissionSessionLocal {
     public void createPermission(String module, String title) throws ExistSuchPermissionException{
         verifyPermission(module, title);
         Permission permission = new Permission();
-        permission.setModule(module);
+        permission.setSystemModule(module);
         permission.setTitle(title);
         entityManager.persist(permission);
         entityManager.flush();
@@ -74,10 +74,27 @@ public class PermissionSession implements PermissionSessionLocal {
     public void verifyPermission(String module, String title) throws ExistSuchPermissionException {
         List<Permission> permissions = getAllPermissions();
         for (Permission permission : permissions) {
-            if (permission.getModule().equals(module) && permission.getTitle().equals(title)) {
+            if (permission.getSystemModule().equals(module) && permission.getTitle().equals(title)) {
                 throw new ExistSuchPermissionException(UserMsg.EXIST_PERMISSION_ERROR);
             }
         }
     }
 
+    @Override
+    public Permission getPermissionById(Long permissionId) {
+        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.permissionId = :inId");
+        query.setParameter("inId", permissionId);
+        Permission permission = null;
+        try {
+            permission = (Permission) query.getSingleResult();
+        } catch (NoResultException ex) {
+            ex.printStackTrace();
+        }
+        return permission;        
+    }
+
+//    @Override
+//    public Permission deletePermission(String roleName, String module, String title) throws NoSuchPermissionException {
+//        
+//    }
 }

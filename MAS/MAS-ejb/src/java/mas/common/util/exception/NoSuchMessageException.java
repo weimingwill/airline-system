@@ -9,13 +9,13 @@ package mas.common.util.exception;
  *
  * @author winga_000
  */
-public class NoMessageException extends Exception {
+public class NoSuchMessageException extends Exception {
 
     /**
      * Creates a new instance of <code>NoMessageException</code> without detail
      * message.
      */
-    public NoMessageException() {
+    public NoSuchMessageException() {
     }
 
     /**
@@ -24,7 +24,7 @@ public class NoMessageException extends Exception {
      *
      * @param msg the detail message.
      */
-    public NoMessageException(String msg) {
+    public NoSuchMessageException(String msg) {
         super(msg);
     }
 }

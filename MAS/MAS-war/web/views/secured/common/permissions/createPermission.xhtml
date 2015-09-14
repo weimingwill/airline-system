@@ -13,9 +13,9 @@
         <h:form>
             <h:panelGrid columns="2" columnClasses="label, value">
                 <p:outputLabel value="Permission module: "/>
-                <p:inputText binding="#{module}"/>
+                <p:inputText required="true" requiredMessage="Permission module is required" binding="#{module}"/>
                 <p:outputLabel value="Permission title: "/>
-                <p:inputText binding="#{title}"/>
+                <p:inputText required="true" requiredMessage="Permission title is required" binding="#{title}"/>
                 <p:commandButton action="#{permissionController.createPermission(module.value, title.value)}" value="create" update="messages"/>
             </h:panelGrid>
         </h:form>

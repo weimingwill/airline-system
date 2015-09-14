@@ -27,7 +27,7 @@ public class SystemMsg implements Serializable {
     private Long systemMsgId;
     private String message;
     private boolean readed;
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "systemMsgs")
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "systemMsgs")
     private List<SystemUser> systemUsers = new ArrayList<SystemUser>();    
 
     public void create(String message){

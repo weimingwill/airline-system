@@ -62,9 +62,6 @@ public class NavigationController implements Serializable {
     }
 
     //Access control
-    public String toAssignUserRole() {
-        return "/views/secured/common/access_control/assignUserRole.xhtml";
-    }
 
     public String redirectToWorkspace() {
         return "/views/secured/common/users/userWorkspace.xhtml" + REDIRECT;
@@ -82,7 +79,21 @@ public class NavigationController implements Serializable {
     public String redirectToCreateUser() {
         return "/views/secured/common/users/createUser.xhtml" + REDIRECT;
     }
+    
+    public String toAssignUserRole() {
+        return "/views/secured/common/users/assignUserRole.xhtml";
+    }    
 
+    public String redirectToAssignUserRoles() {
+        return "/views/secured/common/users/assignUserRoles.xhtml" + REDIRECT;
+    }
+    public String toViewAllUsers() {
+        return "/views/secured/common/users/viewAllUsers.xhtml";
+    }
+    public String redirectToViewAllUsers() {
+        return "/views/secured/common/users/viewAllUsers.xhtml" + REDIRECT;
+    }
+    
     //Role
     public String toCreateRole() {
         return "/views/secured/common/roles/createRole.xhtml";
@@ -92,6 +103,23 @@ public class NavigationController implements Serializable {
         return "/views/secured/common/roles/createRole.xhtml" + REDIRECT;
     }
 
+    public String toViewAllRoles() {
+        return "/views/secured/common/roles/viewAllRoles.xhtml";
+    }
+
+    public String redirectToViewAllRoles() {
+        return "/views/secured/common/roles/viewAllRoles.xhtml" + REDIRECT;
+    }
+
+    public String toGrantRolePermissions() {
+        return "/views/secured/common/roles/grantRolePermissions.xhtml";
+    }
+
+    public String redirectToGrantRolePermissions() {
+        return "/views/secured/common/roles/grantRolePermissions.xhtml" + REDIRECT;
+    }
+    
+
     //Permission
     public String toCreatePermission() {
         return "/views/secured/common/permissions/createPermission.xhtml";
@@ -99,5 +127,13 @@ public class NavigationController implements Serializable {
 
     public String redirectToCreatePermission() {
         return "/views/secured/common/permissions/createPermission.xhtml?" + REDIRECT;
+    }
+
+    public String toViewAllPermissions() {
+        return "/views/secured/common/permissions/viewAllPermissions.xhtml";
+    }
+
+    public String redirectToViewAllPermission() {
+        return "/views/secured/common/permissions/viewAllPermissions.xhtml?" + REDIRECT;
     }
 }

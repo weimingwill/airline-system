@@ -18,7 +18,8 @@
                     <p:inputText binding="#{roleName}"/>
                 </p:row>
 
-                <p:selectCheckboxMenu id="menu" binding="#{permissions}" label="Permissions"
+                
+                <p:selectCheckboxMenu id="menu" binding="#{permissions}" label="Select permissions"
                                       filter="true" filterMatchMode="startsWith" panelStyle="width:250px"> 
                     <f:selectItems value="#{permissionController.permissionList}" />
                     <p:ajax update ="display"/>

@@ -20,6 +20,7 @@ import mas.common.entity.SystemUser;
 import mas.common.util.exception.NoSuchPermissionException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.exception.ExistSuchRoleException;
+import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserMsg;
 
 /**
@@ -28,7 +29,7 @@ import mas.common.util.helper.UserMsg;
  */
 @Stateless
 public class RoleSession implements RoleSessionLocal {
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -36,10 +37,9 @@ public class RoleSession implements RoleSessionLocal {
     private SystemUserSessionLocal systemUsersSession;
     @EJB
     private PermissionSessionLocal permissionSession;
-    
-    
+
     @Override
-    public SystemRole getSystemRolesByName(String roleName) throws NoSuchRoleException{
+    public SystemRole getSystemRoleByName(String roleName) throws NoSuchRoleException {
         Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName");
         query.setParameter("inRoleName", roleName);
         SystemRole systemRole = null;
@@ -51,60 +51,62 @@ public class RoleSession implements RoleSessionLocal {
         return systemRole;
     }
 
+//    @Override
+//    public List<SystemRole> getSystemRolesByName(String roleName) throws NoSuchRoleException {
+//        Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName");
+//        query.setParameter("inRoleName", roleName);
+//        SystemRole systemRole = null;
+//        try {
+//            systemRole = (SystemRole) query.getResultList();
+//        } catch (NoResultException ex) {
+//            throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
+//        }
+//        return systemRole;
+//    }
     @Override
-    public List<Permission> getRolePermissions(String roleName) 
-            throws NoSuchRoleException, NoSuchPermissionException{
-        try{
-            SystemRole role = getSystemRolesByName(roleName);
-            List<Permission> permissions = null;
-            permissions = role.getPermissions();
+    public List<Permission> getRolePermissions(String roleName) throws NoSuchRoleException{
+        SystemRole role = getSystemRoleByName(roleName);
+        if (role == null) {
+            throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
+        } else {
+            List<Permission> permissions = role.getPermissions();
             return permissions;
-        } catch(NullPointerException e){
-            throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
         }
     }
 
     @Override
     public List<SystemRole> getAllRoles() {
         Query query = entityManager.createQuery("SELECT r FROM SystemRole r");
-        return query.getResultList();        
+        return query.getResultList();
     }
-    
+
     @Override
-    public List<SystemRole> getUserRoles(String username) {
-        SystemUser user = systemUsersSession.getSystemUserByName(username);
-        return user.getSystemRoles();
-    }
-    
-    @Override
-    public void createSystemRole(String roleName, String[] permissions) throws ExistSuchRoleException{
+    public void createSystemRole(String roleName, String[] permissions) throws ExistSuchRoleException {
         verifySystemRole(roleName);
         SystemRole role = new SystemRole();
-        List<Permission> permissionList = new ArrayList<Permission>();
+        role.create(roleName);
         for (String permission : permissions) {
             String module = permission.split(":")[0];
             String title = permission.split(":")[1];
-            Permission p = permissionSession.getPermissions(module, title);
-            permissionList.add(p);
+            Permission p = permissionSession.getPermission(module, title);
+            role.getPermissions().add(p);
+            p.getSystemRoles().add(role);
         }
-        role.setRoleName(roleName);
-        role.setPermissions(permissionList);
         entityManager.persist(role);
         entityManager.flush();
     }
 
     @Override
-    public void assignRoleToPermissions(String roleName, Map<String, ArrayList<String>> permissions) throws NoSuchRoleException{
-        SystemRole systemRole = getSystemRolesByName(roleName);
+    public void assignRoleToPermissions(String roleName, Map<String, ArrayList<String>> permissions) throws NoSuchRoleException {
+        SystemRole systemRole = getSystemRoleByName(roleName);
         String module;
         List<Permission> permissionList = new ArrayList<Permission>();
-        
         for (Map.Entry<String, ArrayList<String>> entry : permissions.entrySet()) {
             module = entry.getKey();
-            for(String title: entry.getValue()){
+            for (String title : entry.getValue()) {
                 try {
-                    permissionList.add(permissionSession.getPermissions(module,title));
-                } catch (Exception e){
+                    permissionList.add(permissionSession.getPermission(module, title));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -122,26 +124,30 @@ public class RoleSession implements RoleSessionLocal {
             }
         }
     }
-    
+
     @Override
-    public void assignUserToRole(String username, ArrayList<String> roles) {
-        SystemUser user = systemUsersSession.getSystemUserByName(username);
-        List<SystemRole> roleList = new ArrayList<SystemRole>();
-        for(String roleName: roles){
-            try{
-                roleList.add(getSystemRolesByName(roleName));
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        user.setSystemRoles(roleList);
-        entityManager.merge(user);
-    }
-    
-    @Override
-    public List<String> getRolesNameList(){
+    public List<String> getRolesNameList() {
         Query query = entityManager.createQuery("SELECT r.roleName FROM SystemRole r");
         return (List<String>) query.getResultList();
-    }        
+    }
+
+    @Override
+    public List<RolePermission> getAllRolesPermission() {
+        List<RolePermission> rolePermissionList = new ArrayList<>();
+        for (SystemRole role : getAllRoles()) {
+            for (Permission permission : role.getPermissions()) {
+                RolePermission rolePermission = new RolePermission(role.getRoleName(), permission.getPermissionName());
+                rolePermissionList.add(rolePermission);
+            }
+        }
+        return rolePermissionList;
+    }
+
+    @Override
+    public void grantRolePermissions(SystemRole role, List<Permission> permissions) {
+        SystemRole systemRole = entityManager.find(SystemRole.class, role.getSystemRoleId());
+        systemRole.setPermissions(permissions);
+        entityManager.merge(systemRole);
+    }
 
 }

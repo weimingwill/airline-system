@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.Local;
 import mas.common.entity.Permission;
 import mas.common.util.exception.ExistSuchPermissionException;
+import mas.common.util.exception.NoSuchPermissionException;
 
 /**
  *
@@ -17,8 +18,10 @@ import mas.common.util.exception.ExistSuchPermissionException;
 @Local
 public interface PermissionSessionLocal {
     public List<Permission> getAllPermissions();
-    public Permission getPermissions(String module, String title);
+    public Permission getPermissionById(Long permissionId);
+    public Permission getPermission(String module, String title);
     public List<Permission> getPermissionsByModule(String module);
     public void createPermission(String module, String title) throws ExistSuchPermissionException;
     public void verifyPermission(String module, String title) throws ExistSuchPermissionException;
+//    public Permission deletePermission(String roleName, String module, String title) throws NoSuchPermissionException;
 }

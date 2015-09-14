@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/WorkspaceTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">
+        View all permissions
+    </ui:define>
+
+    <ui:define name="content">
+        <p:dataTable value="#{permissionController.allPermissions}" var="permission">
+            <p:column headerText="Module">
+                <p:outputLabel value="#{permission.systemModule}" />
+            </p:column>
+            
+            <p:column headerText="Title">
+                <p:outputLabel value="#{permission.title}" />
+            </p:column>
+<!--            
+            <p:column headerText="Function">
+                <p:commandLink value="Delete"  update="messages"/>
+            </p:column>-->
+        </p:dataTable>
+    </ui:define>
+
+</ui:composition>

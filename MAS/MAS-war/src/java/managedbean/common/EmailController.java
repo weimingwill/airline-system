@@ -5,6 +5,7 @@
  */
 package managedbean.common;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
@@ -24,7 +25,7 @@ import util.security.SMTPAuthenticator;
  */
 @Named(value = "emailController")
 @RequestScoped
-public class EmailController {
+public class EmailController implements Serializable{
 
     private String emailServerName;
     private String sender;

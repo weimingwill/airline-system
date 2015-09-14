@@ -24,6 +24,7 @@ import mas.common.session.RoleSessionLocal;
 import mas.common.session.SystemUserSessionLocal;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.exception.ExistSuchRoleException;
+import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserMsg;
 
 /**
@@ -43,11 +44,15 @@ public class RoleController implements Serializable {
     private SystemUserSessionLocal systemUserSession;
     @EJB
     private RoleSessionLocal roleSession;
-    
+
     private String username;
+    private List<SystemRole> roleList;
+    private List<SystemRole> roles;
     private List<String> roleNameList;
-    private String[] selectedRoleNames;
-    private List<Permission> rolePermissions;
+//    private List<Permission> rolePermissions;
+    private List<Permission> permissionList;
+    private List<RolePermission> rolePermissionList;
+    private SystemRole selectedRole;
 
     /**
      * Creates a new instance of roleController
@@ -61,6 +66,7 @@ public class RoleController implements Serializable {
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         this.username = (String) sessionMap.get("username");
         setRoleNameList();
+        roles = getAllRoles();
     }
 
     public String createSystemRole(String roleName, String[] permissions) {
@@ -79,10 +85,6 @@ public class RoleController implements Serializable {
         return roleSession.getAllRoles();
     }
 
-    public List<SystemRole> getUserRoles() {
-        return roleSession.getUserRoles(username);
-    }
-
     private void setRoleNameList() {
         List<SystemRole> roles = getAllRoles();
         roleNameList = new ArrayList<String>();
@@ -91,24 +93,27 @@ public class RoleController implements Serializable {
         }
     }
 
-    public void updateRolePermission(String roleName, Map<String, ArrayList<String>> permissions) throws NoSuchRoleException {
-        roleSession.assignRoleToPermissions(roleName, permissions);
+    public void onRoleSelected() throws NoSuchRoleException {
+        permissionList = roleSession.getRolePermissions(selectedRole.getRoleName());
     }
 
-    public void updateUserRole(String username, ArrayList<String> roles) {
-        roleSession.assignUserToRole(username, roles);
+    public String grantRolePermissions() {
+        roleSession.grantRolePermissions(selectedRole, permissionList);
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.getExternalContext().getFlash().setKeepMessages(true);
+        context.addMessage(null, new FacesMessage("Successful", "Grant role: " + selectedRole.getRoleName() + " with permissions"));
+        return navigationController.redirectToGrantRolePermissions();
     }
-
-    public void displayUserRoles(String username) {
-        roleSession.getUserRoles(username);
+    
+    public List<Permission> getRolePermissionsByRoleName(String roleName) throws NoSuchRoleException{
+        return roleSession.getRolePermissions(roleName);
     }
-
-
+    
     //Getter and Setter
     public UserController getUserController() {
         return userController;
-    }    
-    
+    }
+
     public void setUserController(UserController userController) {
         this.userController = userController;
     }
@@ -129,21 +134,44 @@ public class RoleController implements Serializable {
         this.roleNameList = roleNameList;
     }
 
-    public String[] getSelectedRoleNames() {
-        return selectedRoleNames;
+    public List<SystemRole> getRoles() {
+        return roles;
     }
 
-    public void setSelectedRoleNames(String[] selectedRoleNames) {
-        this.selectedRoleNames = selectedRoleNames;
+    public void setRoles(List<SystemRole> roles) {
+        this.roles = roles;
     }
 
-    public List<Permission> getRolePermissions() {
-        return rolePermissions;
+    public List<SystemRole> getRoleList() {
+        return roleList;
     }
 
-    public void setRolePermissions(List<Permission> rolePermissions) {
-        this.rolePermissions = rolePermissions;
+    public void setRoleList(List<SystemRole> roleList) {
+        this.roleList = roleList;
+    }
+
+    public List<RolePermission> getRolePermissionList() {
+        return rolePermissionList;
+    }
+
+    public void setRolePermissionList(List<RolePermission> rolePermissionList) {
+        this.rolePermissionList = rolePermissionList;
+    }
+
+    public SystemRole getSelectedRole() {
+        return selectedRole;
+    }
+
+    public void setSelectedRole(SystemRole selectedRole) {
+        this.selectedRole = selectedRole;
+    }
+
+    public List<Permission> getPermissionList() {
+        return permissionList;
     }
     
+    public void setPermissionList(List<Permission> permissionList) {
+        this.permissionList = permissionList;
+    }
 
 }

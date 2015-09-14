@@ -85,7 +85,7 @@ public class PermissionController implements Serializable {
         List<Permission> permissions = getAllPermissions();
         permissionList = new ArrayList<String>();
         for (Permission permission : permissions) {
-            String p = permission.getModule() + ":" + permission.getTitle();
+            String p = permission.getSystemModule()+ ":" + permission.getTitle();
             permissionList.add(p);
         }
     }

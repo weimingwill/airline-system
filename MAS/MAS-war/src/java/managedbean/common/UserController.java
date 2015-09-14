@@ -26,6 +26,12 @@ import mas.common.util.helper.UserMsg;
 import util.helper.CountdownHelper;
 import util.security.CryptographicHelper;
 import botdetect.web.jsf.JsfCaptcha;
+import java.util.List;
+import mas.common.entity.SystemRole;
+import mas.common.session.RoleSessionLocal;
+import mas.common.util.exception.NoSuchRoleException;
+import mas.common.util.helper.RolePermission;
+import mas.common.util.helper.UserRolePermission;
 
 /**
  *
@@ -41,9 +47,11 @@ public class UserController implements Serializable {
     private NavigationController navigationController;
     @Inject
     private EmailController emailController;
-
+    
     @EJB
     private SystemUserSessionLocal systemUserSession;
+    @EJB
+    private RoleSessionLocal roleSession;
     private String username;
     private String password;
     private String email;
@@ -53,7 +61,12 @@ public class UserController implements Serializable {
     private boolean loggedIn;
     private JsfCaptcha captcha;
     private String captchaCode;
-   private int countTrial = 0;
+    private int countTrial = 0;
+    private List<SystemUser> userList;
+    private SystemUser selectedUser;
+    private List<SystemRole> roleList;
+    private List<UserRolePermission> userRolePermissionList;
+    private List<RolePermission> rolePermissionList;
 
     public UserController() {
     }
@@ -80,11 +93,11 @@ public class UserController implements Serializable {
             if (countTrial > 2) {
                 systemUserSession.lockUser(username);
                 System.out.println("locked user " + username);
-                
+
                 countdownHelper.unlockUserCountDown(1800 * 1000, username); //Unlock user after 30mins
                 countTrial = 0;
             }
-            
+
             System.out.println("Count Trial: " + countTrial);
             return navigationController.toLogin();
         }
@@ -116,9 +129,9 @@ public class UserController implements Serializable {
             String receiver = "Weimin g<a0119405@u.nus.edu>";
             emailController.sendEmail(subject, mailContent, receiver);
             systemUserSession.setResetDigest(email, resetDigest);
-            
+
             countdownHelper.expireResetPasswoordCountDown(1800 * 1000, email);//Auto expire password after 30mins
-            
+
             FacesContext context = FacesContext.getCurrentInstance();
             context.getExternalContext().getFlash().setKeepMessages(true);
             context.addMessage(null, new FacesMessage("Successful", "Please check your email to reset password"));
@@ -166,17 +179,31 @@ public class UserController implements Serializable {
         }
     }
 
-    public String createUser() throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException {
+//    public String createUser(String username, String password, String[] roles) throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException, NoSuchRoleException {
+//    public String createUser(String username, String password, List<SystemRole> roles) throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException, NoSuchRoleException {
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.getExternalContext().getFlash().setKeepMessages(true);
+//        try {
+//            CryptographicHelper cryptographicHelper = new CryptographicHelper();
+//            password = cryptographicHelper.doMD5Hashing(password);
+//            systemUserSession.createUser(username, password, roles);
+//            context.getExternalContext().getFlash().setKeepMessages(true);
+//            context.addMessage(null, new FacesMessage("Successful", "New user " + username + " is created successfuly!"));
+//            return navigationController.redirectToCreateUser();
+//        } catch (ExistSuchUserException ex) {
+//            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
+//            return navigationController.toCreateUser();
+//        }
+//    }
+    public String createUser(String username, String password) throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException, NoSuchRoleException {
         FacesContext context = FacesContext.getCurrentInstance();
         context.getExternalContext().getFlash().setKeepMessages(true);
         try {
             CryptographicHelper cryptographicHelper = new CryptographicHelper();
-            newPassword = cryptographicHelper.doMD5Hashing(newPassword);
-            systemUserSession.createUser(newUsername, newPassword);
+            password = cryptographicHelper.doMD5Hashing(password);
+            systemUserSession.createUser(username, password, roleList);
             context.getExternalContext().getFlash().setKeepMessages(true);
-            context.addMessage(null, new FacesMessage("Successful", "New user " + newUsername + " is created successfuly!"));
-            newUsername = null;
-            newPassword = null;
+            context.addMessage(null, new FacesMessage("Successful", "New user " + username + " is created successfuly!"));
             return navigationController.redirectToCreateUser();
         } catch (ExistSuchUserException ex) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
@@ -184,6 +211,31 @@ public class UserController implements Serializable {
         }
     }
 
+    public List<SystemUser> getAllUsers() {
+        return systemUserSession.getAllUsers();
+    }
+
+    public String assignUserRoles() {
+        systemUserSession.assignUserToRole(selectedUser, roleList);
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage("Successful", "Assign user:" + selectedUser.getUsername() + " with roles successuflly"));
+        return navigationController.redirectToAssignUserRoles();
+    }
+    
+    public List<SystemRole> getUserRoles() throws NoSuchUsernameException {
+        return systemUserSession.getUserRoles(username);
+    }
+    
+    public List<SystemRole> getUserRolesByUsername(String username) throws NoSuchUsernameException{
+        return systemUserSession.getUserRoles(username);
+    }
+
+    public void onUserSelected() throws NoSuchUsernameException {
+        rolePermissionList = systemUserSession.getUserRolesPermissions(selectedUser.getUsername());
+        roleList = systemUserSession.getUserRoles(selectedUser.getUsername());
+    }
+    
+    
 //
 //Getter and Setter
 //
@@ -254,7 +306,7 @@ public class UserController implements Serializable {
     public void setEmailController(EmailController emailController) {
         this.emailController = emailController;
     }
-    
+
     public String getNewUsername() {
         return newUsername;
     }
@@ -295,5 +347,45 @@ public class UserController implements Serializable {
         this.captchaCode = captchaCode;
     }
 
+    public List<SystemRole> getRoleList() {
+        return roleList;
+    }
 
+    public void setRoleList(List<SystemRole> roleList) {
+        this.roleList = roleList;
+    }
+
+    public List<SystemUser> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(List<SystemUser> userList) {
+        this.userList = userList;
+    }
+
+    public SystemUser getSelectedUser() {
+        return selectedUser;
+    }
+
+    public void setSelectedUser(SystemUser selectedUser) {
+        this.selectedUser = selectedUser;
+    }
+
+    public List<UserRolePermission> getUserRolePermissionList() {
+        return userRolePermissionList;
+    }
+
+    public void setUserRolePermissionList(List<UserRolePermission> userRolePermissionList) {
+        this.userRolePermissionList = userRolePermissionList;
+    }
+
+    public List<RolePermission> getRolePermissionList() {
+        return rolePermissionList;
+    }
+
+    public void setRolePermissionList(List<RolePermission> rolePermissionList) {
+        this.rolePermissionList = rolePermissionList;
+    }
+    
+    
 }

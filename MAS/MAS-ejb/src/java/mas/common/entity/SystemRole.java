@@ -26,11 +26,15 @@ public class SystemRole implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long systemRoleId;
     private String roleName;
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "systemRoles")
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "systemRoles")
     private List<SystemUser> systemUsers = new ArrayList<SystemUser>();   
-    @ManyToMany(cascade={CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private List<Permission> permissions = new ArrayList<Permission>();
 
+    public void create(String roleName){
+        this.setRoleName(roleName);
+    }
+    
     public Long getSystemRoleId() {
         return systemRoleId;
     }

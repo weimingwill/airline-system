@@ -13,25 +13,26 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import mas.common.entity.Permission;
 import mas.common.entity.SystemMsg;
+import mas.common.entity.SystemRole;
 import mas.common.entity.SystemUser;
 import mas.common.util.exception.NoSuchEmailException;
 import mas.common.util.helper.UserMsg;
 import mas.common.util.exception.InvalidPasswordException;
-import mas.common.util.exception.NoMessageException;
+import mas.common.util.exception.NoSuchMessageException;
 import mas.common.util.exception.NoSuchUsernameException;
 import mas.common.util.exception.ExistSuchUserException;
+import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.helper.CreateToken;
+import mas.common.util.helper.RolePermission;
+import mas.common.util.helper.UserRolePermission;
 
-/**
- *
- * @author Lewis
- */
 @Stateless
 public class SystemUserSession implements SystemUserSessionLocal {
 
     @EJB
-    private PermissionSessionLocal accessControlSession;
+    private RoleSessionLocal roleSession;
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
@@ -70,7 +71,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     public void verifySystemUserPassword(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException {
         SystemUser user = getSystemUserByName(username);
         if (user == null) {
-            throw new NoSuchUsernameException(UserMsg.WRONG_USERNAME_ERROR);
+            throw new NoSuchUsernameException(UserMsg.NO_SUCH_USERNAME_ERROR);
         } else {
             String userPassword = user.getPassword();
             if (!userPassword.equals(inputPassword)) {
@@ -90,10 +91,10 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public List<SystemMsg> getUserUnreadMessages(String username) throws NoSuchUsernameException{
+    public List<SystemMsg> getUserUnreadMessages(String username) throws NoSuchUsernameException {
         SystemUser user = getSystemUserByName(username);
         if (user == null) {
-            throw new NoSuchUsernameException(UserMsg.WRONG_USERNAME_ERROR);
+            throw new NoSuchUsernameException(UserMsg.NO_SUCH_USERNAME_ERROR);
         } else {
             List<SystemMsg> unreadMsg = new ArrayList<SystemMsg>();
             try {
@@ -110,15 +111,15 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void readUnreadMessages(String username) throws NoMessageException{
+    public void readUnreadMessages(String username) throws NoSuchMessageException {
         List<SystemMsg> unreadMsgs = getUserMessages(username);
-        if(unreadMsgs == null){
-            throw new NoMessageException(UserMsg.NO_MESSAGE_ERROR);
+        if (unreadMsgs == null) {
+            throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
         } else {
             for (SystemMsg msg : unreadMsgs) {
                 msg.setReaded(true);
                 entityManager.merge(msg);
-            }            
+            }
         }
     }
 
@@ -136,15 +137,49 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void createUser(String username, String password) throws ExistSuchUserException {
+    public void createUser(String username, String password, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException {
         SystemUser user = getSystemUserByName(username);
         if (user != null) {
-            throw new ExistSuchUserException(UserMsg.WRONG_USERNAME_EXIST_ERROR);
+            throw new ExistSuchUserException(UserMsg.EXIST_USERNAME_ERROR);
         } else {
             SystemUser systemUser = new SystemUser();
-            systemUser.setUsername(username);
-            systemUser.setPassword(password);
+            systemUser.create(username, password);
+            for (SystemRole role : roles) {
+                SystemRole r = roleSession.getSystemRoleByName(role.getRoleName());
+                systemUser.getSystemRoles().add(r);
+                r.getSystemUsers().add(systemUser);
+            }
             entityManager.persist(systemUser);
+        }
+    }
+
+    @Override
+    public void assignUserToRole(List<SystemUser> users, List<SystemRole> roles) {
+        for (SystemUser user : users) {
+            SystemUser systemUser = entityManager.find(SystemUser.class, user.getSystemUserId());
+            for (SystemRole role : roles) {
+                SystemRole systemRole = entityManager.find(SystemRole.class, role.getSystemRoleId());
+                systemUser.getSystemRoles().add(systemRole);
+                systemRole.getSystemUsers().add(systemUser);
+            }
+            entityManager.merge(systemUser);
+        }
+    }
+
+    @Override
+    public void assignUserToRole(SystemUser user, List<SystemRole> roles) {
+        SystemUser systemUser = entityManager.find(SystemUser.class, user.getSystemUserId());
+        systemUser.setSystemRoles(roles);
+        entityManager.merge(systemUser);
+    }
+
+    @Override
+    public List<SystemRole> getUserRoles(String username) throws NoSuchUsernameException {
+        SystemUser user = getSystemUserByName(username);
+        if (user == null) {
+            throw new NoSuchUsernameException(UserMsg.NO_SUCH_USERNAME_ERROR);
+        } else {
+            return user.getSystemRoles();
         }
     }
 
@@ -178,7 +213,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void expireResetPassword(String email) {       
+    public void expireResetPassword(String email) {
         SystemUser user = getSystemUserByEmail(email);
         String resetDigest = CreateToken.createNewToken();
         user.setResetDigest(resetDigest);
@@ -198,4 +233,38 @@ public class SystemUserSession implements SystemUserSessionLocal {
         user.setLocked(false);
         entityManager.merge(user);
     }
+
+    @Override
+    public List<UserRolePermission> getAllUsersRolesPermissions() {
+        List<UserRolePermission> userRolePermissionList = new ArrayList<UserRolePermission>();
+        for (SystemUser user : getAllUsers()) {
+            for (SystemRole role : user.getSystemRoles()) {
+                for (Permission permission : role.getPermissions()) {
+                    UserRolePermission userRolePermission
+                            = new UserRolePermission(user.getUsername(), role.getRoleName(), permission.getPermissionName());
+                    userRolePermissionList.add(userRolePermission);
+                }
+            }
+        }
+        return userRolePermissionList;
+    }
+
+    @Override
+    public List<RolePermission> getUserRolesPermissions(String username) throws NoSuchUsernameException {
+        SystemUser user = getSystemUserByName(username);
+        List<RolePermission> rolePermissionList = new ArrayList<RolePermission>();
+        if (user == null) {
+            throw new NoSuchUsernameException(UserMsg.NO_SUCH_USERNAME_ERROR);
+        } else {
+            for (SystemRole role : user.getSystemRoles()) {
+                for (Permission permission : role.getPermissions()) {
+                    RolePermission rolePermission
+                            = new RolePermission(role.getRoleName(), permission.getPermissionName());
+                    rolePermissionList.add(rolePermission);
+                }
+            }
+        }
+        return rolePermissionList;
+    }
+
 }

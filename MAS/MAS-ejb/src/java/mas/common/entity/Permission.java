@@ -26,11 +26,15 @@ public class Permission implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long permissionId;
-    private String module;
+    private String systemModule;
     private String title;
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "permissions")
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "permissions")
     private List<SystemRole> systemRoles = new ArrayList<SystemRole>();   
 
+    public String getPermissionName(){
+        return this.systemModule + ":" + this.title;
+    }
+    
     public Long getPermissionId() {
         return permissionId;
     }
@@ -64,15 +68,14 @@ public class Permission implements Serializable {
         return "mas.common.entity.Access[ permissionId=" + permissionId + " ]";
     }
 
-    public String getModule() {
-        return module;
+    public String getSystemModule() {
+        return systemModule;
     }
 
-    public void setModule(String module) {
-        this.module = module;
+    public void setSystemModule(String systemModule) {
+        this.systemModule = systemModule;
     }
-
-
+    
     /**
      * @return the title
      */

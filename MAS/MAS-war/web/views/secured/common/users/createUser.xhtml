@@ -4,7 +4,8 @@
                 template="./../../../../template/WorkspaceTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="botDetectFacelets">
 
     <ui:define name="title">
         Create new user
@@ -15,23 +16,42 @@
             <h:panelGrid columns="2" columnClasses="label, value">
 
                 <h:outputText value="Username"/>
-                <p:inputText required="true" requiredMessage="Please enter username" id="username" value="#{userController.newUsername}"/>
+
+                <p:inputText required="true" requiredMessage="Please enter username" id="username" binding="#{newUsername}"/>
                 <h:outputText value="Password"/>
-                <p:password required="true" requiredMessage="Please enter password" id="password" value="#{userController.newPassword}"/>
+                <p:password required="true" requiredMessage="Please enter password" id="password" binding="#{newPassword}"/>
+                <h:outputText value="Select Roles"/>
+                <ui:remove>
+                    <p:selectCheckboxMenu id="menu" binding="#{roleNames}" label="Roles"
+                                          filter="true" filterMatchMode="startsWith" panelStyle="width:300px"> 
+                        <f:selectItems value="#{roleController.roleNameList}" />
+                        <p:ajax update ="display"/>
+                    </p:selectCheckboxMenu>
 
-                <p:selectCheckboxMenu id="menu" binding="#{roles}" label="Roles"
-                                      filter="true" filterMatchMode="startsWith" panelStyle="width:250px"> 
-                    <f:selectItems value="#{roleController.roleNameList}" />
-                    <p:ajax update ="display"/>
-                </p:selectCheckboxMenu>
+                    <p:outputPanel id="display" style="width:250px;">
+                        <p:dataList value="#{roleNames.value}" var="roleName" emptyMessage="No permission selected">
+                            #{roleName}
+                        </p:dataList>
+                    </p:outputPanel>
+                </ui:remove>
 
-                <p:outputPanel id="display" style="width:250px;">
-                    <p:dataList value="#{roles.value}" var="role" emptyMessage="No role selected">
-                        #{role}
-                    </p:dataList>
-                </p:outputPanel>
-                
-                <p:commandButton action="#{userController.createUser()}" value="Create" update="messages"/>    
+
+                <p:selectManyMenu id="advanced" value="#{userController.roleList}" converter="roleConverter"
+                                  var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:200px;">
+                    <f:selectItems value="#{roleController.roles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
+                    <!--<p:ajax update="display"/>-->
+                    <p:column>
+                        <h:outputText value="#{role.roleName}"  />
+                    </p:column>
+                </p:selectManyMenu>
+
+                <ui:remove>
+                    <p:commandButton action="#{userController.createUser(newUsername.value, newPassword.value, roleList.value)}" value="Create" update="messages"/>      
+                    <p:outputLabel id="display" value="#{roleList.value}" />
+                </ui:remove>  
+
+                <p:commandButton action="#{userController.createUser(newUsername.value, newPassword.value)}" value="Create" update="messages"/>    
+
             </h:panelGrid>
         </h:form>
     </ui:define>
