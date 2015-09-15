@@ -39,14 +39,14 @@ public class RoleSession implements RoleSessionLocal {
     private PermissionSessionLocal permissionSession;
 
     @Override
-    public SystemRole getSystemRoleByName(String roleName) throws NoSuchRoleException {
+    public SystemRole getSystemRoleByName(String roleName){
         Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName");
         query.setParameter("inRoleName", roleName);
         SystemRole systemRole = null;
         try {
             systemRole = (SystemRole) query.getSingleResult();
         } catch (NoResultException ex) {
-            throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
+            systemRole = null;
         }
         return systemRole;
     }
@@ -86,33 +86,14 @@ public class RoleSession implements RoleSessionLocal {
         SystemRole role = new SystemRole();
         role.create(roleName);
         for (String permission : permissions) {
-            String module = permission.split(":")[0];
-            String title = permission.split(":")[1];
-            Permission p = permissionSession.getPermission(module, title);
+            String system = permission.split(":")[0];
+            String module = permission.split(":")[1];
+            Permission p = permissionSession.getPermission(system, module);
             role.getPermissions().add(p);
             p.getSystemRoles().add(role);
         }
         entityManager.persist(role);
         entityManager.flush();
-    }
-
-    @Override
-    public void assignRoleToPermissions(String roleName, Map<String, ArrayList<String>> permissions) throws NoSuchRoleException {
-        SystemRole systemRole = getSystemRoleByName(roleName);
-        String module;
-        List<Permission> permissionList = new ArrayList<Permission>();
-        for (Map.Entry<String, ArrayList<String>> entry : permissions.entrySet()) {
-            module = entry.getKey();
-            for (String title : entry.getValue()) {
-                try {
-                    permissionList.add(permissionSession.getPermission(module, title));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        systemRole.setPermissions(permissionList);
-        entityManager.merge(systemRole);
     }
 
     @Override

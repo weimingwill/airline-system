@@ -26,13 +26,14 @@ public class Permission implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long permissionId;
+    private String system;
     private String systemModule;
-    private String title;
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "permissions")
-    private List<SystemRole> systemRoles = new ArrayList<SystemRole>();   
+    private boolean deleted;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "permissions")
+    private List<SystemRole> systemRoles = new ArrayList<>();   
 
     public String getPermissionName(){
-        return this.systemModule + ":" + this.title;
+        return this.system + ":" + this.systemModule;
     }
     
     public Long getPermissionId() {
@@ -75,27 +76,29 @@ public class Permission implements Serializable {
     public void setSystemModule(String systemModule) {
         this.systemModule = systemModule;
     }
+
+    public String getSystem() {
+        return system;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
+    }
     
-    /**
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * @param title the title to set
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public List<SystemRole> getSystemRoles() {
         return systemRoles;
     }
 
     public void setSystemRoles(List<SystemRole> systemRoles) {
         this.systemRoles = systemRoles;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
     
     

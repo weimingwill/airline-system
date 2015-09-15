@@ -31,14 +31,16 @@ public class SystemUser implements Serializable {
     private String resetDigest;
     private boolean locked;
     private boolean activated;
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    private boolean deleted;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemRole> systemRoles = new ArrayList<SystemRole>();
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH} , fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
     private List<SystemMsg> systemMsgs = new ArrayList<SystemMsg>();
     
-    public void create(String username, String password){
+    public void create(String username, String password, String email){
         this.setUsername(username);
         this.setPassword(password);
+        this.setEmail(email);
     }
 
     public Long getSystemUserId() {
@@ -150,4 +152,14 @@ public class SystemUser implements Serializable {
     public void setActivated(boolean activated) {
         this.activated = activated;
     }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    
 }

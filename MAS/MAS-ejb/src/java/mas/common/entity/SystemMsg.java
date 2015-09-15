@@ -27,7 +27,8 @@ public class SystemMsg implements Serializable {
     private Long systemMsgId;
     private String message;
     private boolean readed;
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "systemMsgs")
+    private boolean deleted;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "systemMsgs")
     private List<SystemUser> systemUsers = new ArrayList<SystemUser>();    
 
     public void create(String message){
@@ -91,5 +92,15 @@ public class SystemMsg implements Serializable {
     public String toString() {
         return "mas.common.entity.InternalMessage[ systemMsgId=" + systemMsgId + " ]";
     }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+    
+    
     
 }

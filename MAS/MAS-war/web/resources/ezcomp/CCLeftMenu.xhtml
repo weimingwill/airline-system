@@ -17,7 +17,7 @@
                     <p:menuitem action="#{navigationController.redirectToSendMessages()}" value="send message" />
                     <p:menuitem action="#{navigationController.redirectToViewMessages()}" value="view message (unread  #{internalMsgController.unreadMessagesNumber})" actionListener="#{internalMsgController.readUnreadMessages}"/>
                 </p:submenu>
-                <p:submenu label="Access Control">
+                <p:submenu label="Access Control" rendered="#{userController.hasRole('Admin') or userController.admin}">
                     <p:submenu label="User management">
                         <p:menuitem  value="Create user" action="#{navigationController.redirectToCreateUser()}" />
                         <p:menuitem  value="Assign user roles" action="#{navigationController.redirectToAssignUserRoles()}" />

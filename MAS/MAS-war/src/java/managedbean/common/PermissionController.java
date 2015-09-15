@@ -69,12 +69,12 @@ public class PermissionController implements Serializable {
         return permissionSession.getAllPermissions();
     }
     
-    public String createPermission(String module, String title) {
+    public String createPermission(String system, String systemModule) {
         FacesContext context = FacesContext.getCurrentInstance();
         context.getExternalContext().getFlash().setKeepMessages(true);
         try {
-            permissionSession.createPermission(module, title);
-            context.addMessage(null, new FacesMessage("Successful", "Create new permission: " + module + ":" + title + " successfully!"));
+            permissionSession.createPermission(system, systemModule);
+            context.addMessage(null, new FacesMessage("Successful", "Create new permission: " + system + ":" + systemModule + " successfully!"));
         } catch (ExistSuchPermissionException ex) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", UserMsg.EXIST_PERMISSION_ERROR));
         }
@@ -85,7 +85,7 @@ public class PermissionController implements Serializable {
         List<Permission> permissions = getAllPermissions();
         permissionList = new ArrayList<String>();
         for (Permission permission : permissions) {
-            String p = permission.getSystemModule()+ ":" + permission.getTitle();
+            String p = permission.getPermissionName();
             permissionList.add(p);
         }
     }

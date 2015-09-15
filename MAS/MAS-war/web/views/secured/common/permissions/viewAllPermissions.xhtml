@@ -10,12 +10,12 @@
 
     <ui:define name="content">
         <p:dataTable value="#{permissionController.allPermissions}" var="permission">
-            <p:column headerText="Module">
-                <p:outputLabel value="#{permission.systemModule}" />
+            <p:column headerText="System">
+                <p:outputLabel value="#{permission.system}" />
             </p:column>
             
-            <p:column headerText="Title">
-                <p:outputLabel value="#{permission.title}" />
+            <p:column headerText="Module">
+                <p:outputLabel value="#{permission.systemModule}" />
             </p:column>
 <!--            
             <p:column headerText="Function">

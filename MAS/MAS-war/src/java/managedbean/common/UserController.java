@@ -126,7 +126,8 @@ public class UserController implements Serializable {
             String resetDigest = createNewToken();
             String subject = "Reset Password";
             String mailContent = navigationController.toUnsecuredUsersFolder() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + resetDigest + "&email=" + email;
-            String receiver = "Weimin g<a0119405@u.nus.edu>";
+            //String receiver = "Weiming<a0119405@u.nus.edu>";
+            String receiver = email;
             emailController.sendEmail(subject, mailContent, receiver);
             systemUserSession.setResetDigest(email, resetDigest);
 
@@ -195,13 +196,13 @@ public class UserController implements Serializable {
 //            return navigationController.toCreateUser();
 //        }
 //    }
-    public String createUser(String username, String password) throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException, NoSuchRoleException {
+    public String createUser(String username, String password, String email) throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException, NoSuchRoleException {
         FacesContext context = FacesContext.getCurrentInstance();
         context.getExternalContext().getFlash().setKeepMessages(true);
         try {
             CryptographicHelper cryptographicHelper = new CryptographicHelper();
             password = cryptographicHelper.doMD5Hashing(password);
-            systemUserSession.createUser(username, password, roleList);
+            systemUserSession.createUser(username, password, email, roleList);
             context.getExternalContext().getFlash().setKeepMessages(true);
             context.addMessage(null, new FacesMessage("Successful", "New user " + username + " is created successfuly!"));
             return navigationController.redirectToCreateUser();
@@ -234,6 +235,15 @@ public class UserController implements Serializable {
         rolePermissionList = systemUserSession.getUserRolesPermissions(selectedUser.getUsername());
         roleList = systemUserSession.getUserRoles(selectedUser.getUsername());
     }
+    
+    public boolean hasRole(String roleName) throws NoSuchUsernameException, NoSuchRoleException{
+        return systemUserSession.hasRole(username, roleName);
+    }
+    
+    public boolean isAdmin(){
+        return systemUserSession.isAdmin(username);
+    }
+    
     
     
 //
@@ -386,6 +396,4 @@ public class UserController implements Serializable {
     public void setRolePermissionList(List<RolePermission> rolePermissionList) {
         this.rolePermissionList = rolePermissionList;
     }
-    
-    
 }

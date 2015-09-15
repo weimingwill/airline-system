@@ -7,6 +7,8 @@ package mas.common.session;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -137,13 +139,13 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void createUser(String username, String password, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException {
+    public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException {
         SystemUser user = getSystemUserByName(username);
         if (user != null) {
             throw new ExistSuchUserException(UserMsg.EXIST_USERNAME_ERROR);
         } else {
             SystemUser systemUser = new SystemUser();
-            systemUser.create(username, password);
+            systemUser.create(username, password, email);
             for (SystemRole role : roles) {
                 SystemRole r = roleSession.getSystemRoleByName(role.getRoleName());
                 systemUser.getSystemRoles().add(r);
@@ -265,6 +267,31 @@ public class SystemUserSession implements SystemUserSessionLocal {
             }
         }
         return rolePermissionList;
+    }
+
+    @Override
+    public boolean hasRole(String username, String roleName) {
+        SystemRole role = roleSession.getSystemRoleByName(roleName);
+        List<SystemRole> roles;
+        try {
+            roles = getUserRoles(username);
+        } catch (NoSuchUsernameException ex) {
+            return false;
+        }
+        if(role == null || roles == null){
+            return false;
+        }
+        return roles.contains(role);
+    }
+
+    @Override
+    public boolean isAdmin(String username) {
+        SystemUser user = getSystemUserByName(username);
+        if(user == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

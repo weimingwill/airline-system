@@ -16,23 +16,23 @@
             <p:dashboard id="board" model="#{dashboardViewController.model}">
                 <p:ajax event="reorder" listener="#{dashboardView.handleReorder}" update="messages" />
 
-                <p:panel id="aps" header="Airline Planning System">
+                <p:panel id="aps" header="Airline Planning System" rendered="#{userController.hasRole('Fleet planner')}">
                     <h:outputText value="APS Content" />
                 </p:panel>
 
-                <p:panel id="ais" header="Airline Inventory System">
+                <p:panel id="ais" header="Airline Inventory System" rendered="#{userController.hasRole('Inventory Manager')}">
                     <h:outputText value="AIS Content" />
                 </p:panel>
 
-                <p:panel id="apos" header="Airline Operation System">
+                <p:panel id="apos" header="Airline Operation System" rendered="#{userController.hasRole('Cabin Crew')}">
                     <h:outputText value="APOS Content"  />
                 </p:panel>
 
-                <p:panel id="ads" header="Airline Distribution System">
+                <p:panel id="ads" header="Airline Distribution System" rendered="#{userController.hasRole('IT Staff')}">
                     <h:outputText value="ADS Content" />
                 </p:panel>
 
-                <p:panel id="crm" header="Customer Relationship Management System">
+                <p:panel id="crm" header="Customer Relationship Management System" rendered="#{userController.hasRole('Operations Analyst')}">
                     <h:outputText value="CRM Content" />
                 </p:panel>
             </p:dashboard>

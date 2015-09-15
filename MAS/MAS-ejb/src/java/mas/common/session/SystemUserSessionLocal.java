@@ -32,7 +32,7 @@ public interface SystemUserSessionLocal {
     public void readUnreadMessages(String username)  throws NoSuchMessageException;
     public List<SystemUser> getAllUsers();
     public List<SystemUser> getAllOtherUsers(String uresetPasswordsername);
-    public void createUser(String username, String password, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException;
+    public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException;
 //    public void createUser(String username, String password, String[] roleNames) throws ExistSuchUserException, NoSuchRoleException;
     public List<String> getSystemUsernameList();
     public void verifySystemUserEmail(String email) throws NoSuchEmailException;
@@ -47,4 +47,6 @@ public interface SystemUserSessionLocal {
     public List<UserRolePermission> getAllUsersRolesPermissions();
     public List<RolePermission> getUserRolesPermissions(String username) throws NoSuchUsernameException;
     public List<SystemRole> getUserRoles(String username) throws NoSuchUsernameException;
+    public boolean hasRole(String username, String roleName) throws NoSuchUsernameException, NoSuchRoleException;
+    public boolean isAdmin(String username);
 }
