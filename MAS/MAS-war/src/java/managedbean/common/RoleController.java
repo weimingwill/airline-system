@@ -87,7 +87,7 @@ public class RoleController implements Serializable {
 
     private void setRoleNameList() {
         List<SystemRole> roles = getAllRoles();
-        roleNameList = new ArrayList<String>();
+        roleNameList = new ArrayList<>();
         for (SystemRole role : roles) {
             roleNameList.add(role.getRoleName());
         }

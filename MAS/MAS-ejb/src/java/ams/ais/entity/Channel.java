@@ -16,20 +16,19 @@ import javax.persistence.Id;
  * @author winga_000
  */
 @Entity
-public class TicketFamily implements Serializable {
+public class Channel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ticketFamilyId;
+    private Long channelId;
     private String name;
-    private int seatQty;
 
-    public Long getTicketFamilyId() {
-        return ticketFamilyId;
+    public Long getChannelId() {
+        return channelId;
     }
 
-    public void setTicketFamilyId(Long ticketFamilyId) {
-        this.ticketFamilyId = ticketFamilyId;
+    public void setChannelId(Long channelId) {
+        this.channelId = channelId;
     }
 
     public String getName() {
@@ -40,29 +39,22 @@ public class TicketFamily implements Serializable {
         this.name = name;
     }
 
-    public int getSeatQty() {
-        return seatQty;
-    }
 
-    public void setSeatQty(int seatQty) {
-        this.seatQty = seatQty;
-    }
-    
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (ticketFamilyId != null ? ticketFamilyId.hashCode() : 0);
+        hash += (channelId != null ? channelId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the ticketFamilyId fields are not set
-        if (!(object instanceof TicketFamily)) {
+        // TODO: Warning - this method won't work in the case the channelId fields are not set
+        if (!(object instanceof Channel)) {
             return false;
         }
-        TicketFamily other = (TicketFamily) object;
-        if ((this.ticketFamilyId == null && other.ticketFamilyId != null) || (this.ticketFamilyId != null && !this.ticketFamilyId.equals(other.ticketFamilyId))) {
+        Channel other = (Channel) object;
+        if ((this.channelId == null && other.channelId != null) || (this.channelId != null && !this.channelId.equals(other.channelId))) {
             return false;
         }
         return true;
@@ -70,7 +62,7 @@ public class TicketFamily implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ais.entity.TicketFamily[ ticketFamilyId=" + ticketFamilyId + " ]";
+        return "ams.ais.entity.Channel[ channelId=" + channelId + " ]";
     }
     
 }
