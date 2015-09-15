@@ -6,10 +6,16 @@
 package ams.ais.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -17,13 +23,15 @@ import javax.persistence.Id;
  */
 @Entity
 public class CabinClass implements Serializable {
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cabinClassId;
     private String name;
     private int seatQty;
-    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")
+    private List<TicketFamily> ticketFamilys = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Rule> rules = new ArrayList<>();
     
     public Long getCabinClassId() {
         return cabinClassId;
@@ -48,6 +56,24 @@ public class CabinClass implements Serializable {
     public void setSeatQty(int seatQty) {
         this.seatQty = seatQty;
     }
+
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
+    }
+
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
+    }
+
+    public List<Rule> getRules() {
+        return rules;
+    }
+
+    public void setRules(List<Rule> rules) {
+        this.rules = rules;
+    }
+    
+    
 
     @Override
     public int hashCode() {

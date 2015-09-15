@@ -6,10 +6,15 @@
 package ams.ais.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 /**
  *
@@ -22,8 +27,28 @@ public class Rule implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ruleId;
     private String name;
-    private float value;
+    private float ruleValue;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rules")
+    private List<CabinClass> cabinClasses = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rules")
+    private List<TicketFamily> ticketFamilys = new ArrayList<>();
 
+    public List<CabinClass> getCabinClasses() {
+        return cabinClasses;
+    }
+
+    public void setCabinClasses(List<CabinClass> cabinClasses) {
+        this.cabinClasses = cabinClasses;
+    }
+
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
+    }
+
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
+    }
+    
     public Long getRuleId() {
         return ruleId;
     }
@@ -40,13 +65,15 @@ public class Rule implements Serializable {
         this.name = name;
     }
 
-    public float getValue() {
-        return value;
+    public float getRuleValue() {
+        return ruleValue;
     }
 
-    public void setValue(float value) {
-        this.value = value;
+    public void setRuleValue(float ruleValue) {
+        this.ruleValue = ruleValue;
     }
+
+
 
     
 

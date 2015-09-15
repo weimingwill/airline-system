@@ -134,6 +134,17 @@ public class NavigationController implements Serializable {
     }
 
     public String redirectToViewAllPermission() {
-        return "/views/secured/common/permissions/viewAllPermissions.xhtml?" + REDIRECT;
+        return "/views/secured/common/permissions/viewAllPermissions.xhtml" + REDIRECT;
+    }
+    
+    //AIS
+        //Product Design
+    public String redirectToCreateCabinClass() {
+        return "/views/secured/ais/product_design/createCabinClass.xhtml" + REDIRECT;
+    }
+    
+        //Pricing
+    public String redirectToPricing(){
+        return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT ;
     }
 }

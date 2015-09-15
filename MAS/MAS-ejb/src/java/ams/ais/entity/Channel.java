@@ -6,10 +6,15 @@
 package ams.ais.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 /**
  *
@@ -22,7 +27,9 @@ public class Channel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long channelId;
     private String name;
-
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "channels")
+    private List<BookingClass> bookingClasses = new ArrayList<>();
+            
     public Long getChannelId() {
         return channelId;
     }
@@ -39,6 +46,15 @@ public class Channel implements Serializable {
         this.name = name;
     }
 
+    public List<BookingClass> getBookingClasses() {
+        return bookingClasses;
+    }
+
+    public void setBookingClasses(List<BookingClass> bookingClasses) {
+        this.bookingClasses = bookingClasses;
+    }
+
+    
 
     @Override
     public int hashCode() {

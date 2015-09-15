@@ -33,9 +33,9 @@ public class SystemUser implements Serializable {
     private boolean activated;
     private boolean deleted;
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<SystemRole> systemRoles = new ArrayList<SystemRole>();
+    private List<SystemRole> systemRoles = new ArrayList<>();
     @ManyToMany(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
-    private List<SystemMsg> systemMsgs = new ArrayList<SystemMsg>();
+    private List<SystemMsg> systemMsgs = new ArrayList<>();
     
     public void create(String username, String password, String email){
         this.setUsername(username);

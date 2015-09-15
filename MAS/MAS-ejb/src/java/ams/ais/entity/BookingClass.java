@@ -6,10 +6,16 @@
 package ams.ais.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -20,20 +26,41 @@ public class BookingClass implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long BookingClassId;
+    private Long bookingClassId;
     private String name;
     private int seatQty;
     private float price;
     private float priceCoefficient;
     private int demand;
     private String status; 
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private TicketFamily ticketFamily = new TicketFamily();
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Channel> channels = new ArrayList<>();
 
     public Long getBookingClassId() {
-        return BookingClassId;
+        return bookingClassId;
     }
 
-    public void setBookingClassId(Long BookingClassId) {
-        this.BookingClassId = BookingClassId;
+    public void setBookingClassId(Long bookingClassId) {
+        this.bookingClassId = bookingClassId;
+    }
+
+
+    public TicketFamily getTicketFamily() {
+        return ticketFamily;
+    }
+
+    public void setTicketFamily(TicketFamily ticketFamily) {
+        this.ticketFamily = ticketFamily;
+    }
+
+    public List<Channel> getChannels() {
+        return channels;
+    }
+
+    public void setChannels(List<Channel> channels) {
+        this.channels = channels;
     }
 
     public String getName() {
@@ -91,18 +118,18 @@ public class BookingClass implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (BookingClassId != null ? BookingClassId.hashCode() : 0);
+        hash += (bookingClassId != null ? bookingClassId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the BookingClassId fields are not set
+        // TODO: Warning - this method won't work in the case the bookingClassId fields are not set
         if (!(object instanceof BookingClass)) {
             return false;
         }
         BookingClass other = (BookingClass) object;
-        if ((this.BookingClassId == null && other.BookingClassId != null) || (this.BookingClassId != null && !this.BookingClassId.equals(other.BookingClassId))) {
+        if ((this.bookingClassId == null && other.bookingClassId != null) || (this.bookingClassId != null && !this.bookingClassId.equals(other.bookingClassId))) {
             return false;
         }
         return true;
@@ -110,7 +137,7 @@ public class BookingClass implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ais.entity.BookingClass[ BookingClassId=" + BookingClassId + " ]";
+        return "ams.ais.entity.BookingClass[ bookingClassId=" + bookingClassId + " ]";
     }
     
 }

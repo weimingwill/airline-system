@@ -33,7 +33,13 @@
                         <p:menuitem value="Create permission" action="#{navigationController.redirectToCreatePermission()}"/>
                         <p:menuitem value="View all permissions" action="#{navigationController.redirectToViewAllPermission()}"/>
                     </p:submenu>             
-
+                </p:submenu>
+                <p:submenu label="Product Design">
+                    <p:menuitem value="Create Cabin Class" action="#{navigationController.redirectToCreateCabinClass()}" />
+                    
+                </p:submenu>
+                <p:submenu label="Pricing">
+                    <p:menuitem value="Pricing" action="#{navigationController.redirectToPricing()}" />
                 </p:submenu>
             </p:panelMenu>
         </h:form>    

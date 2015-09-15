@@ -6,10 +6,17 @@
 package ams.ais.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -23,7 +30,13 @@ public class TicketFamily implements Serializable {
     private Long ticketFamilyId;
     private String name;
     private int seatQty;
-
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private CabinClass cabinClass = new CabinClass();
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
+    private List<BookingClass> bookingClasses  = new ArrayList<>();    
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Rule> rules = new ArrayList<>();
+    
     public Long getTicketFamilyId() {
         return ticketFamilyId;
     }
@@ -46,6 +59,30 @@ public class TicketFamily implements Serializable {
 
     public void setSeatQty(int seatQty) {
         this.seatQty = seatQty;
+    }
+
+    public CabinClass getCabinClass() {
+        return cabinClass;
+    }
+
+    public void setCabinClass(CabinClass cabinClass) {
+        this.cabinClass = cabinClass;
+    }
+
+    public List<BookingClass> getBookingClasses() {
+        return bookingClasses;
+    }
+
+    public void setBookingClasses(List<BookingClass> bookingClasses) {
+        this.bookingClasses = bookingClasses;
+    }
+
+    public List<Rule> getRules() {
+        return rules;
+    }
+
+    public void setRules(List<Rule> rules) {
+        this.rules = rules;
     }
     
     @Override
