@@ -6,11 +6,12 @@
 package managedbean.common;
 
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -36,7 +37,7 @@ import mas.common.util.exception.NoSuchMessageException;
  * @author winga_000
  */
 @Named(value = "internalMsgController")
-@SessionScoped
+@RequestScoped
 public class InternalMsgController implements Serializable {
 
     @EJB
@@ -44,7 +45,7 @@ public class InternalMsgController implements Serializable {
     private String message;
     private String receiver;
     private String username;
-    private String[] receivers; 
+    private String[] receivers;
 
     @Inject
     private UserController userController;
@@ -52,16 +53,16 @@ public class InternalMsgController implements Serializable {
     private NavigationController navigationController;
 
     //Initialization
-    public InternalMsgController() {
+    public InternalMsgController() {   
+    }
+
+    @PostConstruct
+    public void init() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         this.username = (String) sessionMap.get("username");
-    }
-
-    public List<SystemMsg> getUserMessages() {
-        return systemUserSession.getUserMessages(username);
-    }
-
+    }    
+    
     public String saveMessage(String message, String[] receivers) {
         String messageContent = String.valueOf(message);
         try {
@@ -115,21 +116,20 @@ public class InternalMsgController implements Serializable {
         }
     }
 
-    public List<SystemMsg> getUneadMessages() {
-        try {
-            return systemUserSession.getUserMessages(username);
-        } catch (NullPointerException e) {
-            return null;
-        }
+    public List<SystemMsg> getUserMessages() {
+        return systemUserSession.getUserMessages(username);
+    }
+    
+    public List<SystemMsg> getUnreadMessages() {
+        return systemUserSession.getUserMessages(username);
     }
 
     public int getUnreadMessagesNumber() {
-        try {
-            systemUserSession.getUserUnreadMessages(username);
-            return systemUserSession.getUserUnreadMessages(username).size();
-        } catch (Exception e) {
+        List<SystemMsg> systemMsgs = systemUserSession.getUserUnreadMessages(username);
+        if (systemMsgs == null) {
             return 0;
         }
+        return systemMsgs.size();
     }
 
     public void readUnreadMessages(ActionEvent event) {

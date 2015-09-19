@@ -22,11 +22,11 @@ import mas.common.util.helper.RolePermission;
  */
 @Local
 public interface RoleSessionLocal {
-    public SystemRole getSystemRoleByName(String roleName);
+    public SystemRole getSystemRoleByName(String roleName) throws NoSuchRoleException;
 //    public List<SystemRole> getSystemRolesByName(String roleName) throws NoSuchRoleException;
     public List<SystemRole> getAllRoles();
-    public List<Permission> getRolePermissions(String roleName) throws NoSuchRoleException;
-    public void createSystemRole(String roleName, String[] permissions) throws ExistSuchRoleException;
+    public List<Permission> getRolePermissions(String roleName);
+    public void createSystemRole(String roleName, String[] permissions) throws ExistSuchRoleException, NoSuchPermissionException;
     public void verifySystemRole(String roleName) throws ExistSuchRoleException;
 //    public void assignRoleToPermissions(String roleName, Map<String, ArrayList<String>> permissions) throws NoSuchRoleException;
 //    public void assignUserToRole(String username, ArrayList<String> roles);

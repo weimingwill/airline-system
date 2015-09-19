@@ -14,6 +14,8 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import mas.common.entity.SystemUser;
 import mas.common.session.SystemUserSessionLocal;
+import mas.common.util.exception.NoSuchUsernameException;
+import mas.common.util.helper.UserMsg;
 
 /**
  *
@@ -31,6 +33,8 @@ public class UserConverter implements Converter {
                 return systemUserSession.getSystemUserByName(value);
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
+            } catch (NoSuchUsernameException ex) {
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", UserMsg.NO_SUCH_USERNAME_ERROR));
             }
         } else {
             return null;

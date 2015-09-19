@@ -47,7 +47,7 @@ public class UserController implements Serializable {
     private NavigationController navigationController;
     @Inject
     private EmailController emailController;
-    
+
     @EJB
     private SystemUserSessionLocal systemUserSession;
     @EJB
@@ -76,10 +76,16 @@ public class UserController implements Serializable {
 //        boolean isHuman = captcha.validate(captchaCode);
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-        if (systemUserSession.getSystemUserByName(username).isLocked()) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Your account has been locked, please reset password or wait 30mins to try again"));
+        try {
+            if (systemUserSession.getSystemUserByName(username).isLocked()) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Your account has been locked, please reset password or wait 30mins to try again"));
+                return navigationController.toLogin();
+            }
+        } catch (NoSuchUsernameException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
             return navigationController.toLogin();
         }
+
 //        if (!isHuman) {
 //            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Captcha code entered is incorrect"));
 //            return navigationController.toLogin();
@@ -144,7 +150,7 @@ public class UserController implements Serializable {
         }
     }
 
-    public String resetPassword() throws NoSuchEmailException {
+    public String resetPassword() {
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
@@ -152,32 +158,28 @@ public class UserController implements Serializable {
         Map<String, String> params = externalContext.getRequestParameterMap();
         String userEmail = params.get("email");
         String resetDigest = params.get("resetDigest");
-        SystemUser user = systemUserSession.getSystemUserByEmail(userEmail);
-        if (userEmail == null || resetDigest == null || user == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "You are not authorised to reset password. Send reset email again"));
-            return navigationController.toPasswordResetSendEmail() + "?faces-redirect=true";
-        } else if (!user.getResetDigest().equals(resetDigest)) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Password reset expired. Send reset email again"));
-            return navigationController.toPasswordResetSendEmail() + "?faces-redirect=true";
+        try {
+            systemUserSession.verifySystemUserEmail(userEmail);
+            SystemUser user = systemUserSession.getSystemUserByEmail(userEmail);
+            if (resetDigest == null) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "You are not authorised to reset password. Send reset email again"));
+            } else if (!user.getResetDigest().equals(resetDigest)) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Password reset expired. Send reset email again"));
+            }
+            systemUserSession.resetPassword(userEmail, cryptographicHelper.doMD5Hashing(newPassword));
+            systemUserSession.expireResetPassword(email);//expire reset digest if it has been used;
+            newPassword = null;
+            context.addMessage(null, new FacesMessage("Successful",
+                    "Password reset successfully, you can login with new password now"));
+        } catch (NoSuchEmailException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error", "You are not authorised to reset password. Send reset email again"));
         }
-        systemUserSession.resetPassword(userEmail, cryptographicHelper.doMD5Hashing(newPassword));
-        systemUserSession.expireResetPassword(email);//expire reset digest if it has been used;
-        newPassword = null;
-        context.addMessage(null, new FacesMessage("Successful", "Password reset successfully, you can login with new password now"));
-        return navigationController.toLogin() + "?faces-redirect=true";
+        return navigationController.redirectToPasswordResetSendEmail();
     }
 
     public String createNewToken() {
         return CreateToken.createNewToken();
-    }
-
-    public SystemUser getUserByEmail(String email) throws NoSuchEmailException {
-        SystemUser user = systemUserSession.getSystemUserByEmail(email);
-        if (user == null) {
-            throw new NoSuchEmailException();
-        } else {
-            return systemUserSession.getSystemUserByEmail(email);
-        }
     }
 
 //    public String createUser(String username, String password, String[] roles) throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException, NoSuchRoleException {
@@ -222,12 +224,12 @@ public class UserController implements Serializable {
         context.addMessage(null, new FacesMessage("Successful", "Assign user:" + selectedUser.getUsername() + " with roles successuflly"));
         return navigationController.redirectToAssignUserRoles();
     }
-    
+
     public List<SystemRole> getUserRoles() throws NoSuchUsernameException {
         return systemUserSession.getUserRoles(username);
     }
-    
-    public List<SystemRole> getUserRolesByUsername(String username) throws NoSuchUsernameException{
+
+    public List<SystemRole> getUserRolesByUsername(String username) throws NoSuchUsernameException {
         return systemUserSession.getUserRoles(username);
     }
 
@@ -235,17 +237,19 @@ public class UserController implements Serializable {
         rolePermissionList = systemUserSession.getUserRolesPermissions(selectedUser.getUsername());
         roleList = systemUserSession.getUserRoles(selectedUser.getUsername());
     }
-    
-    public boolean hasRole(String roleName) throws NoSuchUsernameException, NoSuchRoleException{
+
+    public boolean hasRole(String roleName) {
         return systemUserSession.hasRole(username, roleName);
     }
-    
-    public boolean isAdmin(){
+
+    public boolean isAdmin() {
         return systemUserSession.isAdmin(username);
     }
-    
-    
-    
+
+    public SystemUser getUserByEmail(String email) throws NoSuchEmailException {
+        return systemUserSession.getSystemUserByEmail(email);
+    }
+
 //
 //Getter and Setter
 //

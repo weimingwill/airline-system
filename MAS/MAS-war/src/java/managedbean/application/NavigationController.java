@@ -57,6 +57,10 @@ public class NavigationController implements Serializable {
         return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml";
     }
 
+    public String redirectToPasswordResetSendEmail(){
+        return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml" + REDIRECT;
+    }
+    
     public String toUnsecuredUsersFolder() {
         return "http://localhost:8080/MAS-war/views/unsecured/common/users/";
     }

@@ -5,6 +5,8 @@
  */
 package util.converter;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -14,6 +16,7 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import mas.common.entity.Permission;
 import mas.common.session.PermissionSessionLocal;
+import mas.common.util.exception.NoSuchPermissionException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.helper.UserMsg;
 
@@ -33,6 +36,8 @@ public class PermissionConverter implements Converter {
                 return permissionSession.getPermissionById(Long.parseLong(value));
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
+            } catch (NoSuchPermissionException ex) {
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", UserMsg.NO_PERMISSION_ERROR));
             }
         } else {
             return null;

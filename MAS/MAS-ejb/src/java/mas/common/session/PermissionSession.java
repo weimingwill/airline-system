@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import mas.common.entity.Permission;
 import mas.common.util.exception.ExistSuchPermissionException;
+import mas.common.util.exception.NoSuchPermissionException;
 import mas.common.util.helper.UserMsg;
 
 /**
@@ -28,14 +29,14 @@ public class PermissionSession implements PermissionSessionLocal {
     private EntityManager entityManager;
     
     @Override
-    public List<Permission> getPermissionsByModule(String system) {
+    public List<Permission> getPermissionsByModule(String system) throws NoSuchPermissionException{
         Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.system = :inSystem");
         query.setParameter("inSystem", system);
         List<Permission> permissions = null;
         try {
             permissions = (List<Permission>) query.getResultList();
         } catch (NoResultException ex) {
-            ex.printStackTrace();
+            throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
         }
         return permissions;
     }
@@ -47,7 +48,7 @@ public class PermissionSession implements PermissionSessionLocal {
     }
 
     @Override
-    public Permission getPermission(String system, String systemModule) {
+    public Permission getPermission(String system, String systemModule) throws NoSuchPermissionException{
         Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.system = :inSystem AND p.systemModule = :inModule");
         query.setParameter("inSystem", system);
         query.setParameter("inModule", systemModule);
@@ -55,7 +56,7 @@ public class PermissionSession implements PermissionSessionLocal {
         try {
             permission = (Permission) query.getSingleResult();
         } catch (NoResultException ex) {
-            ex.printStackTrace();
+            throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
         }
         return permission;
     }
@@ -81,14 +82,14 @@ public class PermissionSession implements PermissionSessionLocal {
     }
 
     @Override
-    public Permission getPermissionById(Long permissionId) {
+    public Permission getPermissionById(Long permissionId) throws NoSuchPermissionException{
         Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.permissionId = :inId");
         query.setParameter("inId", permissionId);
         Permission permission = null;
         try {
             permission = (Permission) query.getSingleResult();
         } catch (NoResultException ex) {
-            ex.printStackTrace();
+            throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
         }
         return permission;        
     }

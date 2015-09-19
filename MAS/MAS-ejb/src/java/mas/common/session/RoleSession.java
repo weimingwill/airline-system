@@ -8,6 +8,8 @@ package mas.common.session;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -39,14 +41,14 @@ public class RoleSession implements RoleSessionLocal {
     private PermissionSessionLocal permissionSession;
 
     @Override
-    public SystemRole getSystemRoleByName(String roleName){
+    public SystemRole getSystemRoleByName(String roleName) throws NoSuchRoleException {
         Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName");
         query.setParameter("inRoleName", roleName);
         SystemRole systemRole = null;
         try {
             systemRole = (SystemRole) query.getSingleResult();
         } catch (NoResultException ex) {
-            systemRole = null;
+            throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
         }
         return systemRole;
     }
@@ -64,14 +66,15 @@ public class RoleSession implements RoleSessionLocal {
 //        return systemRole;
 //    }
     @Override
-    public List<Permission> getRolePermissions(String roleName) throws NoSuchRoleException{
-        SystemRole role = getSystemRoleByName(roleName);
-        if (role == null) {
-            throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
-        } else {
+    public List<Permission> getRolePermissions(String roleName) {
+        try {
+            SystemRole role = getSystemRoleByName(roleName);
             List<Permission> permissions = role.getPermissions();
             return permissions;
+        } catch (NoSuchRoleException ex) {
+            return null;
         }
+
     }
 
     @Override
@@ -81,7 +84,7 @@ public class RoleSession implements RoleSessionLocal {
     }
 
     @Override
-    public void createSystemRole(String roleName, String[] permissions) throws ExistSuchRoleException {
+    public void createSystemRole(String roleName, String[] permissions) throws ExistSuchRoleException, NoSuchPermissionException {
         verifySystemRole(roleName);
         SystemRole role = new SystemRole();
         role.create(roleName);

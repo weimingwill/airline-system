@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.servlet.Filter;
@@ -60,12 +62,9 @@ public class ResetPasswordFilter implements Filter {
         String email = request.getParameter("email");
         try {
             SystemUser user = userController.getUserByEmail(email);
-            
             if (resetDigest == null || !resetDigest.equals(user.getResetDigest())) {
                 rsp.sendRedirect(contextPath + navigationController.toPasswordResetSendEmail());
             }
-        } catch (NoResultException ex) {
-            rsp.sendRedirect(contextPath + navigationController.toPasswordResetSendEmail());
         } catch (NoSuchEmailException ex) {
             rsp.sendRedirect(contextPath + navigationController.toPasswordResetSendEmail());
         }

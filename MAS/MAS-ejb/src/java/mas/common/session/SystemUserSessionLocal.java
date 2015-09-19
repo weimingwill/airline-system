@@ -25,28 +25,31 @@ import mas.common.util.helper.UserRolePermission;
  */
 @Local
 public interface SystemUserSessionLocal {
-    public void verifySystemUserPassword(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException;
+    public SystemUser getSystemUserByName(String username) throws NoSuchUsernameException;    
+    public SystemUser getSystemUserByEmail(String email) throws NoSuchEmailException;
     public List<SystemMsg> getUserMessages(String username);
-    public List<SystemMsg> getUserUnreadMessages(String username) throws NoSuchUsernameException;
-    public SystemUser getSystemUserByName(String username);
+    public List<SystemMsg> getUserUnreadMessages(String username);    
+    public void verifySystemUserPassword(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException;
+    public void verifySystemUserEmail(String email) throws NoSuchEmailException;
+    
     public void readUnreadMessages(String username)  throws NoSuchMessageException;
     public List<SystemUser> getAllUsers();
     public List<SystemUser> getAllOtherUsers(String uresetPasswordsername);
     public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException;
 //    public void createUser(String username, String password, String[] roleNames) throws ExistSuchUserException, NoSuchRoleException;
     public List<String> getSystemUsernameList();
-    public void verifySystemUserEmail(String email) throws NoSuchEmailException;
-    public SystemUser getSystemUserByEmail(String email);
-    public void resetPassword(String email, String password) throws NoSuchEmailException ;
-    public void setResetDigest(String email, String resetDigest);
-    public void expireResetPassword(String email);
-    public void lockUser(String username);
-    public void unlockUser(String username);
+    
+    
+    public void resetPassword(String email, String password) throws NoSuchEmailException;
+    public void setResetDigest(String email, String resetDigest) throws NoSuchEmailException;
+    public void expireResetPassword(String email) throws NoSuchEmailException;
+    public void lockUser(String username) throws NoSuchUsernameException;
+    public void unlockUser(String username) throws NoSuchUsernameException;
     public void assignUserToRole(List<SystemUser> users, List<SystemRole> roles);
     public void assignUserToRole(SystemUser user, List<SystemRole> roles);
     public List<UserRolePermission> getAllUsersRolesPermissions();
-    public List<RolePermission> getUserRolesPermissions(String username) throws NoSuchUsernameException;
-    public List<SystemRole> getUserRoles(String username) throws NoSuchUsernameException;
-    public boolean hasRole(String username, String roleName) throws NoSuchUsernameException, NoSuchRoleException;
+    public List<RolePermission> getUserRolesPermissions(String username);
+    public List<SystemRole> getUserRoles(String username);
+    public boolean hasRole(String username, String roleName);
     public boolean isAdmin(String username);
 }

@@ -39,11 +39,9 @@ public class PermissionController implements Serializable {
     @EJB
     private PermissionSessionLocal permissionSession;
 
-    private String username;
     private List<String> permissionList;
     private String[] selectedPermissions;
     
-//    private List<SelectItem> usernameList;
 //    private List<SelectItem> roleNameList;
 //    private List<SelectItem> permissionList;
     
@@ -59,9 +57,6 @@ public class PermissionController implements Serializable {
 
     @PostConstruct
     public void init() {
-        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        Map<String, Object> sessionMap = externalContext.getSessionMap();
-        this.username = (String) sessionMap.get("username");
         setPermissionList();
     }
 
@@ -122,15 +117,6 @@ public class PermissionController implements Serializable {
     /**
      * @return the selectedUser
      */
-    
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
 
     public List<String> getPermissionList() {
         return permissionList;
