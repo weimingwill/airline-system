@@ -31,6 +31,7 @@ public class Route implements Serializable {
     private Long id;
     
     private ArrayList<String> allStops;
+    private String status;
     @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="routes")
     private Collection<Leg> legs = new ArrayList<Leg>();
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
@@ -159,6 +160,20 @@ public class Route implements Serializable {
      */
     public void setAllStops(ArrayList<String> allStops) {
         this.allStops = allStops;
+    }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
     }
     
 }
