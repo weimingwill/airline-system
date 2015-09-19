@@ -30,6 +30,10 @@ public class TicketFamily implements Serializable {
     private Long ticketFamilyId;
     private String name;
     private int seatQty;
+    private boolean deleted;
+
+   
+    
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private CabinClass cabinClass = new CabinClass();
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
@@ -60,7 +64,15 @@ public class TicketFamily implements Serializable {
     public void setSeatQty(int seatQty) {
         this.seatQty = seatQty;
     }
+    
+    public boolean isDeleted() {
+        return deleted;
+    }
 
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+    
     public CabinClass getCabinClass() {
         return cabinClass;
     }

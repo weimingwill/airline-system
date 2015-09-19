@@ -27,6 +27,10 @@ public class Channel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long channelId;
     private String name;
+    private boolean deleted;
+
+  
+    
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "channels")
     private List<BookingClass> bookingClasses = new ArrayList<>();
             
@@ -45,7 +49,15 @@ public class Channel implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public boolean isDeleted() {
+        return deleted;
+    }
 
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+    
     public List<BookingClass> getBookingClasses() {
         return bookingClasses;
     }
@@ -53,7 +65,8 @@ public class Channel implements Serializable {
     public void setBookingClasses(List<BookingClass> bookingClasses) {
         this.bookingClasses = bookingClasses;
     }
-
+    
+    
     
 
     @Override

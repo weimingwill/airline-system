@@ -28,6 +28,9 @@ public class Rule implements Serializable {
     private Long ruleId;
     private String name;
     private float ruleValue;
+    private boolean deleted;
+
+    
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rules")
     private List<CabinClass> cabinClasses = new ArrayList<>();
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rules")
@@ -72,8 +75,15 @@ public class Rule implements Serializable {
     public void setRuleValue(float ruleValue) {
         this.ruleValue = ruleValue;
     }
+    
+    
+    public boolean isDeleted() {
+        return deleted;
+    }
 
-
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
     
 

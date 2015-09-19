@@ -33,6 +33,10 @@ public class BookingClass implements Serializable {
     private float priceCoefficient;
     private int demand;
     private String status; 
+    private boolean deleted;
+
+   
+    
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private TicketFamily ticketFamily = new TicketFamily();
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
@@ -109,6 +113,14 @@ public class BookingClass implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
     
     

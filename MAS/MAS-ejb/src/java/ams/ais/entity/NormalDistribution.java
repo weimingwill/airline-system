@@ -23,7 +23,11 @@ public class NormalDistribution implements Serializable {
     private Long normalDistributionId;
     private float dev;
     private float p;
+    private boolean deleted;
 
+    
+
+    
     public Long getNormalDistributionId() {
         return normalDistributionId;
     }
@@ -47,7 +51,15 @@ public class NormalDistribution implements Serializable {
     public void setP(float p) {
         this.p = p;
     }
+    
+    
+    public boolean isDeleted() {
+        return deleted;
+    }
 
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
     @Override
     public int hashCode() {
