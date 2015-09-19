@@ -29,6 +29,8 @@ public class Route implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    private ArrayList<String> allStops;
     @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="routes")
     private Collection<Leg> legs = new ArrayList<Leg>();
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
@@ -143,6 +145,20 @@ public class Route implements Serializable {
      */
     public void setReturnRoute(Route returnRoute) {
         this.returnRoute = returnRoute;
+    }
+
+    /**
+     * @return the allStops
+     */
+    public ArrayList<String> getAllStops() {
+        return allStops;
+    }
+
+    /**
+     * @param allStops the allStops to set
+     */
+    public void setAllStops(ArrayList<String> allStops) {
+        this.allStops = allStops;
     }
     
 }
