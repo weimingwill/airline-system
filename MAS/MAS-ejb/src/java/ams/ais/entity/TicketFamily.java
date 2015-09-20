@@ -34,12 +34,13 @@ public class TicketFamily implements Serializable {
 
    
     
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private CabinClass cabinClass = new CabinClass();
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<BookingClass> bookingClasses  = new ArrayList<>();    
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<Rule> rules = new ArrayList<>();
+    
+   
     
     public Long getTicketFamilyId() {
         return ticketFamilyId;
@@ -73,14 +74,10 @@ public class TicketFamily implements Serializable {
         this.deleted = deleted;
     }
     
-    public CabinClass getCabinClass() {
-        return cabinClass;
-    }
+    
 
-    public void setCabinClass(CabinClass cabinClass) {
-        this.cabinClass = cabinClass;
-    }
-
+    
+    
     public List<BookingClass> getBookingClasses() {
         return bookingClasses;
     }

@@ -37,8 +37,7 @@ public class BookingClass implements Serializable {
 
    
     
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private TicketFamily ticketFamily = new TicketFamily();
+    
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<Channel> channels = new ArrayList<>();
 
@@ -51,13 +50,7 @@ public class BookingClass implements Serializable {
     }
 
 
-    public TicketFamily getTicketFamily() {
-        return ticketFamily;
-    }
-
-    public void setTicketFamily(TicketFamily ticketFamily) {
-        this.ticketFamily = ticketFamily;
-    }
+    
 
     public List<Channel> getChannels() {
         return channels;
