@@ -30,20 +30,13 @@ public class Route implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    private ArrayList<String> allStops;
     private String status;
     @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="routes")
     private Collection<Leg> legs = new ArrayList<Leg>();
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
     private Collection<Flight> flights = new ArrayList<Flight>();
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private Airport originAirport;
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private Airport destAirport;
     @OneToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Route returnRoute;
-    
-    
 
     public Long getId() {
         return id;
@@ -107,34 +100,6 @@ public class Route implements Serializable {
     }
 
     /**
-     * @return the originAirport
-     */
-    public Airport getOriginAirport() {
-        return originAirport;
-    }
-
-    /**
-     * @param originAirport the originAirport to set
-     */
-    public void setOriginAirport(Airport originAirport) {
-        this.originAirport = originAirport;
-    }
-
-    /**
-     * @return the destAirport
-     */
-    public Airport getDestAirport() {
-        return destAirport;
-    }
-
-    /**
-     * @param destAirport the destAirport to set
-     */
-    public void setDestAirport(Airport destAirport) {
-        this.destAirport = destAirport;
-    }
-
-    /**
      * @return the returnRoute
      */
     public Route getReturnRoute() {
@@ -146,20 +111,6 @@ public class Route implements Serializable {
      */
     public void setReturnRoute(Route returnRoute) {
         this.returnRoute = returnRoute;
-    }
-
-    /**
-     * @return the allStops
-     */
-    public ArrayList<String> getAllStops() {
-        return allStops;
-    }
-
-    /**
-     * @param allStops the allStops to set
-     */
-    public void setAllStops(ArrayList<String> allStops) {
-        this.allStops = allStops;
     }
 
     /**
