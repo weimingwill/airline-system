@@ -29,20 +29,9 @@ public class Rule implements Serializable {
     private String name;
     private float ruleValue;
     private boolean deleted;
-
     
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rules")
-    private List<CabinClass> cabinClasses = new ArrayList<>();
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rules")
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
-
-    public List<CabinClass> getCabinClasses() {
-        return cabinClasses;
-    }
-
-    public void setCabinClasses(List<CabinClass> cabinClasses) {
-        this.cabinClasses = cabinClasses;
-    }
 
     public List<TicketFamily> getTicketFamilys() {
         return ticketFamilys;
