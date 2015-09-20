@@ -16,12 +16,12 @@
                 <p:outputLabel value="Username:"/>
                 <p:outputLabel value=" #{username}" />
                 <h:outputText value="Email:"/>
-                <p:inputText required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" id="email" value="#{userController.userByUsername.email}" binding="#{newEmail}">
-                    <p:ajax update="messages" event="blur" />
+                <p:inputText required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" id="email" value="#{userController.email}" >
+                    <!--<p:ajax update="messages" event="blur" />-->
                     <f:validateRegex
                         pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
                 </p:inputText>
-                <p:commandButton value="edit" action="#{userController.updateUserProfile(newEmail.value)}" update="messages"/>
+                <p:commandButton value="edit" action="#{userController.updateUserProfile()}" update="messages"/>
             
 <!--            Click and show the contents in panel
             <h:panelGrid>

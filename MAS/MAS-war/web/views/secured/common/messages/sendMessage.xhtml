@@ -14,7 +14,7 @@
 
                 <p:selectCheckboxMenu id="menu" binding="#{receivers}" label="Receivers"
                                       filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
-                    <f:selectItems value="#{applicationBean.otherUsernames}" />
+                    <f:selectItems value="#{userController.allOtherUsernames}" />
                     <p:ajax update ="display"/>
                 </p:selectCheckboxMenu>
 

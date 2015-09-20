@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import managedbean.application.NavigationController;
-import managedbean.common.UserController;
+import managedbean.common.LoginController;
 
 /**
  *
@@ -30,7 +30,7 @@ public class AutoLogoutFilter implements Filter {
     @Inject
     NavigationController navigationController;
     @Inject
-    UserController userController;
+    LoginController loginController;
     
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -43,11 +43,11 @@ public class AutoLogoutFilter implements Filter {
         HttpServletResponse rsp = (HttpServletResponse) response;
         String contextPath = req.getContextPath(); 
         HttpSession session = req.getSession();
-        if (userController.isLoggedIn()) {
+        if (loginController.isLoggedIn()) {
             session.setMaxInactiveInterval(60 * 30);
         }
         if(session == null){
-            rsp.sendRedirect(contextPath + userController.doLogout());
+            rsp.sendRedirect(contextPath + loginController.doLogout());
             System.out.println("AutoLooutFilter: Logout()");
         }
         

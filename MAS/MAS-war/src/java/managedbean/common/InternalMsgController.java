@@ -49,8 +49,6 @@ public class InternalMsgController implements Serializable {
     private String[] receivers;
 
     @Inject
-    private UserController userController;
-    @Inject
     private NavigationController navigationController;
     @Inject
     private MsgController msgController;
@@ -209,14 +207,6 @@ public class InternalMsgController implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public UserController getUserController() {
-        return userController;
-    }
-
-    public void setUserController(UserController userController) {
-        this.userController = userController;
     }
 
     public String[] getReceivers() {

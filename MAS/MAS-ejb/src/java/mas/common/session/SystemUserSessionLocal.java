@@ -54,8 +54,10 @@ public interface SystemUserSessionLocal {
     
     public List<SystemUser> getAllUsers();
 
-    public List<SystemUser> getAllOtherUsers(String uresetPasswordsername);
+    public List<SystemUser> getAllOtherUsers(String username);
 
+    public List<String> getAllOtherUsernames(String username);
+    
     public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException;
 //    public void createUser(String username, String password, String[] roleNames) throws ExistSuchUserException, NoSuchRoleException;
 

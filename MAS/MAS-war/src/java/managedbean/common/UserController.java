@@ -7,29 +7,23 @@ package managedbean.common;
 
 import managedbean.application.NavigationController;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.Map;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import mas.common.entity.SystemUser;
 import mas.common.session.SystemUserSessionLocal;
 import mas.common.util.exception.NoSuchEmailException;
-import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.NoSuchUsernameException;
 import mas.common.util.exception.ExistSuchUserException;
 import mas.common.util.helper.CreateToken;
-import mas.common.util.helper.UserMsg;
 import util.helper.CountdownHelper;
 import util.security.CryptographicHelper;
-import botdetect.web.jsf.JsfCaptcha;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.RequestScoped;
 import managedbean.application.MsgController;
 import mas.common.entity.SystemRole;
 import mas.common.session.RoleSessionLocal;
@@ -43,7 +37,7 @@ import mas.common.util.helper.UserRolePermission;
  * @author winga_000
  */
 @Named(value = "userController")
-@SessionScoped
+@RequestScoped
 public class UserController implements Serializable {
 
     private final String TIMER_NAME_RESET_PASSWORD = "RESET_PASSWORD_TIMER";
@@ -54,7 +48,7 @@ public class UserController implements Serializable {
     private EmailController emailController;
     @Inject
     private MsgController msgController;
-    
+
     @EJB
     private SystemUserSessionLocal systemUserSession;
     @EJB
@@ -65,80 +59,26 @@ public class UserController implements Serializable {
     private String resetDigest;
     private String newUsername;
     private String newPassword;
-    private boolean loggedIn;
-    private JsfCaptcha captcha;
-    private String captchaCode;
-    private int countTrial = 0;
     private List<SystemUser> userList;
     private SystemUser selectedUser;
     private List<SystemRole> roleList;
     private List<UserRolePermission> userRolePermissionList;
     private List<RolePermission> rolePermissionList;
+    private List<String> otherUsernames;
 
     public UserController() {
     }
-    
-//    @PostConstruct
-//    public void init(){
-//        try {
-//            userProfile = systemUserSession.getSystemUserByName(username);
-//        } catch (NoSuchUsernameException ex) {
-//            userProfile = null;
-//        }
-//    }
 
-    public String doLogin() throws NoSuchUsernameException, InvalidPasswordException, InterruptedException {
-        CountdownHelper countdownHelper = new CountdownHelper(systemUserSession);
-//        boolean isHuman = captcha.validate(captchaCode);
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        try {
-            if (systemUserSession.getSystemUserByName(username).isLocked()) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Your account has been locked, please reset password or wait 30mins to try again"));
-                return navigationController.toLogin();
-            }
-        } catch (NoSuchUsernameException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
-            return navigationController.toLogin();
-        }
-
-//        if (!isHuman) {
-//            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Captcha code entered is incorrect"));
-//            return navigationController.toLogin();
-//        }
-        CryptographicHelper cryptographicHelper = new CryptographicHelper();
-        try {
-            systemUserSession.verifySystemUserPassword(username, cryptographicHelper.doMD5Hashing(password));
-        } catch (NoSuchUsernameException | InvalidPasswordException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
-            countTrial++;
-            if (countTrial > 2) {
-                systemUserSession.lockUser(username);
-                System.out.println("locked user " + username);
-
-                countdownHelper.unlockUserCountDown(1800 * 1000, username); //Unlock user after 30mins
-                countTrial = 0;
-            }
-
-            System.out.println("Count Trial: " + countTrial);
-            return navigationController.toLogin();
-        }
-        loggedIn = true;
-        countTrial = 0;
+    @PostConstruct
+    public void init() {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, Object> sessionMap = externalContext.getSessionMap();
-        sessionMap.put("username", username);
-        externalContext.getFlash().setKeepMessages(true);
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Successful", UserMsg.LOGIN_SUCCESS_MSG));
-        captchaCode = null;
-        return navigationController.redirectToWorkspace();
-    }
-
-    public String doLogout() {
-        loggedIn = false;
-        username = null;
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage("Successful", UserMsg.LOGIN_OUT_MSG));
-        return navigationController.redirectToWorkspace();
+        this.username = (String) sessionMap.get("username");
+        try {
+            email = getUserByUsername().getEmail();
+        } catch (NoSuchUsernameException ex) {
+            email = null;
+        }
     }
 
     public String resetPasswordSendEmail() throws InterruptedException {
@@ -147,14 +87,14 @@ public class UserController implements Serializable {
             systemUserSession.verifySystemUserEmail(email);
             String resetDigest = createNewToken();
             String subject = "Reset Password";
-            String mailContent = navigationController.toUnsecuredUsersFolder() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + resetDigest + "&email=" + email;
-            //String receiver = "Weiming<a0119405@u.nus.edu>";
+            String mailContent = navigationController.toUnsecuredUsersFolder()
+                    + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + resetDigest + "&email=" + email;
             String receiver = email;
             emailController.sendEmail(subject, mailContent, receiver);
             systemUserSession.setResetDigest(email, resetDigest);
 
             countdownHelper.expireResetPasswoordCountDown(1800 * 1000, email);//Auto expire password after 30mins
-            
+
             msgController.addMessage("Please check your email to reset password");
             return navigationController.redirectToHome() + "?faces-redirect=true";
         } catch (NoSuchEmailException ex) {
@@ -165,9 +105,8 @@ public class UserController implements Serializable {
 
     public String resetPassword() {
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        context.getExternalContext().getFlash().setKeepMessages(true);
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        externalContext.getFlash().setKeepMessages(true);
         Map<String, String> params = externalContext.getRequestParameterMap();
         String userEmail = params.get("email");
         String resetDigest = params.get("resetDigest");
@@ -175,18 +114,16 @@ public class UserController implements Serializable {
             systemUserSession.verifySystemUserEmail(userEmail);
             SystemUser user = systemUserSession.getSystemUserByEmail(userEmail);
             if (resetDigest == null) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "You are not authorised to reset password. Send reset email again"));
+                msgController.addErrorMessage("You are not authorised to reset password. Send reset email again");
             } else if (!user.getResetDigest().equals(resetDigest)) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Password reset expired. Send reset email again"));
+                msgController.addErrorMessage("Password reset expired. Send reset email again");
             }
             systemUserSession.resetPassword(userEmail, cryptographicHelper.doMD5Hashing(newPassword));
             systemUserSession.expireResetPassword(email);//expire reset digest if it has been used;
             newPassword = null;
-            context.addMessage(null, new FacesMessage("Successful",
-                    "Password reset successfully, you can login with new password now"));
+            msgController.addMessage("Password reset successfully, you can login with new password now");
         } catch (NoSuchEmailException e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error", "You are not authorised to reset password. Send reset email again"));
+            msgController.addErrorMessage("You are not authorised to reset password. Send reset email again");
         }
         return navigationController.redirectToPasswordResetSendEmail();
     }
@@ -195,23 +132,7 @@ public class UserController implements Serializable {
         return CreateToken.createNewToken();
     }
 
-//    public String createUser(String username, String password, String[] roles) throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException, NoSuchRoleException {
-//    public String createUser(String username, String password, List<SystemRole> roles) throws ExistSuchUserException, InvalidPasswordException, NoSuchUsernameException, NoSuchRoleException {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        context.getExternalContext().getFlash().setKeepMessages(true);
-//        try {
-//            CryptographicHelper cryptographicHelper = new CryptographicHelper();
-//            password = cryptographicHelper.doMD5Hashing(password);
-//            systemUserSession.createUser(username, password, roles);
-//            context.getExternalContext().getFlash().setKeepMessages(true);
-//            context.addMessage(null, new FacesMessage("Successful", "New user " + username + " is created successfuly!"));
-//            return navigationController.redirectToCreateUser();
-//        } catch (ExistSuchUserException ex) {
-//            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
-//            return navigationController.toCreateUser();
-//        }
-//    }
-    public String createUser(String username, String password, String email){
+    public String createUser(String username, String password, String email) {
         try {
             CryptographicHelper cryptographicHelper = new CryptographicHelper();
             password = cryptographicHelper.doMD5Hashing(password);
@@ -221,7 +142,7 @@ public class UserController implements Serializable {
             String mailContent = "Please reset password first using the following link: \n" + navigationController.toUnsecuredUsersFolder() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + resetDigest + "&email=" + email;
             String receiver = email;
             emailController.sendEmail(subject, mailContent, receiver);
-            systemUserSession.setResetDigest(email, resetDigest);            
+            systemUserSession.setResetDigest(email, resetDigest);
             msgController.addMessage("New user " + username + " is created successfuly!");
             cleanAttributeValue();
             return navigationController.redirectToCreateUser();
@@ -233,6 +154,11 @@ public class UserController implements Serializable {
 
     public List<SystemUser> getAllUsers() {
         return systemUserSession.getAllUsers();
+    }
+
+    public List<String> getAllOtherUsernames() {
+        otherUsernames = systemUserSession.getAllOtherUsernames(username);
+        return otherUsernames;
     }
 
     public String assignUserRoles() {
@@ -266,22 +192,22 @@ public class UserController implements Serializable {
     public SystemUser getUserByEmail(String email) throws NoSuchEmailException {
         return systemUserSession.getSystemUserByEmail(email);
     }
-    
-    public SystemUser getUserByUsername() throws NoSuchUsernameException{
+
+    public SystemUser getUserByUsername() throws NoSuchUsernameException {
         return systemUserSession.getSystemUserByName(username);
     }
-    
-    public void cleanAttributeValue(){
+
+    public void cleanAttributeValue() {
         selectedUser = null;
         roleList = null;
         userRolePermissionList = null;
         rolePermissionList = null;
     }
-    
-    public String updateUserProfile(String newEmail){
+
+    public String updateUserProfile() {
         try {
             System.out.println("Begin update user.");
-            systemUserSession.updateUserProfile(username, newEmail);
+            systemUserSession.updateUserProfile(username, email);
             msgController.addMessage("Update user profile successfully!");
         } catch (NoSuchUsernameException | ExistSuchUserEmailException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -289,8 +215,8 @@ public class UserController implements Serializable {
         }
         return navigationController.redirectToViewUserProfile();
     }
-    
-    public String changePassword(String newPassword, String newConfirmPassword){
+
+    public String changePassword(String newPassword, String newConfirmPassword) {
         try {
             if (newPassword.equals(newConfirmPassword)) {
                 CryptographicHelper cryptographicHelper = new CryptographicHelper();
@@ -309,6 +235,7 @@ public class UserController implements Serializable {
 //
 //Getter and Setter
 //
+
     /**
      * @return the username
      */
@@ -393,30 +320,6 @@ public class UserController implements Serializable {
         this.newPassword = newPassword;
     }
 
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
-
-    public JsfCaptcha getCaptcha() {
-        return captcha;
-    }
-
-    public void setCaptcha(JsfCaptcha captcha) {
-        this.captcha = captcha;
-    }
-
-    public String getCaptchaCode() {
-        return captchaCode;
-    }
-
-    public void setCaptchaCode(String captchaCode) {
-        this.captchaCode = captchaCode;
-    }
-
     public List<SystemRole> getRoleList() {
         return roleList;
     }
@@ -457,5 +360,12 @@ public class UserController implements Serializable {
         this.rolePermissionList = rolePermissionList;
     }
 
-    
+    public List<String> getOtherUsernames() {
+        return otherUsernames;
+    }
+
+    public void setOtherUsernames(List<String> otherUsernames) {
+        this.otherUsernames = otherUsernames;
+    }
+
 }

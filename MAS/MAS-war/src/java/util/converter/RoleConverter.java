@@ -32,9 +32,6 @@ public class RoleConverter implements Converter {
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                //RoleController role = (RoleController) fc.getExternalContext().getRequestMap().get("roleController");
-                //return role.getAllRoles().get(Integer.parseInt(value));
-//                return roleSession.getAllRoles().get(Integer.parseInt(value)-1);
                 return roleSession.getSystemRoleByName(value);
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));

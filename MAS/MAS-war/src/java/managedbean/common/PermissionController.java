@@ -30,8 +30,6 @@ import mas.common.util.helper.UserMsg;
 public class PermissionController implements Serializable {
 
     @Inject
-    UserController userController;
-    @Inject
     NavigationController navigationController;
 
     @EJB

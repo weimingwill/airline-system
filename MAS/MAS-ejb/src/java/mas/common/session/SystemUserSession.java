@@ -85,6 +85,18 @@ public class SystemUserSession implements SystemUserSessionLocal {
         return query.getResultList();
     }
 
+    @Override
+    public List<String> getAllOtherUsernames(String username) {
+        List<SystemUser> users = getAllOtherUsers(username);
+        List<String> usernames = new ArrayList<>();
+        if (users != null) {
+            for (SystemUser user : users) {
+                usernames.add(user.getUsername());
+            }
+        }
+        return usernames;
+    }
+
     //User Messages
     @Override
     public List<SystemMsg> getUserMessages(String username) {
