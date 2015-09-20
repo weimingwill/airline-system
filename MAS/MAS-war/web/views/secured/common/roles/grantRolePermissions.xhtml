@@ -13,8 +13,9 @@
     <ui:define name="content">
         <h:form id="grantRolePermissions">
             <h:panelGrid class="access-control">
+                <p:outputLabel value="Select role: "/>
                 <p:selectOneListbox id="grantRolePermissions-roleList" value="#{roleController.selectedRole}"  converter="roleConverter" 
-                                    var="role" filter="true" filterMatchMode="contains" style="width:200px;">
+                                    var="role" filter="true" filterMatchMode="contains" style="width:300px;">
                     <p:ajax update="grantRolePermissions-rolePanel" listener="#{roleController.onRoleSelected()}"/>
                     <f:selectItems value="#{roleController.allRoles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}" />
                     <p:column>
@@ -25,15 +26,16 @@
 
                 <p:outputPanel id="grantRolePermissions-rolePanel">
 
-                    <p:dataTable value="#{roleController.permissionList}" var="permission" emptyMessage="No role selected">
+                    <p:dataTable value="#{roleController.permissionList}" var="permission" class="userRoleDataTable" emptyMessage="No role selected">
                         <p:row>Permissions</p:row>
                         <p:column headerText="Permissions">
                             <h:outputText value="#{permission.permissionName}" />
                         </p:column>
                     </p:dataTable>
-
+                    
+                    <p:outputLabel value="Select permissions: " />
                     <p:selectManyMenu id="grantRolePermissions-permissionList" value="#{roleController.permissionList}" converter="permissionConverter"
-                                      var="permission" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:200px;">
+                                      var="permission" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:600px;">
                         <f:selectItems value="#{permissionController.allPermissions}" var="permission" itemLabel="#{permission.permissionName}" itemValue="#{permission}"/>
 
                         <p:column>

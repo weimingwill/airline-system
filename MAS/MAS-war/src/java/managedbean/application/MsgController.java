@@ -25,12 +25,14 @@ public class MsgController {
     }
 
     public void addMessage(String summary) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, null);
+        FacesMessage message = new FacesMessage("Successful", summary);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     public void addErrorMessage(String summary) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, null);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", summary);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 }

@@ -13,31 +13,49 @@
     <ui:define name="content">
         <h:form id="assignUserRoles">
             <h:panelGrid class="access-control">
-                <p:selectOneListbox id="assignUserRoles-userList" value="#{userController.selectedUser}"  converter="userConverter" 
-                                    var="user" filter="true" filterMatchMode="contains" style="width:200px;">
-                    <p:ajax update="assignUserRoles-rolePanel" listener="#{userController.onUserSelected()}"/>
-                    <f:selectItems value="#{userController.allUsers}" var="user" itemLabel="#{user.username}" itemValue="#{user}" />
-                    <p:column>
-                        <h:outputText value="#{user.username}" />
+                <f:facet name="header">
+                    <h:outputText value="Assign User Roles"/>
+                </f:facet>
+                <h:panelGroup>
+                    <p:column headerText="Select user: ">
+                        <p:outputLabel value="Select user:" />
+                        <p:selectOneListbox id="assignUserRoles-userList" value="#{userController.selectedUser}"  converter="userConverter" 
+                                            var="user" filter="true" filterMatchMode="contains" style="width:300px;">
+
+                            <p:ajax update="assignUserRoles-rolePanel" listener="#{userController.onUserSelected()}"/>
+                            <f:selectItems value="#{userController.allUsers}" var="user" itemLabel="#{user.username}" itemValue="#{user}" />
+                            <p:column>
+                                <h:outputText value="#{user.username}" />
+                            </p:column>
+
+                        </p:selectOneListbox>
                     </p:column>
-                    
-                </p:selectOneListbox>
+                </h:panelGroup>
 
                 <p:outputPanel id="assignUserRoles-rolePanel">
+                    <p:column>
+                        <p:dataTable value="#{userController.roleList}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
+                            <f:facet name="header">
+                                Existing user roles
+                            </f:facet>
+                            <p:column headerText="Roles">
+                                <h:outputText value="#{role.roleName}" />
+                            </p:column>
 
-                    <p:dataTable value="#{userController.rolePermissionList}" var="rolePermission" emptyMessage="No role selected">
-                        <p:row>User</p:row>
-                        <p:column headerText="Roles">
-                            <h:outputText value="#{rolePermission.role}" />
-                        </p:column>
+                            <p:column headerText="Permisssions">
+                                <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                                    <p:column>
+                                        <p:outputLabel value="#{permission.permissionName}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
 
-                        <p:column headerText="Permissions">
-                            <h:outputText value="#{rolePermission.permission}" />
-                        </p:column>    
-                    </p:dataTable>
+                    <p:outputLabel value="Select user roles:" />
 
                     <p:selectManyMenu id="assignUserRoles-roleList" value="#{userController.roleList}" converter="roleConverter"
-                                      var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:200px;">
+                                      var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:400px;">
                         <f:selectItems value="#{roleController.allRoles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
 
                         <p:column>

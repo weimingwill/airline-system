@@ -26,6 +26,7 @@ import mas.common.util.exception.NoSuchMessageException;
 import mas.common.util.exception.NoSuchUsernameException;
 import mas.common.util.exception.ExistSuchUserException;
 import mas.common.util.exception.NoSuchRoleException;
+import mas.common.util.exception.NoUserExistException;
 import mas.common.util.helper.CreateToken;
 import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserRolePermission;
@@ -171,20 +172,15 @@ public class SystemUserSession implements SystemUserSessionLocal {
 
     @Override
     public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException {
-        try {
-            SystemUser user = getSystemUserByName(username);
-        } catch (NoSuchUsernameException e) {
-            SystemUser systemUser = new SystemUser();
-            systemUser.create(username, password, email);
-            for (SystemRole role : roles) {
-                SystemRole r = roleSession.getSystemRoleByName(role.getRoleName());
-                systemUser.getSystemRoles().add(r);
-                r.getSystemUsers().add(systemUser);
-            }
-            entityManager.persist(systemUser);
-            throw new ExistSuchUserException(UserMsg.EXIST_USERNAME_ERROR);
+        verifySystemUserExistence(username, email);
+        SystemUser systemUser = new SystemUser();
+        systemUser.create(username, password, email);
+        for (SystemRole role : roles) {
+            SystemRole r = roleSession.getSystemRoleByName(role.getRoleName());
+            systemUser.getSystemRoles().add(r);
+            r.getSystemUsers().add(systemUser);
         }
-
+        entityManager.persist(systemUser);
     }
 
     @Override
@@ -206,7 +202,20 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void assignUserToRole(List<SystemUser> users, List<SystemRole> roles) {
+    public void verifySystemUserExistence(String useranme, String email) throws ExistSuchUserException {
+        List<SystemUser> users = getAllUsers();
+        if (users != null) {
+            for (SystemUser user : users) {
+                if (user.getUsername().equals(useranme) || user.getEmail().equals(email)) {
+                    throw new ExistSuchUserException(UserMsg.EXIST_USER_ERROR);
+                }
+            }
+        }
+    }
+
+    @Override
+    public
+            void assignUserToRole(List<SystemUser> users, List<SystemRole> roles) {
         for (SystemUser user : users) {
             SystemUser systemUser = entityManager.find(SystemUser.class, user.getSystemUserId());
             for (SystemRole role : roles) {
@@ -214,14 +223,17 @@ public class SystemUserSession implements SystemUserSessionLocal {
                 systemUser.getSystemRoles().add(systemRole);
                 systemRole.getSystemUsers().add(systemUser);
             }
+
             entityManager.merge(systemUser);
         }
     }
 
     @Override
-    public void assignUserToRole(SystemUser user, List<SystemRole> roles) {
+    public
+            void assignUserToRole(SystemUser user, List<SystemRole> roles) {
         SystemUser systemUser = entityManager.find(SystemUser.class, user.getSystemUserId());
         systemUser.setSystemRoles(roles);
+
         entityManager.merge(systemUser);
     }
 
@@ -249,8 +261,10 @@ public class SystemUserSession implements SystemUserSessionLocal {
             verifySystemUserEmail(email);
             user.setPassword(password);
             entityManager.merge(user);
+
         } catch (NoSuchEmailException ex) {
-            Logger.getLogger(SystemUserSession.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SystemUserSession.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -285,7 +299,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
 
     @Override
     public List<UserRolePermission> getAllUsersRolesPermissions() {
-        List<UserRolePermission> userRolePermissionList = new ArrayList<UserRolePermission>();
+        List<UserRolePermission> userRolePermissionList = new ArrayList<>();
         for (SystemUser user : getAllUsers()) {
             for (SystemRole role : user.getSystemRoles()) {
                 for (Permission permission : role.getPermissions()) {

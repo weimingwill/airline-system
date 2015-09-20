@@ -98,6 +98,14 @@ public class NavigationController implements Serializable {
         return "/views/secured/common/users/viewAllUsers.xhtml" + REDIRECT;
     }
     
+    public String redirectToViewUserProfile(){
+        return "/views/secured/common/users/viewProfile.xhtml" + REDIRECT;
+    }
+
+    public String redirectToEditUserProfile(){
+        return "/views/secured/common/users/editProfile.xhtml" + REDIRECT;
+    }
+    
     //Role
     public String toCreateRole() {
         return "/views/secured/common/roles/createRole.xhtml";

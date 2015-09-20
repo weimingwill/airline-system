@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/WorkspaceTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        User profile
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <h:panelGrid columns="2">
+                
+                <p:outputLabel value="Username"/>
+                <p:inputText required="true" requiredMessage="Please enter username" id="username" value="#{username}"/>
+                <h:outputText value="Password"/>
+                <p:password required="true" requiredMessage="Please enter password" id="password" value="#{password}"/>
+                <h:outputText value="Email"/>
+                <p:inputText required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" id="email" value="#{email}">
+                    <f:validateRegex
+                        pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                </p:inputText>
+            </h:panelGrid>
+        </h:form>
+
+        <p:dataTable value="#{userController.getUserRolesByUsername(username)}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
+            <f:facet name="header">
+                Existing user roles
+            </f:facet>
+            <p:column headerText="Roles">
+                <h:outputText value="#{role.roleName}" />
+            </p:column>
+
+            <p:column headerText="Permisssions">
+                <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                    <p:column>
+                        <p:outputLabel value="#{permission.permissionName}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:column>
+        </p:dataTable>
+
+    </ui:define>
+
+</ui:composition>

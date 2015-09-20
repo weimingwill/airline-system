@@ -69,3 +69,8 @@ tr.hide{
 .flagMessage{
     font-weight: bold;
 }
+
+.userRoleDataTable{
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

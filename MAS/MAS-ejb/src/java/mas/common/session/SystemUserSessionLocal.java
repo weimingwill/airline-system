@@ -47,6 +47,8 @@ public interface SystemUserSessionLocal {
 
     public void verifySystemUserEmail(String email) throws NoSuchEmailException;
 
+    public void verifySystemUserExistence(String useranme, String email) throws ExistSuchUserException;
+    
     public List<SystemUser> getAllUsers();
 
     public List<SystemUser> getAllOtherUsers(String uresetPasswordsername);

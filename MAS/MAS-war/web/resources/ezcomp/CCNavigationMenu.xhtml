@@ -19,6 +19,7 @@
                 <p:menuitem value="User Workspace" url="#{navigationController.redirectToWorkspace()}" icon="ui-icon-home"></p:menuitem>
                 <f:facet name="options">
                     <p:inputText style="margin-right:10px" placeholder="Search"/>
+                    <p:commandButton action="#{navigationController.redirectToViewUserProfile()}" value="Profile" rendered="#{userController.loggedIn}" />
                     <p:commandButton action="#{navigationController.toLogin()}" value="Login" rendered="#{not userController.loggedIn}" icon="ui-icon-extlink"></p:commandButton>
                     <p:commandButton action="#{userController.doLogout()}" value="Logout" rendered="#{userController.loggedIn}" icon="ui-icon-extlink"></p:commandButton>                    
 
