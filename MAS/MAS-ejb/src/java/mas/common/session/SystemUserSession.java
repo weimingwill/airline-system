@@ -19,6 +19,7 @@ import mas.common.entity.Permission;
 import mas.common.entity.SystemMsg;
 import mas.common.entity.SystemRole;
 import mas.common.entity.SystemUser;
+import mas.common.util.exception.ExistSuchUserEmailException;
 import mas.common.util.exception.NoSuchEmailException;
 import mas.common.util.helper.UserMsg;
 import mas.common.util.exception.InvalidPasswordException;
@@ -184,6 +185,31 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
+    public void updateUserProfile(String username, String email) throws NoSuchUsernameException, ExistSuchUserEmailException {
+        List<SystemUser> systemUsers = getAllOtherUsers(username);
+        SystemUser user = getSystemUserByName(username);
+        if (systemUsers != null) {
+            for (SystemUser systemUser : systemUsers) {
+                System.out.println("SystemUser: " + systemUser + systemUser.getEmail() + ".. "  + systemUser.getUsername() );
+                System.out.println("Email: " + email );
+                if (email.equals(systemUser.getEmail())) {
+                    System.out.println("To throw exception");
+                    throw new ExistSuchUserEmailException(UserMsg.EXIST_USER_EMAIL_ERROR);
+                }
+            }
+        }
+        user.setEmail(email);
+        entityManager.merge(user);
+    }
+
+    @Override
+    public void changePassword(String username, String password) throws NoSuchUsernameException {
+        SystemUser user = getSystemUserByName(username);
+        user.setPassword(password);
+        entityManager.merge(user);
+    }
+
+    @Override
     public void verifySystemUserPassword(String username, String inputPassword) throws InvalidPasswordException, NoSuchUsernameException {
         try {
             SystemUser user = getSystemUserByName(username);
@@ -202,6 +228,18 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
+    public void verifyUserEmailExistence(String email) throws ExistSuchUserEmailException {
+        List<SystemUser> users = getAllUsers();
+        if (users != null) {
+            for (SystemUser user : users) {
+                if (user.getEmail().equals(email)) {
+                    throw new ExistSuchUserEmailException(UserMsg.EXIST_USER_EMAIL_ERROR);
+                }
+            }
+        }
+    }
+
+    @Override
     public void verifySystemUserExistence(String useranme, String email) throws ExistSuchUserException {
         List<SystemUser> users = getAllUsers();
         if (users != null) {
@@ -214,8 +252,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public
-            void assignUserToRole(List<SystemUser> users, List<SystemRole> roles) {
+    public void assignUserToRole(List<SystemUser> users, List<SystemRole> roles) {
         for (SystemUser user : users) {
             SystemUser systemUser = entityManager.find(SystemUser.class, user.getSystemUserId());
             for (SystemRole role : roles) {
@@ -229,8 +266,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public
-            void assignUserToRole(SystemUser user, List<SystemRole> roles) {
+    public void assignUserToRole(SystemUser user, List<SystemRole> roles) {
         SystemUser systemUser = entityManager.find(SystemUser.class, user.getSystemUserId());
         systemUser.setSystemRoles(roles);
 
@@ -261,7 +297,6 @@ public class SystemUserSession implements SystemUserSessionLocal {
             verifySystemUserEmail(email);
             user.setPassword(password);
             entityManager.merge(user);
-
         } catch (NoSuchEmailException ex) {
             Logger.getLogger(SystemUserSession.class
                     .getName()).log(Level.SEVERE, null, ex);

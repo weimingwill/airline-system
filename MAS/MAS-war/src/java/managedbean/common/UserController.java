@@ -33,6 +33,7 @@ import javax.annotation.PostConstruct;
 import managedbean.application.MsgController;
 import mas.common.entity.SystemRole;
 import mas.common.session.RoleSessionLocal;
+import mas.common.util.exception.ExistSuchUserEmailException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserRolePermission;
@@ -277,6 +278,34 @@ public class UserController implements Serializable {
         rolePermissionList = null;
     }
     
+    public String updateUserProfile(String newEmail){
+        try {
+            System.out.println("Begin update user.");
+            systemUserSession.updateUserProfile(username, newEmail);
+            msgController.addMessage("Update user profile successfully!");
+        } catch (NoSuchUsernameException | ExistSuchUserEmailException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+            return navigationController.toEditUserProfile();
+        }
+        return navigationController.redirectToViewUserProfile();
+    }
+    
+    public String changePassword(String newPassword, String newConfirmPassword){
+        try {
+            if (newPassword.equals(newConfirmPassword)) {
+                CryptographicHelper cryptographicHelper = new CryptographicHelper();
+                newPassword = cryptographicHelper.doMD5Hashing(newPassword);
+                systemUserSession.changePassword(username, newPassword);
+                msgController.addMessage("Change password successfully!");
+                return navigationController.redirectToWorkspace();
+            } else {
+                msgController.addErrorMessage("The password entered are different.");
+            }
+        } catch (NoSuchUsernameException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.toChangePassword();
+    }
 //
 //Getter and Setter
 //

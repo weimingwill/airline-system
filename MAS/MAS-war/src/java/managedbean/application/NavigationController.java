@@ -48,7 +48,6 @@ public class NavigationController implements Serializable {
     }
 
     //Password reset
-
     public String toPasswordReset() {
         return "/views/unsecured/common/users/resetPassword.xhtml";
     }
@@ -57,16 +56,15 @@ public class NavigationController implements Serializable {
         return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml";
     }
 
-    public String redirectToPasswordResetSendEmail(){
+    public String redirectToPasswordResetSendEmail() {
         return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml" + REDIRECT;
     }
-    
+
     public String toUnsecuredUsersFolder() {
         return "http://localhost:8080/MAS-war/views/unsecured/common/users/";
     }
 
     //Access control
-
     public String redirectToWorkspace() {
         return "/views/secured/common/users/userWorkspace.xhtml" + REDIRECT;
     }
@@ -83,29 +81,42 @@ public class NavigationController implements Serializable {
     public String redirectToCreateUser() {
         return "/views/secured/common/users/createUser.xhtml" + REDIRECT;
     }
-    
+
     public String toAssignUserRole() {
         return "/views/secured/common/users/assignUserRole.xhtml";
-    }    
+    }
 
     public String redirectToAssignUserRoles() {
         return "/views/secured/common/users/assignUserRoles.xhtml" + REDIRECT;
     }
+
     public String toViewAllUsers() {
         return "/views/secured/common/users/viewAllUsers.xhtml";
     }
+
     public String redirectToViewAllUsers() {
         return "/views/secured/common/users/viewAllUsers.xhtml" + REDIRECT;
     }
-    
-    public String redirectToViewUserProfile(){
+
+    public String redirectToViewUserProfile() {
         return "/views/secured/common/users/viewProfile.xhtml" + REDIRECT;
     }
 
-    public String redirectToEditUserProfile(){
+    public String toEditUserProfile() {
+        return "/views/secured/common/users/editProfile.xhtml";
+    }
+
+    public String redirectToEditUserProfile() {
         return "/views/secured/common/users/editProfile.xhtml" + REDIRECT;
     }
+
+    public String toChangePassword(){
+        return "/views/secured/common/users/changePassword.xhtml";
+    }
     
+    public String redirectToChangePassword(){
+        return "/views/secured/common/users/changePassword.xhtml" + REDIRECT;
+    }
     //Role
     public String toCreateRole() {
         return "/views/secured/common/roles/createRole.xhtml";
@@ -130,7 +141,6 @@ public class NavigationController implements Serializable {
     public String redirectToGrantRolePermissions() {
         return "/views/secured/common/roles/grantRolePermissions.xhtml" + REDIRECT;
     }
-    
 
     //Permission
     public String toCreatePermission() {
@@ -148,15 +158,15 @@ public class NavigationController implements Serializable {
     public String redirectToViewAllPermission() {
         return "/views/secured/common/permissions/viewAllPermissions.xhtml" + REDIRECT;
     }
-    
+
     //AIS
-        //Product Design
+    //Product Design
     public String redirectToCreateCabinClass() {
         return "/views/secured/ais/product_design/createCabinClass.xhtml" + REDIRECT;
     }
-    
-        //Pricing
-    public String redirectToPricing(){
-        return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT ;
+
+    //Pricing
+    public String redirectToPricing() {
+        return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }
 }

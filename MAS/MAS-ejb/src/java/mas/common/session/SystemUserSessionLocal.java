@@ -10,6 +10,7 @@ import javax.ejb.Local;
 import mas.common.entity.SystemMsg;
 import mas.common.entity.SystemRole;
 import mas.common.entity.SystemUser;
+import mas.common.util.exception.ExistSuchUserEmailException;
 import mas.common.util.exception.NoSuchEmailException;
 import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.NoSuchMessageException;
@@ -49,6 +50,8 @@ public interface SystemUserSessionLocal {
 
     public void verifySystemUserExistence(String useranme, String email) throws ExistSuchUserException;
     
+    public void verifyUserEmailExistence(String email) throws ExistSuchUserEmailException;
+    
     public List<SystemUser> getAllUsers();
 
     public List<SystemUser> getAllOtherUsers(String uresetPasswordsername);
@@ -56,6 +59,10 @@ public interface SystemUserSessionLocal {
     public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException;
 //    public void createUser(String username, String password, String[] roleNames) throws ExistSuchUserException, NoSuchRoleException;
 
+    public void updateUserProfile(String username, String email) throws NoSuchUsernameException, ExistSuchUserEmailException;
+    
+    public void changePassword(String username, String password) throws NoSuchUsernameException;
+    
     public List<String> getSystemUsernameList();
 
     public void resetPassword(String email, String password) throws NoSuchEmailException;
