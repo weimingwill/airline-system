@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ais.session;
+package mas.common.session;
 
 import javax.ejb.Stateless;
 
@@ -12,7 +12,7 @@ import javax.ejb.Stateless;
  * @author winga_000
  */
 @Stateless
-public class CabinClassSession implements CabinClassSessionLocal {
+public class InternalMsgSession implements InternalMsgSessionLocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")

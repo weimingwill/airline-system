@@ -27,6 +27,7 @@ import javax.jms.Session;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
 import mas.common.entity.SystemMsg;
 import mas.common.session.SystemUserSessionLocal;
@@ -51,6 +52,8 @@ public class InternalMsgController implements Serializable {
     private UserController userController;
     @Inject
     private NavigationController navigationController;
+    @Inject
+    private MsgController msgController;
 
     //Initialization
     public InternalMsgController() {   
@@ -91,6 +94,7 @@ public class InternalMsgController implements Serializable {
                 messageProducer = session.createProducer(destination);
                 mapMessage = session.createMapMessage();
                 mapMessage.setString("message", message);
+                mapMessage.setString("sender", username);
                 mapMessage.setInt("receiverNumber", receivers.length);
                 for (int i = 0; i < receivers.length; i++) {
                     mapMessage.setString("receiver" + i, receivers[i]);
@@ -138,7 +142,42 @@ public class InternalMsgController implements Serializable {
         } catch (NoSuchMessageException e) {
         }
     }
+    
+    public void flagMessage(String message){
+        try {
+            systemUserSession.flagMessage(username, message);
+            msgController.addMessage("Flag message " + message + " successfully!");
+        } catch (NoSuchMessageException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+    }
+    
+    public void unFlagMessage(String message){
+        try {
+            systemUserSession.unFlagMessage(username, message);
+            msgController.addMessage("Unflag message " + message + " successfully!");
+        } catch (NoSuchMessageException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+    }
+    
+    public void deleteMessage(String message){
+        try {
+            systemUserSession.deleteMessage(username, message);
+            msgController.addMessage("Delete message " + message + " successfully!");
+        } catch (NoSuchMessageException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+    }
 
+    public String getMessageTableRowClasses(){
+        StringBuilder sb = new StringBuilder();
+        for (SystemMsg msg : getUserMessages()) {
+            sb.append((msg.isDeleted()) ? "hide," : "show,");
+        }
+        return sb.toString();
+    }
+    
     //Getter and Setter
     public String getMessage() {
         return message;

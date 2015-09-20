@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ais.session;
+package mas.common.session;
 
 import javax.ejb.Local;
 
@@ -12,6 +12,6 @@ import javax.ejb.Local;
  * @author winga_000
  */
 @Local
-public interface CabinClassSessionLocal {
+public interface InternalMsgSessionLocal {
     
 }

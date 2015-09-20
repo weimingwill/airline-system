@@ -62,3 +62,10 @@
     vertical-align: top;
 }
 
+tr.hide{
+    display: none;
+}
+
+.flagMessage{
+    font-weight: bold;
+}

@@ -83,6 +83,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
         return query.getResultList();
     }
 
+    //User Messages
     @Override
     public List<SystemMsg> getUserMessages(String username) {
         try {
@@ -120,6 +121,52 @@ public class SystemUserSession implements SystemUserSessionLocal {
                 entityManager.merge(msg);
             }
         }
+    }
+
+    @Override
+    public void flagMessage(String username, String message) throws NoSuchMessageException {
+        List<SystemMsg> msgs = getUserMessages(username);
+        if (msgs == null) {
+            throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
+        } else {
+            for (SystemMsg msg : msgs) {
+                if (msg.getMessage().equals(message)) {
+                    msg.setFlaged(true);
+                    entityManager.merge(msg);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void unFlagMessage(String username, String message) throws NoSuchMessageException {
+        List<SystemMsg> msgs = getUserMessages(username);
+        if (msgs == null) {
+            throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
+        } else {
+            for (SystemMsg msg : msgs) {
+                if (msg.getMessage().equals(message)) {
+                    msg.setFlaged(false);
+                    entityManager.merge(msg);
+                }
+            }
+        }
+    }
+
+    @Override
+    public String deleteMessage(String username, String message) throws NoSuchMessageException {
+        List<SystemMsg> msgs = getUserMessages(username);
+        if (msgs == null) {
+            throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
+        } else {
+            for (SystemMsg msg : msgs) {
+                if (msg.getMessage().equals(message)) {
+                    msg.setDeleted(true);
+                    entityManager.merge(msg);
+                }
+            }
+        }
+        return message;
     }
 
     @Override
