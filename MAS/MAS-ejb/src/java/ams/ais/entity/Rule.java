@@ -14,7 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -30,15 +30,15 @@ public class Rule implements Serializable {
     private float ruleValue;
     private boolean deleted;
     
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rules")
-    private List<TicketFamily> ticketFamilys = new ArrayList<>();
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rule")
+    private List<TicketFamilyRule> ticketFamilyRules = new ArrayList<>();
 
-    public List<TicketFamily> getTicketFamilys() {
-        return ticketFamilys;
+    public List<TicketFamilyRule> getTicketFamilyRules() {
+        return ticketFamilyRules;
     }
 
-    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
-        this.ticketFamilys = ticketFamilys;
+    public void setTicketFamilyRules(List<TicketFamilyRule> ticketFamilyRules) {
+        this.ticketFamilyRules = ticketFamilyRules;
     }
     
     public Long getRuleId() {

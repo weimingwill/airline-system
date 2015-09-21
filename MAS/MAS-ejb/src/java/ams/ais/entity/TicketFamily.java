@@ -33,9 +33,10 @@ public class TicketFamily implements Serializable {
     private boolean deleted;
     
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
-    private List<BookingClass> bookingClasses  = new ArrayList<>();    
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<Rule> rules = new ArrayList<>();
+    private List<TicketFamilyBookingClass> ticketFamilyBookingClasses = new ArrayList<>();
+       
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
+    private List<TicketFamilyRule> ticketFamilyRules = new ArrayList<>();
     
     public Long getTicketFamilyId() {
         return ticketFamilyId;
@@ -45,6 +46,14 @@ public class TicketFamily implements Serializable {
         this.ticketFamilyId = ticketFamilyId;
     }
 
+    public List<TicketFamilyRule> getTicketFamilyRules() {
+        return ticketFamilyRules;
+    }
+
+    public void setTicketFamilyRules(List<TicketFamilyRule> ticketFamilyRules) {
+        this.ticketFamilyRules = ticketFamilyRules;
+    }
+    
     public String getName() {
         return name;
     }
@@ -69,20 +78,12 @@ public class TicketFamily implements Serializable {
         this.deleted = deleted;
     }
 
-    public List<BookingClass> getBookingClasses() {
-        return bookingClasses;
+    public List<TicketFamilyBookingClass> getTicketFamilyBookingClasses() {
+        return ticketFamilyBookingClasses;
     }
 
-    public void setBookingClasses(List<BookingClass> bookingClasses) {
-        this.bookingClasses = bookingClasses;
-    }
-
-    public List<Rule> getRules() {
-        return rules;
-    }
-
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
+    public void setTicketFamilyBookingClasses(List<TicketFamilyBookingClass> ticketFamilyBookingClasses) {
+        this.ticketFamilyBookingClasses = ticketFamilyBookingClasses;
     }
     
     @Override

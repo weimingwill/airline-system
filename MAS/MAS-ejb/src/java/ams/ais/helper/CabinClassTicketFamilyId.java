@@ -11,11 +11,28 @@ import java.io.Serializable;
  *
  * @author winga_000
  */
-public class TicketFamilyDetailId implements Serializable{
+public class CabinClassTicketFamilyId implements Serializable{
     private Long cabinClassId;
     private Long ticketFamilyId;
+
+    public Long getCabinClassId() {
+        return cabinClassId;
+    }
+
+    public void setCabinClassId(Long cabinClassId) {
+        this.cabinClassId = cabinClassId;
+    }
+
+    public Long getTicketFamilyId() {
+        return ticketFamilyId;
+    }
+
+    public void setTicketFamilyId(Long ticketFamilyId) {
+        this.ticketFamilyId = ticketFamilyId;
+    }
     
         
+    
     @Override
     public int hashCode() {
         return (int)(cabinClassId + ticketFamilyId);
@@ -24,8 +41,8 @@ public class TicketFamilyDetailId implements Serializable{
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the ticketFamilyId fields are not set
-    if (object instanceof TicketFamilyDetailId) {
-      TicketFamilyDetailId otherId = (TicketFamilyDetailId) object;
+    if (object instanceof CabinClassTicketFamilyId) {
+      CabinClassTicketFamilyId otherId = (CabinClassTicketFamilyId) object;
       return (otherId.cabinClassId == this.cabinClassId) && (otherId.ticketFamilyId == this.ticketFamilyId);
     }
     return false;
@@ -33,7 +50,7 @@ public class TicketFamilyDetailId implements Serializable{
 
     @Override
     public String toString() {
-        return "ams.ais.entity.TicketFamilyDetail[ cabinClassId=" + cabinClassId + " ][ ticketFamilyId=" + ticketFamilyId + " ]";
+        return "ams.ais.entity.CabinClassTicketFamily[ cabinClassId=" + cabinClassId + " ][ ticketFamilyId=" + ticketFamilyId + " ]";
     }
     
 }

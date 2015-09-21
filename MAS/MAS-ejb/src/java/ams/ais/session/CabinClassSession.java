@@ -5,6 +5,7 @@
  */
 package ams.ais.session;
 
+
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
 import java.util.List;
@@ -14,14 +15,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 /**
  *
  * @author Bowen
  */
 @Stateless
 public class CabinClassSession implements CabinClassSessionLocal {
-
+    
     @EJB
     private TicketFamilySessionLocal ticketFamilySession;
     
@@ -66,7 +66,8 @@ public class CabinClassSession implements CabinClassSessionLocal {
             cabinclass = null;
         }
         return cabinclass;
-        
-        //To change body of generated methods, choose Tools | Templates.
-    }
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+}
+
 }

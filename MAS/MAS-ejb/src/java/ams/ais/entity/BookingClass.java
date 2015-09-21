@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -23,6 +24,7 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 public class BookingClass implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,14 +34,11 @@ public class BookingClass implements Serializable {
     private float price;
     private float priceCoefficient;
     private int demand;
-    private String status; 
+    private String status;
     private boolean deleted;
 
-   
-    
-    
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<Channel> channels = new ArrayList<>();
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "bookingClass")
+    private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
 
     public Long getBookingClassId() {
         return bookingClassId;
@@ -47,17 +46,6 @@ public class BookingClass implements Serializable {
 
     public void setBookingClassId(Long bookingClassId) {
         this.bookingClassId = bookingClassId;
-    }
-
-
-    
-
-    public List<Channel> getChannels() {
-        return channels;
-    }
-
-    public void setChannels(List<Channel> channels) {
-        this.channels = channels;
     }
 
     public String getName() {
@@ -107,7 +95,7 @@ public class BookingClass implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
     public boolean isDeleted() {
         return deleted;
     }
@@ -115,10 +103,6 @@ public class BookingClass implements Serializable {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-    
-    
-
-  
 
     @Override
     public int hashCode() {
@@ -144,5 +128,5 @@ public class BookingClass implements Serializable {
     public String toString() {
         return "ams.ais.entity.BookingClass[ bookingClassId=" + bookingClassId + " ]";
     }
-    
+
 }

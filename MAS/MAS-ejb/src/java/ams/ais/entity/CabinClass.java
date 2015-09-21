@@ -30,7 +30,7 @@ public class CabinClass implements Serializable {
     private boolean deleted;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")
-    private List<TicketFamilyDetail> ticketFamilyDetails = new ArrayList<>();
+    private List<CabinClassTicketFamily> ticketFamilyDetails = new ArrayList<>();
     
     public Long getCabinClassId() {
         return cabinClassId;
@@ -64,11 +64,11 @@ public class CabinClass implements Serializable {
         this.deleted = deleted;
     }
 
-    public List<TicketFamilyDetail> getTicketFamilyDetails() {
+    public List<CabinClassTicketFamily> getTicketFamilyDetails() {
         return ticketFamilyDetails;
     }
 
-    public void setTicketFamilyDetails(List<TicketFamilyDetail> ticketFamilyDetails) {
+    public void setTicketFamilyDetails(List<CabinClassTicketFamily> ticketFamilyDetails) {
         this.ticketFamilyDetails = ticketFamilyDetails;
     }
     

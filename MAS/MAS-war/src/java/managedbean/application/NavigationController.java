@@ -164,7 +164,14 @@ public class NavigationController implements Serializable {
     public String redirectToCreateCabinClass() {
         return "/views/secured/ais/product_design/createCabinClass.xhtml" + REDIRECT;
     }
+    
+    public String redirectToViewAllCabinClass() {
+        return "/views/secured/ais/product_design/viewAllCabinClass.xhtml" + REDIRECT;
+    }
 
+    public String redirectToDeleteCabinClass() {
+        return "/views/secured/ais/product_design/deleteCabinClass.xhtml" + REDIRECT;
+    }
     //Pricing
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
