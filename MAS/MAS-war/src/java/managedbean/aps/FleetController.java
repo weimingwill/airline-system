@@ -8,7 +8,6 @@ package managedbean.aps;
 import ams.aps.entity.AircraftType;
 import ams.aps.session.FleetPlanningSessionLocal;
 import ams.aps.util.exception.EmptyTableException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -38,7 +37,6 @@ public class FleetController {
     @PostConstruct
     public void init(){
         getAvailableAircraftModels();
-        fleetPlanningSession.testQuery();
     }
     
     public void getAvailableAircraftModels(){

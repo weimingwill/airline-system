@@ -7,7 +7,6 @@ package ams.aps.session;
 
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftType;
-import ams.aps.entity.Airport;
 import ams.aps.entity.SeatConfig;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.helper.Message;
