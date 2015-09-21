@@ -14,12 +14,14 @@
         <h:form>
             <p:menu toggleable="true" style="width:200px;">
                 <p:submenu label="Fleet Planning">
-                    <p:menuitem action="#{navigationController.toViewAircraftModel()}" value="View Aircraft Models" />
-                    <p:menuitem action="#{navigationController.toAddNewAircraft()}" value="Add New Aircraft"/>
+                    <p:menuitem action="#{navigationBean.toViewAircraftModel()}" value="View Aircraft Models" />
+                    <p:menuitem action="#{navigationBean.toAddNewAircraft()}" value="Add New Aircraft"/>
                 </p:submenu>
                 <p:submenu label="Route Planning">
-                    <p:menuitem  action="#{navigationController.toAddHub()}" value="Add Hub"/>
-                    <p:menuitem  action="#{navigationController.toCancelHub()}" value="Cancel Hub"/>
+                    <p:menuitem  action="#{navigationBean.toAddHub()}" value="Add Hub"/>
+                    <p:menuitem  action="#{navigationBean.toCancelHub()}" value="Cancel Hub"/>
+                    <p:menuitem  action="#{navigationBean.toAddRoute()}" value="Add Route"/>
+                   
                 </p:submenu>
                 <p:submenu label="Flight Scheduling">
                     <p:menuitem  action="#" value="PUT YOUR MENU HERE"/>
