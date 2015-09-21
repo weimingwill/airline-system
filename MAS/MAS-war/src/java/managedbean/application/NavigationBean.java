@@ -73,4 +73,12 @@ public class NavigationBean implements Serializable {
     public String redirectToAPS(){
         return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
     }
+    
+    public String toViewAircraftModel(){
+        return "/views/secured/aps/fleet/viewAircraftModel.xhtml";
+    }
+    
+    public String toAddNewAircraft(){
+        return "/views/secured/aps/fleet/addNewAircraft.xhtml";
+    }
 }

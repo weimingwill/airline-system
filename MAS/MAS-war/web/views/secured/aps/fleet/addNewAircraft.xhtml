@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../../../template/ApsTemplate.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="Tail Number:"/>
+                        <p:inputText binding="#{tailNo}"/>
+                        <p:outputLabel value="Lifespan:"/>
+                        <p:inputText binding="#{lifetime}"/>
+                        <p:outputLabel value="Source:"/>
+                        <p:inputText binding="#{source}"/>
+                        <p:outputLabel value="Cost:"/>
+                        <p:inputText binding="#{cost}"/>
+                        <p:outputLabel value="Aircraft Model:"/>
+                        <p:selectOneMenu value="#{fleetController.aircraftModel}" converter="aircraftModelConverter" filter="true" filterMatchMode="contains" style="width:100%">
+                            <f:selectItems value="#{fleetController.aircraftModels}" var="model" itemLabel="#{model.typeCode}" itemValue="#{model}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Seat Configuration:"/>
+                        <p:inputText binding="#{seatConfig}"/>
+                        <p:commandButton value="Add"/>
+                    </p:panelGrid>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
