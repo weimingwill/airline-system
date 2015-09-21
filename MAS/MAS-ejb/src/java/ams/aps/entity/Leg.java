@@ -29,9 +29,6 @@ public class Leg implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    @JoinTable
-    private Collection<Route> routes = new ArrayList<Route>();
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Airport departAirport;
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
@@ -68,20 +65,6 @@ public class Leg implements Serializable {
     @Override
     public String toString() {
         return "ams.aps.entity.Leg[ id=" + id + " ]";
-    }
-
-    /**
-     * @return the routes
-     */
-    public Collection<Route> getRoutes() {
-        return routes;
-    }
-
-    /**
-     * @param routes the routes to set
-     */
-    public void setRoutes(Collection<Route> routes) {
-        this.routes = routes;
     }
 
     /**

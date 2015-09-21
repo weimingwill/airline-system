@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -34,12 +35,6 @@ public class Airport implements Serializable {
     private Float latitude;
     private Float altitude;
     private Float longitude;
-    
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="departAirport")
-    private Collection<Leg> outLegs = new ArrayList<Leg>();
-    
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="arrivalAirport")
-    private Collection<Leg> inLegs = new ArrayList<Leg>();
     
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private City city;
@@ -158,34 +153,6 @@ public class Airport implements Serializable {
      */
     public void setIsHub(Boolean isHub) {
         this.isHub = isHub;
-    }
-
-    /**
-     * @return the outLegs
-     */
-    public Collection<Leg> getOutLegs() {
-        return outLegs;
-    }
-
-    /**
-     * @param outLegs the outLegs to set
-     */
-    public void setOutLegs(Collection<Leg> outLegs) {
-        this.outLegs = outLegs;
-    }
-
-    /**
-     * @return the inLegs
-     */
-    public Collection<Leg> getInLegs() {
-        return inLegs;
-    }
-
-    /**
-     * @param inLegs the inLegs to set
-     */
-    public void setInLegs(Collection<Leg> inLegs) {
-        this.inLegs = inLegs;
     }
 
     /**
