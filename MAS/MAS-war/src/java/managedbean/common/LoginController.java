@@ -15,6 +15,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
 import mas.common.session.SystemUserSessionLocal;
 import mas.common.util.exception.InvalidPasswordException;
@@ -33,7 +34,9 @@ public class LoginController implements Serializable {
 
     @Inject
     private NavigationController navigationController;
-
+    @Inject
+    private MsgController msgController;
+    
     @EJB
     private SystemUserSessionLocal systemUserSession;
 
@@ -57,11 +60,11 @@ public class LoginController implements Serializable {
         ExternalContext externalContext = context.getExternalContext();
         try {
             if (systemUserSession.getSystemUserByName(username).isLocked()) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Your account has been locked, please reset password or wait 30mins to try again"));
+                msgController.addErrorMessage("Your account has been locked, please reset password or wait 30mins to try again");
                 return navigationController.toLogin();
             }
         } catch (NoSuchUsernameException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
+            msgController.addErrorMessage(ex.getMessage());
             return navigationController.toLogin();
         }
 

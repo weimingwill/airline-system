@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -22,18 +23,16 @@ import javax.persistence.ManyToMany;
  */
 @Entity
 public class Channel implements Serializable {
-    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long channelId;
     private String name;
     private boolean deleted;
 
-  
-    
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "channels")
-    private List<BookingClass> bookingClasses = new ArrayList<>();
-            
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "channel")
+    private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
+
     public Long getChannelId() {
         return channelId;
     }
@@ -49,7 +48,7 @@ public class Channel implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public boolean isDeleted() {
         return deleted;
     }
@@ -57,17 +56,6 @@ public class Channel implements Serializable {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-    
-    public List<BookingClass> getBookingClasses() {
-        return bookingClasses;
-    }
-
-    public void setBookingClasses(List<BookingClass> bookingClasses) {
-        this.bookingClasses = bookingClasses;
-    }
-    
-    
-    
 
     @Override
     public int hashCode() {
@@ -93,5 +81,5 @@ public class Channel implements Serializable {
     public String toString() {
         return "ams.ais.entity.Channel[ channelId=" + channelId + " ]";
     }
-    
+
 }
