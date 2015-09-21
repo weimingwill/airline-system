@@ -8,7 +8,7 @@ package ams.aps.entity;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,7 +27,7 @@ public class Aircraft implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long aircraftId;
     private String tailNo;
     private Float lifetime;
     private String status;
@@ -37,35 +37,38 @@ public class Aircraft implements Serializable {
     private Float avgUnitOilUsage;
     
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraft")
-    private Collection<FlightSchedule> flightSchedules = new ArrayList<FlightSchedule>();
+    private List<AircraftCabinClass> aircraftCabinClasses = new ArrayList<>();
+            
+    
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraft")
+    private List<FlightSchedule> flightSchedules = new ArrayList<>();
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private AircraftType aircraftType;
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private SeatConfig seatConfig;
-    
-    public Long getId() {
-        return id;
+
+    public Long getAircraftId() {
+        return aircraftId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setAircraftId(Long aircraftId) {
+        this.aircraftId = aircraftId;
     }
+    
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (aircraftId != null ? aircraftId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the aircraftId fields are not set
         if (!(object instanceof Aircraft)) {
             return false;
         }
         Aircraft other = (Aircraft) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.aircraftId == null && other.aircraftId != null) || (this.aircraftId != null && !this.aircraftId.equals(other.aircraftId))) {
             return false;
         }
         return true;
@@ -73,7 +76,7 @@ public class Aircraft implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.Aircraft[ id=" + id + " ]";
+        return "ams.aps.entity.Aircraft[ aircraftId=" + aircraftId + " ]";
     }
 
     /**
@@ -175,20 +178,6 @@ public class Aircraft implements Serializable {
     }
 
     /**
-     * @return the flightSchedules
-     */
-    public Collection<FlightSchedule> getFlightSchedules() {
-        return flightSchedules;
-    }
-
-    /**
-     * @param flightSchedules the flightSchedules to set
-     */
-    public void setFlightSchedules(Collection<FlightSchedule> flightSchedules) {
-        this.flightSchedules = flightSchedules;
-    }
-
-    /**
      * @return the aircraftType
      */
     public AircraftType getAircraftType() {
@@ -202,18 +191,21 @@ public class Aircraft implements Serializable {
         this.aircraftType = aircraftType;
     }
 
-    /**
-     * @return the seatConfig
-     */
-    public SeatConfig getSeatConfig() {
-        return seatConfig;
+    public List<AircraftCabinClass> getAircraftCabinClasses() {
+        return aircraftCabinClasses;
     }
 
-    /**
-     * @param seatConfig the seatConfig to set
-     */
-    public void setSeatConfig(SeatConfig seatConfig) {
-        this.seatConfig = seatConfig;
+    public void setAircraftCabinClasses(List<AircraftCabinClass> aircraftCabinClasses) {
+        this.aircraftCabinClasses = aircraftCabinClasses;
     }
+
+    public List<FlightSchedule> getFlightSchedules() {
+        return flightSchedules;
+    }
+
+    public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
+        this.flightSchedules = flightSchedules;
+    }
+
     
 }

@@ -43,8 +43,6 @@ public class AircraftType implements Serializable {
     private Float trackInM;
     private Float wheelbaseInM;
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private Collection<SeatConfig> seatConfigs = new ArrayList<SeatConfig>();
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraftType")
     private Collection<Aircraft> aircrafts = new ArrayList<Aircraft>();
     
@@ -290,20 +288,6 @@ public class AircraftType implements Serializable {
      */
     public void setWheelbaseInM(Float wheelbaseInM) {
         this.wheelbaseInM = wheelbaseInM;
-    }
-
-    /**
-     * @return the seatConfigs
-     */
-    public Collection<SeatConfig> getSeatConfigs() {
-        return seatConfigs;
-    }
-
-    /**
-     * @param seatConfigs the seatConfigs to set
-     */
-    public void setSeatConfigs(Collection<SeatConfig> seatConfigs) {
-        this.seatConfigs = seatConfigs;
     }
 
     /**

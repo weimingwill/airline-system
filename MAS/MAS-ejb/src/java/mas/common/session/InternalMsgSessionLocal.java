@@ -5,9 +5,7 @@
  */
 package mas.common.session;
 
-import java.util.List;
 import javax.ejb.Local;
-import mas.common.entity.SystemMsg;
 
 /**
  *
@@ -15,5 +13,5 @@ import mas.common.entity.SystemMsg;
  */
 @Local
 public interface InternalMsgSessionLocal {
-    public List<SystemMsg> getAllInternalMessages();
+    
 }

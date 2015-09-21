@@ -8,6 +8,7 @@ package ams.aps.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,7 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -29,12 +29,11 @@ public class Route implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    private String status;
+    private boolean deleted;
     @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="routes")
-    private Collection<Leg> legs = new ArrayList<Leg>();
+    private List<Leg> legs = new ArrayList<>();
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
-    private Collection<Flight> flights = new ArrayList<Flight>();
+    private List<Flight> flights = new ArrayList<>();
     @OneToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Route returnRoute;
 
@@ -71,31 +70,19 @@ public class Route implements Serializable {
         return "ams.aps.entity.Route[ id=" + id + " ]";
     }
 
-    /**
-     * @return the legs
-     */
-    public Collection<Leg> getLegs() {
+    public List<Leg> getLegs() {
         return legs;
     }
 
-    /**
-     * @param legs the legs to set
-     */
-    public void setLegs(Collection<Leg> legs) {
+    public void setLegs(List<Leg> legs) {
         this.legs = legs;
     }
 
-    /**
-     * @return the flights
-     */
-    public Collection<Flight> getFlights() {
+    public List<Flight> getFlights() {
         return flights;
     }
 
-    /**
-     * @param flights the flights to set
-     */
-    public void setFlights(Collection<Flight> flights) {
+    public void setFlights(List<Flight> flights) {
         this.flights = flights;
     }
 
@@ -113,18 +100,12 @@ public class Route implements Serializable {
         this.returnRoute = returnRoute;
     }
 
-    /**
-     * @return the status
-     */
-    public String getStatus() {
-        return status;
+    public boolean isDeleted() {
+        return deleted;
     }
 
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(String status) {
-        this.status = status;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
     
 }

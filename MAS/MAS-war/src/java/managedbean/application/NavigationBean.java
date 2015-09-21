@@ -74,12 +74,21 @@ public class NavigationBean implements Serializable {
         return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
     }
     
+    public String toViewAircraftModel(){
+        return "/views/secured/aps/fleet/viewAircraftModel.xhtml";
+    }
+    
+    public String toAddNewAircraft(){
+        return "/views/secured/aps/fleet/addNewAircraft.xhtml";
+    }
+    
     public String toAddHub(){
         return "/views/secured/aps/route/addHub.xhtml?faces-redirect=true";
     }
     
     public String toCancelHub(){
         return "/views/secured/aps/route/cancelHub.xhtml?faces-redirect=true";
+
     }
     
     public String toAddRoute(){
