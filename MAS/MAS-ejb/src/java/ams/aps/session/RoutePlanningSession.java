@@ -269,6 +269,11 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
             route1.setLegs(legs);
             route1.setDeleted(Boolean.FALSE);
+            leg1.getRoutes().add(route1);
+            leg2.getRoutes().add(route1);
+            leg1.setRoutes(leg1.getRoutes());
+            leg2.setRoutes(leg2.getRoutes());
+            
 
             legs.clear();
             legs.add(leg4);
@@ -278,9 +283,15 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             route2.setDeleted(Boolean.FALSE);
             route2.setReturnRoute(route1);
             route1.setReturnRoute(route2);
+            leg3.getRoutes().add(route2);
+            leg4.getRoutes().add(route2);
+            leg3.setRoutes(leg3.getRoutes());
+            leg4.setRoutes(leg4.getRoutes());
 
-            em.persist(route1);
-            em.persist(route2);
+            em.persist(leg1);
+            em.persist(leg2);
+            em.persist(leg3);
+            em.persist(leg4);
 
             System.out.println("RoutePlanningSession: addRoute(): Set return route.");
 
