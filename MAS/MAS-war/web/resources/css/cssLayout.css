@@ -58,4 +58,19 @@
   text-decoration : underline;
 }
 
+.access-control, table, tr, td{
+    vertical-align: top;
+}
 
+tr.hide{
+    display: none;
+}
+
+.flagMessage{
+    font-weight: bold;
+}
+
+.userRoleDataTable{
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

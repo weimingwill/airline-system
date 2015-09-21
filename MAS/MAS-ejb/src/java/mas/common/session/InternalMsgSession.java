@@ -5,12 +5,7 @@
  */
 package mas.common.session;
 
-import java.util.List;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import mas.common.entity.SystemMsg;
 
 /**
  *
@@ -18,12 +13,7 @@ import mas.common.entity.SystemMsg;
  */
 @Stateless
 public class InternalMsgSession implements InternalMsgSessionLocal {
-    @PersistenceContext
-    private EntityManager em;
-    
-    @Override
-    public List<SystemMsg> getAllInternalMessages() {
-        Query query = em.createQuery("SELECT m FROM SystemMsg m");
-        return query.getResultList();
-    }
+
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
 }

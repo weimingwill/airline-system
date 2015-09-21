@@ -24,31 +24,33 @@ import javax.persistence.ManyToMany;
 public class SystemUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long systemUserId;
     private String username;
     private String password;
     private String email;
     private String resetDigest;
     private boolean locked;
     private boolean activated;
+    private boolean deleted;
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<SystemRole> roles = new ArrayList<SystemRole>();
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<SystemMsg> systemMsgs = new ArrayList<SystemMsg>();
+    private List<SystemRole> systemRoles = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
+    private List<SystemMsg> systemMsgs = new ArrayList<>();
     
-    public void create(String username, String password){
+    public void create(String username, String password, String email){
         this.setUsername(username);
         this.setPassword(password);
+        this.setEmail(email);
+    }
+
+    public Long getSystemUserId() {
+        return systemUserId;
+    }
+
+    public void setSystemUserId(Long systemUserId) {
+        this.systemUserId = systemUserId;
     }
     
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public List<SystemMsg> getSystemMsgs() {
         return systemMsgs;
     }
@@ -61,18 +63,18 @@ public class SystemUser implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (systemUserId != null ? systemUserId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the systemUserId fields are not set
         if (!(object instanceof SystemUser)) {
             return false;
         }
         SystemUser other = (SystemUser) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.systemUserId == null && other.systemUserId != null) || (this.systemUserId != null && !this.systemUserId.equals(other.systemUserId))) {
             return false;
         }
         return true;
@@ -80,7 +82,7 @@ public class SystemUser implements Serializable {
 
     @Override
     public String toString() {
-        return "mas.common.entity.SystemUser[ id=" + id + " ]";
+        return "mas.common.entity.SystemUser[ systemUserId=" + systemUserId + " ]";
     }
 
     /**
@@ -111,18 +113,12 @@ public class SystemUser implements Serializable {
         this.password = password;
     }
 
-    /**
-     * @param roles the roles to set
-     */
-    public void setRoles(List<SystemRole> roles) {
-        this.roles = roles;
+    public List<SystemRole> getSystemRoles() {
+        return systemRoles;
     }
 
-    /**
-     * @return the roles
-     */
-    public List<SystemRole> getRoles() {
-        return roles;
+    public void setSystemRoles(List<SystemRole> systemRoles) {
+        this.systemRoles = systemRoles;
     }
 
     public String getEmail() {
@@ -156,4 +152,14 @@ public class SystemUser implements Serializable {
     public void setActivated(boolean activated) {
         this.activated = activated;
     }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    
 }

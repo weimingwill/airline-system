@@ -10,6 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import mas.common.session.SystemUserSessionLocal;
+import mas.common.util.exception.NoSuchEmailException;
+import mas.common.util.exception.NoSuchUsernameException;
+import mas.common.util.helper.UserMsg;
 
 /**
  *
@@ -39,7 +42,11 @@ public class CountdownHelper {
             } catch (InterruptedException ex) {
                 Logger.getLogger(CountdownHelper.class.getName()).log(Level.SEVERE, null, ex);
             }           
-            systemUserSession.expireResetPassword(email);
+            try {
+                systemUserSession.expireResetPassword(email);
+            } catch (NoSuchEmailException ex) {
+                Logger.getLogger(CountdownHelper.class.getName()).log(Level.SEVERE, null, ex);
+            }
             System.out.println("CountDown end.");
         }
     }
@@ -84,7 +91,12 @@ public class CountdownHelper {
             } catch (InterruptedException ex) {
                 Logger.getLogger(CountdownHelper.class.getName()).log(Level.SEVERE, null, ex);
             }           
-            systemUserSession.unlockUser(username);
+            try {
+                systemUserSession.unlockUser(username);
+            } catch (NoSuchUsernameException ex) {
+                System.err.println(UserMsg.NO_SUCH_EMAIL_ERROR);
+                Logger.getLogger(CountdownHelper.class.getName()).log(Level.SEVERE, null, ex);
+            }
             System.out.println("CountDown end.");
         }
     }

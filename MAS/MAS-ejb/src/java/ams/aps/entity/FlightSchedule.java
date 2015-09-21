@@ -5,11 +5,12 @@
  */
 package ams.aps.entity;
 
+import ams.ais.entity.FlightScheduleBookingClass;
 import java.io.Serializable;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.sql.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,10 +26,9 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class FlightSchedule implements Serializable {
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long flightScheduleId;
     private String departTerminal;
     private String departGate;
     private Date departDatel;
@@ -37,37 +37,42 @@ public class FlightSchedule implements Serializable {
     private String arrivalGate;
     private Date arrivalDatel;
     private Time arrivalTime;
+    private boolean deleted;
    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
+    private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Aircraft aircraft;
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Leg leg;
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Flight flight;
-    
-    public Long getId() {
-        return id;
+
+    public Long getFlightScheduleId() {
+        return flightScheduleId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setFlightScheduleId(Long flightScheduleId) {
+        this.flightScheduleId = flightScheduleId;
     }
+    
+
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (flightScheduleId != null ? flightScheduleId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the flightScheduleId fields are not set
         if (!(object instanceof FlightSchedule)) {
             return false;
         }
         FlightSchedule other = (FlightSchedule) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.flightScheduleId == null && other.flightScheduleId != null) || (this.flightScheduleId != null && !this.flightScheduleId.equals(other.flightScheduleId))) {
             return false;
         }
         return true;
@@ -75,7 +80,7 @@ public class FlightSchedule implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.FlightSchedule[ id=" + id + " ]";
+        return "ams.aps.entity.FlightSchedule[ flightScheduleId=" + flightScheduleId + " ]";
     }
 
     /**
@@ -230,6 +235,22 @@ public class FlightSchedule implements Serializable {
      */
     public void setFlight(Flight flight) {
         this.flight = flight;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public List<FlightScheduleBookingClass> getFlightScheduleBookingClasses() {
+        return flightScheduleBookingClasses;
+    }
+
+    public void setFlightScheduleBookingClasses(List<FlightScheduleBookingClass> flightScheduleBookingClasses) {
+        this.flightScheduleBookingClasses = flightScheduleBookingClasses;
     }
     
 }

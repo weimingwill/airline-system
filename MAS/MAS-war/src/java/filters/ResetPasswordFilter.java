@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.servlet.Filter;
@@ -20,8 +22,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import managedbean.application.NavigationBean;
-import managedbean.common.UserBean;
+import managedbean.application.NavigationController;
+import managedbean.common.UserController;
 import mas.common.entity.SystemUser;
 import mas.common.util.exception.NoSuchEmailException;
 
@@ -33,9 +35,9 @@ import mas.common.util.exception.NoSuchEmailException;
 public class ResetPasswordFilter implements Filter {
 
     @Inject
-    private UserBean userBean;
+    private UserController userController;
     @Inject
-    private NavigationBean navigationBean;
+    private NavigationController navigationController;
 
     private static final boolean debug = true;
 
@@ -59,15 +61,12 @@ public class ResetPasswordFilter implements Filter {
         String resetDigest = request.getParameter("resetDigest");
         String email = request.getParameter("email");
         try {
-            SystemUser user = userBean.getUserByEmail(email);
-            
+            SystemUser user = userController.getUserByEmail(email);
             if (resetDigest == null || !resetDigest.equals(user.getResetDigest())) {
-                rsp.sendRedirect(contextPath + navigationBean.toPasswordResetSendEmail());
+                rsp.sendRedirect(contextPath + navigationController.toPasswordResetSendEmail());
             }
-        } catch (NoResultException ex) {
-            rsp.sendRedirect(contextPath + navigationBean.toPasswordResetSendEmail());
         } catch (NoSuchEmailException ex) {
-            rsp.sendRedirect(contextPath + navigationBean.toPasswordResetSendEmail());
+            rsp.sendRedirect(contextPath + navigationController.toPasswordResetSendEmail());
         }
 
         Throwable problem = null;

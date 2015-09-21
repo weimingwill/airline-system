@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/WorkspaceTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">
+        View all users
+    </ui:define>
+
+    <ui:define name="content">
+        <p:dataTable value="#{userController.allUsers}" var="user">
+            <p:column headerText="Username">
+                <p:outputLabel value="#{user.username}"/>
+            </p:column>
+            
+            <p:column headerText="Email">
+                <p:outputLabel value="#{user.email}" />
+            </p:column>
+            
+            <p:column headerText="Role">
+                <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
+                    <p:column>
+                        <p:outputLabel value="#{role.roleName}" />
+                    </p:column>
+                </p:dataTable>
+            </p:column>
+            
+            
+             <p:column headerText="Permissions">
+                <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
+                    <p:column>
+                        <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                            <p:column>
+                                <p:outputLabel value="#{permission.permissionName}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:dataTable>
+            </p:column>   
+        </p:dataTable>
+    </ui:define>
+
+</ui:composition>
