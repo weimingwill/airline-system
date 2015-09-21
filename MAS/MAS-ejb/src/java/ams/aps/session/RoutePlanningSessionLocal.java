@@ -10,7 +10,6 @@ import ams.aps.entity.City;
 import ams.aps.entity.Country;
 import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Local;
 
