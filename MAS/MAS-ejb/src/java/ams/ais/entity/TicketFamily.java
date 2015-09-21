@@ -28,8 +28,8 @@ public class TicketFamily implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ticketFamilyId;
+    private String type;
     private String name;
-    private int seatQty;
     private boolean deleted;
     
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
@@ -62,12 +62,12 @@ public class TicketFamily implements Serializable {
         this.name = name;
     }
 
-    public int getSeatQty() {
-        return seatQty;
+    public String getType() {
+        return type;
     }
 
-    public void setSeatQty(int seatQty) {
-        this.seatQty = seatQty;
+    public void setType(String type) {
+        this.type = type;
     }
     
     public boolean isDeleted() {

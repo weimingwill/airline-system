@@ -30,11 +30,6 @@ public class BookingClass implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingClassId;
     private String name;
-    private int seatQty;
-    private float price;
-    private float priceCoefficient;
-    private int demand;
-    private String status;
     private boolean deleted;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "bookingClass")
@@ -55,47 +50,7 @@ public class BookingClass implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public int getSeatQty() {
-        return seatQty;
-    }
-
-    public void setSeatQty(int seatQty) {
-        this.seatQty = seatQty;
-    }
-
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public float getPriceCoefficient() {
-        return priceCoefficient;
-    }
-
-    public void setPriceCoefficient(float priceCoefficient) {
-        this.priceCoefficient = priceCoefficient;
-    }
-
-    public int getDemand() {
-        return demand;
-    }
-
-    public void setDemand(int demand) {
-        this.demand = demand;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
+    
     public boolean isDeleted() {
         return deleted;
     }
