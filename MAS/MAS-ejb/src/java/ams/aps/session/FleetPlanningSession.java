@@ -7,8 +7,6 @@ package ams.aps.session;
 
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftType;
-import ams.aps.entity.Airport;
-import ams.aps.entity.SeatConfig;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.helper.Message;
 import java.util.List;
@@ -59,11 +57,6 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
 
     @Override
     public void addNewAircraft(Aircraft newAircraft) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<SeatConfig> getAircraftConfigs(String aircraftType) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
