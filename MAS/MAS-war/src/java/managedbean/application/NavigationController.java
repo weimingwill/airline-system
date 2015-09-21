@@ -177,6 +177,10 @@ public class NavigationController implements Serializable {
         return "/views/secured/ais/booking_class/createBookingClass.xhtml" + REDIRECT;
     }
     
+    public String redirectToDeleteBookingClass(){
+        return "/views/secured/ais/booking_class/deleteBookingClass.xhtml" + REDIRECT;
+    }
+    
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }

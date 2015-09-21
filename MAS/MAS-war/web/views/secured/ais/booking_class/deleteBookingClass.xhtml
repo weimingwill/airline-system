@@ -6,16 +6,16 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="title">
-        Create Booking Class
+        Delete Booking Class
     </ui:define>
 
     <ui:define name="content">
         <h:form>
             <h:panelGrid columns="2">
-                <p:outputLabel value="Booking class name: "/>
+                <p:outputLabel value="booking class name: "/>
 
                 <p:inputText value="#{bookingClassController.bookingClassName}"/>
-                <p:commandButton action="#{bookingClassController.createBookingClass()}" value="Create" update="messages" />
+                <p:commandButton action="#{bookingClassController.deleteBookingClass()}" value="Delete" update="messages" />
             </h:panelGrid>
         </h:form>
     </ui:define>

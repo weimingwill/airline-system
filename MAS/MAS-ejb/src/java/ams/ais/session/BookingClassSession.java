@@ -6,12 +6,12 @@
 package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
-import ams.ais.entity.CabinClass;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
-import ams.ais.util.exception.ExistSuchCabinClassNameException;
-import ams.ais.util.exception.ExistSuchCabinClassTypeException;
+import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.AisMsg;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -25,7 +25,7 @@ import javax.persistence.Query;
  */
 @Stateless
 public class BookingClassSession implements BookingClassSessionLocal {
-    
+
     @EJB
     private BookingClassSessionLocal bookingClassSessionLocal;
 
@@ -38,6 +38,27 @@ public class BookingClassSession implements BookingClassSessionLocal {
         BookingClass bookingClass = new BookingClass();
         bookingClass.create(name);
         entityManager.persist(bookingClass);
+    }
+
+    @Override
+    public void deleteBookingClass(String name) throws NoSuchBookingClassException {
+        BookingClass bookingClassTemp = search(name);
+        bookingClassTemp.setDeleted(true);
+    }
+
+    @Override
+    public BookingClass search(String name) throws NoSuchBookingClassException {
+        List<BookingClass> bookingClasses = getAllBookingClasses();
+        if (bookingClasses == null) {
+            throw new NoSuchBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
+        } else {
+            for (BookingClass bookingClass : bookingClasses) {
+                if (name.equals(bookingClass.getName())) {
+                    return bookingClass;
+                }
+            }
+            throw new NoSuchBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
+        }
     }
 
     @Override
@@ -54,9 +75,8 @@ public class BookingClassSession implements BookingClassSessionLocal {
 
     @Override
     public List<BookingClass> getAllBookingClasses() {
-        Query query = entityManager.createQuery("SELECT c FROM BookingClass c");
+        Query query = entityManager.createQuery("SELECT c FROM BookingClass c WHERE c.deleted = FALSE");
         return query.getResultList();
     }
-
 
 }

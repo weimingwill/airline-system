@@ -7,6 +7,9 @@ package managedbean.ais;
 
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
+import ams.ais.util.exception.NoSuchBookingClassException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -46,6 +49,16 @@ public class BookingClassController {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToCreateBookingClass();
+    }
+    
+    public String deleteBookingClass(){
+        try {
+            bookingClassSession.deleteBookingClass(bookingClassName);
+            msgController.addMessage("Booking class is deleted successfully!");
+        } catch (NoSuchBookingClassException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToDeleteBookingClass(); 
     }
 
     
