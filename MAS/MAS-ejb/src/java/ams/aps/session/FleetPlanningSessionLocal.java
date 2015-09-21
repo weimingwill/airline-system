@@ -26,5 +26,4 @@ public interface FleetPlanningSessionLocal {
     public List<SeatConfig> getAircraftConfigs(String aircraftType);
     public void markAircraftAsRetired(String tailNo);
     public AircraftType getAircraftTypeById(Long id);
-    public void testQuery();
 }

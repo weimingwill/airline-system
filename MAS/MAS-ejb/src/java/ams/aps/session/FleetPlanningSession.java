@@ -75,18 +75,5 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
     @Override
     public AircraftType getAircraftTypeById(Long id) {
         return entityManager.find(AircraftType.class, id);
-    }
-
-    @Override
-    public void testQuery() {
-        // dummy data
-        Airport originAirport = entityManager.find(Airport.class, 1), destAirport = entityManager.find(Airport.class, 2);
-        // query route such that
-        Query query = entityManager.createQuery("SELECT rt FROM Route AS rt WHERE rt.originAirport = :originAirport AND rt.destAirport = :destAirport");
-        query.setParameter("originAirport", originAirport);
-        query.setParameter("destAirport", destAirport);
-        
-    }
-    
-    
+    }    
 }

@@ -80,7 +80,8 @@ public class NavigationBean implements Serializable {
     
     public String toAddNewAircraft(){
         return "/views/secured/aps/fleet/addNewAircraft.xhtml";
-
+    }
+    
     public String toAddHub(){
         return "/views/secured/aps/route/addHub.xhtml?faces-redirect=true";
     }
