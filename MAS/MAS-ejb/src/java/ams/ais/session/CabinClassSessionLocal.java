@@ -7,7 +7,8 @@ package ams.ais.session;
 
 
 import ams.ais.entity.CabinClass;
-import ams.ais.entity.TicketFamily;
+import ams.ais.util.exception.ExistSuchCabinClassNameException;
+import ams.ais.util.exception.ExistSuchCabinClassTypeException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -19,7 +20,8 @@ import javax.ejb.Local;
 public interface CabinClassSessionLocal {
      
    public List<CabinClass> getAllCabinClass();
-   public void createCabinClass(String name, String type);
+   public void createCabinClass(String name, String type) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
+   public void verifyCabinClassExistence(String type, String name) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
    public void deleteCabinClass(String name);
    public CabinClass getCabinClassByName(String name);
    

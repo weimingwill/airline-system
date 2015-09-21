@@ -15,14 +15,13 @@
             <h:panelGrid columns="2" columnClasses="label, value">
 
                 <h:outputText value="Type"/>
-                <p:inputText required="true" requiredMessage="Please enter cabin class type" id="username" binding="#{newCabinclasstype}"/>
-                
+                <p:inputText required="true" requiredMessage="Please enter cabin class type" id="type" value="#{cabinClassController.type}"/>                
                 <h:outputText value="Name"/>
-                <p:inputText required="true" requiredMessage="Please enter cabin class name" id="name" binding="#{newCabinclassname}">
+                <p:inputText required="true" requiredMessage="Please enter cabin class name" id="name" value="#{cabinClassController.name}">
                
                 </p:inputText>
                 
-                <p:commandButton action="#{userController.createUser(newUsername.value, newPassword.value, newEmail.value)}" value="Create" update="messages"/>    
+                <p:commandButton action="#{cabinClassController.createCabinClass()}" value="Create" update="messages"/>    
 
             </h:panelGrid>
         </h:form>
