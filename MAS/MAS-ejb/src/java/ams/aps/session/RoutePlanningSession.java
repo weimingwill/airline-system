@@ -268,14 +268,14 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             legs.add(leg2);
 
             route1.setLegs(legs);
-            route1.setStatus("added");
+            route1.setDeleted(Boolean.FALSE);
 
             legs.clear();
             legs.add(leg4);
             legs.add(leg3);
 
             route2.setLegs(legs);
-            route2.setStatus("added");
+            route2.setDeleted(Boolean.FALSE);
             route2.setReturnRoute(route1);
             route1.setReturnRoute(route2);
 
