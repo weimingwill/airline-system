@@ -27,7 +27,6 @@ public class Rule implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ruleId;
     private String name;
-    private float ruleValue;
     private boolean deleted;
     
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rule")
@@ -56,15 +55,6 @@ public class Rule implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public float getRuleValue() {
-        return ruleValue;
-    }
-
-    public void setRuleValue(float ruleValue) {
-        this.ruleValue = ruleValue;
-    }
-    
     
     public boolean isDeleted() {
         return deleted;
