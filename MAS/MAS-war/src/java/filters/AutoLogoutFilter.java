@@ -24,7 +24,7 @@ import managedbean.common.LoginController;
  *
  * @author winga_000
  */
-@WebFilter(filterName = "AutoLogoutFilter", urlPatterns = {"/*"})
+//@WebFilter(filterName = "AutoLogoutFilter", urlPatterns = {"/*"})
 public class AutoLogoutFilter implements Filter {
 
     @Inject

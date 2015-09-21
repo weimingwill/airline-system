@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mas.common.session;
+package ams.ais.session;
 
+import ams.ais.entity.TicketFamily;
 import javax.ejb.Local;
 
 /**
  *
- * @author winga_000
+ * @author Bowen
  */
 @Local
-public interface InternalMsgSessionLocal {
-    
+public interface TicketFamilySessionLocal {
+    public TicketFamily getTicketFamilyByName (String ticketFamilyName);
 }
