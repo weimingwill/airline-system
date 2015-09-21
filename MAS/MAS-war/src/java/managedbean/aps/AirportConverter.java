@@ -28,7 +28,8 @@ public class AirportConverter implements Converter {
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                return routeController.getAirportByICAO(value);
+                Object obj = routeController.getAirportByICAO(value);
+                return obj;
             } catch (NullPointerException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid airport."));
             }

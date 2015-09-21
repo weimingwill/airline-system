@@ -81,4 +81,8 @@ public class NavigationBean implements Serializable {
     public String toCancelHub(){
         return "/views/secured/aps/route/cancelHub.xhtml?faces-redirect=true";
     }
+    
+    public String toAddRoute(){
+        return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
+    }
 }

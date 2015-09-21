@@ -7,16 +7,16 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-            <p:outputLabel value="Welcome to Merline Airlin #{userBean.username}" style="font-size:15px;"></p:outputLabel>
+        <p:outputLabel value="Welcome to Merline Airlin #{userBean.username}" style="font-size:15px;"></p:outputLabel>
         <h:form>
 
-            <ui:remove>
-            <p:commandButton action="#{navigationBean.toLogin()}" value="Login" rendered="#{not userBean.loggedIn}"></p:commandButton>
-            <p:commandButton action="#{userBean.doLogout()}" value="Logout" rendered="#{userBean.loggedIn}"></p:commandButton>
-            
-            <p:commandButton action="#{navigationBean.redirectToWorkplace()}" value="Workplace"></p:commandButton>
-        </ui:remove>
+            <!--ui:remove>
+                <p:commandButton action="#{navigationBean.toLogin()}" value="Login" rendered="#{not userBean.loggedIn}"></p:commandButton>
+                <p:commandButton action="#{userBean.doLogout()}" value="Logout" rendered="#{userBean.loggedIn}"></p:commandButton>
+
+                <p:commandButton action="#{navigationBean.redirectToWorkplace()}" value="Workplace"></p:commandButton>
+            </ui:remove-->
         </h:form>
-            
+
     </ui:define>
 </ui:composition>
