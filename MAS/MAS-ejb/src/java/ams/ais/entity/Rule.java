@@ -27,7 +27,6 @@ public class Rule implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ruleId;
     private String name;
-    private float ruleValue;
     private boolean deleted;
 
     
@@ -36,7 +35,11 @@ public class Rule implements Serializable {
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
 
     
-
+    public void create(String name) {
+        
+        this.setName(name);
+       
+    }
     public List<TicketFamily> getTicketFamilys() {
         return ticketFamilys;
     }
@@ -61,13 +64,7 @@ public class Rule implements Serializable {
         this.name = name;
     }
 
-    public float getRuleValue() {
-        return ruleValue;
-    }
-
-    public void setRuleValue(float ruleValue) {
-        this.ruleValue = ruleValue;
-    }
+   
     
     
     public boolean isDeleted() {

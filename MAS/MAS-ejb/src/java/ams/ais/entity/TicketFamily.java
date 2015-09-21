@@ -29,7 +29,6 @@ public class TicketFamily implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ticketFamilyId;
     private String name;
-    private int seatQty;
     private boolean deleted;
 
    
@@ -58,13 +57,7 @@ public class TicketFamily implements Serializable {
         this.name = name;
     }
 
-    public int getSeatQty() {
-        return seatQty;
-    }
-
-    public void setSeatQty(int seatQty) {
-        this.seatQty = seatQty;
-    }
+    
     
     public boolean isDeleted() {
         return deleted;
