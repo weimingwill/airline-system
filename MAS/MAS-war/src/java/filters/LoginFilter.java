@@ -17,7 +17,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import managedbean.application.NavigationController;
-import managedbean.common.UserController;
+import managedbean.common.LoginController;
 
 /**
  *
@@ -25,11 +25,11 @@ import managedbean.common.UserController;
  */
 @WebFilter(filterName = "LoginFilter", urlPatterns = {"/views/secured/*"})
 public class LoginFilter implements Filter{
- 
-    @Inject
-    UserController userController;
+    
     @Inject
     NavigationController navigationController;
+    @Inject
+    LoginController loginController;
     
     @Override
     public void init(FilterConfig config) throws ServletException{
@@ -46,9 +46,9 @@ public class LoginFilter implements Filter{
         String loginUrl = contextPath + navigationController.toLogin();
         String redirectUrl = contextPath + navigationController.redirectToWorkspace();
         boolean inLoginPage = uri.equals(loginUrl);
-        if (!userController.isLoggedIn() && !inLoginPage) {
+        if (!loginController.isLoggedIn() && !inLoginPage) {
             rsp.sendRedirect(loginUrl);
-        } else if (userController.isLoggedIn() && inLoginPage) {
+        } else if (loginController.isLoggedIn() && inLoginPage) {
             rsp.sendRedirect(redirectUrl);
         }        
         chain.doFilter(req, rsp);

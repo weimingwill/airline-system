@@ -5,6 +5,8 @@
  */
 package util.converter;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -30,12 +32,11 @@ public class RoleConverter implements Converter {
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                //RoleController role = (RoleController) fc.getExternalContext().getRequestMap().get("roleController");
-                //return role.getAllRoles().get(Integer.parseInt(value));
-//                return roleSession.getAllRoles().get(Integer.parseInt(value)-1);
                 return roleSession.getSystemRoleByName(value);
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
+            } catch (NoSuchRoleException ex) {
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", UserMsg.NO_SUCH_ROLE_ERROR));
             }
         } else {
             return null;

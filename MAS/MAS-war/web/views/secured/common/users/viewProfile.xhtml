@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/WorkspaceTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        User profile
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <h:panelGrid>
+                <p:outputLabel value="Username: #{username}"/>
+                <p:outputLabel value="Email: #{userController.userByUsername.email}"/>
+
+                <p:dataTable value="#{userController.getUserRolesByUsername(username)}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
+                    <f:facet name="header">
+                        Existing user roles
+                    </f:facet>
+                    <p:column headerText="Roles">
+                        <h:outputText value="#{role.roleName}" />
+                    </p:column>
+
+                    <p:column headerText="Permisssions">
+                        <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                            <p:column>
+                                <p:outputLabel value="#{permission.permissionName}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:dataTable>
+
+                <p:commandButton value="Edit" action="#{navigationController.redirectToEditUserProfile()}"  />
+            </h:panelGrid>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

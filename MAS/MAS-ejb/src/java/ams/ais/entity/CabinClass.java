@@ -26,24 +26,11 @@ public class CabinClass implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cabinClassId;
     private String name;
-    private String type;
-
-    
+    private int seatQty;
     private boolean deleted;
 
-   
-    
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<TicketFamily> ticketFamilys = new ArrayList<>();
-    
-    
-    
-    public void create(String type,String name) {
-        this.type=type;
-        this.setName(name);
-       
-    }
-    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")
+    private List<TicketFamilyDetail> ticketFamilyDetails = new ArrayList<>();
     
     public Long getCabinClassId() {
         return cabinClassId;
@@ -61,7 +48,13 @@ public class CabinClass implements Serializable {
         this.name = name;
     }
 
-   
+    public int getSeatQty() {
+        return seatQty;
+    }
+
+    public void setSeatQty(int seatQty) {
+        this.seatQty = seatQty;
+    }
     
     public boolean isDeleted() {
         return deleted;
@@ -70,25 +63,18 @@ public class CabinClass implements Serializable {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-    
-    
-    public String getType() {
-        return type;
+
+    public List<TicketFamilyDetail> getTicketFamilyDetails() {
+        return ticketFamilyDetails;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTicketFamilyDetails(List<TicketFamilyDetail> ticketFamilyDetails) {
+        this.ticketFamilyDetails = ticketFamilyDetails;
     }
     
-    public List<TicketFamily> getTicketFamilys() {
-        return ticketFamilys;
-    }
 
-    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
-        this.ticketFamilys = ticketFamilys;
-    }
     
-   
+    
     
 
     @Override

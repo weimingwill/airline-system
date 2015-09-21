@@ -21,4 +21,7 @@ public class UserMsg {
     public static final String NO_MESSAGE_ERROR = "User does not have messages";
     public static final String EXIST_ROLE_ERROR = "Role already exist";
     public static final String EXIST_PERMISSION_ERROR = "Permission already exist";
+    public static final String NO_USER_EXIST_ERROR = "No user exist in database";
+    public static final String EXIST_USER_ERROR = "User already exist";
+    public static final String EXIST_USER_EMAIL_ERROR = "Email already exist";
 }

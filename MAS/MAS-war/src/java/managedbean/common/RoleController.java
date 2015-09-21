@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -24,6 +26,7 @@ import mas.common.session.RoleSessionLocal;
 import mas.common.session.SystemUserSessionLocal;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.exception.ExistSuchRoleException;
+import mas.common.util.exception.NoSuchPermissionException;
 import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserMsg;
 
@@ -45,7 +48,6 @@ public class RoleController implements Serializable {
     @EJB
     private RoleSessionLocal roleSession;
 
-    private String username;
     private List<SystemRole> roleList;
     private List<SystemRole> roles;
     private List<String> roleNameList;
@@ -62,9 +64,6 @@ public class RoleController implements Serializable {
 
     @PostConstruct
     public void init() {
-        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        Map<String, Object> sessionMap = externalContext.getSessionMap();
-        this.username = (String) sessionMap.get("username");
         setRoleNameList();
         roles = getAllRoles();
     }
@@ -77,6 +76,8 @@ public class RoleController implements Serializable {
             context.addMessage(null, new FacesMessage("Successful", "Create new role: " + roleName + " successfully!"));
         } catch (ExistSuchRoleException ex) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", UserMsg.EXIST_ROLE_ERROR));
+        } catch (NoSuchPermissionException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", UserMsg.NO_PERMISSION_ERROR));
         }
         return navigationController.redirectToCreateRole();
     }
@@ -116,14 +117,6 @@ public class RoleController implements Serializable {
 
     public void setUserController(UserController userController) {
         this.userController = userController;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public List<String> getRoleNameList() {
