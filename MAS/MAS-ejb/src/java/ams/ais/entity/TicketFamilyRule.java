@@ -38,7 +38,7 @@ public class TicketFamilyRule implements Serializable {
     private Rule rule;
 
     @Column(name = "VALUE")
-    private float value;
+    private float ruleValue;
 
     public Long getTicketFamilyId() {
         return ticketFamilyId;
@@ -72,12 +72,13 @@ public class TicketFamilyRule implements Serializable {
         this.rule = rule;
     }
 
-    public float getValue() {
-        return value;
+    public float getRuleValue() {
+        return ruleValue;
     }
 
-    public void setValue(float value) {
-        this.value = value;
+    public void setRuleValue(float ruleValue) {
+        this.ruleValue = ruleValue;
     }
-    
+
+
 }

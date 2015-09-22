@@ -27,6 +27,7 @@ public class Channel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long channelId;
+    private String type;
     private String name;
     private boolean deleted;
 
@@ -55,6 +56,22 @@ public class Channel implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public List<BookingClassChannel> getBookingClassChannels() {
+        return bookingClassChannels;
+    }
+
+    public void setBookingClassChannels(List<BookingClassChannel> bookingClassChannels) {
+        this.bookingClassChannels = bookingClassChannels;
     }
 
     @Override
