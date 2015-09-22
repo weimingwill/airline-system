@@ -35,6 +35,7 @@ public class CabinClass implements Serializable {
     public void create(String type, String name) {
         this.setType(type);
         this.setName(name);
+        this.setDeleted(false);
     }
     
     public Long getCabinClassId() {
