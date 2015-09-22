@@ -6,20 +6,20 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="title">
-        Delete Cabin Class
+        Create New Rule
     </ui:define>
-        
+
     <ui:define name="content">
-        <h:form id="deleteCabinClassForm">
+        <h:form id="createCabinClassForm">
             <h:panelGrid columns="2" columnClasses="label, value">
 
-                                
-                <h:outputText value="Delete through Cabin Class Name"/>
-                <p:inputText required="true" requiredMessage="Please enter cabin class name you want to delete" id="name" value="#{cabinClassController.name}">
+                             
+                <h:outputText value="Name"/>
+                <p:inputText required="true" requiredMessage="Please enter rule name" id="name" value="#{ruleController.name}">
                
                 </p:inputText>
                 
-                <p:commandButton action="#{cabinClassController.deleteCabinClass()}" value="Delete" update="messages"/>    
+                <p:commandButton action="#{ruleController.createRule()}" value="Create" update="messages"/>    
 
             </h:panelGrid>
         </h:form>
