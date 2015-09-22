@@ -4,7 +4,8 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/WorkspaceTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="title">
         User Workspace
@@ -12,30 +13,45 @@
 
     <ui:define name="content">
         <h:form>
+            <c:forEach items="#{userController.userPermissions}" var="permission">
+                <p:panel id="#{permission.system}" header="#{permission.system}">
+                    <p:dashboard id="board" model="#{dashboardViewController.model}" >
+                        <c:forEach items="#{permissionController.getSystemModuelsBySystem(permission.system)}" var="module">
+                            <p:panel id="#{module}" header="#{module}"></p:panel>
+                        </c:forEach>
+                    </p:dashboard>
+                </p:panel>
+            </c:forEach>
+            
+            <ui:remove>
             <p:outputLabel style="font-size:20px;"> Welcome #{userController.username}</p:outputLabel>
-            <p:dashboard id="board" model="#{dashboardViewController.model}">
-                <p:ajax event="reorder" listener="#{dashboardView.handleReorder}" update="messages" />
+            <p:panel id="apsPanel" rendered="#{userController.hasSystemPermission("aps")}">
+                <p:outputLabel value="Airline Planning System" style="font-size:15px;" /> 
+                <p:dashboard id="board" model="#{dashboardViewController.model}" >
+                    <p:ajax event="reorder" listener="#{dashboardView.handleReorder}" update="messages" />
 
-                <p:panel id="aps" header="Airline Planning System" rendered="#{userController.hasRole('Fleet planner')}">
-                    <h:outputText value="APS Content" />
-                </p:panel>
+                    <p:panel id="aps" header="Airline Planning System" rendered="#{userController.hasRole('Fleet planner')}">
+                        <h:outputText value="APS Content" />
+                    </p:panel>
 
-                <p:panel id="ais" header="Airline Inventory System" rendered="#{userController.hasRole('Inventory Manager')}">
-                    <h:outputText value="AIS Content" />
-                </p:panel>
+                    <p:panel id="ais" style="width:200px;height:200px;" rendered="#{userController.hasRole('Inventory Manager')}">
+                        <p:outputLabel value="Airline Inventory System"></p:outputLabel>    
+                    </p:panel>
 
-                <p:panel id="apos" header="Airline Operation System" rendered="#{userController.hasRole('Cabin Crew')}">
-                    <h:outputText value="APOS Content"  />
-                </p:panel>
+                    <p:panel id="apos" header="Airline Operation System" rendered="#{userController.hasRole('Cabin Crew')}">
+                        <h:outputText value="APOS Content"  />
+                    </p:panel>
 
-                <p:panel id="ads" header="Airline Distribution System" rendered="#{userController.hasRole('IT Staff')}">
-                    <h:outputText value="ADS Content" />
-                </p:panel>
+                    <p:panel id="ads" header="Airline Distribution System" rendered="#{userController.hasRole('IT Staff')}">
+                        <h:outputText value="ADS Content" />
+                    </p:panel>
 
-                <p:panel id="crm" header="Customer Relationship Management System" rendered="#{userController.hasRole('Operations Analyst')}">
-                    <h:outputText value="CRM Content" />
-                </p:panel>
-            </p:dashboard>
+                    <p:panel id="crm" header="Customer Relationship Management System" rendered="#{userController.hasRole('Operations Analyst')}">
+                        <h:outputText value="CRM Content" />
+                    </p:panel>
+                </p:dashboard>
+            </p:panel>
+            </ui:remove>
         </h:form>
 
 

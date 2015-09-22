@@ -93,7 +93,9 @@ public class PermissionController implements Serializable {
         return resultItems;
     }
 
-
+    public List<String> getSystemModuelsBySystem(String system){
+        return permissionSession.getSystemModulesBySystem(system);
+    }
 
     
 //

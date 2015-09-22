@@ -14,7 +14,11 @@
         <h:form>
             <h:panelGrid>
                 <p:outputLabel value="Username: #{username}"/>
+                <p:outputLabel value="Name: #{name}"/>
                 <p:outputLabel value="Email: #{userController.userByUsername.email}"/>
+                <p:outputLabel value="Phone: #{phone}"/>
+                <p:outputLabel value="Address: #{address}"/>
+                <p:outputLabel value="Department: #{department}"/>                
 
                 <p:dataTable value="#{userController.getUserRolesByUsername(username)}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
                     <f:facet name="header">

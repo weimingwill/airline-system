@@ -7,6 +7,7 @@ package mas.common.session;
 
 import java.util.List;
 import javax.ejb.Local;
+import mas.common.entity.Permission;
 import mas.common.entity.SystemMsg;
 import mas.common.entity.SystemRole;
 import mas.common.entity.SystemUser;
@@ -61,7 +62,8 @@ public interface SystemUserSessionLocal {
     public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException;
 //    public void createUser(String username, String password, String[] roleNames) throws ExistSuchUserException, NoSuchRoleException;
 
-    public void updateUserProfile(String username, String email) throws NoSuchUsernameException, ExistSuchUserEmailException;
+    public void updateUserProfile(String username, String name, String email, String phone, 
+            String address, String department) throws NoSuchUsernameException, ExistSuchUserEmailException;
     
     public void changePassword(String username, String password) throws NoSuchUsernameException;
     
@@ -86,8 +88,14 @@ public interface SystemUserSessionLocal {
     public List<RolePermission> getUserRolesPermissions(String username);
 
     public List<SystemRole> getUserRoles(String username);
+    
+    public List<Permission> getUserPermissions(String username);
 
     public boolean hasRole(String username, String roleName);
 
     public boolean isAdmin(String username);
+    
+//    public boolean hasSystemPermission(String username, String systemAbbr);
+//
+//    public boolean hasSystemModulePermission(String username, String systemAbbr, String systemModule);
 }

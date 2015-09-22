@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -197,20 +197,22 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void updateUserProfile(String username, String email) throws NoSuchUsernameException, ExistSuchUserEmailException {
+    public void updateUserProfile(String username, String name, String email, String phone, 
+            String address, String department) throws NoSuchUsernameException, ExistSuchUserEmailException {
         List<SystemUser> systemUsers = getAllOtherUsers(username);
         SystemUser user = getSystemUserByName(username);
         if (systemUsers != null) {
             for (SystemUser systemUser : systemUsers) {
-                System.out.println("SystemUser: " + systemUser + systemUser.getEmail() + ".. "  + systemUser.getUsername() );
-                System.out.println("Email: " + email );
                 if (email.equals(systemUser.getEmail())) {
-                    System.out.println("To throw exception");
                     throw new ExistSuchUserEmailException(UserMsg.EXIST_USER_EMAIL_ERROR);
                 }
             }
         }
+        user.setName(name);
         user.setEmail(email);
+        user.setPhone(phone);
+        user.setAddress(address);
+        user.setDepartment(department);
         entityManager.merge(user);
     }
 
@@ -296,6 +298,24 @@ public class SystemUserSession implements SystemUserSessionLocal {
 
     }
 
+    @Override
+    public List<Permission> getUserPermissions(String username) {
+        List<SystemRole> roles = getUserRoles(username);
+        if(roles != null){
+            List<Permission> permissionList = new ArrayList<>();
+            for (SystemRole role  : roles) {
+                List<Permission> permissions = role.getPermissions();
+                if (permissions != null) {
+                    for (Permission permission : permissions) {
+                        permissionList.add(permission);
+                    }
+                }
+            }
+            return permissionList;
+        }
+        return null;
+    }
+    
     @Override
     public List<String> getSystemUsernameList() {
         Query query = entityManager.createQuery("SELECT u.username FROM SystemUser u");
@@ -400,5 +420,33 @@ public class SystemUserSession implements SystemUserSessionLocal {
             return false;
         }
     }
+//
+//    @Override
+//    public boolean hasSystemPermission(String username, String systemAbbr) {
+//        List<Permission> permissions = getUserPermissions(username);
+//        if (permissions != null) {
+//            for (Permission permission : permissions) {
+//                if (systemAbbr.equals(permission.getSystemAbbr())) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean hasSystemModulePermission(String username, String systemAbbr, String systemModule) {
+//        List<Permission> permissions = getUserPermissions(username);
+//        if (permissions != null) {
+//            for (Permission permission : permissions) {
+//                if (systemAbbr.equals(permission.getSystemAbbr()) && systemModule.equals(permission.getSystemModule())) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
+    
+    
 
 }
