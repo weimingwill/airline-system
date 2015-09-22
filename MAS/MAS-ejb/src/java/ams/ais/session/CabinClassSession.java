@@ -8,6 +8,7 @@ package ams.ais.session;
 import ams.ais.entity.CabinClass;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
+import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.helper.AisMsg;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class CabinClassSession implements CabinClassSessionLocal {
     private EntityManager entityManager;
 
     @Override
-    public void createCabinClass(String type, String name) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException{
+    public void createCabinClass(String type, String name) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException {
         verifyCabinClassExistence(type, name);
         CabinClass cabinClass = new CabinClass();
         cabinClass.create(type, name);
@@ -43,7 +44,8 @@ public class CabinClassSession implements CabinClassSessionLocal {
 
     @Override
     public List<CabinClass> getAllCabinClass() {
-        Query query = entityManager.createQuery("SELECT c FROM CabinClass c");
+        Query query = entityManager.createQuery("SELECT c FROM CabinClass c WHERE c.deleted = false");
+
         return query.getResultList();
     }
 
@@ -64,12 +66,15 @@ public class CabinClassSession implements CabinClassSessionLocal {
     }
 
     @Override
-    public void deleteCabinClass(String name) {
-
+    public void deleteCabinClass(String name) throws NoSuchCabinClassException {
         CabinClass cabinclass = getCabinClassByName(name);
-        cabinclass.setDeleted(true);
-        entityManager.merge(cabinclass);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (cabinclass == null) {
+            throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
+        } else {
+            cabinclass.setDeleted(true);
+            entityManager.merge(cabinclass);
+        }
+        //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -83,8 +88,73 @@ public class CabinClassSession implements CabinClassSessionLocal {
             cabinclass = null;
         }
         return cabinclass;
-    // Add business logic below. (Right-click in editor and choose
+        // Add business logic below. (Right-click in editor and choose
         // "Insert Code > Add Business Method")
+    }
+
+    @Override
+    public void updateCabinClass(String oldname, String type, String name) throws NoSuchCabinClassException, ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException {
+
+        CabinClass c = getCabinClassByName(oldname);
+        if (c == null) {
+            throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
+        } else {
+            List<CabinClass> cabinclasses = getAllOtherCabinClass(oldname);
+
+            if (cabinclasses != null) {
+
+                for (CabinClass cc : cabinclasses) {
+                    if (type.equals(cc.getType())) {
+                        throw new ExistSuchCabinClassTypeException(AisMsg.EXIST_SUCH_CABIN_CLASS_TYPE_ERROR);
+                    }
+                    if (name.equals(cc.getName())) {
+                        throw new ExistSuchCabinClassNameException(AisMsg.EXIST_SUCH_CABIN_CLASS_NAME_ERROR);
+                    }
+                }
+            }
+        }
+        c.setName(name);
+        c.setType(type);
+        entityManager.merge(c);
+        entityManager.flush();
+
+    }
+
+    @Override
+    public List<String> getAllOtherCabinClassByName(String name) {
+        Query query = entityManager.createQuery("SELECT c FROM CabinClass c where c.name <> :name");
+        query.setParameter("name", name);
+        List<CabinClass> cabinclass = query.getResultList();
+        List<String> names = new ArrayList<>();
+        if (cabinclass != null) {
+            for (CabinClass cabin : cabinclass) {
+                names.add(cabin.getName());
+            }
+        }
+        return names;
+
+    }
+
+    @Override
+    public List<String> getAllOtherCabinClassByType(String type) {
+        Query query = entityManager.createQuery("SELECT c FROM CabinClass c where c.name <> :type");
+        query.setParameter("type", type);
+        List<CabinClass> cabinclass = query.getResultList();
+        List<String> types = new ArrayList<>();
+        if (cabinclass != null) {
+            for (CabinClass cabin : cabinclass) {
+                types.add(cabin.getType());
+            }
+        }
+        return types;
+    }
+
+    @Override
+    public List<CabinClass> getAllOtherCabinClass(String name) {
+        Query query = entityManager.createQuery("SELECT c FROM CabinClass c where c.name <> :name");
+        query.setParameter("name", name);
+        return query.getResultList();
+
     }
 
 }
