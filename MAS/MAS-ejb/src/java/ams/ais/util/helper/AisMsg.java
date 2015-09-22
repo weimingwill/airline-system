@@ -15,4 +15,6 @@ public class AisMsg {
     public static final String EXIST_SUCH_CABIN_CLASS_TYPE_ERROR = "Cabin class type already exists";
     public static final String EXIST_SUCH_CABIN_CLASS_NAME_ERROR = "Cabin class name already exists";
     public static final String NO_SUCH_CABIN_CLASS_ERROR = "Cabin class doesn't exist";
+    public static final String EXIST_SUCH_RULE_ERROR = "Rule already exists";
+    public static final String NO_SUCH_RULE_ERROR = "Rule doesn't exists";
 }
