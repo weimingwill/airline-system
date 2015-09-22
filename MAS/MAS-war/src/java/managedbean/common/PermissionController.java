@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -20,9 +22,11 @@ import mas.common.session.PermissionSessionLocal;
 import mas.common.session.SystemUserSessionLocal;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
+import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
 import mas.common.entity.Permission;
 import mas.common.util.exception.ExistSuchPermissionException;
+import mas.common.util.exception.NoSuchPermissionException;
 import mas.common.util.helper.UserMsg;
 
 @Named(value = "permissionController")
@@ -31,7 +35,9 @@ public class PermissionController implements Serializable {
 
     @Inject
     NavigationController navigationController;
-
+    @Inject
+    MsgController msgController;
+    
     @EJB
     private SystemUserSessionLocal systemUserSession;
     @EJB
@@ -97,20 +103,15 @@ public class PermissionController implements Serializable {
         return permissionSession.getSystemModulesBySystem(system);
     }
 
-    
-//
-//    public void displayRolePermission() {
-//        
-//        try {
-//            setRolePermissions(permissionSession.getRolePermissions(inputRoleName));
-//        } catch (NoSuchRoleException ex) {
-//            
-//        } catch (NoSuchPermissionException ex) {
-//            setMsg(ex.getMessage());
-//            setRolePermissions(null);
-//        }
-//    }
-
+    public String deletePermission(String system, String systemModule){
+        try {
+            String permission = permissionSession.deletePermission(system, systemModule);
+            msgController.addMessage("Delete " + permission + " successfully!");
+        } catch (NoSuchPermissionException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllPermission();
+    }
     
     //Getter and Setter
     

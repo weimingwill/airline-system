@@ -24,6 +24,7 @@ import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.exception.ExistSuchRoleException;
 import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserMsg;
+import mas.util.helper.SafeHelper;
 
 /**
  *
@@ -42,7 +43,7 @@ public class RoleSession implements RoleSessionLocal {
 
     @Override
     public SystemRole getSystemRoleByName(String roleName) throws NoSuchRoleException {
-        Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName");
+        Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName and r.deleted = FALSE");
         query.setParameter("inRoleName", roleName);
         SystemRole systemRole = null;
         try {
@@ -53,34 +54,30 @@ public class RoleSession implements RoleSessionLocal {
         return systemRole;
     }
 
-//    @Override
-//    public List<SystemRole> getSystemRolesByName(String roleName) throws NoSuchRoleException {
-//        Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.roleName = :inRoleName");
-//        query.setParameter("inRoleName", roleName);
-//        SystemRole systemRole = null;
-//        try {
-//            systemRole = (SystemRole) query.getResultList();
-//        } catch (NoResultException ex) {
-//            throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
-//        }
-//        return systemRole;
-//    }
     @Override
-    public List<Permission> getRolePermissions(String roleName) {
+    public List<Permission> getRolePermissions(String roleName) throws NoSuchRoleException {
+        Query query = entityManager.createQuery("SELECT p FROM SystemRole r join r.permissions rp, Permission p "
+                + "WHERE rp.permissionId = p.permissionId and r.roleName = :inRoleName and r.deleted = FALSE and p.deleted = FALSE and r.deleted = FALSE");
+        query.setParameter("inRoleName", roleName);
+        List<Permission> permissions = null;
         try {
-            SystemRole role = getSystemRoleByName(roleName);
-            List<Permission> permissions = role.getPermissions();
-            return permissions;
-        } catch (NoSuchRoleException ex) {
-            return null;
+            permissions = (List<Permission>)query.getResultList();
+        } catch (NoResultException ex) {
+            throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
         }
-
+        return permissions;
     }
 
     @Override
     public List<SystemRole> getAllRoles() {
-        Query query = entityManager.createQuery("SELECT r FROM SystemRole r");
+        Query query = entityManager.createQuery("SELECT r FROM SystemRole r where r.deleted = FALSE");
         return query.getResultList();
+    }
+
+    @Override
+    public List<String> getRolesNameList() {
+        Query query = entityManager.createQuery("SELECT r.roleName FROM SystemRole r where r.deleted = FALSE");
+        return (List<String>) query.getResultList();
     }
 
     @Override
@@ -110,28 +107,20 @@ public class RoleSession implements RoleSessionLocal {
     }
 
     @Override
-    public List<String> getRolesNameList() {
-        Query query = entityManager.createQuery("SELECT r.roleName FROM SystemRole r");
-        return (List<String>) query.getResultList();
-    }
-
-    @Override
-    public List<RolePermission> getAllRolesPermission() {
-        List<RolePermission> rolePermissionList = new ArrayList<>();
-        for (SystemRole role : getAllRoles()) {
-            for (Permission permission : role.getPermissions()) {
-                RolePermission rolePermission = new RolePermission(role.getRoleName(), permission.getPermissionName());
-                rolePermissionList.add(rolePermission);
-            }
-        }
-        return rolePermissionList;
-    }
-
-    @Override
     public void grantRolePermissions(SystemRole role, List<Permission> permissions) {
         SystemRole systemRole = entityManager.find(SystemRole.class, role.getSystemRoleId());
         systemRole.setPermissions(permissions);
         entityManager.merge(systemRole);
     }
 
+    @Override
+    public String deleteRole(String roleName) throws NoSuchRoleException {
+        SystemRole systemRole = getSystemRoleByName(roleName);
+        if (systemRole == null) {
+            throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
+        } else {
+            systemRole.setDeleted(true);
+            return roleName;
+        }
+    }
 }

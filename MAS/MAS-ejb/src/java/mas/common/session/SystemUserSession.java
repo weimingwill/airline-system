@@ -48,7 +48,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     //Get user
     @Override
     public SystemUser getSystemUserByName(String username) throws NoSuchUsernameException {
-        Query query = entityManager.createQuery("SELECT u FROM SystemUser u WHERE u.username = :inUserName");
+        Query query = entityManager.createQuery("SELECT u FROM SystemUser u WHERE u.username = :inUserName and u.deleted = FALSE");
         query.setParameter("inUserName", username);
         SystemUser user = null;
         try {
@@ -61,7 +61,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
 
     @Override
     public SystemUser getSystemUserByEmail(String email) throws NoSuchEmailException {
-        Query query = entityManager.createQuery("SELECT u FROM SystemUser u WHERE u.email = :email");
+        Query query = entityManager.createQuery("SELECT u FROM SystemUser u WHERE u.email = :email and u.deleted = FALSE");
         query.setParameter("email", email);
         SystemUser user = null;
         try {
@@ -74,13 +74,13 @@ public class SystemUserSession implements SystemUserSessionLocal {
 
     @Override
     public List<SystemUser> getAllUsers() {
-        Query query = entityManager.createQuery("SELECT u FROM SystemUser u");
+        Query query = entityManager.createQuery("SELECT u FROM SystemUser u WHERE u.deleted = FALSE");
         return query.getResultList();
     }
 
     @Override
     public List<SystemUser> getAllOtherUsers(String username) {
-        Query query = entityManager.createQuery("SELECT u FROM SystemUser u where u.username <> :username");
+        Query query = entityManager.createQuery("SELECT u FROM SystemUser u where u.username <> :username  and u.deleted = FALSE");
         query.setParameter("username", username);
         return query.getResultList();
     }
@@ -184,10 +184,11 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException {
+    public void createUser(String username, String password, String name, String email, String phone,
+            String address, String department, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException {
         verifySystemUserExistence(username, email);
         SystemUser systemUser = new SystemUser();
-        systemUser.create(username, password, email);
+        systemUser.create(username, password, name, email, phone, address, department);
         for (SystemRole role : roles) {
             SystemRole r = roleSession.getSystemRoleByName(role.getRoleName());
             systemUser.getSystemRoles().add(r);
@@ -197,7 +198,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void updateUserProfile(String username, String name, String email, String phone, 
+    public void updateUserProfile(String username, String name, String email, String phone,
             String address, String department) throws NoSuchUsernameException, ExistSuchUserEmailException {
         List<SystemUser> systemUsers = getAllOtherUsers(username);
         SystemUser user = getSystemUserByName(username);
@@ -208,6 +209,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
                 }
             }
         }
+        System.out.println("name: " + name);
         user.setName(name);
         user.setEmail(email);
         user.setPhone(phone);
@@ -289,33 +291,52 @@ public class SystemUserSession implements SystemUserSessionLocal {
 
     @Override
     public List<SystemRole> getUserRoles(String username) {
+        Query query = entityManager.createQuery("SELECT r FROM SystemUser u JOIN u.systemRoles ur, SystemRole r "
+                + "WHERE ur.systemRoleId = r.systemRoleId and u.username = :inUsername and u.deleted = FALSE and r.deleted = FALSE");
+        query.setParameter("inUsername", username);
+        List<SystemRole> roles;
         try {
-            SystemUser user = getSystemUserByName(username);
-            return user.getSystemRoles();
-        } catch (NoSuchUsernameException ex) {
+            roles = (List<SystemRole>) query.getResultList();
+            return roles;
+        } catch (NoResultException ex) {
             return null;
         }
-
     }
 
     @Override
     public List<Permission> getUserPermissions(String username) {
         List<SystemRole> roles = getUserRoles(username);
-        if(roles != null){
+        if (roles != null) {
             List<Permission> permissionList = new ArrayList<>();
-            for (SystemRole role  : roles) {
-                List<Permission> permissions = role.getPermissions();
-                if (permissions != null) {
+            for (SystemRole role : roles) {
+                try {
+                    List<Permission> permissions = roleSession.getRolePermissions(role.getRoleName());
                     for (Permission permission : permissions) {
                         permissionList.add(permission);
                     }
+                } catch (NoSuchRoleException ex) {
                 }
             }
             return permissionList;
         }
         return null;
     }
-    
+
+    @Override
+    public List<String> getUserPermissionSystems(String username) {
+        List<String> permissionSystems = new ArrayList<>();
+        List<Permission> permissions = getUserPermissions(username);
+        if (permissions != null) {
+            for (Permission permission : permissions) {
+                if (!permissionSystems.contains(permission.getSystem())) {
+                    permissionSystems.add(permission.getSystem());
+                }
+            }
+            return permissionSystems;
+        }
+        return null;
+    }
+
     @Override
     public List<String> getSystemUsernameList() {
         Query query = entityManager.createQuery("SELECT u.username FROM SystemUser u");
@@ -364,49 +385,48 @@ public class SystemUserSession implements SystemUserSessionLocal {
         entityManager.merge(user);
     }
 
-    @Override
-    public List<UserRolePermission> getAllUsersRolesPermissions() {
-        List<UserRolePermission> userRolePermissionList = new ArrayList<>();
-        for (SystemUser user : getAllUsers()) {
-            for (SystemRole role : user.getSystemRoles()) {
-                for (Permission permission : role.getPermissions()) {
-                    UserRolePermission userRolePermission
-                            = new UserRolePermission(user.getUsername(), role.getRoleName(), permission.getPermissionName());
-                    userRolePermissionList.add(userRolePermission);
-                }
-            }
-        }
-        return userRolePermissionList;
-    }
-
-    @Override
-    public List<RolePermission> getUserRolesPermissions(String username) {
-        try {
-            SystemUser user = getSystemUserByName(username);
-            List<RolePermission> rolePermissionList = new ArrayList<>();
-            for (SystemRole role : user.getSystemRoles()) {
-                for (Permission permission : role.getPermissions()) {
-                    RolePermission rolePermission
-                            = new RolePermission(role.getRoleName(), permission.getPermissionName());
-                    rolePermissionList.add(rolePermission);
-                }
-            }
-            return rolePermissionList;
-        } catch (NoSuchUsernameException ex) {
-            return null;
-        }
-    }
-
+//    @Override
+//    public List<UserRolePermission> getAllUsersRolesPermissions() {
+//        List<UserRolePermission> userRolePermissionList = new ArrayList<>();
+//        for (SystemUser user : getAllUsers()) {
+//            for (SystemRole role : user.getSystemRoles()) {
+//                for (Permission permission : role.getPermissions()) {
+//                    UserRolePermission userRolePermission
+//                            = new UserRolePermission(user.getUsername(), role.getRoleName(), permission.getPermissionName());
+//                    userRolePermissionList.add(userRolePermission);
+//                }
+//            }
+//        }
+//        return userRolePermissionList;
+//    }
+//    @Override
+//    public List<RolePermission> getUserRolesPermissions(String username) {
+//        try {
+//            SystemUser user = getSystemUserByName(username);
+//            List<RolePermission> rolePermissionList = new ArrayList<>();
+//            for (SystemRole role : user.getSystemRoles()) {
+//                for (Permission permission : role.getPermissions()) {
+//                    RolePermission rolePermission
+//                            = new RolePermission(role.getRoleName(), permission.getPermissionName());
+//                    rolePermissionList.add(rolePermission);
+//                }
+//            }
+//            return rolePermissionList;
+//        } catch (NoSuchUsernameException ex) {
+//            return null;
+//        }
+//    }
     @Override
     public boolean hasRole(String username, String roleName) {
         try {
+            SystemUser user = getSystemUserByName(username);
             SystemRole role = roleSession.getSystemRoleByName(roleName);
             List<SystemRole> roles = getUserRoles(username);
             if (roles == null) {
                 return false;
             }
             return roles.contains(role);
-        } catch (NoSuchRoleException ex) {
+        } catch (NoSuchRoleException | NoSuchUsernameException ex) {
             return false;
         }
     }
@@ -415,11 +435,12 @@ public class SystemUserSession implements SystemUserSessionLocal {
     public boolean isAdmin(String username) {
         try {
             SystemUser user = getSystemUserByName(username);
-            return true;
+            return username.equals("admin");
         } catch (NoSuchUsernameException ex) {
             return false;
         }
     }
+
 //
 //    @Override
 //    public boolean hasSystemPermission(String username, String systemAbbr) {
@@ -446,7 +467,15 @@ public class SystemUserSession implements SystemUserSessionLocal {
 //        }
 //        return false;
 //    }
-    
-    
+    @Override
+    public String deleteUser(String username) throws NoSuchUsernameException {
+        SystemUser user = getSystemUserByName(username);
+        if (user == null) {
+            throw new NoSuchUsernameException(UserMsg.NO_SUCH_USERNAME_ERROR);
+        } else {
+            user.setDeleted(true);
+        }
+        return username;
+    }
 
 }

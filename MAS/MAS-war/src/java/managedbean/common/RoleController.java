@@ -19,6 +19,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
 import mas.common.entity.Permission;
 import mas.common.entity.SystemRole;
@@ -42,6 +43,8 @@ public class RoleController implements Serializable {
     UserController userController;
     @Inject
     NavigationController navigationController;
+    @Inject
+    MsgController msgController;
 
     @EJB
     private SystemUserSessionLocal systemUserSession;
@@ -100,14 +103,26 @@ public class RoleController implements Serializable {
 
     public String grantRolePermissions() {
         roleSession.grantRolePermissions(selectedRole, permissionList);
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.getExternalContext().getFlash().setKeepMessages(true);
-        context.addMessage(null, new FacesMessage("Successful", "Grant role: " + selectedRole.getRoleName() + " with permissions"));
+        msgController.addMessage("Grant role: " + selectedRole.getRoleName() + " with permissions");
         return navigationController.redirectToGrantRolePermissions();
     }
     
-    public List<Permission> getRolePermissionsByRoleName(String roleName) throws NoSuchRoleException{
-        return roleSession.getRolePermissions(roleName);
+    public List<Permission> getRolePermissionsByRoleName(String roleName){
+        try {
+            return roleSession.getRolePermissions(roleName);
+        } catch (NoSuchRoleException ex) {
+            return null;
+        }
+    }
+    
+    public String deleteRole(String roleName){
+        try {
+            String role = roleSession.deleteRole(roleName);
+            msgController.addMessage("Delete " + role + " successfully!");
+        } catch (NoSuchRoleException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllRoles();
     }
     
     //Getter and Setter

@@ -12,33 +12,39 @@
 
     <ui:define name="content">
         <h:form>
-            <h:panelGrid>
-                <p:outputLabel value="Username: #{username}"/>
-                <p:outputLabel value="Name: #{name}"/>
-                <p:outputLabel value="Email: #{userController.userByUsername.email}"/>
-                <p:outputLabel value="Phone: #{phone}"/>
-                <p:outputLabel value="Address: #{address}"/>
-                <p:outputLabel value="Department: #{department}"/>                
-
-                <p:dataTable value="#{userController.getUserRolesByUsername(username)}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
-                    <f:facet name="header">
-                        Existing user roles
-                    </f:facet>
-                    <p:column headerText="Roles">
-                        <h:outputText value="#{role.roleName}" />
-                    </p:column>
-
-                    <p:column headerText="Permisssions">
-                        <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
-                            <p:column>
-                                <p:outputLabel value="#{permission.permissionName}"/>
-                            </p:column>
-                        </p:dataTable>
-                    </p:column>
-                </p:dataTable>
-
-                <p:commandButton value="Edit" action="#{navigationController.redirectToEditUserProfile()}"  />
+            <h:panelGrid columns="2">
+                <p:outputLabel value="Username: "/>
+                <p:outputLabel value="#{username}" />
+                <p:outputLabel value="Name:"/>
+                <p:outputLabel value="#{userController.name}"/>
+                <p:outputLabel value="Email: "/>
+                <p:outputLabel value="#{userController.email}"/>
+                <p:outputLabel value="Phone:"/>
+                <p:outputLabel value="#{userController.phone}"/>
+                <p:outputLabel value="Address: "/>
+                <p:outputLabel value="#{userController.address}"/>
+                <p:outputLabel value="Department: "/>                
+                <p:outputLabel value="#{userController.department}"/>                
             </h:panelGrid>
+            <p:dataTable value="#{userController.getUserRolesByUsername(username)}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
+                <f:facet name="header">
+                    Existing user roles
+                </f:facet>
+                <p:column headerText="Roles">
+                    <h:outputText value="#{role.roleName}" />
+                </p:column>
+
+                <p:column headerText="Permisssions">
+                    <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                        <p:column>
+                            <p:outputLabel value="#{permission.permissionName}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:column>
+            </p:dataTable>
+
+            <p:commandButton value="Edit" action="#{navigationController.redirectToEditUserProfile()}"  />
+
         </h:form>
 
     </ui:define>

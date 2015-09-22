@@ -14,22 +14,23 @@
         <h:form>
             <h:panelGrid columns="2">
                 <p:outputLabel value="Username:"/>
-                <p:outputLabel value=" #{username}" />
+                
+                <p:outputLabel value="#{username}" rendered="#{not username}"/>
                 <p:outputLabel value="Name:"/>
-                <p:outputLabel value=" #{name}" />                
+                <p:inputText value="#{userController.name}" />                
                 <h:outputText value="Email:"/>
                 <p:inputText required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" id="email" value="#{userController.email}" >
-                    <!--<p:ajax update="messages" event="blur" />-->
+                    <p:ajax update="messages" event="blur" />
                     <f:validateRegex
                         pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
                 </p:inputText>
                 <p:outputLabel value="Phone:"/>
-                <p:outputLabel value=" #{phone}" />
+                <p:inputText value="#{userController.phone}" />
                 <p:outputLabel value="Address:"/>
-                <p:outputLabel value=" #{address}" />
+                <p:inputText value="#{userController.address}" />
                 <p:outputLabel value="Department:"/>
-                <p:outputLabel value=" #{department}" />
-                <p:commandButton value="edit" action="#{userController.updateUserProfile()}" update="messages"/>
+                <p:inputText value="#{userController.department}" />
+                <p:commandButton value="save" action="#{userController.updateUserProfile()}" update="messages"/>
 
                 <!--            Click and show the contents in panel
                             <h:panelGrid>

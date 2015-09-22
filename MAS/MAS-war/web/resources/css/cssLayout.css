@@ -74,3 +74,19 @@ tr.hide{
     padding-top: 20px;
     padding-bottom: 20px;
 }
+
+.systemHeader{
+    font-size: 15px;
+}
+
+.modulePanelTable table tr td {
+    width: 800px;
+    padding: 20px;
+    border: none;
+    text-align: left;
+}
+
+.modulePanel{
+    width: 200px;
+    height: 200px;
+}
