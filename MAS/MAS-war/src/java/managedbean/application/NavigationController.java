@@ -226,6 +226,9 @@ public class NavigationController implements Serializable {
 
     public String redirectToViewRoutes() {
         return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
-
+    }
+    
+    public String redirectToViewFlightSchedulings() {
+        return "/views/secured/aps/flight_scheduling/viewFlightSchedulings.xhtml" + REDIRECT;
     }
 }
