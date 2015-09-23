@@ -18,7 +18,11 @@ public class AisMsg {
     public static final String NO_SUCH_CABIN_CLASS_ERROR = "Cabin class doesn't exist";
     public static final String EXIST_SUCH_RULE_ERROR = "Rule already exists";
     public static final String NO_SUCH_RULE_ERROR = "Rule doesn't exists";
+    public static final String EXIST_SUCH_TICKET_FAMILY_TYPE_ERROR = "Ticket family type already exists";
+    public static final String EXIST_SUCH_TICKET_FAMILY_NAME_ERROR = "Ticket family name already exists";
+    public static final String NO_SUCH_TICKET_FAMILY_ERROR = "Ticket family doesn't exist";
     public static final String EXIST_SUCH_BOOKING_CLASS_ERROR = "Booking class name already exists";
     public static final String NO_SUCH_BOOKING_CLASS_ERROR = "Booking class does not exist";
+    
 
 }
