@@ -18,10 +18,10 @@
                     <p:menuitem action="#{navigationBean.toAddNewAircraft()}" value="Add New Aircraft"/>
                 </p:submenu>
                 <p:submenu label="Route Planning">
-                    <p:menuitem  action="#{navigationBean.toAddHub()}" value="Add Hub"/>
-                    <p:menuitem  action="#{navigationBean.toCancelHub()}" value="Cancel Hub"/>
-                    <p:menuitem  action="#{navigationBean.toAddRoute()}" value="Add Route"/>
-                   
+                    <p:menuitem  action="#{navigationController.redirectToAddHub()}" value="Add Hub"/>
+                    <p:menuitem  action="#{navigationController.redirectToCancelHub()}" value="Cancel Hub"/>
+                    <p:menuitem  action="#{navigationController.redirectToAddRoute()}" value="Add Route"/>
+                    <p:menuitem  action="#{navigationController.redirectToViewRoutes()}" value="View Routes"/>
                 </p:submenu>
                 <p:submenu label="Flight Scheduling">
                     <p:menuitem  action="#" value="PUT YOUR MENU HERE"/>

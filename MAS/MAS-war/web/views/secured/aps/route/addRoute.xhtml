@@ -7,7 +7,8 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-        Create  a route:
+        Create a route (The return route will be automatically created for you):
+        
         <h:form>
             <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
                 <p:outputLabel for="origin" value="Origin:" />
@@ -29,10 +30,11 @@
                     <f:selectItem itemLabel="Select Destination" itemValue="" noSelectionOption="true" />
                     <f:selectItems value="#{routeController.destList}" var="destination" itemLabel="#{destination.airportName}" itemValue="#{destination}"/>
                 </p:selectOneMenu>
+                
+                <p:commandButton value="Add route" update="messages" action="#{navigationController.redirectToAddRoute()}" actionListener="#{routeController.addRouteSimple}" icon="ui-icon-check" />
+
             </h:panelGrid>
-            
-            <p:commandButton value="Add route" update="messages" action="#{navigationBean.toAddRoute()}" actionListener="#{routeController.addRouteSimple}" icon="ui-icon-check" />
-            
+                         
         </h:form>
     </ui:define>
 

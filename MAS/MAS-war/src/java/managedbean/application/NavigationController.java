@@ -184,12 +184,22 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/fleet/addNewAircraft.xhtml";
     }
 
-    public String toAddHub() {
-        return "/views/secured/aps/route/addHub.xhtml?faces-redirect=true";
+    public String redirectToAddHub() {
+        return "/views/secured/aps/route/addHub.xhtml" + REDIRECT;
     }
 
-    public String toCancelHub() {
-        return "/views/secured/aps/route/cancelHub.xhtml?faces-redirect=true";
+    public String redirectToCancelHub() {
+        return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
+
+    }
+    
+    public String redirectToAddRoute() {
+        return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
+
+    }
+    
+    public String redirectToViewRoutes() {
+        return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
 
     }
 }

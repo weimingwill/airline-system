@@ -79,6 +79,19 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         }
         return city;
     }
+    
+    @Override
+    public Route getRouteByID(Long id) {
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.id = :inID");
+        query.setParameter("inID", id);
+        Route route = null;
+        try {
+            route = (Route) query.getSingleResult();
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        return route;
+    }
 
     @Override
     public List<Country> getCountryList() {
@@ -163,6 +176,21 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     }
 
     @Override
+    public boolean softDeleteRoute(Long id) {
+        try {
+            Route route = em.find(Route.class, id);
+            Route returnRoute = em.find(Route.class, route.getReturnRoute().getId());
+            route.setDeleted(true);
+            returnRoute.setDeleted(true);
+            em.merge(route);
+            em.merge(returnRoute);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+    
+    @Override
     public Leg checkLegExistence(Airport origin, Airport destination) {
         System.out.println("RoutePlanningSession: checkLegExistence()");
 
@@ -173,6 +201,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
         try {
             return (Leg) query.getSingleResult();
+            
         } catch (Exception ex) {
             return null;
         }
@@ -211,18 +240,22 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     @Override
     public boolean addRoute(List<Airport> stopList) {
         try {
-            Leg leg1 = checkLegExistence(stopList.get(0), stopList.get(1));
-            Leg leg2 = checkLegExistence(stopList.get(1), stopList.get(2));
-            Leg leg3 = new Leg();
-            Leg leg4 = new Leg();
 
             Airport a1 = em.find(Airport.class, stopList.get(0).getId());
             Airport a2 = em.find(Airport.class, stopList.get(1).getId());
             Airport a3 = em.find(Airport.class, stopList.get(2).getId());
+            
+            Leg leg1 = checkLegExistence(a1, a2);
+            Leg leg2 = checkLegExistence(a2, a1);
+            Leg leg3 = checkLegExistence(a2, a3);
+            Leg leg4 = checkLegExistence(a3, a2);
 
             if (leg1 == null) {
 
+                System.out.println("RoutePlanningSession: AddRoute(): leg1 & 3 not exist");
+                
                 leg1 = new Leg();
+                leg3 = new Leg();
 
                 leg1.setArrivalAirport(a2);
                 leg1.setDepartAirport(a1);
@@ -234,15 +267,21 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
                 System.out.println("RoutePlanningSession: addRoute(): Set leg1 & 3.");
             } else {
-                leg1 = em.find(Leg.class, leg1.getId());
-                leg3 = em.find(Leg.class, leg3.getId());
+                
+                System.out.println("RoutePlanningSession: AddRoute(): leg1 & 3 exist");
+                
+                em.merge(leg1);
+                em.merge(leg3);
 
                 System.out.println("RoutePlanningSession: addRoute(): Find leg1 & 3.");
             }
 
             if (leg2 == null) {
+                
+                System.out.println("RoutePlanningSession: AddRoute(): leg2 & 4 not exist");
 
                 leg2 = new Leg();
+                leg4 = new Leg();
 
                 leg2.setArrivalAirport(a3);
                 leg2.setDepartAirport(a2);
@@ -254,6 +293,9 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
                 System.out.println("RoutePlanningSession: addRoute(): Set leg2 & 4.");
             } else {
+                
+                System.out.println("RoutePlanningSession: AddRoute(): leg2 & 4 exist");
+                
                 leg2 = em.find(Leg.class, leg2.getId());
                 leg4 = em.find(Leg.class, leg4.getId());
 
@@ -269,13 +311,8 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
             route1.setLegs(legs);
             route1.setDeleted(Boolean.FALSE);
-            leg1.getRoutes().add(route1);
-            leg2.getRoutes().add(route1);
-            leg1.setRoutes(leg1.getRoutes());
-            leg2.setRoutes(leg2.getRoutes());
-            
 
-            legs.clear();
+            legs = new ArrayList<Leg>();
             legs.add(leg4);
             legs.add(leg3);
 
@@ -283,15 +320,9 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             route2.setDeleted(Boolean.FALSE);
             route2.setReturnRoute(route1);
             route1.setReturnRoute(route2);
-            leg3.getRoutes().add(route2);
-            leg4.getRoutes().add(route2);
-            leg3.setRoutes(leg3.getRoutes());
-            leg4.setRoutes(leg4.getRoutes());
 
-            em.persist(leg1);
-            em.persist(leg2);
-            em.persist(leg3);
-            em.persist(leg4);
+            em.persist(route1);
+            em.persist(route2);
 
             System.out.println("RoutePlanningSession: addRoute(): Set return route.");
 
@@ -303,7 +334,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public List<Route> getAllroutes() {
-        Query query = em.createQuery("SELECT r FROM Route r WHERE r.status = 'added'");
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = 0");
 
         try {
             return (List<Route>) query.getResultList();
