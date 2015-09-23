@@ -15,18 +15,14 @@
         <h:form id="navigationMenu">
             <p:menubar>
                 <p:menuitem value="Merline Airline" url="#{navigationController.redirectToHome()}"></p:menuitem>
-
+                
                 <p:menuitem value="User Workspace" url="#{navigationController.redirectToWorkspace()}" icon="ui-icon-home"></p:menuitem>
-
-                <p:submenu label="setting" icon="ui-icon-gear" rendered="#{loginController.loggedIn}">
-                    <p:menuitem  value="Profile" url="#{navigationController.redirectToViewUserProfile()}" />
-                    <p:menuitem  value="Change password" url="#{navigationController.redirectToChangePassword()}" />
-                </p:submenu>
+                <p:menuitem value="Airline Planning System" url="#{navigationController.redirectToAPS()}" icon="ui-icon-pencil"></p:menuitem>
                 <f:facet name="options">
-                    <p:inputText style="margin-right:10px" placeholder="Search"  />
+                    <p:inputText style="margin-right:10px" placeholder="Search"/>
+                    <p:commandButton action="#{navigationController.toLogin()}" value="Login" rendered="#{not userBean.loggedIn}" icon="ui-icon-extlink"></p:commandButton>
+                    <p:commandButton action="#{userBean.doLogout()}" value="Logout" rendered="#{userBean.loggedIn}" icon="ui-icon-extlink"></p:commandButton>                    
 
-                    <p:commandButton action="#{navigationController.toLogin()}" value="Login" rendered="#{not loginController.loggedIn}" icon="ui-icon-extlink"></p:commandButton>
-                    <p:commandButton action="#{loginController.doLogout()}" value="Logout" rendered="#{loginController.loggedIn}" icon="ui-icon-extlink"></p:commandButton>                    
                 </f:facet>
             </p:menubar>
         </h:form>        

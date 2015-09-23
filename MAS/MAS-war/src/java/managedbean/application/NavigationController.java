@@ -110,14 +110,16 @@ public class NavigationController implements Serializable {
         return "/views/secured/common/users/editProfile.xhtml" + REDIRECT;
     }
 
-    public String toChangePassword(){
+    public String toChangePassword() {
         return "/views/secured/common/users/changePassword.xhtml";
     }
-    
-    public String redirectToChangePassword(){
+
+    public String redirectToChangePassword() {
         return "/views/secured/common/users/changePassword.xhtml" + REDIRECT;
     }
+
     //Role
+
     public String toCreateRole() {
         return "/views/secured/common/roles/createRole.xhtml";
     }
@@ -183,5 +185,36 @@ public class NavigationController implements Serializable {
     
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
+    }
+
+    public String redirectToAPS() {
+        return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
+    }
+
+    public String toViewAircraftModel() {
+        return "/views/secured/aps/fleet/viewAircraftModel.xhtml";
+    }
+
+    public String toAddNewAircraft() {
+        return "/views/secured/aps/fleet/addNewAircraft.xhtml";
+    }
+
+    public String redirectToAddHub() {
+        return "/views/secured/aps/route/addHub.xhtml" + REDIRECT;
+    }
+
+    public String redirectToCancelHub() {
+        return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
+
+    }
+    
+    public String redirectToAddRoute() {
+        return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
+
+    }
+    
+    public String redirectToViewRoutes() {
+        return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
+
     }
 }
