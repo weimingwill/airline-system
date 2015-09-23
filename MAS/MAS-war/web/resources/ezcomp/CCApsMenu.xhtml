@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form>
+            <p:menu toggleable="true" style="width:200px;">
+                <p:submenu label="Fleet Planning">
+                    <p:menuitem action="#{navigationBean.toViewAircraftModel()}" value="View Aircraft Models" />
+                    <p:menuitem action="#{navigationBean.toAddNewAircraft()}" value="Add New Aircraft"/>
+                </p:submenu>
+                <p:submenu label="Route Planning">
+                    <p:menuitem  action="#{navigationController.redirectToAddHub()}" value="Add Hub"/>
+                    <p:menuitem  action="#{navigationController.redirectToCancelHub()}" value="Cancel Hub"/>
+                    <p:menuitem  action="#{navigationController.redirectToAddRoute()}" value="Add Route"/>
+                    <p:menuitem  action="#{navigationController.redirectToViewRoutes()}" value="View Routes"/>
+                </p:submenu>
+                <p:submenu label="Flight Scheduling">
+                    <p:menuitem  action="#{navigationController.redirectToViewFlightSchedulings()}" value="View Flight Schedulings"/>
+                </p:submenu>
+            </p:menu>
+        </h:form>
+    </cc:implementation>
+</html>

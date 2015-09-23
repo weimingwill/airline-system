@@ -31,7 +31,6 @@ public class Route implements Serializable {
     private Long id;
     private boolean deleted;
     @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    @JoinTable
     private List<Leg> legs = new ArrayList<>();
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
     private List<Flight> flights = new ArrayList<>();
