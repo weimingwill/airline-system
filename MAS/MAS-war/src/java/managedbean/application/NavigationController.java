@@ -171,19 +171,32 @@ public class NavigationController implements Serializable {
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }
-
+    
+    //Airline Planning
     public String redirectToAPS() {
-        return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
+        return "/views/secured/aps/apsMain.xhtml" + REDIRECT;
     }
 
     public String toViewAircraftModel() {
-        return "/views/secured/aps/fleet/viewAircraftModel.xhtml";
+        return "/views/secured/aps/fleet/viewAircraftModel.xhtml" + REDIRECT;
     }
 
     public String toAddNewAircraft() {
-        return "/views/secured/aps/fleet/addNewAircraft.xhtml";
+        return "/views/secured/aps/fleet/addNewAircraft.xhtml" + REDIRECT;
     }
 
+    public String toViewFleet(){
+        return "/views/secured/aps/fleet/viewFleet.xhtml" + REDIRECT;
+    }
+    
+    public String toRetireAicraft(){
+        return "/views/secured/aps/fleet/retireAircraft.xhtml" + REDIRECT;
+    }
+    
+    public String toViewRetiredFleet(){
+        return "/views/secured/aps/fleet/viewRetiredFleet.xhtml" + REDIRECT;
+    }
+    
     public String toAddHub() {
         return "/views/secured/aps/route/addHub.xhtml?faces-redirect=true";
     }
@@ -192,4 +205,10 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/cancelHub.xhtml?faces-redirect=true";
 
     }
+    
+    public String toAddRoute(){
+        return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
+    }
+    
+    
 }

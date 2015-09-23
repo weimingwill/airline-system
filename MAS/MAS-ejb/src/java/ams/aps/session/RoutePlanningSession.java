@@ -211,87 +211,87 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     @Override
     public boolean addRoute(List<Airport> stopList) {
         try {
-            Leg leg1 = checkLegExistence(stopList.get(0), stopList.get(1));
-            Leg leg2 = checkLegExistence(stopList.get(1), stopList.get(2));
-            Leg leg3 = new Leg();
-            Leg leg4 = new Leg();
-
-            Airport a1 = em.find(Airport.class, stopList.get(0).getId());
-            Airport a2 = em.find(Airport.class, stopList.get(1).getId());
-            Airport a3 = em.find(Airport.class, stopList.get(2).getId());
-
-            if (leg1 == null) {
-
-                leg1 = new Leg();
-
-                leg1.setArrivalAirport(a2);
-                leg1.setDepartAirport(a1);
-                leg3.setArrivalAirport(a1);
-                leg3.setDepartAirport(a2);
-
-                em.persist(leg1);
-                em.persist(leg3);
-
-                System.out.println("RoutePlanningSession: addRoute(): Set leg1 & 3.");
-            } else {
-                leg1 = em.find(Leg.class, leg1.getId());
-                leg3 = em.find(Leg.class, leg3.getId());
-
-                System.out.println("RoutePlanningSession: addRoute(): Find leg1 & 3.");
-            }
-
-            if (leg2 == null) {
-
-                leg2 = new Leg();
-
-                leg2.setArrivalAirport(a3);
-                leg2.setDepartAirport(a2);
-                leg4.setArrivalAirport(a2);
-                leg4.setDepartAirport(a3);
-
-                em.persist(leg2);
-                em.persist(leg4);
-
-                System.out.println("RoutePlanningSession: addRoute(): Set leg2 & 4.");
-            } else {
-                leg2 = em.find(Leg.class, leg2.getId());
-                leg4 = em.find(Leg.class, leg4.getId());
-
-                System.out.println("RoutePlanningSession: addRoute(): Find leg2 & 4.");
-            }
-
-            System.out.println("RoutePlanningSession: addRoute(): Start set return route.");
-            Route route1 = new Route();
-            Route route2 = new Route();
-            List<Leg> legs = new ArrayList<Leg>();
-            legs.add(leg1);
-            legs.add(leg2);
-
-            route1.setLegs(legs);
-            route1.setDeleted(Boolean.FALSE);
-            leg1.getRoutes().add(route1);
-            leg2.getRoutes().add(route1);
-            leg1.setRoutes(leg1.getRoutes());
-            leg2.setRoutes(leg2.getRoutes());
-            
-
-            legs.clear();
-            legs.add(leg4);
-            legs.add(leg3);
-
-            route2.setLegs(legs);
-            route2.setDeleted(Boolean.FALSE);
-            route2.setReturnRoute(route1);
-            route1.setReturnRoute(route2);
-            leg3.getRoutes().add(route2);
-            leg4.getRoutes().add(route2);
-            leg3.setRoutes(leg3.getRoutes());
-            leg4.setRoutes(leg4.getRoutes());
-
-            em.persist(leg1);
-            em.persist(leg2);
-            em.persist(leg3);
-            em.persist(leg4);
+//            Leg leg1 = checkLegExistence(stopList.get(0), stopList.get(1));
+//            Leg leg2 = checkLegExistence(stopList.get(1), stopList.get(2));
+//            Leg leg3 = new Leg();
+//            Leg leg4 = new Leg();
+//
+//            Airport a1 = em.find(Airport.class, stopList.get(0).getId());
+//            Airport a2 = em.find(Airport.class, stopList.get(1).getId());
+//            Airport a3 = em.find(Airport.class, stopList.get(2).getId());
+//
+//            if (leg1 == null) {
+//
+//                leg1 = new Leg();
+//
+//                leg1.setArrivalAirport(a2);
+//                leg1.setDepartAirport(a1);
+//                leg3.setArrivalAirport(a1);
+//                leg3.setDepartAirport(a2);
+//
+//                em.persist(leg1);
+//                em.persist(leg3);
+//
+//                System.out.println("RoutePlanningSession: addRoute(): Set leg1 & 3.");
+//            } else {
+//                leg1 = em.find(Leg.class, leg1.getId());
+//                leg3 = em.find(Leg.class, leg3.getId());
+//
+//                System.out.println("RoutePlanningSession: addRoute(): Find leg1 & 3.");
+//            }
+//
+//            if (leg2 == null) {
+//
+//                leg2 = new Leg();
+//
+//                leg2.setArrivalAirport(a3);
+//                leg2.setDepartAirport(a2);
+//                leg4.setArrivalAirport(a2);
+//                leg4.setDepartAirport(a3);
+//
+//                em.persist(leg2);
+//                em.persist(leg4);
+//
+//                System.out.println("RoutePlanningSession: addRoute(): Set leg2 & 4.");
+//            } else {
+//                leg2 = em.find(Leg.class, leg2.getId());
+//                leg4 = em.find(Leg.class, leg4.getId());
+//
+//                System.out.println("RoutePlanningSession: addRoute(): Find leg2 & 4.");
+//            }
+//
+//            System.out.println("RoutePlanningSession: addRoute(): Start set return route.");
+//            Route route1 = new Route();
+//            Route route2 = new Route();
+//            List<Leg> legs = new ArrayList<Leg>();
+//            legs.add(leg1);
+//            legs.add(leg2);
+//
+////            route1.setLegs(legs);
+////            route1.setDeleted(Boolean.FALSE);
+////            leg1.getRoutes().add(route1);
+////            leg2.getRoutes().add(route1);
+////            leg1.setRoutes(leg1.getRoutes());
+////            leg2.setRoutes(leg2.getRoutes());
+////            
+////
+////            legs.clear();
+////            legs.add(leg4);
+////            legs.add(leg3);
+////
+////            route2.setLegs(legs);
+////            route2.setDeleted(Boolean.FALSE);
+////            route2.setReturnRoute(route1);
+////            route1.setReturnRoute(route2);
+////            leg3.getRoutes().add(route2);
+////            leg4.getRoutes().add(route2);
+////            leg3.setRoutes(leg3.getRoutes());
+////            leg4.setRoutes(leg4.getRoutes());
+//
+//            em.persist(leg1);
+//            em.persist(leg2);
+//            em.persist(leg3);
+//            em.persist(leg4);
 
             System.out.println("RoutePlanningSession: addRoute(): Set return route.");
 

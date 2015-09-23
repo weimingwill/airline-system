@@ -26,26 +26,27 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class FlightSchedule implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long flightScheduleId;
     private String departTerminal;
     private String departGate;
-    private Date departDatel;
+    private Date departDate;
     private Time departTime;
     private String arrivalTerminal;
     private String arrivalGate;
-    private Date arrivalDatel;
+    private Date arrivalDate;
     private Time arrivalTime;
     private boolean deleted;
-   
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Aircraft aircraft;
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Leg leg;
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight flight;
 
     public Long getFlightScheduleId() {
@@ -55,8 +56,6 @@ public class FlightSchedule implements Serializable {
     public void setFlightScheduleId(Long flightScheduleId) {
         this.flightScheduleId = flightScheduleId;
     }
-    
-
 
     @Override
     public int hashCode() {
@@ -112,20 +111,6 @@ public class FlightSchedule implements Serializable {
     }
 
     /**
-     * @return the departDatel
-     */
-    public Date getDepartDatel() {
-        return departDatel;
-    }
-
-    /**
-     * @param departDatel the departDatel to set
-     */
-    public void setDepartDatel(Date departDatel) {
-        this.departDatel = departDatel;
-    }
-
-    /**
      * @return the departTime
      */
     public Time getDepartTime() {
@@ -165,20 +150,6 @@ public class FlightSchedule implements Serializable {
      */
     public void setArrivalGate(String arrivalGate) {
         this.arrivalGate = arrivalGate;
-    }
-
-    /**
-     * @return the arrivalDatel
-     */
-    public Date getArrivalDatel() {
-        return arrivalDatel;
-    }
-
-    /**
-     * @param arrivalDatel the arrivalDatel to set
-     */
-    public void setArrivalDatel(Date arrivalDatel) {
-        this.arrivalDatel = arrivalDatel;
     }
 
     /**
@@ -252,5 +223,33 @@ public class FlightSchedule implements Serializable {
     public void setFlightScheduleBookingClasses(List<FlightScheduleBookingClass> flightScheduleBookingClasses) {
         this.flightScheduleBookingClasses = flightScheduleBookingClasses;
     }
-    
+
+    /**
+     * @return the departDate
+     */
+    public Date getDepartDate() {
+        return departDate;
+    }
+
+    /**
+     * @param departDate the departDate to set
+     */
+    public void setDepartDate(Date departDate) {
+        this.departDate = departDate;
+    }
+
+    /**
+     * @return the arrivalDate
+     */
+    public Date getArrivalDate() {
+        return arrivalDate;
+    }
+
+    /**
+     * @param arrivalDate the arrivalDate to set
+     */
+    public void setArrivalDate(Date arrivalDate) {
+        this.arrivalDate = arrivalDate;
+    }
+
 }

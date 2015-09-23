@@ -10,36 +10,42 @@
         <ui:composition template="./../../../../template/ApsTemplate.xhtml">
 
             <ui:define name="content">
-                <p:outputLabel for="aircraft-model-table" value="#{fleetController.msg}"/>
-                <p:dataTable id="aircraft-model-table" var="model" value="#{fleetController.aircraftModels}">
-                    <p:column headerText="Type" sortBy="#{model.typeCode}">
-                        <h:outputText value="#{model.typeCode}"/>
-                    </p:column>
-                    <p:column headerText="Type Family" sortBy="#{model.typeFamily}">
-                        <h:outputText value="#{model.typeFamily}"/>
-                    </p:column>
-                    <p:column headerText="Manufacturer" sortBy="#{model.mfdBy}">
-                        <h:outputText value="#{model.mfdBy}"/>
-                    </p:column>
-                    <p:column headerText="Typical Seating (Number of people)" sortBy="#{model.typicalSeating}">
-                        <h:outputText value="#{model.typicalSeating}"/>
-                    </p:column>
-                    <p:column headerText="Max Seating (Number of people)" sortBy="#{model.maxSeating}">
-                        <h:outputText value="#{model.maxSeating}"/>
-                    </p:column>
-                    <p:column headerText="Range (km)" sortBy="#{model.rangeInKm}">
-                        <h:outputText value="#{model.rangeInKm}"/>
-                    </p:column>
-                    <p:column headerText="Overall Length (m)" sortBy="#{model.overallLengthInM}">
-                        <h:outputText value="#{model.overallLengthInM}"/>
-                    </p:column>
-                    <p:column headerText="Wing Span (m)" sortBy="#{model.wingspanInM}">
-                        <h:outputText value="#{model.wingspanInM}"/>
-                    </p:column>
-                    <p:column headerText="Max Fuel Capacity (litres)" sortBy="#{model.maxFuelCapacity}">
-                        <h:outputText value="#{model.maxFuelCapacity}"/>
-                    </p:column>
-                </p:dataTable>
+                <p:panel id="basic" header="Available Aircraft Models in the Market" style="margin-bottom:20px">
+                    <p:outputLabel for="aircraft-model-table" value="#{fleetController.msg}"/>
+                    <p:dataTable id="aircraft-model-table" var="model" value="#{fleetController.aircraftModels}" rows="10"
+                                 paginator="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,15">
+                        <p:column headerText="Type" sortBy="#{model.typeCode}">
+                            <h:outputText value="#{model.typeCode}"/>
+                        </p:column>
+                        <p:column headerText="Type Family" sortBy="#{model.typeFamily}">
+                            <h:outputText value="#{model.typeFamily}"/>
+                        </p:column>
+                        <p:column headerText="Manufacturer" sortBy="#{model.mfdBy}">
+                            <h:outputText value="#{model.mfdBy}"/>
+                        </p:column>
+                        <p:column headerText="Typical Seating (Number of people)" sortBy="#{model.typicalSeating}">
+                            <h:outputText value="#{model.typicalSeating}"/>
+                        </p:column>
+                        <p:column headerText="Max Seating (Number of people)" sortBy="#{model.maxSeating}">
+                            <h:outputText value="#{model.maxSeating}"/>
+                        </p:column>
+                        <p:column headerText="Range (km)" sortBy="#{model.rangeInKm}">
+                            <h:outputText value="#{model.rangeInKm}"/>
+                        </p:column>
+                        <p:column headerText="Overall Length (m)" sortBy="#{model.overallLengthInM}">
+                            <h:outputText value="#{model.overallLengthInM}"/>
+                        </p:column>
+                        <p:column headerText="Wing Span (m)" sortBy="#{model.wingspanInM}">
+                            <h:outputText value="#{model.wingspanInM}"/>
+                        </p:column>
+                        <p:column headerText="Max Fuel Capacity (litres)" sortBy="#{model.maxFuelCapacity}">
+                            <h:outputText value="#{model.maxFuelCapacity}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
             </ui:define>
 
         </ui:composition>
