@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/AisTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">
+        View All Ticket Family
+    </ui:define>
+
+    <ui:define name="content">
+        <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily">
+            <p:column headerText="Ticket Family Type">
+                <p:outputLabel value="#{ticketfamily.type}"/>
+            </p:column>
+            
+            <p:column headerText="Ticket Family Name">
+                <p:outputLabel value="#{ticketfamily.name}" />
+            </p:column>
+            
+          
+        </p:dataTable>
+        
+        <p:commandButton value="Edit" action="#{navigationController.redirectToEditTicketFamily()}"  />
+    </ui:define>
+
+</ui:composition>
