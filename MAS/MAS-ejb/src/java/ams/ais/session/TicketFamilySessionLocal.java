@@ -6,6 +6,10 @@
 package ams.ais.session;
 
 import ams.ais.entity.TicketFamily;
+import ams.ais.util.exception.ExistSuchTicketFamilyNameException;
+import ams.ais.util.exception.ExistSuchTicketFamilyTypeException;
+import ams.ais.util.exception.NoSuchTicketFamilyException;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -14,5 +18,11 @@ import javax.ejb.Local;
  */
 @Local
 public interface TicketFamilySessionLocal {
+    public List<TicketFamily> getAllTicketFamily();
     public TicketFamily getTicketFamilyByName (String ticketFamilyName);
+    public void createTicketFamily(String type, String name) throws ExistSuchTicketFamilyNameException, ExistSuchTicketFamilyTypeException;
+    public void verifyTicketFamilyExistence(String type, String name) throws ExistSuchTicketFamilyNameException, ExistSuchTicketFamilyTypeException;
+    public void deleteTicketFamily(String name) throws NoSuchTicketFamilyException;
+    public void updateTicketFamily(String oldname, String type, String name) throws NoSuchTicketFamilyException, ExistSuchTicketFamilyNameException,ExistSuchTicketFamilyTypeException;
+    public List<TicketFamily> getAllOtherTicketFamily(String name);
 }
