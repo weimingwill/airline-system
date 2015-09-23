@@ -197,7 +197,22 @@ public class NavigationController implements Serializable {
     public String redirectToEditRule() {
         return "/views/secured/ais/product_design/editRule.xhtml" + REDIRECT;
     }
-
+    
+    public String redirectToCreateTicketFamily() {
+        return "/views/secured/ais/product_design/createTicketFamily.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewAllTicketFamily() {
+        return "/views/secured/ais/product_design/viewAllTicketFamily.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToDeleteTicketFamily() {
+        return "/views/secured/ais/product_design/deleteTicketFamily.xhtml" + REDIRECT;
+    }
+    public String redirectToEditTicketFamily() {
+        return "/views/secured/ais/product_design/editTicketFamily.xhtml" + REDIRECT;
+    }
+    
     //Pricing
     public String redirectToCreateBookingClass() {
         return "/views/secured/ais/booking_class/createBookingClass.xhtml" + REDIRECT;
