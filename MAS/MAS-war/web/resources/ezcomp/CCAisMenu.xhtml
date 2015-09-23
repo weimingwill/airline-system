@@ -14,9 +14,17 @@
         <h:form>
             <p:menu toggleable="true" style="width:200px;">
                 <p:submenu label="Product Design">
-                    <p:menuitem value="Create Cabin Class" action="#{navigationController.redirectToCreateCabinClass()}"/>
-                    <p:menuitem value="View all Cabin Class" action="#{navigationController.redirectToViewAllCabinClass()}"/>
-                    <p:menuitem value="Delete Cabin Class" action="#{navigationController.redirectToDeleteCabinClass()}"/>
+                    <p:submenu label="Cabin Class">
+                        <p:menuitem value="Create Cabin Class" action="#{navigationController.redirectToCreateCabinClass()}"/>
+                        <p:menuitem value="View all Cabin Class" action="#{navigationController.redirectToViewAllCabinClass()}"/>
+                        <p:menuitem value="Delete Cabin Class" action="#{navigationController.redirectToDeleteCabinClass()}"/>
+                    </p:submenu>
+                    
+                    <p:submenu label="Rule">
+                        <p:menuitem value="Create New Rule" action="#{navigationController.redirectToCreateRule()}"/>
+                        <p:menuitem value="View all Rules" action="#{navigationController.redirectToViewAllRules()}"/>
+                        <p:menuitem value="Delete Rule" action="#{navigationController.redirectToDeleteRule()}"/>
+                    </p:submenu>
                 </p:submenu>
                 <p:submenu label="Pricing">
                     <p:menuitem value="Create booking class" action="#{navigationController.redirectToCreateBookingClass()}" />
