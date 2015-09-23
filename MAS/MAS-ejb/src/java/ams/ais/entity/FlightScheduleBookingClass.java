@@ -8,8 +8,10 @@ package ams.ais.entity;
 import ams.ais.helper.FlightScheduleBookingClassId;
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
@@ -31,11 +33,11 @@ public class FlightScheduleBookingClass implements Serializable {
     @Id
     private Long bookingClassId;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "FLIGHTSCHEDULEID", referencedColumnName = "FLIGHTSCHEDULEID")
     private FlightSchedule flightSchedule;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "BOOKINGCLASSID", referencedColumnName = "BOOKINGCLASSID")
     private BookingClass bookingClass;
 
