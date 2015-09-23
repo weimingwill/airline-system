@@ -25,6 +25,12 @@
                         <p:menuitem value="View all Rules" action="#{navigationController.redirectToViewAllRules()}"/>
                         <p:menuitem value="Delete Rule" action="#{navigationController.redirectToDeleteRule()}"/>
                     </p:submenu>
+                    
+                    <p:submenu label="Ticket Family">
+                        <p:menuitem value="Create New Ticket Family" action="#{navigationController.redirectToCreateTicketFamily()}"/>
+                        <p:menuitem value="View all Ticket Families" action="#{navigationController.redirectToViewAllTicketFamily()}"/>
+                        <p:menuitem value="Delete Ticket Family" action="#{navigationController.redirectToDeleteTicketFamily()}"/>
+                    </p:submenu>
                 </p:submenu>
                 <p:submenu label="Pricing">
                     <p:menuitem value="Create booking class" action="#{navigationController.redirectToCreateBookingClass()}" />
