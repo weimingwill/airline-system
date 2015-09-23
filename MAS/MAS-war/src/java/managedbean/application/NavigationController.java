@@ -202,4 +202,9 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
 
     }
+    
+    public String redirectToViewObsoleteRoutes() {
+        return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
+
+    }
 }

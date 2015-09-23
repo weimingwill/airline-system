@@ -56,6 +56,8 @@ public interface RoutePlanningSessionLocal {
     
     public boolean addRoute(List<Airport> stopList);
     
-    public List<Route> getAllroutes();
+    public List<Route> getAllRoutes();
+    
+    public List<Route> getAllObsoleteRoutes();
     
 }
