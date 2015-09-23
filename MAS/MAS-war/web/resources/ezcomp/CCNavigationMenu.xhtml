@@ -18,6 +18,7 @@
                 
                 <p:menuitem value="User Workspace" url="#{navigationController.redirectToWorkspace()}" icon="ui-icon-home"></p:menuitem>
                 <p:menuitem value="Airline Planning System" url="#{navigationController.redirectToAPS()}" icon="ui-icon-pencil"></p:menuitem>
+                <p:menuitem value="Airline Inventory System" url="#{navigationController.redirectToAIS()}" icon="ui-icon-clipboard"></p:menuitem>
                 <f:facet name="options">
                     <p:inputText style="margin-right:10px" placeholder="Search"/>
                     <p:commandButton action="#{navigationController.toLogin()}" value="Login" rendered="#{not userBean.loggedIn}" icon="ui-icon-extlink"></p:commandButton>

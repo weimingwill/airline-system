@@ -119,7 +119,6 @@ public class NavigationController implements Serializable {
     }
 
     //Role
-
     public String toCreateRole() {
         return "/views/secured/common/roles/createRole.xhtml";
     }
@@ -162,11 +161,17 @@ public class NavigationController implements Serializable {
     }
 
     //AIS
-    //Product Design
+    
+    public String redirectToAIS() {
+        return "/views/secured/ais/aisMain.xhtml" + REDIRECT;
+    }
+    
+        //Product Design
+
     public String redirectToCreateCabinClass() {
         return "/views/secured/ais/product_design/createCabinClass.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToViewAllCabinClass() {
         return "/views/secured/ais/product_design/viewAllCabinClass.xhtml" + REDIRECT;
     }
@@ -174,19 +179,25 @@ public class NavigationController implements Serializable {
     public String redirectToDeleteCabinClass() {
         return "/views/secured/ais/product_design/deleteCabinClass.xhtml" + REDIRECT;
     }
-    //Pricing
-    public String redirectToCreateBookingClass(){
+
+        //Pricing
+
+    public String redirectToCreateBookingClass() {
         return "/views/secured/ais/booking_class/createBookingClass.xhtml" + REDIRECT;
     }
-    
-    public String redirectToDeleteBookingClass(){
+
+    public String redirectToDeleteBookingClass() {
         return "/views/secured/ais/booking_class/deleteBookingClass.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }
 
+    
+    
+    
+    //APS
     public String redirectToAPS() {
         return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
     }
@@ -207,12 +218,12 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToAddRoute() {
         return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToViewRoutes() {
         return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
 
