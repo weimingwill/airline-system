@@ -30,6 +30,8 @@ public interface RoutePlanningSessionLocal {
     
     public City getCityByID(Long id);
     
+    public Route getRouteByID(Long id);
+    
     public Airport getAirportByICAOCode(String code);
 
     public List<City> getCityListByCountry(String countryCode);
@@ -46,12 +48,16 @@ public interface RoutePlanningSessionLocal {
 
     public boolean addHub(String icaoCode);
     
+    public boolean softDeleteRoute(Long id);
+    
     public Leg checkLegExistence(Airport origin, Airport destination);
     
     public Route checkRouteExistence(List<Airport> allStopsNames);
     
     public boolean addRoute(List<Airport> stopList);
     
-    public List<Route> getAllroutes();
+    public List<Route> getAllRoutes();
+    
+    public List<Route> getAllObsoleteRoutes();
     
 }

@@ -4,27 +4,50 @@
                 template="./../../../../template/ApsTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="content">
-        <p:dataTable var="route" value="#{routeController.routeList}" sortMode="multiple">
-        <f:facet name="header">
-            Current Routes
-        </f:facet>
-            <p:column headerText="Id" sortBy="#{route.id}">
-            <h:outputText value="#{car.id}" />
-        </p:column>
- 
+
+        <p:dataTable var="routeExisted" value="#{routeController.routesShowList}" style="margin-bottom:40px" rows="10"
+                     paginator="true"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="5,10,15">
+            <f:facet name="header">
+                Routes
+            </f:facet>
+            <p:column headerText="Id" sortBy="#{routeExisted.get(0)}">
+                <h:outputText value="#{routeExisted.get(0)}" />
+            </p:column>
+
+            <p:column headerText="Origin" sortBy="#{routeExisted.get(1)}">
+                <h:outputText value="#{routeExisted.get(1)}" />
+            </p:column>
             
- 
-        <p:column headerText="Brand" sortBy="#{car.brand}">
-            <h:outputText value="#{car.brand}" />
-        </p:column>
- 
-        <p:column headerText="Color" sortBy="#{car.color}">
-            <h:outputText value="#{car.color}" />
-        </p:column>
-    </p:dataTable>
+            <p:column headerText="Stopovers" sortBy="#{routeExisted.get(3)}">
+                <h:outputText value="#{routeExisted.get(3)}" />
+            </p:column>
+            
+            <p:column headerText="Destination" sortBy="#{routeExisted.get(2)}">
+                <h:outputText value="#{routeExisted.get(2)}" />
+            </p:column>
+
+            
+        </p:dataTable>
+
+        <h:form>
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="route" value="Route:"/>
+                <p:selectOneMenu id="route" value="#{routeController.route}" converter="routeConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
+                    <f:selectItem itemLabel="Select" itemValue="" />
+                    <f:selectItems value="#{routeController.routeList}" var="route" itemLabel="#{route.id}" itemValue="#{route}" />
+                </p:selectOneMenu>
+
+            </h:panelGrid>
+            <p:commandButton value="Delete route and return route" update="messages" action="#{navigationController.redirectToViewRoutes()}" actionListener="#{routeController.deleteRoute}" style="left:27px" icon="ui-icon-check"/>
+
+        </h:form>
+
     </ui:define>
 
 </ui:composition>

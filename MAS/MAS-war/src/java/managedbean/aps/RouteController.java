@@ -11,18 +11,17 @@ import ams.aps.entity.Country;
 import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
 import ams.aps.session.RoutePlanningSessionLocal;
+import ams.aps.util.helper.RouteDisplayHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
-import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
+import managedbean.application.MsgController;
 
 /**
  *
@@ -31,6 +30,9 @@ import javax.faces.event.ValueChangeEvent;
 @Named(value = "routeController")
 @SessionScoped
 public class RouteController implements Serializable {
+
+    @Inject
+    private MsgController msgController;
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
@@ -54,6 +56,9 @@ public class RouteController implements Serializable {
     private Route route;
     private List<Route> routeList;
     private List<Route> sameODRoutes;
+    private List<List<String>> routesShowList;
+    private List<List<String>> obsoleteRoutesShowList;
+    private List<RouteDisplayHelper> routeDisplayList;
 
     /**
      * Creates a new instance of RouteController
@@ -65,6 +70,8 @@ public class RouteController implements Serializable {
     public void init() {
         countries = (List<Country>) routePlanningSession.getCountryList();
         hubs = (List<Airport>) routePlanningSession.getHubs();
+        viewRoutes();
+        viewObsoleteRoutes();
     }
 
     public Country getCountryByCode(String isoCode) {
@@ -79,44 +86,42 @@ public class RouteController implements Serializable {
         return routePlanningSession.getAirportByICAOCode(icao);
     }
 
+    public Route getRouteByID(Long id) {
+        return routePlanningSession.getRouteByID(id);
+    }
+
     public void addNewHub(ActionEvent event) {
         System.out.println("RouteController: addHub()");
-        FacesContext context = FacesContext.getCurrentInstance();
         if (routePlanningSession.addHub(airport.getIcaoCode())) {
-            context.addMessage(null, new FacesMessage("Successful", "Add a hub successfully!"));
+            msgController.addMessage("Add a hub successfully!");
             cleanGlobalVariable();
         } else {
-            context.addMessage(null, new FacesMessage("Failed", "Failed to add hub!"));
+            msgController.addErrorMessage("Failed to add hub!");
             cleanGlobalVariable();
         }
     }
 
     public void cancelHub(ActionEvent event) {
         System.out.println("RouteController: cancelHub()");
-        FacesContext context = FacesContext.getCurrentInstance();
         if (routePlanningSession.cancelHub(hub.getIcaoCode())) {
-            context.addMessage(null, new FacesMessage("Successful", "Cancel a hub successfully!"));
+            msgController.addMessage("Cancel a hub successfully!");
             cleanGlobalVariable();
         } else {
-            context.addMessage(null, new FacesMessage("Failed", "Failed to cancel hub!"));
+            msgController.addErrorMessage("Failed to cancel hub!");
             cleanGlobalVariable();
         }
     }
 
-    public void getCitiesByCountry(ValueChangeEvent event) {
-        String isoCode = ((Country) event.getNewValue()).getIsoCode();
-        setCities((List<City>) routePlanningSession.getCityListByCountry(isoCode));
+    public void onCountryChange() {
+        setCities((List<City>) routePlanningSession.getCityListByCountry(country.getIsoCode()));
+        city = null;
+        airport = null;
+        airportsNotHub = new ArrayList<Airport>();
     }
 
-    public void getNonHubAitportsByCityID(ValueChangeEvent event) {
-        Long cityID = ((City) event.getNewValue()).getId();
-        setAirportsNotHub((List<Airport>) routePlanningSession.getNonHubAirportListByCity(cityID));
+    public void onCityChange() {
+        setAirportsNotHub((List<Airport>) routePlanningSession.getNonHubAirportListByCity(city.getId()));
     }
-
-//    public List<Route> checkRouteExistnce(String oriAirportIcao, String DesAirportIcao) {
-//        sameODRoutes = (List<Route>) routePlanningSession.getRoutesByOD(oriAirportIcao, DesAirportIcao);
-//        return sameODRoutes;
-//    }
 
     public void onOriginChange() {
         stopover = null;
@@ -140,26 +145,100 @@ public class RouteController implements Serializable {
     }
 
     public void addRouteSimple(ActionEvent event) {
-        FacesContext context = FacesContext.getCurrentInstance();
         List<Airport> allStops = new ArrayList<Airport>();
         allStops.add(hub);
         allStops.add(stopover);
         allStops.add(destination);
-        if (routePlanningSession.checkRouteExistence(allStops)!=null) {
-            context.addMessage(null, new FacesMessage("Error", "Route exists already!"));
+        if (routePlanningSession.checkRouteExistence(allStops) != null) {
+            msgController.addErrorMessage("Route exists already!");
+            cleanGlobalVariable();
         } else {
             if (routePlanningSession.addRoute(allStops)) {
-                context.addMessage(null, new FacesMessage("Successful", "Add route and return route successfully!"));
+                msgController.addMessage("Add route and return route successfully!");
                 cleanGlobalVariable();
             } else {
-                context.addMessage(null, new FacesMessage("Failed", "Failed to add route!"));
+                msgController.addErrorMessage("Fail to add route!");
                 cleanGlobalVariable();
             }
         }
+
+        viewRoutes();
     }
-    
+
+    public void deleteRoute(ActionEvent event) {
+        if (routePlanningSession.softDeleteRoute(route.getId())) {
+            msgController.addMessage("Route and return route deleted successfully!");
+            cleanGlobalVariable();
+        } else {
+            msgController.addErrorMessage("Fail to delete route and return route!");
+            cleanGlobalVariable();
+        }
+
+        viewRoutes();
+        viewObsoleteRoutes();
+    }
+
     public void viewRoutes() {
-        routeList = routePlanningSession.getAllroutes();
+        routeList = routePlanningSession.getAllRoutes();
+        setRoutesShowList(new ArrayList<List<String>>());
+        for (Route r : routeList) {
+            List<String> routeTemp = new ArrayList<String>();
+            List<Leg> legs = r.getLegs();
+            int size = legs.size();
+
+            System.out.println("Retrived Route: " + legs.get(0).getDepartAirport().getAirportName() + "-" + legs.get(0).getArrivalAirport().getAirportName()+ "-" + legs.get(1).getDepartAirport().getAirportName() + "-" + legs.get(1).getArrivalAirport().getAirportName());
+  
+//            System.out.println("route input: " + legs.get(0).getDepartAirport().getAirportName() + " -> " + legs.get(1).getArrivalAirport().getAirportName());
+
+            if (size > 1) {
+                String stopovers = legs.get(0).getArrivalAirport().getAirportName();
+                for (int i = 1; i < size - 1; i++) {
+                    stopovers += " - ";
+                    stopovers += legs.get(i).getArrivalAirport().getAirportName();
+                }
+                routeTemp.add(r.getId().toString());
+                routeTemp.add(legs.get(0).getDepartAirport().getAirportName());
+                routeTemp.add(legs.get(size - 1).getArrivalAirport().getAirportName());
+                routeTemp.add(stopovers);
+            } else {
+                routeTemp.add(r.getId().toString());
+                routeTemp.add(legs.get(0).getDepartAirport().getAirportName());
+                routeTemp.add(legs.get(0).getArrivalAirport().getAirportName());
+                routeTemp.add("N.A.");
+            }
+            getRoutesShowList().add(routeTemp);
+        }
+    }
+
+    public void viewObsoleteRoutes() {
+        List<Route> obRouteList = routePlanningSession.getAllObsoleteRoutes();
+        setObsoleteRoutesShowList(new ArrayList<List<String>>());
+        for (Route r : obRouteList) {
+            List<String> routeTemp = new ArrayList<String>();
+            List<Leg> legs = r.getLegs();
+            int size = legs.size();
+
+//            System.out.println("route input: " + legs.get(0).getDepartAirport().getAirportName() + " -> " + legs.get(1).getArrivalAirport().getAirportName());
+
+            if (size > 1) {
+                String stopovers = legs.get(0).getArrivalAirport().getAirportName();
+                for (int i = 1; i < size - 1; i++) {
+                    stopovers += " - ";
+                    stopovers += legs.get(i).getArrivalAirport().getAirportName();
+                }
+                routeTemp.add(r.getId().toString());
+                routeTemp.add(legs.get(0).getDepartAirport().getAirportName());
+                routeTemp.add(legs.get(size - 1).getArrivalAirport().getAirportName());
+                routeTemp.add(stopovers);
+            } else {
+                routeTemp.add(r.getId().toString());
+                routeTemp.add(legs.get(0).getDepartAirport().getAirportName());
+                routeTemp.add(legs.get(0).getArrivalAirport().getAirportName());
+                routeTemp.add("N.A.");
+            }
+            System.out.println("route check: " + routeTemp.get(1) + " -> " + routeTemp.get(2) + " -> " + routeTemp.get(3));
+            getObsoleteRoutesShowList().add(routeTemp);
+        }
     }
 
     private void cleanGlobalVariable() {
@@ -174,7 +253,7 @@ public class RouteController implements Serializable {
         routeList = null;
         setStopover(null);
         setDestination(null);
-        
+
         hubs = (List<Airport>) routePlanningSession.getHubs();
     }
 
@@ -401,6 +480,48 @@ public class RouteController implements Serializable {
      */
     public void setDestList(List<Airport> destList) {
         this.destList = destList;
+    }
+
+    /**
+     * @return the routesShowList
+     */
+    public List<List<String>> getRoutesShowList() {
+        return routesShowList;
+    }
+
+    /**
+     * @param routesShowList the routesShowList to set
+     */
+    public void setRoutesShowList(List<List<String>> routesShowList) {
+        this.routesShowList = routesShowList;
+    }
+
+    /**
+     * @return the obesoleteRoutesShowList
+     */
+    public List<List<String>> getObsoleteRoutesShowList() {
+        return obsoleteRoutesShowList;
+    }
+
+    /**
+     * @param obesoleteRoutesShowList the obesoleteRoutesShowList to set
+     */
+    public void setObsoleteRoutesShowList(List<List<String>> obsoleteRoutesShowList) {
+        this.obsoleteRoutesShowList = obsoleteRoutesShowList;
+    }
+
+    /**
+     * @return the routeDisplayList
+     */
+    public List<RouteDisplayHelper> getRouteDisplayList() {
+        return routeDisplayList;
+    }
+
+    /**
+     * @param routeDisplayList the routeDisplayList to set
+     */
+    public void setRouteDisplayList(List<RouteDisplayHelper> routeDisplayList) {
+        this.routeDisplayList = routeDisplayList;
     }
 
 }

@@ -6,7 +6,7 @@
 
 package managedbean.aps;
 
-import ams.aps.entity.Airport;
+import ams.aps.entity.Route;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -19,8 +19,8 @@ import javax.inject.Inject;
  *
  * @author ChuningLiu
  */
-@FacesConverter("airportConverter")
-public class AirportConverter implements Converter {
+@FacesConverter("routeConverter")
+public class RouteConverter implements Converter{
     @Inject
     private RouteController routeController;
     
@@ -28,8 +28,7 @@ public class AirportConverter implements Converter {
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                Object obj = routeController.getAirportByICAO(value);
-                return obj;
+                return routeController.getRouteByID(Long.parseLong(value));
             } catch (NullPointerException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid airport."));
             }
@@ -41,9 +40,10 @@ public class AirportConverter implements Converter {
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         if (value != null && !(value instanceof String)) {
-            return ((Airport)value).getIcaoCode();
+            return ((Route)value).getId().toString();
         } else {
             return null;
         }
     }
+    
 }

@@ -185,6 +185,7 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/fleet/addNewAircraft.xhtml" + REDIRECT;
     }
 
+
     public String toViewFleet(){
         return "/views/secured/aps/fleet/viewFleet.xhtml" + REDIRECT;
     }
@@ -200,9 +201,28 @@ public class NavigationController implements Serializable {
     public String toAddHub() {
         return "/views/secured/aps/route/addHub.xhtml?faces-redirect=true";
     }
+    
+    public String redirectToAddHub() {
+        return "/views/secured/aps/route/addHub.xhtml" + REDIRECT;
+    }
 
-    public String toCancelHub() {
-        return "/views/secured/aps/route/cancelHub.xhtml?faces-redirect=true";
+    public String redirectToCancelHub() {
+        return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
+
+    }
+    
+    public String redirectToAddRoute() {
+        return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
+
+    }
+    
+    public String redirectToViewRoutes() {
+        return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
+
+    }
+    
+    public String redirectToViewObsoleteRoutes() {
+        return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
 
     }
     

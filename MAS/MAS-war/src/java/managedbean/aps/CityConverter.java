@@ -28,7 +28,6 @@ public class CityConverter implements Converter {
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                System.out.println("CityConverter: getAsObject() "+value);
                 return routeController.getCityByID(Long.parseLong(value));
             } catch (NullPointerException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
