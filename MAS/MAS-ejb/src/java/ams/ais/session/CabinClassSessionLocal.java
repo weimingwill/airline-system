@@ -21,7 +21,7 @@ import javax.ejb.Local;
 public interface CabinClassSessionLocal {
      
    public List<CabinClass> getAllCabinClass();
-   public void createCabinClass(String name, String type) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
+   public void createCabinClass(String type, String name) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
    public void verifyCabinClassExistence(String type, String name) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
    public void deleteCabinClass(String name) throws NoSuchCabinClassException;
    public CabinClass getCabinClassByName(String name);
