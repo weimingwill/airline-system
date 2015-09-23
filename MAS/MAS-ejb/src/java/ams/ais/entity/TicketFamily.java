@@ -38,6 +38,14 @@ public class TicketFamily implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
     private List<TicketFamilyRule> ticketFamilyRules = new ArrayList<>();
     
+    
+    public void create(String type, String name) {
+        this.setType(type);
+        this.setName(name);
+        this.setDeleted(false);
+    }
+    
+    
     public Long getTicketFamilyId() {
         return ticketFamilyId;
     }
