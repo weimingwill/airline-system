@@ -10,11 +10,15 @@ package ams.aps.util.helper;
  * @author ChuningLiu
  */
 public class RouteDisplayHelper {
-
+    private Long id;
     private String origin;
     private String destination;
     private String legs;
 
+    public RouteDisplayHelper() {
+    }
+
+    
     public RouteDisplayHelper(String origin, String destination, String legs) {
         this.origin = origin;
         this.destination = destination;
@@ -61,6 +65,20 @@ public class RouteDisplayHelper {
      */
     public void setLegs(String legs) {
         this.legs = legs;
+    }
+
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

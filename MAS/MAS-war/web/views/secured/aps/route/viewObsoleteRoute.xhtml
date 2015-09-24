@@ -7,28 +7,29 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-        <p:dataTable var="routeObsoleted" value="#{routeController.obsoleteRoutesShowList}" style="margin-bottom:40px" rows="10"
-                         paginator="true"
-                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         rowsPerPageTemplate="5,10,15">
+        <p:dataTable var="routeObsoleted" value="#{routeController.obsRouteDisplayList}" style="margin-bottom:40px" rows="10"
+                     paginator="true"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="5,10,15">
             <f:facet name="header">
                 Obsoleted Routes
             </f:facet>
-            <p:column headerText="Id" sortBy="#{routeObsoleted.get(0)}">
-                <h:outputText value="#{routeObsoleted.get(0)}" />
+            <p:column headerText="Id" sortBy="#{routeObsoleted.id}">
+                <h:outputText value="#{routeObsoleted.id}" />
             </p:column>
 
-            <p:column headerText="Origin" sortBy="#{routeObsoleted.get(1)}">
-                <h:outputText value="#{routeObsoleted.get(1)}" />
+            <p:column headerText="Origin" sortBy="#{routeObsoleted.origin}">
+                <h:outputText value="#{routeObsoleted.origin}" />
             </p:column>
 
-            <p:column headerText="Destination" sortBy="#{routeObsoleted.get(2)}">
-                <h:outputText value="#{routeObsoleted.get(2)}" />
+            <p:column headerText="Stopovers" sortBy="#{routeObsoleted.legs}">
+                <h:outputText value="#{routeObsoleted.legs}" />
             </p:column>
 
-            <p:column headerText="Stopovers" sortBy="#{routeObsoleted.get(3)}">
-                <h:outputText value="#{routeObsoleted.get(3)}" />
+            <p:column headerText="Destination" sortBy="#{routeObsoleted.destination}">
+                <h:outputText value="#{routeObsoleted.destination}" />
             </p:column>
+
         </p:dataTable>
 
     </ui:define>

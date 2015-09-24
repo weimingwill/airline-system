@@ -9,27 +9,27 @@
 
     <ui:define name="content">
 
-        <p:dataTable var="routeExisted" value="#{routeController.routesShowList}" style="margin-bottom:40px" rows="10"
+        <p:dataTable var="routeList" value="#{routeController.routeDisplayList}" style="margin-bottom:40px" rows="10"
                      paginator="true"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="5,10,15">
             <f:facet name="header">
                 Routes
             </f:facet>
-            <p:column headerText="Id" sortBy="#{routeExisted.get(0)}">
-                <h:outputText value="#{routeExisted.get(0)}" />
+            <p:column headerText="Id" sortBy="#{routeList.id}">
+                <h:outputText value="#{routeList.id}" />
             </p:column>
 
-            <p:column headerText="Origin" sortBy="#{routeExisted.get(1)}">
-                <h:outputText value="#{routeExisted.get(1)}" />
+            <p:column headerText="Origin" sortBy="#{routeList.origin}">
+                <h:outputText value="#{routeList.origin}" />
             </p:column>
             
-            <p:column headerText="Stopovers" sortBy="#{routeExisted.get(3)}">
-                <h:outputText value="#{routeExisted.get(3)}" />
+            <p:column headerText="Stopovers" sortBy="#{routeList.legs}">
+                <h:outputText value="#{routeList.legs}" />
             </p:column>
             
-            <p:column headerText="Destination" sortBy="#{routeExisted.get(2)}">
-                <h:outputText value="#{routeExisted.get(2)}" />
+            <p:column headerText="Destination" sortBy="#{routeList.destination}">
+                <h:outputText value="#{routeList.destination}" />
             </p:column>
 
             
@@ -40,7 +40,7 @@
                 <p:outputLabel for="route" value="Route:"/>
                 <p:selectOneMenu id="route" value="#{routeController.route}" converter="routeConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
                     <f:selectItem itemLabel="Select" itemValue="" />
-                    <f:selectItems value="#{routeController.routeList}" var="route" itemLabel="#{route.id}" itemValue="#{route}" />
+                    <f:selectItems value="#{routeController.routeList}" var="route" itemLabel="#{route.routeId}" itemValue="#{route}" />
                 </p:selectOneMenu>
 
             </h:panelGrid>

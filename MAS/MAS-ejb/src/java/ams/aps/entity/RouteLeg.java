@@ -22,7 +22,7 @@ import javax.persistence.Table;
  */
 @Entity
 @IdClass(RouteLegId.class)
-@Table(name = "AIRCRAFT_CABINCLASS")
+@Table(name = "ROUTE_LEG")
 public class RouteLeg implements Serializable {
     @Id
     private Long routeId;

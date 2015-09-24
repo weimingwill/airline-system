@@ -30,12 +30,14 @@ public class Route implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long routeId;
     private boolean deleted;
-    @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    private List<Leg> legs = new ArrayList<>();
+
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
     private List<Flight> flights = new ArrayList<>();
     @OneToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Route returnRoute;
+    
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
+    private List<RouteLeg> routeLegs = new ArrayList<>();
 
     public Long getRouteId() {
         return routeId;
@@ -70,14 +72,6 @@ public class Route implements Serializable {
         return "ams.aps.entity.Route[ id=" + routeId + " ]";
     }
 
-    public List<Leg> getLegs() {
-        return legs;
-    }
-
-    public void setLegs(List<Leg> legs) {
-        this.legs = legs;
-    }
-
     public List<Flight> getFlights() {
         return flights;
     }
@@ -106,6 +100,20 @@ public class Route implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * @return the routeLegs
+     */
+    public List<RouteLeg> getRouteLegs() {
+        return routeLegs;
+    }
+
+    /**
+     * @param routeLegs the routeLegs to set
+     */
+    public void setRouteLegs(List<RouteLeg> routeLegs) {
+        this.routeLegs = routeLegs;
     }
     
 }

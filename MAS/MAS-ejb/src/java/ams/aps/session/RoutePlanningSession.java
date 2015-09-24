@@ -10,6 +10,7 @@ import ams.aps.entity.City;
 import ams.aps.entity.Country;
 import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
+import ams.aps.entity.RouteLeg;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -79,10 +81,10 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         }
         return city;
     }
-    
+
     @Override
     public Route getRouteByID(Long id) {
-        Query query = em.createQuery("SELECT r FROM Route r WHERE r.id = :inID");
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.routeId = :inID");
         query.setParameter("inID", id);
         Route route = null;
         try {
@@ -145,7 +147,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public List<Route> getRoutesByOD(String oriICAO, String desICAO) {
-        Query query = em.createQuery("SELECT r FROM Route r WHERE r.originAirport.icaoCode = :inOriICAO AND r.destAirport.icaoCode = :inDesICAO");
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.routeId = (SELECT rl.routeId FROM RouteLeg rl WHERE rl.leg.departAirport.icaoCode=:inOriICAO AND rl.leg.arrivalAirport.icaoCode = :inDesICAO)");
         query.setParameter("inOriICAO", oriICAO);
         query.setParameter("inDesICAO", desICAO);
         return (List<Route>) query.getResultList();
@@ -178,13 +180,13 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     @Override
     public boolean softDeleteRoute(Long id) {
         try {
-            
-            System.out.println("PoutePlanningSession: softDeleteRoute: "+id);
-            
+
+            System.out.println("RoutePlanningSession: softDeleteRoute: " + id);
+
             Route route = em.find(Route.class, id);
-            Route returnRoute = em.find(Route.class, route.getReturnRoute().getId());
-            
-            System.out.println("PoutePlanningSession: softDeleteRoute: Route and return route found.");
+            Route returnRoute = em.find(Route.class, route.getReturnRoute().getRouteId());
+
+            System.out.println("RoutePlanningSession: softDeleteRoute: Route and return route found.");
             route.setDeleted(true);
             returnRoute.setDeleted(true);
             em.merge(route);
@@ -194,21 +196,21 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             return false;
         }
     }
-    
+
     @Override
     public Leg checkLegExistence(Airport origin, Airport destination) {
         System.out.println("RoutePlanningSession: checkLegExistence()");
 
-        Query query = em.createQuery("SELECT l FROM Leg l, Airport A1, Airport A2 WHERE (A1=:ori AND A1 MEMBER OF (l.arrivalAirport)) AND (A2=:dest AND A2 MEMBER OF (l.departAirport))");
+        Query query = em.createQuery("SELECT l FROM Leg l, Airport A1, Airport A2 WHERE (A1=:ori AND A1 MEMBER OF (l.departAirport)) AND (A2=:dest AND A2 MEMBER OF (l.arrivalAirport))");
 
         query.setParameter("ori", origin);
         query.setParameter("dest", destination);
-        
+
         try {
             Leg l = (Leg) query.getSingleResult();
-            System.out.println("RoutePlanningSession: checkLegExistence(): leg ID "+l.getId());;
+            System.out.println("Leg = " + l);;
             return l;
-            
+
         } catch (Exception ex) {
             return null;
         }
@@ -217,132 +219,111 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     @Override
     public Route checkRouteExistence(List<Airport> allStops) {
         System.out.println("RoutePlanningSession: checkRouteExistence()");
-        Leg l1 = checkLegExistence(allStops.get(0), allStops.get(1));
-        Leg l2 = checkLegExistence(allStops.get(1), allStops.get(2));
+        Airport origin, destination;
 
-//        List<Leg> legs = new ArrayList();
-//        for(int i=0; i<allStops.size() - 1; i++){
-//            legs.add(checkLegExistence(allStops.get(i),allStops.get(i+1)));
-//        }
-//        if(legs.contains(null)){
-        if (l1 != null && l2 != null) {
-            em.merge(l1);
-            em.merge(l2);
-//            System.out.println("RoutePlanningSession: checkRouteExistence(): Legs exist");
-            Query query = em.createQuery("SELECT r FROM Route AS r WHERE :leg1 MEMBER OF r.legs AND :leg2 MEMBER OF r.legs");
-            query.setParameter("leg1", l1);
-            query.setParameter("leg2", l2);
+        List<Leg> legs = new ArrayList();
+        for (int i = 0; i < allStops.size() - 1; i++) {
+            origin = em.find(Airport.class, allStops.get(i).getId());
+            destination = em.find(Airport.class, allStops.get(i + 1).getId());
+//            System.out.println("Orgin: " + origin.getAirportName() + " -> " +destination.getAirportName());
+            legs.add(checkLegExistence(origin, destination));
+        }
+        // There are legs that does not exist => the route does not exist
+        if (legs.contains(null)) {
+            return null;
+        } // All legs exits -> Check if the legs has the same route id
+        else {
+            String CHECK_EXIST_QUERY = "SELECT r FROM Route r WHERE ";
+            Long legId;
+            for (int i = 0; i < legs.size(); i++) {
+                legId = legs.get(i).getLegId();
+                CHECK_EXIST_QUERY += "r.routeId = (SELECT rl.routeId FROM RouteLeg rl WHERE rl.legId = :inId" + legId + ")";
+                if ((i + 1) < legs.size()) {
+                    CHECK_EXIST_QUERY += " AND ";
+                }
+            }
+            Query query = em.createQuery(CHECK_EXIST_QUERY);
+            for (Leg leg : legs) {
+                legId = leg.getLegId();
+                query.setParameter("inId" + legId, legId);
+            }
+//            System.out.println(CHECK_EXIST_QUERY);
             try {
                 Route r = (Route) query.getSingleResult();
-                return r;
-            } catch (Exception e) {
+                System.out.println("Route = " + r);
+                return new Route();
+            } catch (NoResultException e) {
                 return null;
+            } catch (NonUniqueResultException e) {
+                return new Route();
             }
-        } else {
-//            System.out.println("RoutePlanningSession: checkRouteExistence(): Route does not exist.");
-            return null;
         }
     }
 
     @Override
     public boolean addRoute(List<Airport> stopList) {
-        try {
+        System.out.println("RoutePlanningSession: addRoute():");
+        List<Leg> legList = new ArrayList<>(), returnLegList = new ArrayList<>();
+        Route newRoute = new Route(), newReturnRoute = new Route();
+        Airport origin, destination;
 
-            Airport a1 = em.find(Airport.class, stopList.get(0).getId());
-            Airport a2 = em.find(Airport.class, stopList.get(1).getId());
-            Airport a3 = em.find(Airport.class, stopList.get(2).getId());
-            
-            Leg leg1 = checkLegExistence(a1, a2);
-            Leg leg2 = checkLegExistence(a2, a3);
-            Leg leg3 = checkLegExistence(a2, a1);
-            Leg leg4 = checkLegExistence(a3, a2);
-            
-            if (leg1 == null) {
+        newRoute.setReturnRoute(newReturnRoute);
+        newReturnRoute.setReturnRoute(newRoute);
+        em.persist(newRoute);
+        em.persist(newReturnRoute);
 
-//                System.out.println("RoutePlanningSession: AddRoute(): leg1 & 3 not exist");
-                
-                leg1 = new Leg();
-                leg3 = new Leg();
+        for (int i = 0; i < stopList.size() - 1; i++) {
+            origin = em.find(Airport.class, stopList.get(i).getId());
+            destination = em.find(Airport.class, stopList.get(i + 1).getId());
 
-                leg1.setDepartAirport(a1);
-                leg1.setArrivalAirport(a2);
-                leg3.setDepartAirport(a2);
-                leg3.setArrivalAirport(a1);
+            Leg newLeg = checkLegExistence(origin, destination);
+            Leg newReturnLeg = checkLegExistence(destination, origin);
 
-                em.persist(leg1);
-                em.persist(leg3);
+            if (newLeg == null) {
+                newLeg = new Leg();
+                newReturnLeg = new Leg();
+                newLeg.setDepartAirport(origin);
+                newLeg.setArrivalAirport(destination);
+                newReturnLeg.setDepartAirport(destination);
+                newReturnLeg.setArrivalAirport(origin);
+                em.persist(newLeg);
+                em.persist(newReturnLeg);
                 em.flush();
-//                System.out.println("RoutePlanningSession: addRoute(): Set leg1 & 3.");
             } else {
-                
-//                System.out.println("RoutePlanningSession: AddRoute(): "+leg1.getId()+" "+leg3.getId());
-                
-                leg1 = em.find(Leg.class, leg1.getId());
-                leg3 = em.find(Leg.class, leg3.getId());
-
-//                System.out.println("RoutePlanningSession: addRoute(): Find leg1 & 3.");
+                em.merge(newLeg);
+                em.merge(newReturnLeg);
             }
-
-            if (leg2 == null) {
-                
-//                System.out.println("RoutePlanningSession: AddRoute(): leg2 & 4 not exist");
-
-                leg2 = new Leg();
-                leg4 = new Leg();
-
-                
-                leg2.setDepartAirport(a2);
-                leg2.setArrivalAirport(a3);
-                leg4.setDepartAirport(a3);
-                leg4.setArrivalAirport(a2);
-
-                em.persist(leg2);
-                em.persist(leg4);
-                em.flush();
-
-//                System.out.println("RoutePlanningSession: addRoute(): Set leg2 & 4.");
-            } else {
-                
-//                System.out.println("RoutePlanningSession: AddRoute(): leg2 & 4 exist");
-                
-                leg2 = em.find(Leg.class, leg2.getId());
-                leg4 = em.find(Leg.class, leg4.getId());
-
-//                System.out.println("RoutePlanningSession: addRoute(): Find leg2 & 4.");
-            }
-
-//            System.out.println("RoutePlanningSession: addRoute(): Start set return route.");
-            Route route1 = new Route();
-            Route route2 = new Route();
-            List<Leg> legs = new ArrayList<Leg>();
-            legs.add(leg1);
-            legs.add(leg2);
-
-            route1.setLegs(legs);
-            route1.setDeleted(Boolean.FALSE);
-
-            legs = new ArrayList<Leg>();
-            legs.add(leg4);
-            legs.add(leg3);
-            
-            route2.setLegs(legs);
-            route2.setDeleted(Boolean.FALSE);
-            
-            route2.setReturnRoute(route1);
-            route1.setReturnRoute(route2);
-
-            em.persist(route1);
-            em.persist(route2);
-
-//            System.out.println("route insert: "+route1.getLegs().get(0).getDepartAirport().getAirportName()+" -> "+route1.getLegs().get(1).getArrivalAirport().getAirportName());
-//            System.out.println("route insert: "+route2.getLegs().get(0).getDepartAirport().getAirportName()+" -> "+route2.getLegs().get(1).getArrivalAirport().getAirportName());
-            System.out.println("Route Planning Session: addRoute():");
-            System.out.println("Added Route: " + route1.getLegs().get(0).getDepartAirport().getAirportName() + "-" + route1.getLegs().get(1).getDepartAirport().getAirportName() + "-" + route1.getLegs().get(1).getArrivalAirport().getAirportName());
-            System.out.println("Added Return Route: " + route2.getLegs().get(0).getDepartAirport().getAirportName() + "-" + route2.getLegs().get(1).getDepartAirport().getAirportName() + "-" + route2.getLegs().get(1).getArrivalAirport().getAirportName());
-            return true;
-        } catch (Exception ex) {
-            return false;
+            legList.add(newLeg);
+            returnLegList.add(0, newReturnLeg);
         }
+        System.out.println("Add route:");
+        addRouteLeg(legList, newRoute);
+        System.out.println("Add return route");
+        addRouteLeg(returnLegList, newReturnRoute);
+        return true;
+    }
+
+    private void addRouteLeg(List<Leg> legs, Route route) {
+        System.out.println("RoutePlanningSession: addRouteLeg():");
+        Leg thisLeg;
+        List<RouteLeg> routeLegList = new ArrayList<>();
+        int i = 0;
+        for (Leg leg : legs) {
+            System.out.println("Sequence" + i + "From: " + leg.getDepartAirport().getAirportName() + " - To: " + leg.getArrivalAirport().getAirportName());
+            RouteLeg thisRouteLeg = new RouteLeg();
+            thisLeg = em.find(Leg.class, leg.getLegId());
+            thisRouteLeg.setLeg(thisLeg);
+            thisRouteLeg.setLegId(thisLeg.getLegId());
+            thisRouteLeg.setRoute(route);
+            thisRouteLeg.setRouteId(route.getRouteId());
+            thisRouteLeg.setLegSeq(i);
+            em.persist(thisRouteLeg);
+            routeLegList.add(thisRouteLeg);
+            i++;
+        }
+        route.setRouteLegs(routeLegList);
+        em.merge(route);
+        em.flush();
     }
 
     @Override
@@ -355,7 +336,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             return null;
         }
     }
-    
+
     @Override
     public List<Route> getAllObsoleteRoutes() {
         Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = 1");
@@ -408,5 +389,4 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         }
         return airport;
     }
-
 }

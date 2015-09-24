@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package managedbean.aps;
+package util.converter;
 
- 
-import ams.aps.entity.Country;
+import ams.aps.entity.City;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -14,35 +13,38 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
- 
- 
-@FacesConverter("countryConverter")
-public class CountryConverter implements Converter {
+import managedbean.aps.RouteController;
+
+/**
+ *
+ * @author ChuningLiu
+ */
+@FacesConverter("cityConverter")
+public class CityConverter implements Converter {
+
     @Inject
     private RouteController routeController;
-    
+
     @Override
-    public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-        if(value != null && value.trim().length() > 0) {
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        if (value != null && value.trim().length() > 0) {
             try {
-                return routeController.getCountryByCode(value);
-            } catch(NullPointerException e) {
+                return routeController.getCityByID(Long.parseLong(value));
+            } catch (NullPointerException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
- 
+
     @Override
-    public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if(object != null && !(object instanceof String)) {
-            return String.valueOf(((Country) object).getIsoCode());
-        }
-        else {
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        if (value != null && value != "null" && !(value instanceof String)) {
+            return ((City) value).getId().toString();
+        } else {
             return null;
         }
-    }   
-}         
-           
+    }
+
+}
