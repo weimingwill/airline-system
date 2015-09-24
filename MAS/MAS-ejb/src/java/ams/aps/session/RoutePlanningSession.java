@@ -237,7 +237,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             Long legId;
             for (int i = 0; i < legs.size(); i++) {
                 legId = legs.get(i).getLegId();
-                CHECK_EXIST_QUERY += "r.routeId = (SELECT rl.routeId FROM RouteLeg rl WHERE rl.legId = :inId" + legId + ")";
+                CHECK_EXIST_QUERY += "r.routeId IN (SELECT rl.routeId FROM RouteLeg rl WHERE rl.legId = :inId" + legId + ")";
                 if ((i + 1) < legs.size()) {
                     CHECK_EXIST_QUERY += " AND ";
                 }
@@ -247,7 +247,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
                 legId = leg.getLegId();
                 query.setParameter("inId" + legId, legId);
             }
-//            System.out.println(CHECK_EXIST_QUERY);
+            System.out.println(CHECK_EXIST_QUERY);
             try {
                 Route r = (Route) query.getSingleResult();
                 System.out.println("Route = " + r);
