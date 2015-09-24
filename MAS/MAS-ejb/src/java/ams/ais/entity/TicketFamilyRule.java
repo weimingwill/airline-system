@@ -7,8 +7,10 @@ package ams.ais.entity;
 
 import ams.ais.helper.TicketFamilyRuleId;
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
@@ -29,17 +31,19 @@ public class TicketFamilyRule implements Serializable {
     @Id
     private Long ruleId;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "TICKETFAMILYID", referencedColumnName = "TICKETFAMILYID")
     private TicketFamily ticketFamily;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "RULEID", referencedColumnName = "RULEID")
     private Rule rule;
 
-    @Column(name = "VALUE")
+    @Column(name = "RULEVALUE")
     private float ruleValue;
 
+    
+    
     public Long getTicketFamilyId() {
         return ticketFamilyId;
     }

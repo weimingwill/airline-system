@@ -56,8 +56,6 @@ public class FlightSchedule implements Serializable {
         this.flightScheduleId = flightScheduleId;
     }
     
-
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -97,20 +95,14 @@ public class FlightSchedule implements Serializable {
         this.departTerminal = departTerminal;
     }
 
-    /**
-     * @return the departGate
-     */
     public String getDepartGate() {
         return departGate;
     }
 
-    /**
-     * @param departGate the departGate to set
-     */
     public void setDepartGate(String departGate) {
         this.departGate = departGate;
     }
-
+    
     public Date getDepartDate() {
         return departDate;
     }
