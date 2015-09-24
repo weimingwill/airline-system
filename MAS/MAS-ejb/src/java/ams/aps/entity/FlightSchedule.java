@@ -166,6 +166,22 @@ public class FlightSchedule implements Serializable {
         this.arrivalTime = arrivalTime;
     }
 
+    public Date getDepartDate() {
+        return departDate;
+    }
+
+    public void setDepartDate(Date departDate) {
+        this.departDate = departDate;
+    }
+
+    public Date getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(Date arrivalDate) {
+        this.arrivalDate = arrivalDate;
+    }
+
     /**
      * @return the aircraft
      */

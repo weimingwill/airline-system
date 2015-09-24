@@ -26,8 +26,6 @@ public class NormalDistribution implements Serializable {
     private boolean deleted;
 
     
-
-    
     public Long getNormalDistributionId() {
         return normalDistributionId;
     }

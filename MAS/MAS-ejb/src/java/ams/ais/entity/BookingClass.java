@@ -24,8 +24,6 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class BookingClass implements Serializable {
-
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingClassId;
@@ -35,6 +33,14 @@ public class BookingClass implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "bookingClass")
     private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
 
+    public List<BookingClassChannel> getBookingClassChannels() {
+        return bookingClassChannels;
+    }
+
+    public void setBookingClassChannels(List<BookingClassChannel> bookingClassChannels) {
+        this.bookingClassChannels = bookingClassChannels;
+    }
+    
     public Long getBookingClassId() {
         return bookingClassId;
     }
