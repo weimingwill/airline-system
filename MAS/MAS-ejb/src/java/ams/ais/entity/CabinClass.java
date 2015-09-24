@@ -6,10 +6,15 @@
 package ams.ais.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -24,6 +29,17 @@ public class CabinClass implements Serializable {
     private String name;
     private boolean deleted;
 
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="cabinClass")
+    private List<TicketFamily> ticketFamilys = new ArrayList<>();
+
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
+    }
+
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
+    }
+    
     public Long getCabinClassId() {
         return cabinClassId;
     }

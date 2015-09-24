@@ -24,6 +24,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class BookingClass implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingClassId;
@@ -33,6 +34,17 @@ public class BookingClass implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "bookingClass")
     private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
 
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private TicketFamily ticketFamily;
+
+    public TicketFamily getTicketFamily() {
+        return ticketFamily;
+    }
+
+    public void setTicketFamily(TicketFamily ticketFamily) {
+        this.ticketFamily = ticketFamily;
+    }
+    
     public List<BookingClassChannel> getBookingClassChannels() {
         return bookingClassChannels;
     }
@@ -40,7 +52,7 @@ public class BookingClass implements Serializable {
     public void setBookingClassChannels(List<BookingClassChannel> bookingClassChannels) {
         this.bookingClassChannels = bookingClassChannels;
     }
-    
+
     public Long getBookingClassId() {
         return bookingClassId;
     }
@@ -56,7 +68,7 @@ public class BookingClass implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public boolean isDeleted() {
         return deleted;
     }
