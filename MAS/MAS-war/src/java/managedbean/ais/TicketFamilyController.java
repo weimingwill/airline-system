@@ -5,8 +5,10 @@
  */
 package managedbean.ais;
 
+import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.util.exception.ExistSuchTicketFamilyException;
 import ams.ais.util.exception.ExistSuchTicketFamilyNameException;
 import ams.ais.util.exception.ExistSuchTicketFamilyTypeException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
@@ -36,16 +38,34 @@ public class TicketFamilyController {
     
     @EJB
     private TicketFamilySessionLocal ticketFamilySession;
-    private String oldname;
+    private String oldtype;
+    private String oldCabinClassname;
     private String type;
     private String name;
-
-    public String getOldname() {
-        return oldname;
+    private String cabinclassname;
+    
+    public String getOldCabinClassname() {
+        return oldCabinClassname;
     }
 
-    public void setOldname(String oldname) {
-        this.oldname = oldname;
+    public void setOldCabinClassname(String oldCabinClassname) {
+        this.oldCabinClassname = oldCabinClassname;
+    }
+    public String getCabinclassname() {
+        return cabinclassname;
+    }
+    
+    
+    public void setCabinclassname(String cabinclassname) {
+        this.cabinclassname = cabinclassname;
+    }
+
+    public String getOldtype() {
+        return oldtype;
+    }
+
+    public void setOldtype(String oldtype) {
+        this.oldtype = oldtype;
     }
 
     public String getType() {
@@ -68,11 +88,11 @@ public class TicketFamilyController {
     public TicketFamilyController() {
     }
     
-    public String createTicketFamily(){
+    public String createTicketFamily() {
         try {
-            ticketFamilySession.createTicketFamily(type, name);
+            ticketFamilySession.createTicketFamily(type, name,cabinclassname);
             msgController.addMessage("Create ticket family successfully!");
-        } catch (ExistSuchTicketFamilyNameException | ExistSuchTicketFamilyTypeException ex) {
+        } catch (ExistSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToCreateTicketFamily();
@@ -82,6 +102,10 @@ public class TicketFamilyController {
         return ticketFamilySession.getAllTicketFamily();
     }
     
+    public List<CabinClass> getAllCabinClass() {
+        return ticketFamilySession.getAllCabinClass();
+        
+    }
     public void deleteTicketFamily() {
         try{
         ticketFamilySession.deleteTicketFamily(name);
@@ -93,12 +117,14 @@ public class TicketFamilyController {
     }
     public String updateTicketFamily() {
         try {
-            ticketFamilySession.updateTicketFamily(oldname,type, name);
+            ticketFamilySession.updateTicketFamily(oldtype,oldCabinClassname,type,name,cabinclassname);
             msgController.addMessage("Edit ticket family successfully!");
-        }catch( ExistSuchTicketFamilyNameException | NoSuchTicketFamilyException | ExistSuchTicketFamilyTypeException ex) {
+        }catch( ExistSuchTicketFamilyException | NoSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToViewAllTicketFamily();
         
     }
+    
+    
 }

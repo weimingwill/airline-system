@@ -18,7 +18,11 @@
                 <p:outputLabel value="#{ticketfamily.name}" />
             </p:column>
             
-          
+            <p:column headerText="Cabin Class">
+                <p:outputLabel value="#{ticketfamily.getCabinClass().name}" />
+            </p:column>
+            
+            
         </p:dataTable>
         
         <p:commandButton value="Edit" action="#{navigationController.redirectToEditTicketFamily()}"  />
