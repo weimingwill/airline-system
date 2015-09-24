@@ -14,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -38,6 +40,22 @@ public class TicketFamily implements Serializable {
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private CabinClass cabinClass;
 
+    public CabinClass getCabinClass() {
+        return cabinClass;
+    }
+
+    public void setCabinClass(CabinClass cabinClass) {
+        this.cabinClass = cabinClass;
+    }
+    
+    public void create(String type, String name) {
+        this.setType(type);
+        this.setName(name);
+        this.setDeleted(false);
+    }
+    
+
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
     private List<BookingClass> bookingClasses = new ArrayList<>();
 
@@ -48,14 +66,8 @@ public class TicketFamily implements Serializable {
     public void setBookingClasses(List<BookingClass> bookingClasses) {
         this.bookingClasses = bookingClasses;
     }
-    
-    public CabinClass getCabinClass() {
-        return cabinClass;
-    }
-
-    public void setCabinClass(CabinClass cabinClass) {
-        this.cabinClass = cabinClass;
-    }
+   
+   
 
     public Long getTicketFamilyId() {
         return ticketFamilyId;

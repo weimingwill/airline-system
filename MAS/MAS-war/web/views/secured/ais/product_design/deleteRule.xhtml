@@ -1,26 +1,25 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition template="./../../../../template/AisTemplate.xhtml"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/AisTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui">
 
-
     <ui:define name="title">
-        Delete Cabin Class
+        Delete Rule
     </ui:define>
 
     <ui:define name="content">
         <h:form id="deleteCabinClassForm">
             <h:panelGrid columns="2" columnClasses="label, value">
 
-
-                <h:outputText value="Delete through Cabin Class Name"/>
-                <p:inputText required="true" requiredMessage="Please enter cabin class name you want to delete" id="name" value="#{cabinClassController.name}">
-
+                                
+                <h:outputText value="Delete through rule Name"/>
+                <p:inputText required="true" requiredMessage="Please enter rule name you want to delete" id="name" value="#{ruleController.name}">
+               
                 </p:inputText>
-
-                <p:commandButton action="#{cabinClassController.deleteCabinClass()}" value="Delete" update="messages"/>    
+                
+                <p:commandButton action="#{ruleController.deleteRule()}" value="Delete" update="messages"/>    
 
             </h:panelGrid>
         </h:form>
