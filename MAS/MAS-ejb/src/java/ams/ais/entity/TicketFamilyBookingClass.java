@@ -7,12 +7,15 @@ package ams.ais.entity;
 
 import ams.ais.helper.TicketFamilyBookingClassId;
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.PrimaryKeyJoinColumns;
@@ -29,7 +32,6 @@ public class TicketFamilyBookingClass implements Serializable {
     @EmbeddedId
     private TicketFamilyBookingClassId ticketFamilyBookingClassId;
 
-
 //    @MapsId("cabinClassTicketFamilyId")
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumns({
@@ -44,17 +46,29 @@ public class TicketFamilyBookingClass implements Serializable {
     @PrimaryKeyJoinColumn(name = "BOOKINGCLASSID", referencedColumnName = "BOOKINGCLASSID")
     private BookingClass bookingClass;
 
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<SeatAllocationHistory> seatAllocationHistorys;
+
+
     @Column(name = "SEATQTY")
     private int seatQty;
-    
+
     public TicketFamilyBookingClassId getTicketFamilyBookingClassId() {
         return ticketFamilyBookingClassId;
     }
 
+    public List<SeatAllocationHistory> getSeatAllocationHistorys() {
+        return seatAllocationHistorys;
+    }
+
+    public void setSeatAllocationHistorys(List<SeatAllocationHistory> seatAllocationHistorys) {
+        this.seatAllocationHistorys = seatAllocationHistorys;
+    }
+    
     public void setTicketFamilyBookingClassId(TicketFamilyBookingClassId ticketFamilyBookingClassId) {
         this.ticketFamilyBookingClassId = ticketFamilyBookingClassId;
     }
-    
+
     public CabinClassTicketFamily getCabinClassTicketFamily() {
         return cabinClassTicketFamily;
     }
