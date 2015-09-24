@@ -5,8 +5,11 @@
  */
 package ams.aps.session;
 
+import ams.ais.entity.CabinClass;
+import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.aps.entity.AircraftType;
 import ams.aps.entity.FlightSchedule;
+import ams.aps.util.exception.NoSuchAircraftException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -18,7 +21,8 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class AircraftSession implements AircraftSessionLocal {
-//
-//    @PersistenceContext
-//    private EntityManager entityManager;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
 }

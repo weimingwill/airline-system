@@ -4,25 +4,32 @@
  * and open the template in the editor.
  */
 package util.converter;
+
  
-import ams.aps.entity.AircraftType;
+import ams.aps.entity.Country;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
-import managedbean.aps.FleetController;
+import managedbean.aps.RouteController;
  
-@FacesConverter("aircraftModelConverter")
-public class AircraftModelConverter implements Converter {
-
+ 
+@FacesConverter("countryConverter")
+public class CountryConverter implements Converter {
     @Inject
-    FleetController fleetController;
+    private RouteController routeController;
     
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if(value != null && value.trim().length() > 0) {
-            return fleetController.getAircraftModelById(Long.parseLong(value));
+            try {
+                return routeController.getCountryByCode(value);
+            } catch(NullPointerException e) {
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
+            }
         }
         else {
             return null;
@@ -32,10 +39,11 @@ public class AircraftModelConverter implements Converter {
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
         if(object != null && !(object instanceof String)) {
-            return String.valueOf(((AircraftType) object).getId());
+            return String.valueOf(((Country) object).getIsoCode());
         }
         else {
             return null;
         }
     }   
 }         
+           

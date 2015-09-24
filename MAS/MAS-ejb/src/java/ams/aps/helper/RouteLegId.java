@@ -32,6 +32,6 @@ public class RouteLegId implements Serializable{
 
     @Override
     public String toString() {
-        return "ams.ais.entity.RouteLegId[ routeId=" + routeId + " ][ legId=" + legId + " ]";
+        return "ams.aps.entity.RouteLegId[ routeId=" + routeId + " ][ legId=" + legId + " ]";
     }
 }
