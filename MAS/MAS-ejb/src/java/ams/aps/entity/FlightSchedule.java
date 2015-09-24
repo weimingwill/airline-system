@@ -240,32 +240,4 @@ public class FlightSchedule implements Serializable {
         this.flightScheduleBookingClasses = flightScheduleBookingClasses;
     }
 
-    /**
-     * @return the departDate
-     */
-    public Date getDepartDate() {
-        return departDate;
-    }
-
-    /**
-     * @param departDate the departDate to set
-     */
-    public void setDepartDate(Date departDate) {
-        this.departDate = departDate;
-    }
-
-    /**
-     * @return the arrivalDate
-     */
-    public Date getArrivalDate() {
-        return arrivalDate;
-    }
-
-    /**
-     * @param arrivalDate the arrivalDate to set
-     */
-    public void setArrivalDate(Date arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
 }
