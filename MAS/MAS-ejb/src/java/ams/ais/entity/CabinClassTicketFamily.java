@@ -11,10 +11,9 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -27,17 +26,13 @@ import javax.persistence.Table;
  * @author winga_000
  */
 @Entity
-@IdClass(CabinClassTicketFamilyId.class)
 @Table(name = "CABINCLASS_TICKETFAMILY")
 public class CabinClassTicketFamily implements Serializable {
 
-    @Id
-    private Long aircarftId;
-    @Id
-    private Long cabinClassId;
-    @Id
-    private Long ticketFamilyId;
+    @EmbeddedId
+    private CabinClassTicketFamilyId cabinClassTicketFamilyId;
 
+//    @MapsId("aircraftCabinClassId")
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumns({
         @PrimaryKeyJoinColumn(name = "AIRCRAFTID", referencedColumnName = "AIRCRAFTID"),
@@ -45,6 +40,7 @@ public class CabinClassTicketFamily implements Serializable {
     })
     private AircraftCabinClass aircraftCabinClass;
 
+//    @MapsId("ticketFamilyId")
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "TICKETFAMILYID", referencedColumnName = "TICKETFAMILYID")
     private TicketFamily ticketFamily;
@@ -55,6 +51,14 @@ public class CabinClassTicketFamily implements Serializable {
     @Column(name = "SEATQTY")
     private int seatQty;
 
+    public CabinClassTicketFamilyId getCabinClassTicketFamilyId() {
+        return cabinClassTicketFamilyId;
+    }
+
+    public void setCabinClassTicketFamilyId(CabinClassTicketFamilyId cabinClassTicketFamilyId) {
+        this.cabinClassTicketFamilyId = cabinClassTicketFamilyId;
+    }
+
     public List<TicketFamilyBookingClass> getTicketFamilyBookingClasses() {
         return ticketFamilyBookingClasses;
     }
@@ -63,36 +67,12 @@ public class CabinClassTicketFamily implements Serializable {
         this.ticketFamilyBookingClasses = ticketFamilyBookingClasses;
     }
 
-    public Long getAircarftId() {
-        return aircarftId;
-    }
-
-    public void setAircarftId(Long aircarftId) {
-        this.aircarftId = aircarftId;
-    }
-
-    public Long getCabinClassId() {
-        return cabinClassId;
-    }
-
-    public void setCabinClassId(Long cabinClassId) {
-        this.cabinClassId = cabinClassId;
-    }
-
     public AircraftCabinClass getAircraftCabinClass() {
         return aircraftCabinClass;
     }
 
     public void setAircraftCabinClass(AircraftCabinClass aircraftCabinClass) {
         this.aircraftCabinClass = aircraftCabinClass;
-    }
-
-    public Long getTicketFamilyId() {
-        return ticketFamilyId;
-    }
-
-    public void setTicketFamilyId(Long ticketFamilyId) {
-        this.ticketFamilyId = ticketFamilyId;
     }
 
     public TicketFamily getTicketFamily() {

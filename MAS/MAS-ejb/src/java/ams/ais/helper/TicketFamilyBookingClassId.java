@@ -6,13 +6,25 @@
 package ams.ais.helper;
 
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 
 /**
  *
  * @author winga_000
  */
+@Embeddable
 public class TicketFamilyBookingClassId implements Serializable{
+    
+    @JoinColumns({
+        @JoinColumn(name = "AIRCRAFTID", referencedColumnName = "AIRCRAFTID"),
+        @JoinColumn(name = "CABINCLASSID", referencedColumnName = "CABINCLASSID"),
+        @JoinColumn(name = "TICKETFAMILYID", referencedColumnName = "TICKETFAMILYID")
+    })
     private CabinClassTicketFamilyId cabinClassTicketFamilyId;
+    @Column(name = "BOOKINGCLASSID")
     private Long bookingClassId;
 
     public Long getBookingClassId() {

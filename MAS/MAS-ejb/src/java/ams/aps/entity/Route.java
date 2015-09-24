@@ -28,28 +28,28 @@ public class Route implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long routeId;
     private boolean deleted;
-    @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    @JoinTable
-    private List<Leg> legs = new ArrayList<>();
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
     private List<Flight> flights = new ArrayList<>();
     @OneToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Route returnRoute;
 
-    public Long getId() {
-        return id;
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
+    private List<RouteLeg> routeLegs = new ArrayList<>();
+
+    public Long getRouteId() {
+        return routeId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setRouteId(Long routeId) {
+        this.routeId = routeId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (routeId != null ? routeId.hashCode() : 0);
         return hash;
     }
 
@@ -60,7 +60,7 @@ public class Route implements Serializable {
             return false;
         }
         Route other = (Route) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.routeId == null && other.routeId != null) || (this.routeId != null && !this.routeId.equals(other.routeId))) {
             return false;
         }
         return true;
@@ -68,15 +68,7 @@ public class Route implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.Route[ id=" + id + " ]";
-    }
-
-    public List<Leg> getLegs() {
-        return legs;
-    }
-
-    public void setLegs(List<Leg> legs) {
-        this.legs = legs;
+        return "ams.aps.entity.Route[ id=" + routeId + " ]";
     }
 
     public List<Flight> getFlights() {
@@ -85,6 +77,14 @@ public class Route implements Serializable {
 
     public void setFlights(List<Flight> flights) {
         this.flights = flights;
+    }
+
+    public List<RouteLeg> getRouteLegs() {
+        return routeLegs;
+    }
+
+    public void setRouteLegs(List<RouteLeg> routeLegs) {
+        this.routeLegs = routeLegs;
     }
 
     /**
