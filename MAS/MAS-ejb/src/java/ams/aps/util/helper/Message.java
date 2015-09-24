@@ -11,4 +11,5 @@ package ams.aps.util.helper;
  */
 public class Message {
     public static final String EMPTY_TABLE = "No data";
+    public static final String NO_SUCH_FLIGHT_SCHEDULE_ERRRO = "No such flight schedule exist";
 }
