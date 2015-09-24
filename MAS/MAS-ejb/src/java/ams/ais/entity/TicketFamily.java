@@ -14,9 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 /**
  *
@@ -24,6 +23,7 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class TicketFamily implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +31,32 @@ public class TicketFamily implements Serializable {
     private String type;
     private String name;
     private boolean deleted;
-       
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
     private List<TicketFamilyRule> ticketFamilyRules = new ArrayList<>();
+
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private CabinClass cabinClass;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
+    private List<BookingClass> bookingClasses = new ArrayList<>();
+
+    public List<BookingClass> getBookingClasses() {
+        return bookingClasses;
+    }
+
+    public void setBookingClasses(List<BookingClass> bookingClasses) {
+        this.bookingClasses = bookingClasses;
+    }
     
+    public CabinClass getCabinClass() {
+        return cabinClass;
+    }
+
+    public void setCabinClass(CabinClass cabinClass) {
+        this.cabinClass = cabinClass;
+    }
+
     public Long getTicketFamilyId() {
         return ticketFamilyId;
     }
@@ -50,7 +72,7 @@ public class TicketFamily implements Serializable {
     public void setTicketFamilyRules(List<TicketFamilyRule> ticketFamilyRules) {
         this.ticketFamilyRules = ticketFamilyRules;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -66,7 +88,7 @@ public class TicketFamily implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
-    
+
     public boolean isDeleted() {
         return deleted;
     }
@@ -74,7 +96,7 @@ public class TicketFamily implements Serializable {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -99,5 +121,5 @@ public class TicketFamily implements Serializable {
     public String toString() {
         return "ams.ais.entity.TicketFamily[ ticketFamilyId=" + ticketFamilyId + " ]";
     }
-    
+
 }

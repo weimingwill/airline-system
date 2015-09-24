@@ -34,6 +34,17 @@ public class CabinClass implements Serializable {
         this.setName(name);
     }
     
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="cabinClass")
+    private List<TicketFamily> ticketFamilys = new ArrayList<>();
+
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
+    }
+
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
+    }
+    
     public Long getCabinClassId() {
         return cabinClassId;
     }
