@@ -31,9 +31,6 @@ public class TicketFamily implements Serializable {
     private String type;
     private String name;
     private boolean deleted;
-    
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
-    private List<TicketFamilyBookingClass> ticketFamilyBookingClasses = new ArrayList<>();
        
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
     private List<TicketFamilyRule> ticketFamilyRules = new ArrayList<>();
@@ -84,14 +81,6 @@ public class TicketFamily implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public List<TicketFamilyBookingClass> getTicketFamilyBookingClasses() {
-        return ticketFamilyBookingClasses;
-    }
-
-    public void setTicketFamilyBookingClasses(List<TicketFamilyBookingClass> ticketFamilyBookingClasses) {
-        this.ticketFamilyBookingClasses = ticketFamilyBookingClasses;
     }
     
     @Override

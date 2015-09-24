@@ -23,25 +23,25 @@ public class Leg implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long legId;
     
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Airport departAirport;
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Airport arrivalAirport;
     
-    public Long getId() {
-        return id;
+    public Long getLegId() {
+        return legId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLegId(Long legId) {
+        this.legId = legId;
     }
     
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (legId != null ? legId.hashCode() : 0);
         return hash;
     }
 
@@ -52,7 +52,7 @@ public class Leg implements Serializable {
             return false;
         }
         Leg other = (Leg) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.legId == null && other.legId != null) || (this.legId != null && !this.legId.equals(other.legId))) {
             return false;
         }
         return true;
@@ -60,7 +60,7 @@ public class Leg implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.Leg[ id=" + id + " ]";
+        return "ams.aps.entity.Leg[ id=" + legId + " ]";
     }
 
     /**

@@ -7,8 +7,10 @@ package ams.ais.entity;
 
 import ams.ais.helper.BookingClassChannelId;
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
@@ -29,11 +31,11 @@ public class BookingClassChannel implements Serializable {
     @Id
     private Long channelId;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "BOOKINGCLASSID", referencedColumnName = "BOOKINGCLASSID")
     private BookingClass bookingClass;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "CHANNELID", referencedColumnName = "CHANNELID")
     private Channel channel;
 

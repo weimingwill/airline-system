@@ -14,7 +14,24 @@ import java.io.Serializable;
 public class AircraftCabinClassId implements Serializable{
     private Long aircraftId;
     private Long cabinClassId;    
+
+    public Long getAircraftId() {
+        return aircraftId;
+    }
+
+    public void setAircraftId(Long aircraftId) {
+        this.aircraftId = aircraftId;
+    }
+
+    public Long getCabinClassId() {
+        return cabinClassId;
+    }
+
+    public void setCabinClassId(Long cabinClassId) {
+        this.cabinClassId = cabinClassId;
+    }
         
+    
     @Override
     public int hashCode() {
         return (int)(aircraftId + cabinClassId);
