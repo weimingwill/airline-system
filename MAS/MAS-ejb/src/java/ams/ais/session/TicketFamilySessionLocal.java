@@ -26,7 +26,7 @@ public interface TicketFamilySessionLocal {
     public TicketFamily getTicketFamilyByTypeAndCabinClass (String ticketFamilyType,String cabinClassName);
     public void createTicketFamily(String type, String name,String cabinclass) throws ExistSuchTicketFamilyException;
     public void verifyTicketFamilyExistence(String type, String name,String cabinclass) throws ExistSuchTicketFamilyException;
-    public void deleteTicketFamily(String name) throws NoSuchTicketFamilyException;
+    public void deleteTicketFamily(String type, String cabinClassName) throws NoSuchTicketFamilyException;
     public void updateTicketFamily(String oldtype,String oldcabinclass, String type, String name, String cabinclassname) throws  NoSuchTicketFamilyException, ExistSuchTicketFamilyException;
     public List<TicketFamily> getAllOtherTicketFamily(String name);
     public List<TicketFamily> getAllOtherTicketFamilyByTypeAndCabinClass(String type, String cabinclassname);
