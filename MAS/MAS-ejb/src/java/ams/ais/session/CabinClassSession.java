@@ -6,9 +6,11 @@
 package ams.ais.session;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,4 +159,16 @@ public class CabinClassSession implements CabinClassSessionLocal {
 
     }
 
+    @Override
+    public List<TicketFamily> getCabinClassTicketFamily(String type) throws NoSuchTicketFamilyException {
+       Query query = entityManager.createQuery("SELECT t FROM CabinClass c, TicketFamily t WHERE c.type = :inType and c.cabinClassId = t.cabinClass.cabinClassId and c.deleted = FALSE and t.deleted = FALSE");
+       query.setParameter("inType", type);
+       List<TicketFamily> ticketFamilys = new ArrayList<>();
+        try {
+            ticketFamilys = query.getResultList();
+        } catch (NoResultException e) {
+            throw new NoSuchTicketFamilyException(AisMsg.NO_SUCH_TICKET_FAMILY_ERROR);
+        }
+        return ticketFamilys;
+    }
 }

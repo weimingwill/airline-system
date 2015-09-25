@@ -5,11 +5,11 @@
  */
 package ams.ais.session;
 
+import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchTicketFamilyException;
-import ams.ais.util.exception.ExistSuchTicketFamilyNameException;
-import ams.ais.util.exception.ExistSuchTicketFamilyTypeException;
+import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import java.util.List;
 import javax.ejb.Local;
@@ -30,5 +30,5 @@ public interface TicketFamilySessionLocal {
     public void updateTicketFamily(String oldtype,String oldcabinclass, String type, String name, String cabinclassname) throws  NoSuchTicketFamilyException, ExistSuchTicketFamilyException;
     public List<TicketFamily> getAllOtherTicketFamily(String name);
     public List<TicketFamily> getAllOtherTicketFamilyByTypeAndCabinClass(String type, String cabinclassname);
-    
+    public List<BookingClass> getTicketFamilyBookingClass(String name) throws NoSuchBookingClassException;
 }

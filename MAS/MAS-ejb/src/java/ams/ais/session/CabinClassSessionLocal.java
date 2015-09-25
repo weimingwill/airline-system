@@ -7,9 +7,11 @@ package ams.ais.session;
 
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchTicketFamilyException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -29,5 +31,5 @@ public interface CabinClassSessionLocal {
    public List<String> getAllOtherCabinClassByName (String name);
    public List<String> getAllOtherCabinClassByType (String type);
    public List<CabinClass> getAllOtherCabinClass(String name);
-  
+   public List<TicketFamily> getCabinClassTicketFamily(String type) throws NoSuchTicketFamilyException;
 }

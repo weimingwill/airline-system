@@ -7,8 +7,10 @@ package ams.aps.util.helper;
 
 /**
  *
- * @author Lewis
+ * @author winga_000
  */
-public class Message {
-    public static final String EMPTY_TABLE = "No data";
+public class ApsMessage {
+
+    public static final String NO_SUCH_FLIGHT_SCHEDULE_ERRRO = "No such flight schedule exist";
+    public static final String NO_SUCH_AIRCRAFT_ERROR = "No such aircraft exist";
 }
