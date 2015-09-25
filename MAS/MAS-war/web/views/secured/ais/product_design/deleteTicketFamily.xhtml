@@ -14,8 +14,11 @@
             <h:panelGrid columns="2" columnClasses="label, value">
 
 
-                <h:outputText value="Delete through Ticket Family Name"/>
-                <p:inputText required="true" requiredMessage="Please enter ticket family name you want to delete" id="name" value="#{ticketFamilyController.name}">
+                <h:outputText value="Delete Ticket Type"/>
+                <p:inputText required="true" requiredMessage="Please enter ticket family type you want to delete" id="type" value="#{ticketFamilyController.type}">
+                </p:inputText>
+                <h:outputText value="Delete Ticket Type associate Cabin Class"/>
+                <p:inputText required="true" requiredMessage="Please enter associate cabin class you want to delete" id="cabinclass" value="#{ticketFamilyController.cabinclassname}">
 
                 </p:inputText>
 

@@ -108,7 +108,7 @@ public class TicketFamilyController {
     }
     public void deleteTicketFamily() {
         try{
-        ticketFamilySession.deleteTicketFamily(name);
+        ticketFamilySession.deleteTicketFamily(type,cabinclassname);
         msgController.addMessage("Delete ticket family successfully");
         } catch (NoSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
