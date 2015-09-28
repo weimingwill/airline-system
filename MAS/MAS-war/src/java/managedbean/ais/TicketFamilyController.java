@@ -6,6 +6,7 @@
 package managedbean.ais;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.Rule;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.ExistSuchTicketFamilyException;
@@ -43,6 +44,24 @@ public class TicketFamilyController {
     private String type;
     private String name;
     private String cabinclassname;
+    private double rulevalue;
+    private List<Rule> ruleList;
+
+    public List<Rule> getRuleList() {
+        return ruleList;
+    }
+
+    public void setRuleList(List<Rule> ruleList) {
+        this.ruleList = ruleList;
+    }
+
+    public double getRulevalue() {
+        return rulevalue;
+    }
+
+    public void setRulevalue(double rulevalue) {
+        this.rulevalue = rulevalue;
+    }
     
     public String getOldCabinClassname() {
         return oldCabinClassname;
