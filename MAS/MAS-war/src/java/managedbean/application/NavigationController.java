@@ -8,6 +8,8 @@ package managedbean.application;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -119,7 +121,6 @@ public class NavigationController implements Serializable {
     }
 
     //Role
-
     public String toCreateRole() {
         return "/views/secured/common/roles/createRole.xhtml";
     }
@@ -171,7 +172,7 @@ public class NavigationController implements Serializable {
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }
-    
+
     //Airline Planning
     public String redirectToAPS() {
         return "/views/secured/aps/apsMain.xhtml" + REDIRECT;
@@ -185,23 +186,22 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/fleet/addNewAircraft.xhtml" + REDIRECT;
     }
 
-
-    public String toViewFleet(){
+    public String toViewFleet() {
         return "/views/secured/aps/fleet/viewFleet.xhtml" + REDIRECT;
     }
-    
-    public String toRetireAicraft(){
+
+    public String toRetireAicraft() {
         return "/views/secured/aps/fleet/retireAircraft.xhtml" + REDIRECT;
     }
-    
-    public String toViewRetiredFleet(){
+
+    public String toViewRetiredFleet() {
         return "/views/secured/aps/fleet/viewRetiredFleet.xhtml" + REDIRECT;
     }
-    
+
     public String toAddHub() {
         return "/views/secured/aps/route/addHub.xhtml?faces-redirect=true";
     }
-    
+
     public String redirectToAddHub() {
         return "/views/secured/aps/route/addHub.xhtml" + REDIRECT;
     }
@@ -210,25 +210,31 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToAddRoute() {
         return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToViewRoutes() {
         return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToViewObsoleteRoutes() {
         return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
 
     }
-    
-    public String toAddRoute(){
+
+    public String toAddRoute() {
         return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
     }
-    
-    
+
+    public String redirectToCurrentPage() {
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String uri = request.getRequestURI();
+        uri = uri.substring(uri.indexOf('/', 1));
+        return uri + REDIRECT;
+    }
+
 }

@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="dashboardForm">
+            <p:dashboard id="board" model="#{fleetTableController.model}">
+                <p:panel id="cost" header="Cost">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel styleClass="fa fa-plane"/>
+                        <p:outputLabel value="Purchase/Rent Cost:"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.cost * 1000000}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="(Million) USD"/>
+                        
+                        <p:outputLabel styleClass="fa fa-battery-half"/>
+                        <p:outputLabel value="Average Fuel Usage:"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.avgUnitOilUsage}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="L/(100km*seat)"/>
+                        
+                        <p:outputLabel styleClass="fa fa-usd"/>
+                        <p:outputLabel value="Average Fuel Cost:"/>
+                        <p:outputLabel value=""/>
+                        <p:outputLabel value="USD"/>
+                    </p:panelGrid>
+                </p:panel>
+
+                <p:panel id="performance" header="Performance">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel styleClass="fa fa-arrows-h"/>
+                        <p:outputLabel value="Range:"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.rangeInKm}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="km"/>
+                        
+                        <p:outputLabel styleClass="fa fa-tachometer"/>
+                        <p:outputLabel value="Cruise Speed (Max):"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.maxMachNo * 1225.04}" >
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="km/h"/>
+                    </p:panelGrid>
+                </p:panel>
+
+                <p:panel id="capacity" header="Aircraft Capacity">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel styleClass="fa fa-info-circle"/>
+                        <p:outputLabel value="Max Zero Fuel Weight:"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.maxZeroFuelWeight}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="tonnes"/>
+                        
+                        <p:outputLabel styleClass="fa fa-info-circle"/>
+                        <p:outputLabel value="Max Take-off Weight:"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.maxTakeOffWeight}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="tonnes"/>
+                        
+                        <p:outputLabel styleClass="fa fa-info-circle"/>
+                        <p:outputLabel value="Max Payload:"/>
+                        <p:outputLabel value=""/>
+                        <p:outputLabel value="tonnes"/>
+                        
+                        <p:outputLabel styleClass="fa fa-battery-full"/>
+                        <p:outputLabel value="Fuel Capacity:"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.maxFuelCapacity}">
+                             <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="litre"/>
+                        
+                        <p:outputLabel styleClass="fa fa-user"/>
+                        <p:outputLabel value="Typical Seating:"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.typicalSeating}" />
+                        <p:outputLabel value="seats"/>
+                        
+                        <p:outputLabel styleClass="fa fa-users"/>
+                        <p:outputLabel value="Maximum Seating:"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.maxSeating}" />
+                        <p:outputLabel value="seats"/>
+                    </p:panelGrid>
+                </p:panel>
+                
+                <p:panel id="dimention" header="Aircraft Dimensions">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel styleClass="fa fa-arrows-h"/>
+                        <p:outputLabel value="Overall Length"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.overallLengthInM}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="m"/>
+                        
+                        <p:outputLabel styleClass="fa fa-arrows-h"/>
+                        <p:outputLabel value="Wingspan"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.wingspanInM}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="m"/>
+                        
+                        <p:outputLabel styleClass="fa fa-arrows-v"/>
+                        <p:outputLabel value="Height"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.heightInM}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="m"/>
+                        
+                        <p:outputLabel styleClass="fa fa-arrows-h"/>
+                        <p:outputLabel value="Weelbase"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.wheelbaseInM}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="m"/>
+                        
+                        <p:outputLabel styleClass="fa fa-arrows-h"/>
+                        <p:outputLabel value="Track"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.trackInM}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true" />
+                        </p:outputLabel>
+                        <p:outputLabel value="m"/>
+                        
+
+                    </p:panelGrid>
+                </p:panel>
+            </p:dashboard>
+        </h:form>
+
+    </cc:implementation>
+</html>

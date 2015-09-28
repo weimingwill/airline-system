@@ -47,15 +47,15 @@
 }
 
 #top a:link, #top a:visited {
-  color: white;
-  font-weight : bold;
-  text-decoration: none;
+    color: white;
+    font-weight : bold;
+    text-decoration: none;
 }
 
 #top a:link:hover, #top a:visited:hover  {
-  color: black;
-  font-weight : bold;
-  text-decoration : underline;
+    color: black;
+    font-weight : bold;
+    text-decoration : underline;
 }
 
 .access-control, table, tr, td{
@@ -73,4 +73,19 @@ tr.hide{
 .userRoleDataTable{
     padding-top: 20px;
     padding-bottom: 20px;
+}
+
+.ui-datatable .ui-datatable-footer{
+    text-align: left !important;
+}
+
+
+.ui-dashboard-column{
+    padding-right: 0.5%;
+    padding-left: 0.5%;
+    padding-bottom: 2% !important;
+}
+
+#aircraftDetailsDlg{
+    width:70% !important
 }

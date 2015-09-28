@@ -13,6 +13,7 @@ import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.helper.AircraftCabinClassHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -20,6 +21,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
+import ams.aps.util.helper.AircraftStatus;
 
 /**
  *
@@ -41,7 +43,7 @@ public class FleetController implements Serializable {
     private int[] seatQtyList = new int[10];
     private String seatConfigString = null;
     private List<AircraftCabinClassHelper> aircraftCabinClassHelpers = new ArrayList<>();
-    
+
     
     /**
      * Creates a new instance of FleetController
@@ -75,6 +77,7 @@ public class FleetController implements Serializable {
     }
 
     public void addNewAircraft(String tailNo, String lifespan, String source, String cost, String seatConfig) {
+        System.out.println("FleetController: addNewAircraft():");
         Aircraft newAircraft = new Aircraft();
         newAircraft.setTailNo(tailNo.toUpperCase());
         newAircraft.setLifetime(Float.parseFloat(lifespan));

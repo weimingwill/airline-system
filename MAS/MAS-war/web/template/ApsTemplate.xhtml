@@ -4,22 +4,24 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+      xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu">
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <h:outputStylesheet name="./css/default.css"/>
         <h:outputStylesheet name="./css/cssLayout.css"/>
         <title>Airline Planning System</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/MAS-war/resources/images/favicon.ico"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
     </h:head>
 
     <h:body>
-        <ez:CCNavigationMenu id="navigation-menu" />
+        <me:CCNavigationMenu id="navigation-menu" />
         <p:growl id="messages" showDetail="true"/>
         <!--<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />-->
         <p:layout>
             <p:layoutUnit position="west" resizable="true" size="220" minSize="100" maxSize="300">
-                <ez:CCApsMenu id="aps-navigation-menu"/>
+                <me:CCApsMenu id="aps-navigation-menu"/>
             </p:layoutUnit>
             
             <p:layoutUnit position="center">
