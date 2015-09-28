@@ -26,6 +26,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class FlightSchedule implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long flightScheduleId;
@@ -38,14 +39,14 @@ public class FlightSchedule implements Serializable {
     private Date arrivalDate;
     private Time arrivalTime;
     private boolean deleted;
-   
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Aircraft aircraft;
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Leg leg;
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight flight;
 
     public Long getFlightScheduleId() {
@@ -233,5 +234,5 @@ public class FlightSchedule implements Serializable {
     public void setFlightScheduleBookingClasses(List<FlightScheduleBookingClass> flightScheduleBookingClasses) {
         this.flightScheduleBookingClasses = flightScheduleBookingClasses;
     }
-    
+
 }

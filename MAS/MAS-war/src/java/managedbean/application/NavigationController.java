@@ -119,6 +119,7 @@ public class NavigationController implements Serializable {
     }
 
     //Role
+
     public String toCreateRole() {
         return "/views/secured/common/roles/createRole.xhtml";
     }
@@ -247,17 +248,25 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
 
     }
-
+    
     public String redirectToAddRoute() {
         return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
 
     }
-
+    
     public String redirectToViewRoutes() {
         return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
-    }
 
-    public String redirectToViewFlightSchedulings() {
-        return "/views/secured/aps/flight_scheduling/viewFlightSchedulings.xhtml" + REDIRECT;
     }
+    
+    public String redirectToViewObsoleteRoutes() {
+        return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
+
+    }
+    
+    public String toAddRoute(){
+        return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
+    }
+    
+    
 }

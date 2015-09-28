@@ -45,9 +45,6 @@ public class CabinClassTicketFamily implements Serializable {
     @PrimaryKeyJoinColumn(name = "TICKETFAMILYID", referencedColumnName = "TICKETFAMILYID")
     private TicketFamily ticketFamily;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClassTicketFamily")
-    private List<TicketFamilyBookingClass> ticketFamilyBookingClasses;
-
     @Column(name = "SEATQTY")
     private int seatQty;
 
@@ -57,14 +54,6 @@ public class CabinClassTicketFamily implements Serializable {
 
     public void setCabinClassTicketFamilyId(CabinClassTicketFamilyId cabinClassTicketFamilyId) {
         this.cabinClassTicketFamilyId = cabinClassTicketFamilyId;
-    }
-
-    public List<TicketFamilyBookingClass> getTicketFamilyBookingClasses() {
-        return ticketFamilyBookingClasses;
-    }
-
-    public void setTicketFamilyBookingClasses(List<TicketFamilyBookingClass> ticketFamilyBookingClasses) {
-        this.ticketFamilyBookingClasses = ticketFamilyBookingClasses;
     }
 
     public AircraftCabinClass getAircraftCabinClass() {

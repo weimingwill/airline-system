@@ -54,21 +54,6 @@ public class TicketFamily implements Serializable {
         this.setDeleted(false);
     }
     
-
-
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
-    private List<BookingClass> bookingClasses = new ArrayList<>();
-
-    public List<BookingClass> getBookingClasses() {
-        return bookingClasses;
-    }
-
-    public void setBookingClasses(List<BookingClass> bookingClasses) {
-        this.bookingClasses = bookingClasses;
-    }
-   
-   
-
     public Long getTicketFamilyId() {
         return ticketFamilyId;
     }
