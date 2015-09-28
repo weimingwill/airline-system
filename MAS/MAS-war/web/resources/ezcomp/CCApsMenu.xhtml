@@ -14,14 +14,18 @@
         <h:form>
             <p:menu toggleable="true" style="width:200px;">
                 <p:submenu label="Fleet Planning">
-                    <p:menuitem action="#{navigationBean.toViewAircraftModel()}" value="View Aircraft Models" />
-                    <p:menuitem action="#{navigationBean.toAddNewAircraft()}" value="Add New Aircraft"/>
+                    <p:menuitem action="#{navigationController.toViewAircraftModel()}" value="View Aircraft Models" />
+                    <p:menuitem action="#{navigationController.toAddNewAircraft()}" value="Add New Aircraft"/>
+                    <p:menuitem action="#{navigationController.toViewFleet()}" value="View Fleet"/>
+                    <p:menuitem action="#{navigationController.toRetireAicraft()}" value="Retire Aircraft"/>
+                    <p:menuitem action="#{navigationController.toViewRetiredFleet()}" value="View Retired Fleet"/>
                 </p:submenu>
                 <p:submenu label="Route Planning">
                     <p:menuitem  action="#{navigationController.redirectToAddHub()}" value="Add Hub"/>
                     <p:menuitem  action="#{navigationController.redirectToCancelHub()}" value="Cancel Hub"/>
                     <p:menuitem  action="#{navigationController.redirectToAddRoute()}" value="Add Route"/>
-                    <p:menuitem  action="#{navigationController.redirectToViewRoutes()}" value="View Routes"/>
+                    <p:menuitem  action="#{navigationController.redirectToViewRoutes()}" value="View and Delete Routes"/>
+                    <p:menuitem  action="#{navigationController.redirectToViewObsoleteRoutes()}" value="View Obsolete Routes"/>
                 </p:submenu>
                 <p:submenu label="Flight Scheduling">
                     <p:menuitem  action="#{navigationController.redirectToViewFlightSchedulings()}" value="View Flight Schedulings"/>

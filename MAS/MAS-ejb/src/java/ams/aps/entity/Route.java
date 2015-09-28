@@ -14,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -28,11 +30,12 @@ public class Route implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long routeId;
     private boolean deleted;
+
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
     private List<Flight> flights = new ArrayList<>();
     @OneToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Route returnRoute;
-
+    
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="route")
     private List<RouteLeg> routeLegs = new ArrayList<>();
 
@@ -77,14 +80,6 @@ public class Route implements Serializable {
         this.flights = flights;
     }
 
-    public List<RouteLeg> getRouteLegs() {
-        return routeLegs;
-    }
-
-    public void setRouteLegs(List<RouteLeg> routeLegs) {
-        this.routeLegs = routeLegs;
-    }
-
     /**
      * @return the returnRoute
      */
@@ -105,6 +100,20 @@ public class Route implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * @return the routeLegs
+     */
+    public List<RouteLeg> getRouteLegs() {
+        return routeLegs;
+    }
+
+    /**
+     * @param routeLegs the routeLegs to set
+     */
+    public void setRouteLegs(List<RouteLeg> routeLegs) {
+        this.routeLegs = routeLegs;
     }
     
 }

@@ -31,7 +31,7 @@ public class AircraftModelConverter implements Converter {
  
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if(object != null) {
+        if(object != null && !(object instanceof String)) {
             return String.valueOf(((AircraftType) object).getId());
         }
         else {

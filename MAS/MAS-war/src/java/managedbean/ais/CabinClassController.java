@@ -5,9 +5,12 @@
  */
 package managedbean.ais;
 
+import ams.ais.entity.CabinClass;
 import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
+import ams.ais.util.exception.NoSuchCabinClassException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -33,6 +36,15 @@ public class CabinClassController {
     @EJB
     private CabinClassSessionLocal cabinClassSession;
     
+    private String oldname;
+
+    public String getOldname() {
+        return oldname;
+    }
+
+    public void setOldname(String oldname) {
+        this.oldname = oldname;
+    }
     private String type;
     private String name;
     /**
@@ -51,6 +63,30 @@ public class CabinClassController {
         return navigationController.redirectToCreateCabinClass();
     }
     
+    public List<CabinClass> getAllCabinClass() {
+        return cabinClassSession.getAllCabinClass();
+    }
+    
+    public void deleteCabinClass() {
+        try{
+        cabinClassSession.deleteCabinClass(name);
+        msgController.addMessage("Delete cabin class successfully");
+        } catch (NoSuchCabinClassException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+          
+    }
+    
+    public String updateCabinClass() {
+        try {
+            cabinClassSession.updateCabinClass(oldname,type, name);
+            msgController.addMessage("Edit cabin class successfully!");
+        }catch( ExistSuchCabinClassNameException | NoSuchCabinClassException | ExistSuchCabinClassTypeException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllCabinClass();
+        
+    }
     //Getter and Setter
     public String getType() {
         return type;
