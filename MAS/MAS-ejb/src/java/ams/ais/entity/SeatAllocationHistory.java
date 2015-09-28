@@ -25,6 +25,7 @@ public class SeatAllocationHistory implements Serializable {
     private int number;
     private Date allocateTime;
     private int modified;
+    private FlightScheduleBookingClass flightScheduleBookingClass = new FlightScheduleBookingClass();
 
     public Long getSeatAllocationHistoryId() {
         return seatAllocationHistoryId;
@@ -56,6 +57,14 @@ public class SeatAllocationHistory implements Serializable {
 
     public void setModified(int modified) {
         this.modified = modified;
+    }
+
+    public FlightScheduleBookingClass getFlightScheduleBookingClass() {
+        return flightScheduleBookingClass;
+    }
+
+    public void setFlightScheduleBookingClass(FlightScheduleBookingClass flightScheduleBookingClass) {
+        this.flightScheduleBookingClass = flightScheduleBookingClass;
     }
     
 

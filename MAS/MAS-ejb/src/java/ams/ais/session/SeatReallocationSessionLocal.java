@@ -6,6 +6,8 @@
 package ams.ais.session;
 
 import ams.ais.entity.FlightScheduleBookingClass;
+import ams.ais.entity.NormalDistribution;
+import ams.ais.entity.SeatAllocationHistory;
 import java.sql.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -18,8 +20,9 @@ import javax.ejb.Local;
 public interface SeatReallocationSessionLocal {
     
     public void reallocateSeats();
-    //public List<SeatHistory> viewReallocationHitory();
-    public void yieldManagement (List<Date> checkpoints);
+    public List<SeatAllocationHistory> getAllReallocationHitorys();
+    public void yieldManagement (List<Integer> checkpoints);
     public List<FlightScheduleBookingClass> getAllFlightScheduleBookingClasses();
+    public List<NormalDistribution> getAllNormalDistributions();
     
 }
