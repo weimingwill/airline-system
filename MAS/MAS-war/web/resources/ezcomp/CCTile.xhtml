@@ -30,7 +30,7 @@
                 <p:column colspan="1">
                     <p:outputLabel styleClass="#{cc.attrs.icon} tileIcon"/>
                 </p:column>
-                <p:column colspan="1">
+                <p:column colspan="1" style="text-align: right;">
                     <p:outputLabel value="#{cc.attrs.numericValue}" styleClass="tileValue"/>
                 </p:column>
             </p:row>
@@ -53,7 +53,9 @@
                 box-shadow: 0 0 0.25rem rgba(0,0,0,0.4);
             }
             .tile:hover{
-                box-shadow: 0 0 0 3px #4297d7;
+                /*box-shadow: 0 0 0 4px #65AEE4;*/
+                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.6);
+                border-radius: 5px;
                 cursor: hand;
             }
             .tileHeader{
@@ -88,6 +90,9 @@
             }
             .tileFooterContainer{
                 text-align: right;
+            }
+            .tile > tbody > tr{
+                border: inherit !important;
             }
         </style>
     </cc:implementation>
