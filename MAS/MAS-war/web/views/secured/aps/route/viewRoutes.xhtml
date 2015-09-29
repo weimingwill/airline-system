@@ -38,7 +38,7 @@
         <h:form>
             <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
                 <p:outputLabel for="route" value="Route:"/>
-                <p:selectOneMenu id="route" value="#{routeController.route}" converter="routeConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
+                <p:selectOneMenu id="route" value="#{routeController.route}" converter="routeConverter" style="width:200px" filter="true" filterMatchMode="contains">
                     <f:selectItem itemLabel="Select" itemValue="" />
                     <f:selectItems value="#{routeController.routeList}" var="route" itemLabel="#{route.routeId}" itemValue="#{route}" />
                 </p:selectOneMenu>

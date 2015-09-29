@@ -10,6 +10,7 @@ import ams.aps.entity.City;
 import ams.aps.entity.Country;
 import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
+import ams.aps.util.helper.RouteCompareHelper;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -33,6 +34,8 @@ public interface RoutePlanningSessionLocal {
     public Route getRouteByID(Long id);
     
     public Airport getAirportByICAOCode(String code);
+    
+    public Airport getAirportByName(String name);
 
     public List<City> getCityListByCountry(String countryCode);
 
@@ -42,7 +45,7 @@ public interface RoutePlanningSessionLocal {
 
     public List<Airport> getNonHubAirportListByCity(Long cityID);
 
-    public List<Route> getRoutesByOD(String oriICAO, String desICAO);
+    public List<Route> getRoutesByOD(Airport ori, Airport dest);
 
     public boolean cancelHub(String icaoCode);
 
@@ -59,5 +62,9 @@ public interface RoutePlanningSessionLocal {
     public List<Route> getAllRoutes();
     
     public List<Route> getAllObsoleteRoutes();
+    
+    public List<Airport> getShortestHSRoute(Airport ori, Airport dest);
+    
+    public RouteCompareHelper compareRoutePreparation(String type, List<Airport> stopList);
     
 }

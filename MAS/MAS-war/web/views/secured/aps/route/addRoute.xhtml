@@ -12,21 +12,21 @@
         <h:form>
             <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
                 <p:outputLabel for="origin" value="Origin:" />
-                <p:selectOneMenu id="origin" value="#{routeController.hub}" converter="airportConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
+                <p:selectOneMenu id="origin" value="#{routeController.hub}" converter="airportConverter" style="width:200px" filter="true" filterMatchMode="contains">
                     <p:ajax listener="#{routeController.onOriginChange}" update="stopover" />
                     <f:selectItem itemLabel="Select Origin" itemValue="" noSelectionOption="true" />
                     <f:selectItems value="#{routeController.hubs}" var="hub" itemLabel="#{hub.airportName}" itemValue="#{hub}"/>
                 </p:selectOneMenu>
                 
                 <p:outputLabel for="stopover" value="Stopover:" />
-                <p:selectOneMenu id="stopover" value="#{routeController.stopover}" converter="airportConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
+                <p:selectOneMenu id="stopover" value="#{routeController.stopover}" converter="airportConverter" style="width:200px" filter="true" filterMatchMode="contains">
                     <p:ajax listener="#{routeController.onStopoverChange}" update="destionation" />
                     <f:selectItem itemLabel="Select Stopover" itemValue="" noSelectionOption="true" />
                     <f:selectItems value="#{routeController.stopList}" var="stopover" itemLabel="#{stopover.airportName}" itemValue="#{stopover}"/>
                 </p:selectOneMenu>
 
                 <p:outputLabel for="destionation" value="Destination:" />
-                <p:selectOneMenu id="destionation" value="#{routeController.destination}" converter="airportConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
+                <p:selectOneMenu id="destionation" value="#{routeController.destination}" converter="airportConverter" style="width:200px" filter="true" filterMatchMode="contains">
                     <f:selectItem itemLabel="Select Destination" itemValue="" noSelectionOption="true" />
                     <f:selectItems value="#{routeController.destList}" var="destination" itemLabel="#{destination.airportName}" itemValue="#{destination}"/>
                 </p:selectOneMenu>

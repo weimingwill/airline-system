@@ -230,5 +230,12 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
     }
     
+    public String toCheckRoute(){
+        return "/views/secured/aps/route/checkRouteExistence.xhtml?faces-redirect=true";
+    }
+    
+    public String toGenerateRoute(){
+        return "/views/secured/aps/route/generateRoute.xhtml?faces-redirect=true";
+    }
     
 }

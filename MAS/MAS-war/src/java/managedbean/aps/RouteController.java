@@ -147,7 +147,9 @@ public class RouteController implements Serializable {
     public void addRouteSimple(ActionEvent event) {
         List<Airport> allStops = new ArrayList<Airport>();
         allStops.add(hub);
-        allStops.add(stopover);
+        if (stopover != null) {
+            allStops.add(stopover);
+        }
         allStops.add(destination);
         if (routePlanningSession.checkRouteExistence(allStops) != null) {
             msgController.addErrorMessage("Route exists already!");
@@ -184,18 +186,25 @@ public class RouteController implements Serializable {
             RouteDisplayHelper routeDisplayHelper = new RouteDisplayHelper();
             String legString = "";
             routeDisplayHelper.setId(thisRoute.getRouteId());
-            
+
             System.out.println("Route Controller: viewRoutes(): thisRoute = " + thisRoute.getRouteId());
             for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
-                System.out.println("Route Controller: viewRoutes(): FROM - TO: " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " +thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                if (thisRouteLeg.getLegSeq() == 0) {
+                System.out.println("Route Controller: viewRoutes(): FROM - TO: " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
+                if (thisRoute.getRouteLegs().size() == 1) {
                     routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
-                    legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName();
                     routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
+                    legString = "N.A.";
                 } else {
-                    legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - ";
+                    if (thisRouteLeg.getLegSeq() == 0) {
+                        routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
+                    } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
+                        legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName();
+                        routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
+                    } else {
+                        legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - ";
+                    }
                 }
+
             }
             routeDisplayHelper.setLegs(legString);
             routeDisplayList.add(routeDisplayHelper);
@@ -211,13 +220,19 @@ public class RouteController implements Serializable {
             routeDisplayHelper.setId(thisRoute.getRouteId());
 
             for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
-                if (thisRouteLeg.getLegSeq() == 0) {
+                if (thisRoute.getRouteLegs().size() == 1) {
                     routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
-                    legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName();
                     routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
+                    legString = "N.A.";
                 } else {
-                    legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - ";
+                    if (thisRouteLeg.getLegSeq() == 0) {
+                        routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
+                    } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
+                        legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName();
+                        routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
+                    } else {
+                        legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - ";
+                    }
                 }
             }
             routeDisplayHelper.setLegs(legString);

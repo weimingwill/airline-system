@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/ApsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="myForm">
+            <h:panelGrid columns="4" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="origin" value="Origin:" />
+                <p:selectOneMenu id="origin" value="#{routeExistenceController.origin}" converter="airportConverter"  style="width:200px" required="true" requiredMessage="Field required" filter="true" filterMatchMode="contains">
+                    <p:ajax listener="#{routeExistenceController.onOriginChange()}" update="destination" />
+                    
+                    <f:selectItems value="#{routeExistenceController.hubs}" var="origin" itemLabel="#{origin.airportName}" itemValue="#{origin}" />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="destination" value="Destination:" />
+                <p:selectOneMenu id="destination" value="#{routeExistenceController.destination}" converter="airportConverter"  style="width:200px" required="true" filter="true" filterMatchMode="contains">
+                    
+                    <f:selectItems value="#{routeExistenceController.airports}" var="destination" itemLabel="#{destination.airportName}" itemValue="#{destination}" />
+                </p:selectOneMenu>
+
+            </h:panelGrid>
+
+            <p:commandButton update="myForm:myDialog" value="Plan the route" style="left:20px" actionListener="#{routeExistenceController.checkRouteExistence}" oncomplete="PF('confirmDlg').show()"/>
+
+            <p:dialog id="myDialog" header="#{routeExistenceController.headMsg}" widgetVar="confirmDlg" showEffect="fade" hideEffect="fade">
+                <p:dataTable var="routeList" value="#{routeExistenceController.routeDisplayList}" style="width:550px" rows="5" paginator="true">
+
+                    <p:column headerText="Id" sortBy="#{routeList.id}">
+                        <h:outputText value="#{routeList.id}" />
+                    </p:column>
+
+                    <p:column headerText="Origin" sortBy="#{routeList.origin}">
+                        <h:outputText value="#{routeList.origin}" />
+                    </p:column>
+
+                    <p:column headerText="Stopovers" sortBy="#{routeList.legs}">
+                        <h:outputText value="#{routeList.legs}" />
+                    </p:column>
+
+                    <p:column headerText="Destination" sortBy="#{routeList.destination}">
+                        <h:outputText value="#{routeList.destination}" />
+                    </p:column>
+
+                </p:dataTable>
+                <h:outputText id="confirmMsg" value="#{routeExistenceController.confirmMsg}"/>
+                <p:separator/>
+                <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action ="#{navigationController.toGenerateRoute}" actionListener="#{routeExistenceController.proceedToPlanning}"/>
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('confirmDlg').hide()"/>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
