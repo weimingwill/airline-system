@@ -5,7 +5,8 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -13,49 +14,60 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:form>
+        <h:form id="addNewAircraftForm">
             <p:messages autoUpdate="true"/>
-            <p:panelGrid columns="3">
+            <p:panelGrid columns="2">
                 <p:outputLabel value="Aircraft Model:" for="model"/>
                 <p:selectOneMenu id="model" value="#{fleetController.aircraftModel}" converter="aircraftModelConverter" 
                                  filter="true" filterMatchMode="contains" style="width:100%" required="true">
-                    <f:selectItem itemLabel="Select Aircraft Model" itemValue=""/>
+                    <f:selectItem itemLabel="Select Aircraft Model" itemValue="" noSelectionOption="true"/>
                     <f:selectItems value="#{fleetController.aircraftModels}" var="model" 
                                    itemLabel="#{model.typeCode}" itemValue="#{model}"/>
+                    <p:ajax listener="#{fleetController.onModelSelectChange}" update="cabinClassHelperDlg" oncomplete="PF('cabinClassHelperDlg').show()"/>
+                    <p:tooltip id="model_tooltip" for="model" value="Choose an aircraft model"/>
                 </p:selectOneMenu>
-                <p:tooltip id="model_tooltip" for="model" value="Choose an aircraft model"/>
+
 
                 <p:outputLabel value="Tail Number:" for="tail_no"/>
-                <p:inputMask id="tail_no" binding="#{tailNo}" mask="9V-aaa" required="true"/>
-                <p:tooltip id="tail_no_tooltip" for="tail_no" showEvent="focus" hideEvent="blur" 
-                           value="Register Number with prefix 9V-"/>
+                <p:inputMask id="tail_no" binding="#{tailNo}" mask="9V-aaa" required="true">
+                    <p:tooltip id="tail_no_tooltip" for="tail_no" showEvent="focus" hideEvent="blur" 
+                               value="Register Number with prefix 9V-"/>
+                </p:inputMask>
+
 
                 <p:outputLabel value="Source:" for="source"/>
                 <p:selectOneRadio id="source" binding="#{source}" required="true">
                     <f:selectItem itemLabel="Rented" itemValue="Rented" />
                     <f:selectItem itemLabel="Purchased" itemValue="Purchased" />
+                    <p:tooltip id="source_tooltip" for="source" trackMouse="true" 
+                               value="Choose if the aircraft is rented or purchased"/>
                 </p:selectOneRadio>
-                <p:tooltip id="source_tooltip" for="source" trackMouse="true" 
-                           value="Choose if the aircraft is rented or purchased"/>
+
 
                 <p:outputLabel value="Lifespan (years):" for="lifespan"/>
-                <p:inputMask id="lifespan" binding="#{lifespan}" mask="99" required="true"/>
-                <p:tooltip id="lifespan_tooltip" for="lifespan" showEvent="focus" hideEvent="blur" 
-                           value="Expected lifespan of the aircraft"/>
+                <p:inputMask id="lifespan" binding="#{lifespan}" mask="99" required="true">
+                    <p:tooltip id="lifespan_tooltip" for="lifespan" showEvent="focus" hideEvent="blur" 
+                               value="Expected lifespan of the aircraft"/>
+                </p:inputMask>
 
-                <p:outputLabel value="Cost (million):" for="cost"/>
-                <p:inputText id="cost" binding="#{cost}" required="true"/>
-                <p:tooltip id="cost_tooltip" for="cost" showEvent="focus" hideEvent="blur" 
-                           value="Cost of rental/purchase of aircraft"/>
+
+                <p:outputLabel value="Cost (million USD):" for="cost"/>
+                <p:inputText id="cost" binding="#{cost}" required="true">
+                    <p:tooltip id="cost_tooltip" for="cost" showEvent="focus" hideEvent="blur" 
+                               value="Cost of rental/purchase of aircraft"/>
+                </p:inputText>
+
 
                 <c:forEach var="aircraftCabinClass" items="#{fleetController.aircraftCabinClassHelpers}" varStatus="status">
                     <p:outputLabel value="#Seats for #{aircraftCabinClass.name} Class:"/>
-                    <p:spinner id="#{aircraftCabinClass.type}" value="#{aircraftCabinClass.seatQty}" stepFactor="1" min="0"/>
-                    <p:outputLabel/>
+                    <p:spinner value="#{aircraftCabinClass.seatQty}" stepFactor="1" min="0"/>
                 </c:forEach>
             </p:panelGrid>
             <p:separator/>
             <p:commandButton value="Add" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{fleetController.addNewAircraft(tailNo.value, lifespan.value, source.value, cost.value, seatConfig.value)}"/>
+            <p:dialog id="cabinClassHelperDlg" widgetVar="cabinClassHelperDlg" appendTo="@(body)" header="Seat Configuration Guideline for #{fleetController.aircraftModel.typeCode}" resizable="false" styleClass="cabinClassHelperDlg" position="745,60">
+                <pa:CCCabinClassHelperPanel/>
+            </p:dialog>
         </h:form>
     </cc:implementation>
 </html>

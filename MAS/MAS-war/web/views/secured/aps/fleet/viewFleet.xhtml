@@ -12,6 +12,7 @@
         <h:form>
             <p:panel id="owned-fleet-panel" header="Owned Fleet" style="margin-bottom:20px">
                 <p:dataTable id="fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="10" tableStyle="width:auto; font-size:small"
+                             paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15"
                              selection="#{fleetTableController.selectedAircraft}" rowKey="#{aircraft.aircraftId}" editable="true">
                     <p:messages autoUpdate="true"/>
                     <p:column selectionMode="single" style="width:16px;text-align:center"/>
@@ -72,10 +73,10 @@
 
             </p:panel>
         </h:form>
-        <p:dialog appendTo="@(body)" modal="true" header="Add a new aircraft" widgetVar="addNewAircraftDlg" resizable="false">
-            <fo:CCAddNewAircraftForm id="addAircraftForm"/>
+        <p:dialog appendTo="@(body)" modal="true" header="Add a new aircraft" widgetVar="addNewAircraftDlg" resizable="false" styleClass="addNewAircraftDlg" position="230,60">
+            <fo:CCAddNewAircraftForm/>
         </p:dialog>
-        <p:dialog id="aircraftDetailsDlg" appendTo="@(body)" modal="true" header="Aircraft Detials for #{fleetTableController.selectedAircraft.tailNo} (#{fleetTableController.selectedAircraft.aircraftType.typeCode})" widgetVar="aircraftDetailsDlg" resizable="false">
+        <p:dialog id="aircraftDetailsDlg" appendTo="@(body)" modal="true" header="Aircraft Details for #{fleetTableController.selectedAircraft.tailNo} (#{fleetTableController.selectedAircraft.aircraftType.typeCode})" widgetVar="aircraftDetailsDlg" resizable="false">
             <pa:CCAircraftDetailsPanel/>
         </p:dialog>
         <p:dialog id="editAircraftDlg" appendTo="@(body)" modal="true" header="Edit Aircraft Information" widgetVar="editAircraftDlg" resizable="false">

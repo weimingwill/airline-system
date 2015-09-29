@@ -3,49 +3,56 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <body>
 
         <ui:composition template="./../../../../template/ApsTemplate.xhtml">
-
             <ui:define name="content">
-                <p:panel id="basic" header="Available Aircraft Models in the Market" style="margin-bottom:20px">
-                    <p:outputLabel for="aircraft-model-table" value="#{fleetController.msg}"/>
-                    <p:dataTable id="aircraft-model-table" var="model" value="#{fleetController.aircraftModels}" rows="10"
-                                 paginator="true"
-                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 rowsPerPageTemplate="10,15">
-                        <p:column headerText="Type" sortBy="#{model.typeCode}">
-                            <h:outputText value="#{model.typeCode}"/>
-                        </p:column>
-                        <p:column headerText="Type Family" sortBy="#{model.typeFamily}">
-                            <h:outputText value="#{model.typeFamily}"/>
-                        </p:column>
-                        <p:column headerText="Manufacturer" sortBy="#{model.mfdBy}">
-                            <h:outputText value="#{model.mfdBy}"/>
-                        </p:column>
-                        <p:column headerText="Typical Seating (Number of people)" sortBy="#{model.typicalSeating}">
-                            <h:outputText value="#{model.typicalSeating}"/>
-                        </p:column>
-                        <p:column headerText="Max Seating (Number of people)" sortBy="#{model.maxSeating}">
-                            <h:outputText value="#{model.maxSeating}"/>
-                        </p:column>
-                        <p:column headerText="Range (km)" sortBy="#{model.rangeInKm}">
-                            <h:outputText value="#{model.rangeInKm}"/>
-                        </p:column>
-                        <p:column headerText="Overall Length (m)" sortBy="#{model.overallLengthInM}">
-                            <h:outputText value="#{model.overallLengthInM}"/>
-                        </p:column>
-                        <p:column headerText="Wing Span (m)" sortBy="#{model.wingspanInM}">
-                            <h:outputText value="#{model.wingspanInM}"/>
-                        </p:column>
-                        <p:column headerText="Max Fuel Capacity (litres)" sortBy="#{model.maxFuelCapacity}">
-                            <h:outputText value="#{model.maxFuelCapacity}"/>
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
-
+                <h:form>
+                    <p:panel id="basic" header="Available Aircraft Models in the Market" style="margin-bottom:20px">
+                        <p:outputLabel for="myTableId" value="#{fleetController.msg}"/>
+                        <p:dataTable binding="#{fleetTableController.theDataTable}" id="myTableId" var="model" value="#{fleetController.aircraftModels}" rows="10"
+                                     paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="10,15" widgetVar="aircraftModelTable"
+                                     filteredValue="#{fleetController.filteredAircraftModels}">
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="Search Aircraft Model:  " />
+                                    <p:inputText id="globalFilter" onkeyup="PF('aircraftModelTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                                </p:outputPanel>
+                            </f:facet>
+                            <p:column id="typeCode" headerText="Type" sortBy="#{model.typeCode}" filterBy="#{model.typeCode}" filterMatchMode="contains" filterStyle="display:none">
+                                <h:outputText value="#{model.typeCode}"/>
+                            </p:column>
+                            <p:column headerText="Type Family" sortBy="#{model.typeFamily}" filterBy="#{model.typeFamily}" filterMatchMode="contains" filterStyle="display:none">
+                                <h:outputText value="#{model.typeFamily}"/>
+                            </p:column>
+                            <p:column headerText="Manufacturer" sortBy="#{model.mfdBy}" filterBy="#{model.mfdBy}" filterMatchMode="exact" filterStyle="display:none">
+                                <h:outputText value="#{model.mfdBy}"/>
+                            </p:column>
+                            <p:column headerText="Typical Seating (Number of people)" sortBy="#{model.typicalSeating}">
+                                <h:outputText value="#{model.typicalSeating}"/>
+                            </p:column>
+                            <p:column headerText="Max Seating (Number of people)" sortBy="#{model.maxSeating}">
+                                <h:outputText value="#{model.maxSeating}"/>
+                            </p:column>
+                            <p:column headerText="Range (km)" sortBy="#{model.rangeInKm}">
+                                <h:outputText value="#{model.rangeInKm}"/>
+                            </p:column>
+                            <p:column headerText="Overall Length (m)" sortBy="#{model.overallLengthInM}">
+                                <h:outputText value="#{model.overallLengthInM}"/>
+                            </p:column>
+                            <p:column headerText="Wing Span (m)" sortBy="#{model.wingspanInM}">
+                                <h:outputText value="#{model.wingspanInM}"/>
+                            </p:column>
+                            <p:column headerText="Max Fuel Capacity (litres)" sortBy="#{model.maxFuelCapacity}">
+                                <h:outputText value="#{model.maxFuelCapacity}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
             </ui:define>
 
         </ui:composition>

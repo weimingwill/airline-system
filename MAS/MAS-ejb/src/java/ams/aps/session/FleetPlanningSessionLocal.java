@@ -23,9 +23,9 @@ public interface FleetPlanningSessionLocal {
     public List<Aircraft> getFleet(String status);
     public boolean updateAircraftInfo(Aircraft updatedAircraft);
     public boolean addNewAircraft(Aircraft newAircraft, List<AircraftCabinClassHelper> newAircraftCabinClassHelper);
-    public void markAircraftAsRetired(String tailNo);
     public AircraftType getAircraftTypeById(Long id);
     public List<CabinClass> getAllCabinClasses() throws EmptyTableException;
     public CabinClass getCabinClassById(Long id);
+    public List<List<AircraftCabinClassHelper>> getCabinClassByAircraftType(String typeCode);
     public boolean retireSelectedAircrafts(List<Aircraft> aircrafts);
 }

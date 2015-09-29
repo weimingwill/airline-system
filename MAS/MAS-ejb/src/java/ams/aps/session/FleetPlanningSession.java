@@ -101,11 +101,6 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
     }
 
     @Override
-    public void markAircraftAsRetired(String tailNo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public AircraftType getAircraftTypeById(Long id) {
         return entityManager.find(AircraftType.class, id);
     }
@@ -171,5 +166,38 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<List<AircraftCabinClassHelper>> getCabinClassByAircraftType(String typeCode) {
+        List<List<AircraftCabinClassHelper>> outputHelperList = new ArrayList();
+        for (Long aircraftId : getNumberOfConfigurations(typeCode)) {
+            Query query = entityManager.createQuery("SELECT a FROM AircraftCabinClass a WHERE a.aircraft.aircraftType.typeCode = :inTypeCode AND a.aircraftId=:inId");
+            query.setParameter("inId", aircraftId);
+            query.setParameter("inTypeCode", typeCode);
+            List<AircraftCabinClass> thisAircraftCabinClasses;
+            List<AircraftCabinClassHelper> outputHelpers = new ArrayList();
+            try {
+                thisAircraftCabinClasses = (List<AircraftCabinClass>) query.getResultList();
+                for (AircraftCabinClass thisAircraftCabinClass : thisAircraftCabinClasses) {
+                    outputHelpers.add(new AircraftCabinClassHelper(thisAircraftCabinClass.getCabinClassId(), thisAircraftCabinClass.getCabinClass().getType(), thisAircraftCabinClass.getCabinClass().getName(), thisAircraftCabinClass.getSeatQty()));
+                }
+
+            } catch (Exception e) {
+
+            }
+            outputHelperList.add(outputHelpers);
+        }
+        return outputHelperList;
+    }
+
+    private List<Long> getNumberOfConfigurations(String typeCode) {
+        Query query = entityManager.createQuery("SELECT a.aircraftId FROM AircraftCabinClass a WHERE a.aircraft.aircraftType.typeCode = :inTypeCode GROUP BY a.aircraftId");
+        query.setParameter("inTypeCode", typeCode);
+        try {
+            return (List<Long>) query.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

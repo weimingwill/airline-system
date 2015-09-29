@@ -10,7 +10,9 @@
         <h:form id="form"> 
             <p:panel id="retire-fleet-panel" header="Fleet Can Be Retired" style="margin-bottom:20px">
                 <p:messages autoUpdate="true"/>
-                <p:dataTable id="retire-fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="10" selection="#{fleetTableController.selectedAircrafts}" rowKey="#{aircraft.aircraftId}" tableStyle="width:auto; font-size:small">
+                <p:dataTable id="retire-fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="10" selection="#{fleetTableController.selectedAircrafts}" 
+                             paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="10,15" rowKey="#{aircraft.aircraftId}" tableStyle="width:auto; font-size:small">
                     <p:messages autoUpdate="true"/>
 
                     <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
