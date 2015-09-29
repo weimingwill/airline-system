@@ -7,11 +7,16 @@ package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.Rule;
 import ams.ais.entity.TicketFamily;
+import ams.ais.entity.TicketFamilyRule;
+import ams.ais.helper.TicketFamilyRuleHelper;
 import ams.ais.util.exception.ExistSuchTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
+import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.helper.Message;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -61,16 +66,39 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         Query query = entityManager.createQuery("SELECT c FROM CabinClass c WHERE c.deleted = false");
         return query.getResultList();
     }
-
+    
+    
     @Override
-    public void createTicketFamily(String type, String name, String cabinclassname) throws ExistSuchTicketFamilyException {
+    public void createTicketFamily(String type, String name, String cabinclassname,List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers) throws ExistSuchTicketFamilyException {
         verifyTicketFamilyExistence(type, name, cabinclassname);
         TicketFamily ticketFamily = new TicketFamily();
         ticketFamily.create(type, name);
         ticketFamily.setCabinClass(cabinClassSession.getCabinClassByName(cabinclassname));
         entityManager.persist(ticketFamily);
+        entityManager.flush(); 
+        addTicketFamilyRule(ticketFamily, newTicketFamilyRuleHelpers);
     }
+    
+    private void addTicketFamilyRule(TicketFamily ticketFamily, List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers){
+        Rule thisRule;
+        List<TicketFamilyRule> ticketFamilyRuleList = new ArrayList(); //too be added at aircraft side
 
+        for (TicketFamilyRuleHelper ticketFamilyRuleHelper : newTicketFamilyRuleHelpers) {
+            TicketFamilyRule thisTicketFamilyRule = new TicketFamilyRule();
+            thisRule = entityManager.find(Rule.class, ticketFamilyRuleHelper.getId());
+            // add necessary attributes to aircraftCabinClass object
+            thisTicketFamilyRule.setTicketFamily(ticketFamily);
+            thisTicketFamilyRule.setTicketFamilyId(ticketFamily.getTicketFamilyId());
+            thisTicketFamilyRule.setRule(thisRule);
+            thisTicketFamilyRule.setRuleId(thisRule.getRuleId());
+            thisTicketFamilyRule.setRuleValue((float)ticketFamilyRuleHelper.getRuleValue());
+            entityManager.persist(thisTicketFamilyRule);
+            ticketFamilyRuleList.add(thisTicketFamilyRule);
+        }
+        ticketFamily.setTicketFamilyRules(ticketFamilyRuleList);
+        entityManager.merge(ticketFamily);
+        entityManager.flush();
+    }
     @Override
     public void verifyTicketFamilyExistence(String type, String name, String cabinclassname) throws ExistSuchTicketFamilyException {
 
@@ -179,4 +207,37 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         return bookingClasses;
     }
 
+    @Override
+    public List<Rule> getAllRules() throws EmptyTableException {
+        Query query = entityManager.createQuery("SELECT c FROM Rule c WHERE c.deleted=False");
+        List<Rule> rules = null;
+        try {
+            rules = (List<Rule>) query.getResultList();
+        } catch (NoResultException ex) {
+            throw new EmptyTableException(Message.EMPTY_TABLE);
+        }
+        return rules;
+    }
+    
+//    private boolean addTicketFamilyRule(TicketFamily newTicketFamily, List<TicketFamilyRuleHelper> newAircraftCabinClassHelpers) {
+//        CabinClass thisCabinClass;
+//        List<AircraftCabinClass> aircraftCabinClassList = new ArrayList(); //too be added at aircraft side
+//
+//        for (AircraftCabinClassHelper aircraftCabinClassHelper : newAircraftCabinClassHelpers) {
+//            AircraftCabinClass thisAircraftCabinClass = new AircraftCabinClass();
+//            thisCabinClass = entityManager.find(CabinClass.class, aircraftCabinClassHelper.getId());
+//            // add necessary attributes to aircraftCabinClass object
+//            thisAircraftCabinClass.setAircraft(newAircraft);
+//            thisAircraftCabinClass.setAircraftId(newAircraft.getAircraftId());
+//            thisAircraftCabinClass.setCabinClass(thisCabinClass);
+//            thisAircraftCabinClass.setCabinClassId(thisCabinClass.getCabinClassId());
+//            thisAircraftCabinClass.setSeatQty(aircraftCabinClassHelper.getSeatQty());
+//            entityManager.persist(thisAircraftCabinClass);
+//            aircraftCabinClassList.add(thisAircraftCabinClass);
+//        }
+//        newAircraft.setAircraftCabinClasses(aircraftCabinClassList);
+//        entityManager.merge(newAircraft);
+//        entityManager.flush();
+//        return true;
+//    }
 }
