@@ -53,6 +53,16 @@ public class FlightScheduleBookingClass implements Serializable {
     @Column(name = "DEMAND")
     private int demand;
 
+    public FlightScheduleBookingClass() {
+    }
+
+    public FlightScheduleBookingClass(Long flightScheduleId, Long bookingClassId, FlightSchedule flightSchedule, BookingClass bookingClass) {
+        this.flightScheduleId = flightScheduleId;
+        this.bookingClassId = bookingClassId;
+        this.flightSchedule = flightSchedule;
+        this.bookingClass = bookingClass;
+    }
+    
     public Long getFlightScheduleId() {
         return flightScheduleId;
     }

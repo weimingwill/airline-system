@@ -22,4 +22,5 @@ public interface BookingClassSessionLocal {
     public List<BookingClass> getAllBookingClasses();
     public void deleteBookingClass(String name) throws NoSuchBookingClassException;
     public BookingClass search(String name) throws NoSuchBookingClassException;
+    public BookingClass getBookingClassById(Long id) throws NoSuchBookingClassException;
 }

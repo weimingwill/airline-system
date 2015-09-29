@@ -10,8 +10,6 @@ import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.AisMsg;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -77,6 +75,19 @@ public class BookingClassSession implements BookingClassSessionLocal {
     public List<BookingClass> getAllBookingClasses() {
         Query query = entityManager.createQuery("SELECT c FROM BookingClass c WHERE c.deleted = FALSE");
         return query.getResultList();
+    }
+
+    @Override
+    public BookingClass getBookingClassById(Long id) throws NoSuchBookingClassException {
+        Query query = entityManager.createQuery("SELECT b FROM BookingClass b WHERE b.bookingClassId = :inId and b.deleted = FALSE");
+        query.setParameter("inId", id);
+        BookingClass bookingClass = null;
+        try {
+            bookingClass = (BookingClass) query.getSingleResult();
+        } catch (NoResultException e) {
+            throw new NoSuchBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
+        }
+        return bookingClass;
     }
 
 }

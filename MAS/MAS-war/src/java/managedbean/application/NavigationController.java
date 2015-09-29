@@ -268,5 +268,12 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
     }
     
+        //FlightSchedule
+    public String redirectToAddFlightScheduleBookingClass(){
+        return "/views/secured/aps/flight_schedule/addBookingClasses.xhtml" + REDIRECT;
+    }
     
+    public String redirectToViewFlightSchedule(){
+        return "/views/secured/aps/flight_schedule/viewFlightSchedule.xhtml" + REDIRECT;
+    }
 }

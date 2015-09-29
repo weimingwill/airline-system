@@ -5,15 +5,14 @@
  */
 package ams.aps.session;
 
-import ams.ais.entity.CabinClass;
-import ams.ais.util.exception.NoSuchCabinClassException;
-import ams.aps.entity.AircraftType;
-import ams.aps.entity.FlightSchedule;
-import ams.aps.util.exception.NoSuchAircraftException;
-import java.util.List;
+import ams.aps.entity.AircraftCabinClass;
+import ams.aps.util.exception.NoSuchAircraftCabinClassException;
+import ams.aps.util.helper.ApsMessage;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -24,5 +23,20 @@ public class AircraftSession implements AircraftSessionLocal {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Override
+    public AircraftCabinClass getAircraftCabinClassById(Long aircraftId, Long cabinCalssId) throws NoSuchAircraftCabinClassException {
+        Query query = entityManager.createQuery("SELECT ac FROM AircraftCabinClass ac WHERE ac.aircraftId = :inAircraftId and ac.cabinClassId = :inCabinClassId and ac.cabinClass.deleted = FALSE and ac.aircraft.status NOT LIKE 'Retired'");
+        query.setParameter("inAircraftId", aircraftId);
+        query.setParameter("inCabinClassId", cabinCalssId);
+        AircraftCabinClass aircraftCabinClass = null;
+        try {
+            System.out.println("AircraftCabinClass: " + (AircraftCabinClass)query.getSingleResult());
+            aircraftCabinClass = (AircraftCabinClass)query.getSingleResult();
+        } catch (NoResultException e) {
+            throw new NoSuchAircraftCabinClassException(ApsMessage.No_SUCH_AIRCRAFT_CABINCLASS_ERROR);
+        }
+        return aircraftCabinClass;
+    }
 
 }

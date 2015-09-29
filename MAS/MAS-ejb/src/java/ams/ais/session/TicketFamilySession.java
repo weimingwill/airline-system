@@ -10,6 +10,7 @@ import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
+import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import mas.util.helper.SafeHelper;
 
 /**
  *
@@ -35,17 +37,29 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     private EntityManager entityManager;
 
     @Override
-    public TicketFamily getTicketFamilyByName(String ticketFamilyName) {
-        Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.name = :inticketFamilyName");
+    public TicketFamily getTicketFamilyById(Long id) throws NoSuchTicketFamilyException {
+        Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.ticketFamilyId = :inId and t.deleted = FALSE");
+        query.setParameter("inId", id);
+        TicketFamily ticketFamily = null;
+        try {
+            ticketFamily = (TicketFamily) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new NoSuchTicketFamilyException(AisMsg.NO_SUCH_TICKET_FAMILY_ERROR);
+        }
+        return ticketFamily;
+    }
+    
+    @Override
+    public TicketFamily getTicketFamilyByName(String ticketFamilyName) throws NoSuchTicketFamilyException{
+        Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.name = :inticketFamilyName and t.deleted = FALSE");
         query.setParameter("inticketFamilyName", ticketFamilyName);
         TicketFamily ticketFamily = null;
         try {
             ticketFamily = (TicketFamily) query.getSingleResult();
         } catch (NoResultException ex) {
-            ticketFamily = null;
+            throw new NoSuchTicketFamilyException(AisMsg.NO_SUCH_TICKET_FAMILY_ERROR);
         }
         return ticketFamily;
-
     }
 
     // Add business logic below. (Right-click in editor and choose
@@ -63,11 +77,11 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     }
 
     @Override
-    public void createTicketFamily(String type, String name, String cabinclassname) throws ExistSuchTicketFamilyException {
-        verifyTicketFamilyExistence(type, name, cabinclassname);
+    public void createTicketFamily(String type, String name, String cabinClassName) throws ExistSuchTicketFamilyException, NoSuchCabinClassException {
+        verifyTicketFamilyExistence(type, name, cabinClassName);
         TicketFamily ticketFamily = new TicketFamily();
         ticketFamily.create(type, name);
-        ticketFamily.setCabinClass(cabinClassSession.getCabinClassByName(cabinclassname));
+        ticketFamily.setCabinClass(cabinClassSession.getCabinClassByName(cabinClassName));
         entityManager.persist(ticketFamily);
     }
 
@@ -82,7 +96,6 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
             for (TicketFamily tk : ticketFamilys) {
                 if (type.equals(tk.getType()) && tk.getCabinClass().getName().equals(cabinclassname)) {
                     throw new ExistSuchTicketFamilyException(AisMsg.EXIST_SUCH_TICKET_FAMILY_ERROR);
-
                 }
 
             }
@@ -101,7 +114,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     }
 
     @Override
-    public void updateTicketFamily(String oldtype, String oldcabinclass, String type, String name, String cabinclassname) throws NoSuchTicketFamilyException, ExistSuchTicketFamilyException {
+    public void updateTicketFamily(String oldtype, String oldcabinclass, String type, String name, String cabinclassname) throws NoSuchTicketFamilyException, ExistSuchTicketFamilyException, NoSuchCabinClassException {
         TicketFamily c = getTicketFamilyByTypeAndCabinClass(oldtype, oldcabinclass);
         if (c == null) {
             throw new NoSuchTicketFamilyException(AisMsg.NO_SUCH_TICKET_FAMILY_ERROR);
@@ -167,9 +180,10 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     }
 
     @Override
-    public List<BookingClass> getTicketFamilyBookingClass(String name) throws NoSuchBookingClassException {
-        Query query = entityManager.createQuery("SELECT b FROM TicketFamily t, BookingClass b WHERE t.name = :inName and b.ticketFamily.ticketFamilyId = t.ticketFamilyId and b.deleted = FALSE and t.deleted = FALSE");
-        query.setParameter("inName", name);
+    public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) throws NoSuchBookingClassException {
+        Query query = entityManager.createQuery("SELECT b FROM TicketFamily t, BookingClass b WHERE t.cabinClass.name = :inCabinClassName and t.name = :inTicketFamilyName and b.ticketFamily.ticketFamilyId = t.ticketFamilyId and b.deleted = FALSE and t.deleted = FALSE");
+        query.setParameter("inCabinClassName", cabinClassName);
+        query.setParameter("inTicketFamilyName", ticketFamilyName);
         List<BookingClass> bookingClasses = new ArrayList<>();
         try {
             bookingClasses = query.getResultList();
@@ -178,5 +192,44 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         }
         return bookingClasses;
     }
+
+    @Override
+    public List<String> getTicketFamilyBookingClassNames(String cabinClassName, String ticketFamilyName) {
+        List<String> bookingClassNames = new ArrayList<>();
+        try {
+            for (BookingClass bookingClass : SafeHelper.emptyIfNull(getTicketFamilyBookingClasses(cabinClassName, ticketFamilyName))) {
+                bookingClassNames.add(bookingClass.getName());
+            }
+        } catch (NoSuchBookingClassException e) {
+            return null;
+        }
+        return bookingClassNames;
+    }
+//    @Override
+//    public List<BookingClass> getTicketFamilyBookingClasses(Long cabinClassId, String name) throws NoSuchBookingClassException {
+//        Query query = entityManager.createQuery("SELECT b FROM TicketFamily t, BookingClass b WHERE t.cabinClass.cabinClassId = :inCabinClassId  t.name = :inName and b.ticketFamily.ticketFamilyId = t.ticketFamilyId and b.deleted = FALSE and t.deleted = FALSE");
+//        query.setParameter("inName", name);
+//        query.setParameter(":inCabinClassId", cabinClassId);
+//        List<BookingClass> bookingClasses = new ArrayList<>();
+//        try {
+//            bookingClasses = query.getResultList();
+//        } catch (NoResultException e) {
+//            throw new NoSuchBookingClassException(AisMsg.EXIST_SUCH_BOOKING_CLASS_ERROR);
+//        }
+//        return bookingClasses;
+//    }
+//
+//    @Override
+//    public List<String> getTicketFamilyBookingClassNames(Long cabinClassId, String type) {
+//        List<String> bookingClassNames = new ArrayList<>();
+//        try {
+//            for (BookingClass bookingClass : SafeHelper.emptyIfNull(getTicketFamilyBookingClasses(cabinClassId, type))) {
+//                bookingClassNames.add(bookingClass.getName());
+//            }
+//        } catch (NoSuchBookingClassException e) {
+//            return null;
+//        }
+//        return bookingClassNames;
+//    }
 
 }

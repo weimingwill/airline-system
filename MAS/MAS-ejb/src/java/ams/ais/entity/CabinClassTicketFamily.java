@@ -48,6 +48,21 @@ public class CabinClassTicketFamily implements Serializable {
     @Column(name = "SEATQTY")
     private int seatQty;
 
+    public CabinClassTicketFamily() {
+    }
+
+    public CabinClassTicketFamily(AircraftCabinClass aircraftCabinClass, TicketFamily ticketFamily, int seatQty) {
+        this.aircraftCabinClass = aircraftCabinClass;
+        this.ticketFamily = ticketFamily;
+        this.seatQty = seatQty;
+    }
+    
+    
+    public CabinClassTicketFamily(CabinClassTicketFamilyId cabinClassTicketFamilyId, int seatQty) {
+        this.cabinClassTicketFamilyId = cabinClassTicketFamilyId;
+        this.seatQty = seatQty;
+    }
+    
     public CabinClassTicketFamilyId getCabinClassTicketFamilyId() {
         return cabinClassTicketFamilyId;
     }
