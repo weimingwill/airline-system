@@ -12,6 +12,8 @@ import ams.ais.util.exception.ExistSuchTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
+import ams.ais.util.helper.BookingClassHelper;
+import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -32,8 +34,7 @@ public interface TicketFamilySessionLocal {
     public void updateTicketFamily(String oldtype,String oldcabinclass, String type, String name, String cabinclassname) throws  NoSuchTicketFamilyException, NoSuchCabinClassException, ExistSuchTicketFamilyException;
     public List<TicketFamily> getAllOtherTicketFamily(String name);
     public List<TicketFamily> getAllOtherTicketFamilyByTypeAndCabinClass(String type, String cabinclassname);
-//    public List<BookingClass> getTicketFamilyBookingClasses(Long cabinClassId, String type) throws NoSuchBookingClassException;
-//    public List<String> getTicketFamilyBookingClassNames(Long cabinClassId, String ticketFamliyName);
     public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) throws NoSuchBookingClassException;
     public List<String> getTicketFamilyBookingClassNames(String cabinClassName, String ticketFamilyName);
+    public List<TicketFamilyBookingClassHelper> getTicketFamilyBookingClassHelpers(Long flightScheduleId, Long aircraftId, Long cabinClassId);
 }

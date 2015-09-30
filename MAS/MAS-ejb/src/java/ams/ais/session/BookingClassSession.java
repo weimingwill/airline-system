@@ -6,9 +6,14 @@
 package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
+import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.AisMsg;
+import ams.ais.util.helper.BookingClassHelper;
+import ams.aps.session.FlightScheduleSessionLocal;
+import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -16,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import mas.util.helper.SafeHelper;
 
 /**
  *
@@ -25,7 +31,7 @@ import javax.persistence.Query;
 public class BookingClassSession implements BookingClassSessionLocal {
 
     @EJB
-    private BookingClassSessionLocal bookingClassSessionLocal;
+    private FlightScheduleSessionLocal flightScheduleSession;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -90,4 +96,27 @@ public class BookingClassSession implements BookingClassSessionLocal {
         return bookingClass;
     }
 
+    @Override
+    public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId) {
+        List<BookingClassHelper> bookingClassHelpers = new ArrayList<>();
+        try {
+            List<FlightScheduleBookingClass> flightScheduleBookingClasses;
+            if (ticketFamilyId == null) {
+                flightScheduleBookingClasses = flightScheduleSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
+            } else {
+                flightScheduleBookingClasses = flightScheduleSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(flightScheduleId, ticketFamilyId);
+            }
+            for (FlightScheduleBookingClass flightScheduleBookingClass : flightScheduleBookingClasses) {
+                BookingClass bookingClass = getBookingClassById(flightScheduleBookingClass.getBookingClassId());
+                BookingClassHelper bookingClassHelper = 
+                        new BookingClassHelper(bookingClass, flightScheduleBookingClass.getSeatQty(), flightScheduleBookingClass.getPrice(), 
+                                flightScheduleBookingClass.getPriceCoefficient(), flightScheduleBookingClass.getDemand());
+                bookingClassHelpers.add(bookingClassHelper);
+            }
+        } catch (NoSuchFlightScheduleBookingClassException | NoSuchBookingClassException e) {
+        }
+        return bookingClassHelpers;    
+    }
+    
+    
 }

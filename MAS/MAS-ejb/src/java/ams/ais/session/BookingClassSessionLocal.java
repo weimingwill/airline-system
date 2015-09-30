@@ -8,6 +8,7 @@ package ams.ais.session;
 import ams.ais.entity.BookingClass;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
+import ams.ais.util.helper.BookingClassHelper;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -23,4 +24,5 @@ public interface BookingClassSessionLocal {
     public void deleteBookingClass(String name) throws NoSuchBookingClassException;
     public BookingClass search(String name) throws NoSuchBookingClassException;
     public BookingClass getBookingClassById(Long id) throws NoSuchBookingClassException;
+    public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId);
 }

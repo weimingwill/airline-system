@@ -66,14 +66,5 @@ public class FlightScheduleBookingClassHelper {
     public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
         this.ticketFamilys = ticketFamilys;
     }
-
-//    public List<SeatClassHelper> getTicketFamilyBookingClassHelpers() {
-//        return ticketFamilyBookingClassHelpers;
-//    }
-//
-//    public void setTicketFamilyBookingClassHelpers(List<SeatClassHelper> ticketFamilyBookingClassHelpers) {
-//        this.ticketFamilyBookingClassHelpers = ticketFamilyBookingClassHelpers;
-//    }
-    
-    
+   
 }

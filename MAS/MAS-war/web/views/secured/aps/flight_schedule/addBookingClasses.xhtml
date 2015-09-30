@@ -60,7 +60,8 @@
                         </c:if>
                     </c:forEach>
                 </p:panelGrid>
-                <p:commandButton action="#{flightScheduleController.addBookingClass()}" value="Save" update="messages"/>
+                <p:commandButton action="#{flightScheduleController.addBookingClass('add')}" value="Add" rendered="#{not flightScheduleController.haveBookingClass()}" update="messages" />
+                <p:commandButton action="#{flightScheduleController.addBookingClass('edit')}" value="Edit" rendered="#{flightScheduleController.haveBookingClass()}" update="messages" />
             </p:panel>
 
         </h:form>

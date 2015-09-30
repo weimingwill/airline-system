@@ -8,6 +8,9 @@ package managedbean.ais;
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
+import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
+import ams.ais.util.helper.TicketFamilyBookingClassHelper;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -35,6 +38,8 @@ public class BookingClassController {
     private BookingClassSessionLocal bookingClassSession;
     
     private String bookingClassName;
+    private Long flightScheduleId;
+    private List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers;
     /**
      * Creates a new instance of BookingClassController
      */
@@ -69,6 +74,14 @@ public class BookingClassController {
 
     public void setBookingClassName(String bookingClassName) {
         this.bookingClassName = bookingClassName;
+    }
+
+    public List<FlightSchCabinClsTicFamBookingClsHelper> getFlightSchCabinClsTicFamBookingClsHelpers() {
+        return flightSchCabinClsTicFamBookingClsHelpers;
+    }
+
+    public void setFlightSchCabinClsTicFamBookingClsHelpers(List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers) {
+        this.flightSchCabinClsTicFamBookingClsHelpers = flightSchCabinClsTicFamBookingClsHelpers;
     }
     
     

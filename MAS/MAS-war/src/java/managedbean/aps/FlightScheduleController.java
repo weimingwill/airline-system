@@ -12,6 +12,7 @@ import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
+import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
 import ams.ais.util.helper.FlightScheduleBookingClassHelper;
 import ams.ais.util.helper.SeatClassHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
@@ -24,8 +25,6 @@ import ams.aps.util.exception.NoSuchFlightSchedulException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -59,7 +58,7 @@ public class FlightScheduleController implements Serializable {
     private List<SeatClassHelper> seatClassHelpers;
     private FlightSchedule selectedFlightSchedule;
     private List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers;
-
+    
     public FlightScheduleController() {
     }
 
@@ -165,17 +164,22 @@ public class FlightScheduleController implements Serializable {
         }
     }
 
-    public String addBookingClass() {
+    public String addBookingClass(String method) {
         try {
-            flightScheduleSession.addBookingClass(flightScheduleId, flightScheduleBookingClassHelpers, seatClassHelpers);
+            flightScheduleSession.addBookingClass(flightScheduleId, flightScheduleBookingClassHelpers, seatClassHelpers, method);
             msgController.addMessage("Add booking class succesffully!");
             return navigationController.redirectToViewFlightSchedule();
-        } catch (NoSuchAircraftCabinClassException | NoSuchTicketFamilyException | NoSuchAircraftException | NoSuchCabinClassException | NoSuchFlightSchedulException ex) {
+        } catch (NoSuchAircraftCabinClassException | NoSuchTicketFamilyException | NoSuchAircraftException 
+                | NoSuchCabinClassException | NoSuchFlightSchedulException ex) {
             msgController.addErrorMessage(ex.getMessage());
             return navigationController.redirectToAddFlightScheduleBookingClass();
         }
     }
-
+    
+    public boolean haveBookingClass(){
+        return flightScheduleSession.haveBookingClass(flightScheduleId);
+    }
+    
     //Getter and setter
     public Long getFlightScheduleId() {
         return flightScheduleId;
@@ -232,5 +236,6 @@ public class FlightScheduleController implements Serializable {
     public void setTicketFamilyBookingClassHelpers(List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers) {
         this.ticketFamilyBookingClassHelpers = ticketFamilyBookingClassHelpers;
     }
+
 
 }

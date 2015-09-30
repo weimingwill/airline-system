@@ -5,7 +5,7 @@
  */
 package ams.ais.util.helper;
 
-import ams.ais.entity.BookingClass;
+import ams.ais.entity.TicketFamily;
 import java.util.List;
 
 /**
@@ -13,28 +13,41 @@ import java.util.List;
  * @author winga_000
  */
 public class TicketFamilyBookingClassHelper {
-    private String ticketFamilyName;
-    private List<BookingClass> bookingClass;
+    private TicketFamily ticketFamily;
+    private int seatQty;
+    private List<BookingClassHelper> bookingClassHelpers;
 
-    public TicketFamilyBookingClassHelper(String ticketFamilyName, List<BookingClass> bookingClass) {
-        this.ticketFamilyName = ticketFamilyName;
-        this.bookingClass = bookingClass;
+    public TicketFamilyBookingClassHelper() {
     }
 
-    public String getTicketFamilyName() {
-        return ticketFamilyName;
+    public TicketFamilyBookingClassHelper(TicketFamily ticketFamily, int seatQty, List<BookingClassHelper> bookingClassHelpers) {
+        this.ticketFamily = ticketFamily;
+        this.seatQty = seatQty;
+        this.bookingClassHelpers = bookingClassHelpers;
     }
 
-    public void setTicketFamilyName(String ticketFamilyName) {
-        this.ticketFamilyName = ticketFamilyName;
+    public TicketFamily getTicketFamily() {
+        return ticketFamily;
     }
 
-    public List<BookingClass> getBookingClass() {
-        return bookingClass;
+    public void setTicketFamily(TicketFamily ticketFamily) {
+        this.ticketFamily = ticketFamily;
     }
 
-    public void setBookingClass(List<BookingClass> bookingClass) {
-        this.bookingClass = bookingClass;
+    public List<BookingClassHelper> getBookingClassHelpers() {
+        return bookingClassHelpers;
+    }
+
+    public void setBookingClassHelpers(List<BookingClassHelper> bookingClassHelpers) {
+        this.bookingClassHelpers = bookingClassHelpers;
+    }
+
+    public int getSeatQty() {
+        return seatQty;
+    }
+
+    public void setSeatQty(int seatQty) {
+        this.seatQty = seatQty;
     }
     
 }

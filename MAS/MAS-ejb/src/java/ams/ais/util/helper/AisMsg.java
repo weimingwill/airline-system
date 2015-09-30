@@ -24,5 +24,5 @@ public class AisMsg {
     public static final String EXIST_SUCH_BOOKING_CLASS_ERROR = "Booking class name already exists";
     public static final String NO_SUCH_BOOKING_CLASS_ERROR = "Booking class does not exist";
     public static final String EXIST_SUCH_TICKET_FAMILY_ERROR = "Ticket family already exists";
-
+    public static final String NO_SUCH_CABINCLASS_TICKETFAMILY_ERROR = "Cabin Class and Ticket Family are not associated or does not exist";
 }
