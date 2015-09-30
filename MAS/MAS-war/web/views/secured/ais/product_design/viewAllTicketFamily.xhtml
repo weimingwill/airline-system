@@ -2,7 +2,8 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/AisTemplate.xhtml"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="title">
         View All Ticket Family
@@ -10,21 +11,37 @@
 
     <ui:define name="content">
         <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily">
-            <p:column headerText="Ticket Family Type">
-                <p:outputLabel value="#{ticketfamily.type}"/>
-            </p:column>
-            
-            <p:column headerText="Ticket Family Name">
-                <p:outputLabel value="#{ticketfamily.name}" />
-            </p:column>
-            
+
             <p:column headerText="Cabin Class">
                 <p:outputLabel value="#{ticketfamily.getCabinClass().name}" />
             </p:column>
-            
-            
+            <p:column headerText="Ticket Family Type">
+                <p:outputLabel value="#{ticketfamily.type}"/>
+            </p:column>
+
+            <p:column headerText="Ticket Family Name">
+                <p:outputLabel value="#{ticketfamily.name}" />
+            </p:column>
+
+            <p:column headerText="Rule">
+
+                    <p:dataTable value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(ticketfamily.ticketFamilyId)}" var="rule">
+                        
+                            <p:column>
+                                <p:outputLabel value="#{rule.rule.name}" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{rule.ruleValue}" />
+                            </p:column>
+                       
+                    </p:dataTable>  
+
+            </p:column>
+
+
+
         </p:dataTable>
-        
+
         <p:commandButton value="Edit" action="#{navigationController.redirectToEditTicketFamily()}"  />
     </ui:define>
 
