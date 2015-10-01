@@ -14,6 +14,7 @@ import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.helper.RouteDisplayHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -59,6 +60,7 @@ public class RouteController implements Serializable {
 
     private List<RouteDisplayHelper> routeDisplayList = new ArrayList<>();
     private List<RouteDisplayHelper> obsRouteDisplayList = new ArrayList<>();
+    private List<RouteDisplayHelper> routesToBeDeleted;
 
     /**
      * Creates a new instance of RouteController
@@ -167,14 +169,19 @@ public class RouteController implements Serializable {
     }
 
     public void deleteRoute(ActionEvent event) {
-        if (routePlanningSession.softDeleteRoute(route.getRouteId())) {
-            msgController.addMessage("Route and return route deleted successfully!");
-            cleanGlobalVariable();
-        } else {
-            msgController.addErrorMessage("Fail to delete route and return route!");
+        boolean deleted = true;
+        for (RouteDisplayHelper r : routesToBeDeleted) {
+            if (!routePlanningSession.softDeleteRoute(r.getId())) {
+                deleted = false;
+                msgController.addErrorMessage("Fail to delete routes and return routes!");
+                cleanGlobalVariable();
+                break;
+            }
+        }
+        if (deleted) {
+            msgController.addMessage("Routes and return routes deleted successfully!");
             cleanGlobalVariable();
         }
-
         viewRoutes();
         viewObsoleteRoutes();
     }
@@ -182,61 +189,52 @@ public class RouteController implements Serializable {
     public void viewRoutes() {
         setRouteList(routePlanningSession.getAllRoutes());
         setRouteDisplayList(new ArrayList());
-        for (Route thisRoute : routeList) {
-            RouteDisplayHelper routeDisplayHelper = new RouteDisplayHelper();
-            String legString = "";
-            routeDisplayHelper.setId(thisRoute.getRouteId());
-
-            System.out.println("Route Controller: viewRoutes(): thisRoute = " + thisRoute.getRouteId());
-            for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
-                System.out.println("Route Controller: viewRoutes(): FROM - TO: " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                if (thisRoute.getRouteLegs().size() == 1) {
-                    routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                    routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                    legString = "N.A.";
-                } else {
-                    if (thisRouteLeg.getLegSeq() == 0) {
-                        routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                    } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
-                        legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName();
-                        routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                    } else {
-                        legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - ";
-                    }
-                }
-
-            }
-            routeDisplayHelper.setLegs(legString);
-            routeDisplayList.add(routeDisplayHelper);
-        }
+        createRouteDisplayHelpers(routeList, routeDisplayList);
     }
 
     public void viewObsoleteRoutes() {
         List<Route> obRouteList = routePlanningSession.getAllObsoleteRoutes();
         setObsRouteDisplayList(new ArrayList());
-        for (Route thisRoute : obRouteList) {
+        createRouteDisplayHelpers(obRouteList, obsRouteDisplayList);
+    }
+
+    public void createRouteDisplayHelpers(List<Route> routeList, List<RouteDisplayHelper> displayHelperList) {
+        for (Route thisRoute : routeList) {
             RouteDisplayHelper routeDisplayHelper = new RouteDisplayHelper();
             String legString = "";
             routeDisplayHelper.setId(thisRoute.getRouteId());
 
+            List<String> legAirports = new ArrayList();
+            System.out.println("Route Controller: viewRoutes(): thisRoute = " + thisRoute.getRouteId());
             for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
+                System.out.println("Route Controller: viewRoutes(): FROM - TO (" + thisRouteLeg.getLegSeq() + "): " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
                 if (thisRoute.getRouteLegs().size() == 1) {
                     routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
                     routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                    legString = "N.A.";
                 } else {
                     if (thisRouteLeg.getLegSeq() == 0) {
                         routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
                     } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
-                        legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName();
+                        legAirports.add(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
                         routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
                     } else {
-                        legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - ";
+                        legAirports.add(thisRouteLeg.getLegSeq() - 1, thisRouteLeg.getLeg().getDepartAirport().getAirportName());
+                    }
+                }
+            }
+            if (legAirports.isEmpty()) {
+                legString = "N.A.";
+            } else {
+                for (int i = 0; i < legAirports.size(); i++) {
+                    if (i < legAirports.size() - 1) {
+                        legString += legAirports.get(i) + "-";
+                    } else {
+                        legString += legAirports.get(i);
                     }
                 }
             }
             routeDisplayHelper.setLegs(legString);
-            getObsRouteDisplayList().add(routeDisplayHelper);
+            displayHelperList.add(routeDisplayHelper);
         }
     }
 
@@ -506,5 +504,19 @@ public class RouteController implements Serializable {
      */
     public void setObsRouteDisplayList(List<RouteDisplayHelper> obsRouteDisplayList) {
         this.obsRouteDisplayList = obsRouteDisplayList;
+    }
+
+    /**
+     * @return the routesToBeDeleted
+     */
+    public List<RouteDisplayHelper> getRoutesToBeDeleted() {
+        return routesToBeDeleted;
+    }
+
+    /**
+     * @param routesToBeDeleted the routesToBeDeleted to set
+     */
+    public void setRoutesToBeDeleted(List<RouteDisplayHelper> routesToBeDeleted) {
+        this.routesToBeDeleted = routesToBeDeleted;
     }
 }

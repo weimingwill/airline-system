@@ -237,7 +237,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             return null;
         } // All legs exits -> Check if the legs has the same route id
         else {
-            String CHECK_EXIST_QUERY = "SELECT r FROM Route r WHERE ";
+            String CHECK_EXIST_QUERY = "SELECT r FROM Route r WHERE r.deleted = FALSE AND ";
             Long legId;
             for (int i = 0; i < legs.size(); i++) {
                 legId = legs.get(i).getLegId();
@@ -255,10 +255,11 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             try {
                 Route r = (Route) query.getSingleResult();
                 System.out.println("Route = " + r);
-                return new Route();
+                return r;
             } catch (NoResultException e) {
                 return null;
             } catch (NonUniqueResultException e) {
+                System.out.println("Results = " + (List<Route>) query.getResultList());
                 return new Route();
             }
         }

@@ -6,6 +6,7 @@
 package managedbean.aps;
 
 import ams.aps.entity.Airport;
+import ams.aps.entity.Route;
 import ams.aps.session.RoutePlanningSession;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.helper.RouteCompareHelper;
@@ -32,7 +33,7 @@ public class RoutePlanningController implements Serializable {
 
     @Inject
     private MsgController msgController;
-    
+
     @Inject
     private RouteController routeController;
 
@@ -114,32 +115,40 @@ public class RoutePlanningController implements Serializable {
     }
 
     public void compareRoute() {
-        
+
         odPass();
-        
+
         planODRoute();
         planHSRoute();
 //        custRoute();
     }
-    
+
     public void addPlannedRoutes() {
         List<Airport> stopList = new ArrayList<>();
         for (RouteCompareHelper r : selectedRoutes) {
             Airport tempA = routePlanningSession.getAirportByName(r.getOrigin());
             stopList.add(tempA);
-            if(!r.getStops().equals("N.A.")){
+            if (!r.getStops().equals("N.A.")) {
                 String stops = r.getStops();
-                String[] stopOvers = stops.split("-");
-                for(String so:stopOvers){
+                String[] stopOverNames = stops.split("-");
+                System.out.println("stops = " + stopOverNames);
+                for (String so : stopOverNames) {
                     stopList.add(routePlanningSession.getAirportByName(so));
                 }
             }
             stopList.add(routePlanningSession.getAirportByName(r.getDestination()));
-            if(routePlanningSession.addRoute(stopList)){
-                msgController.addMessage("Add route and return route successfully!");
+            Route temp = routePlanningSession.checkRouteExistence(stopList);
+            System.out.println("temp = " + temp);
+            if (temp == null) {
+                if (routePlanningSession.addRoute(stopList)) {
+                    msgController.addMessage("Add route and return route successfully!");
+                } else {
+                    msgController.addErrorMessage("Fail to add route!");
+                }
             } else {
-                msgController.addErrorMessage("Fail to add route!");
+                msgController.addErrorMessage("Route existed! with type " + r.getType());
             }
+
             routeController.viewRoutes();
         }
     }

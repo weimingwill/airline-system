@@ -31,6 +31,9 @@ import managedbean.application.MsgController;
 @RequestScoped
 public class RouteExistenceController implements Serializable {
 
+    @Inject
+    RouteController routeController;
+
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
 
@@ -56,7 +59,6 @@ public class RouteExistenceController implements Serializable {
     }
 
     public void checkRouteExistence(ActionEvent event) {
-
         setSameODRoutes(routePlanningSession.getRoutesByOD(getOrigin(), getDestination()));
         if (sameODRoutes.isEmpty()) {
             setHeadMsg("Route not existed");
@@ -65,34 +67,7 @@ public class RouteExistenceController implements Serializable {
             setHeadMsg("Following routes are existed");
             setConfirmMsg("Do you still want to plan the route?");
             setRouteDisplayList(new ArrayList());
-
-            for (Route thisRoute : sameODRoutes) {
-                RouteDisplayHelper routeDisplayHelper = new RouteDisplayHelper();
-                String legString = "";
-                routeDisplayHelper.setId(thisRoute.getRouteId());
-
-                System.out.println("Route Controller: viewRoutes(): thisRoute = " + thisRoute.getRouteId());
-                for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
-                    System.out.println("Route Controller: viewRoutes(): FROM - TO: " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                    if (thisRoute.getRouteLegs().size() == 1) {
-                        routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                        routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                        legString = "N.A.";
-                    } else {
-                        if (thisRouteLeg.getLegSeq() == 0) {
-                            routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                        } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
-                            legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName();
-                            routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                        } else {
-                            legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - ";
-                        }
-                    }
-
-                }
-                routeDisplayHelper.setLegs(legString);
-                routeDisplayList.add(routeDisplayHelper);
-            }
+            routeController.createRouteDisplayHelpers(sameODRoutes, routeDisplayList);
         }
 
     }
