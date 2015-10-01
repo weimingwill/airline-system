@@ -15,4 +15,5 @@ public class ApsMessage {
     public static final String NO_SUCH_AIRCRAFT_ERROR = "No such aircraft exist";
     public static final String No_SUCH_AIRCRAFT_CABINCLASS_ERROR = "Nos such aircraft cabin class";
     public static final String No_SUCH_FLIGHTSCHEDULE_BOOKINGCLASS_ERROR = "No such flight schedule booking class";
+    public static final String HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING = "Please select a flight schedule";
 }

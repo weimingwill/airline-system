@@ -55,7 +55,7 @@
                     <f:facet name="footer">
                         <p:commandButton icon="ui-icon-search" value="View" actionListener="#{flightScheduleController.onViewBookingClassClick()}" />
                         <p:commandButton action="#{flightScheduleController.toAddFlightScheduleBookingClass()}" value="Add booking classes" update="messages" />
-                        <p:commandButton value="Seat allocation" update="messages" />
+                        <p:commandButton action="#{flightScheduleController.toSeatAllocation()}" value="Seat allocation" update="messages" />
                         <p:commandButton value="Pricing" update="messages" />
                         <p:commandButton value="Delete" update="messages" />
                     </f:facet>

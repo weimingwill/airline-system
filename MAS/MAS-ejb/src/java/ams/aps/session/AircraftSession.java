@@ -29,9 +29,8 @@ public class AircraftSession implements AircraftSessionLocal {
         Query query = entityManager.createQuery("SELECT ac FROM AircraftCabinClass ac WHERE ac.aircraftId = :inAircraftId and ac.cabinClassId = :inCabinClassId and ac.cabinClass.deleted = FALSE and ac.aircraft.status NOT LIKE 'Retired'");
         query.setParameter("inAircraftId", aircraftId);
         query.setParameter("inCabinClassId", cabinCalssId);
-        AircraftCabinClass aircraftCabinClass = null;
+        AircraftCabinClass aircraftCabinClass = new AircraftCabinClass();
         try {
-            System.out.println("AircraftCabinClass: " + (AircraftCabinClass)query.getSingleResult());
             aircraftCabinClass = (AircraftCabinClass)query.getSingleResult();
         } catch (NoResultException e) {
             throw new NoSuchAircraftCabinClassException(ApsMessage.No_SUCH_AIRCRAFT_CABINCLASS_ERROR);

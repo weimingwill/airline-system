@@ -14,7 +14,7 @@ import ams.ais.util.exception.ExistSuchCabinClassTypeException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
-import ams.ais.util.helper.TicketFamilyBookingClassHelper;
+import ams.aps.helper.AircraftCabinClassId;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -40,5 +40,6 @@ public interface CabinClassSessionLocal {
    public List<String> getCabinClassTicketFamilyNames(String type);
 //   public List<TicketFamilyBookingClassHelper> getCabinClassTicketFamilyBookingClassList(String type);
    public CabinClassTicketFamily getCabinClassTicketFamilyJoinTable(Long aircraftId, Long cabinClassId, Long ticketFamilyId) throws NoSuchCabinClassTicketFamilyException;
+//   public List<CabinClassTicketFamily> getCabinClassTicketFamilyJoinTables(AircraftCabinClassId aircraftCaCbinClassId) throws NoSuchCabinClassTicketFamilyException;
    public List<CabinClassTicketFamily> getCabinClassTicketFamilyJoinTables(Long aircraftId, Long cabinClassId) throws NoSuchCabinClassTicketFamilyException;
 }

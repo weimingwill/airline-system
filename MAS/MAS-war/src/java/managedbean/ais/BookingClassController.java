@@ -9,13 +9,18 @@ import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
-import ams.ais.util.helper.TicketFamilyBookingClassHelper;
+import ams.aps.session.FlightScheduleSessionLocal;
+import ams.aps.util.exception.NoSuchAircraftCabinClassException;
+import ams.aps.util.exception.NoSuchAircraftException;
+import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
@@ -36,6 +41,8 @@ public class BookingClassController {
     
     @EJB
     private BookingClassSessionLocal bookingClassSession;
+    @EJB
+    private FlightScheduleSessionLocal flightScheduleSession;
     
     private String bookingClassName;
     private Long flightScheduleId;
@@ -43,6 +50,18 @@ public class BookingClassController {
     /**
      * Creates a new instance of BookingClassController
      */
+    
+    @PostConstruct
+    public void Init(){
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        Map<String, Object> sessionMap = externalContext.getSessionMap();
+        this.flightScheduleId = (Long)sessionMap.get("flightScheduleId");
+        System.out.println("Initialize Booking Class Controler: ");
+        System.out.println("FlightScheduleId: " + flightScheduleId);
+        initialHelper();
+        System.out.println("Helper: " + flightSchCabinClsTicFamBookingClsHelpers);
+    }
+    
     public BookingClassController() {
     }
     
@@ -66,6 +85,16 @@ public class BookingClassController {
         return navigationController.redirectToDeleteBookingClass(); 
     }
 
+    public String allocateSeats(){
+        try {
+            bookingClassSession.allocateSeats(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+            msgController.addMessage("Allocate seats succesfully!");
+        } catch (NoSuchAircraftCabinClassException | NoSuchAircraftException | NoSuchFlightScheduleBookingClassException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+            return "";
+        }
+        return navigationController.redirectToViewFlightSchedule();
+    }
     
     //Getter and Setter
     public String getBookingClassName() {
@@ -82,6 +111,18 @@ public class BookingClassController {
 
     public void setFlightSchCabinClsTicFamBookingClsHelpers(List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers) {
         this.flightSchCabinClsTicFamBookingClsHelpers = flightSchCabinClsTicFamBookingClsHelpers;
+    }
+
+    public Long getFlightScheduleId() {
+        return flightScheduleId;
+    }
+
+    public void setFlightScheduleId(Long flightScheduleId) {
+        this.flightScheduleId = flightScheduleId;
+    }
+
+    private void initialHelper() {
+        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
     }
     
     

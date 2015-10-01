@@ -16,6 +16,7 @@ import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
+import ams.aps.helper.AircraftCabinClassId;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -37,7 +38,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     private CabinClassSessionLocal cabinClassSession;
     @EJB
     private BookingClassSessionLocal bookingClassSession;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -53,9 +54,9 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         }
         return ticketFamily;
     }
-    
+
     @Override
-    public TicketFamily getTicketFamilyByName(String ticketFamilyName) throws NoSuchTicketFamilyException{
+    public TicketFamily getTicketFamilyByName(String ticketFamilyName) throws NoSuchTicketFamilyException {
         Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.name = :inticketFamilyName and t.deleted = FALSE");
         query.setParameter("inticketFamilyName", ticketFamilyName);
         TicketFamily ticketFamily = null;
@@ -216,19 +217,21 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         List<CabinClassTicketFamily> cabinClassTicketFamilys;
         try {
             cabinClassTicketFamilys = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraftId, cabinClassId);
+//            AircraftCabinClassId aircraftCabinClassId = new AircraftCabinClassId(aircraftId, cabinClassId);
+//            cabinClassTicketFamilys = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraftCabinClassId);
         } catch (NoSuchCabinClassTicketFamilyException e) {
             cabinClassTicketFamilys = new ArrayList<>();
         }
+        System.out.println("CabinClassTicketFamilys: " + cabinClassTicketFamilys);
+        
         List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers = new ArrayList<>();
         for (CabinClassTicketFamily cabinClassTicketFamily : cabinClassTicketFamilys) {
-            TicketFamilyBookingClassHelper helper = 
-                    new TicketFamilyBookingClassHelper(cabinClassTicketFamily.getTicketFamily(), cabinClassTicketFamily.getSeatQty(), 
+            TicketFamilyBookingClassHelper helper
+                    = new TicketFamilyBookingClassHelper(cabinClassTicketFamily.getTicketFamily(), cabinClassTicketFamily.getSeatQty(),
                             bookingClassSession.getBookingClassHelpers(flightScheduleId, cabinClassTicketFamily.getTicketFamily().getTicketFamilyId()));
             ticketFamilyBookingClassHelpers.add(helper);
         }
         return ticketFamilyBookingClassHelpers;
     }
-    
-    
 
 }

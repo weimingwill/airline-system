@@ -16,6 +16,7 @@ import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
+import ams.aps.helper.AircraftCabinClassId;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -252,16 +253,32 @@ public class CabinClassSession implements CabinClassSessionLocal {
         return cabinClassTicketFamily;
     }
     
+//    @Override
+//    public List<CabinClassTicketFamily> getCabinClassTicketFamilyJoinTables(AircraftCabinClassId aircraftCabinClassId) throws NoSuchCabinClassTicketFamilyException {
+//        Query query = entityManager.createQuery("SELECT ct FROM CabinClassTicketFamily ct WHERE ct.cabinClassTicketFamilyId.aircraftCabinClassId = :inId "
+//                + "AND ct.aircraftCabinClass.cabinClass.deleted = FALSE "
+//                + "AND ct.aircraftCabinClass.aircraft.status NOT LIKE 'Retired' AND ct.ticketFamily.deleted = FALSE");
+//        query.setParameter("inId", aircraftCabinClassId);
+//        List<CabinClassTicketFamily> cabinClassTicketFamilys = null;
+//        try {
+//            cabinClassTicketFamilys = (List<CabinClassTicketFamily>)query.getResultList();
+//            System.out.println("CabinClass from AircraftCabinClassID: " + cabinClassTicketFamilys);
+//        } catch (NoResultException e) {
+//            throw new NoSuchCabinClassTicketFamilyException(AisMsg.NO_SUCH_CABINCLASS_TICKETFAMILY_ERROR);
+//        }
+//        return cabinClassTicketFamilys;
+//    }
+    
     @Override
     public List<CabinClassTicketFamily> getCabinClassTicketFamilyJoinTables(Long aircraftId, Long cabinClassId) throws NoSuchCabinClassTicketFamilyException {
         Query query = entityManager.createQuery("SELECT ct FROM CabinClassTicketFamily ct WHERE ct.aircraftCabinClass.aircraftId = :inAircraftId "
-                + "AND ct.aircraftCabinClass.cabinClassId = :inCabinClassId AND ct.aircraftCabinClass.cabinClass.deleted = FALSE "
-                + "AND ct.aircraftCabinClass.aircraft.status NOT LIKE 'Retired' AND ct.ticketFamily.deleted = FALSE");
+                + "AND ct.aircraftCabinClass.cabinClassId = :inCabinClassId AND ct.aircraftCabinClass.cabinClass.deleted = FALSE AND ct.ticketFamily.deleted = FALSE");
         query.setParameter("inAircraftId", aircraftId);
         query.setParameter("inCabinClassId", cabinClassId);
         List<CabinClassTicketFamily> cabinClassTicketFamilys = null;
         try {
             cabinClassTicketFamilys = (List<CabinClassTicketFamily>)query.getResultList();
+            System.out.println("CabinClassTicketFamily in function: " + cabinClassTicketFamilys);
         } catch (NoResultException e) {
             throw new NoSuchCabinClassTicketFamilyException(AisMsg.NO_SUCH_CABINCLASS_TICKETFAMILY_ERROR);
         }

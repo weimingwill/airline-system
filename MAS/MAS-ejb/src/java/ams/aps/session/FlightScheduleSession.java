@@ -13,6 +13,8 @@ import ams.ais.entity.TicketFamily;
 import ams.ais.helper.CabinClassTicketFamilyId;
 import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.util.exception.NeedBookingClassException;
+import ams.ais.util.exception.NeedTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchBookingClassHelperException;
 import ams.ais.util.exception.NoSuchCabinClassException;
@@ -131,7 +133,8 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
 
     @Override
     public void addBookingClass(Long flightScheduleId, List<FlightScheduleBookingClassHelper> flightScheduleBoookingClassHelpers, List<SeatClassHelper> seatClassHelpers, String method)
-            throws NoSuchAircraftCabinClassException, NoSuchTicketFamilyException, NoSuchAircraftException, NoSuchCabinClassException, NoSuchFlightSchedulException {
+            throws NoSuchAircraftCabinClassException, NoSuchTicketFamilyException, NoSuchAircraftException, NoSuchCabinClassException,
+            NoSuchFlightSchedulException, NeedTicketFamilyException, NeedBookingClassException {
         Aircraft aircraft = entityManager.find(Aircraft.class, getFlightScheduleAircraft(flightScheduleId).getAircraftId());
         List<CabinClassTicketFamily> cabinClassTicketFamilys = new ArrayList<>();
         boolean isEdit = false;
@@ -142,28 +145,28 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
             //Get CabinClass
             CabinClass cabinClass = entityManager.find(CabinClass.class, flightScheduleBookingClassHelper.getCabinClass().getCabinClassId());
             //Get aircraftCabinClass
+            System.out.println("aircraft.getAircraftId(): "  + aircraft.getAircraftId());
+            System.out.println("cabinClass.getCabinClassId():" + cabinClass.getCabinClassId());
             AircraftCabinClass aircraftCabinClass = aircraftSession.getAircraftCabinClassById(aircraft.getAircraftId(), cabinClass.getCabinClassId());
             //Create aircraftCabinClassId
             AircraftCabinClassId aircraftCabinClassId = new AircraftCabinClassId(aircraft.getAircraftId(), cabinClass.getCabinClassId());
-
-            for (TicketFamily ticketFamily : SafeHelper.emptyIfNull(flightScheduleBookingClassHelper.getTicketFamilys())) {
+            System.out.println("TicketFamilys: " + flightScheduleBookingClassHelper.getTicketFamilys());
+            List<TicketFamily> ticketFamilys = flightScheduleBookingClassHelper.getTicketFamilys();
+            if (ticketFamilys.isEmpty()) {
+                throw new NeedTicketFamilyException(AisMsg.NEED_TICKET_FAMILY_ERROR);
+            }
+            for (TicketFamily ticketFamily : ticketFamilys) {
+                verifyTicketFamilyHasBookingClass(ticketFamily, seatClassHelpers);
                 //Create CabinClassTicketFamilyId
                 CabinClassTicketFamilyId cabinClassTicketFamilyId = new CabinClassTicketFamilyId(aircraftCabinClassId, ticketFamily.getTicketFamilyId());
                 CabinClassTicketFamily cabinClassTicketFamily;
                 cabinClassTicketFamily = entityManager.find(CabinClassTicketFamily.class, cabinClassTicketFamilyId);
-
                 if (isEdit && cabinClassTicketFamily != null) {
-//                    try {
-//                        cabinClassTicketFamily = cabinClassSession.getCabinClassTicketFamilyJoinTable(aircraft.getAircraftId(), cabinClass.getCabinClassId(), ticketFamily.getTicketFamilyId());
-//                    } catch (NoSuchCabinClassTicketFamilyException e) {
-//                        cabinClassTicketFamily = new CabinClassTicketFamily();
-//                    }
                     cabinClassTicketFamily.setAircraftCabinClass(aircraftCabinClass);
                     cabinClassTicketFamily.setCabinClassTicketFamilyId(cabinClassTicketFamilyId);
                     cabinClassTicketFamily.setTicketFamily(ticketFamily);
                     cabinClassTicketFamily.setSeatQty(0);
                     entityManager.merge(cabinClassTicketFamily);
-
                 } else {
                     //Create CabinClassTicketFamily
                     cabinClassTicketFamily = new CabinClassTicketFamily(cabinClassTicketFamilyId, 0);
@@ -189,6 +192,7 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
     public void assignFlightScheduleBookingClass(Long flightScheduleId, List<SeatClassHelper> seatClassHelpers, boolean isEdit) throws NoSuchFlightSchedulException {
         FlightScheduleBookingClass flightScheduleBookingClass;
         for (SeatClassHelper seatClassHelper : SafeHelper.emptyIfNull(seatClassHelpers)) {
+            System.out.println("BookingClasses: " + seatClassHelper.getBookingClasses());
             for (BookingClass bookingClass : SafeHelper.emptyIfNull(seatClassHelper.getBookingClasses())) {
                 BookingClass newBookingClass = entityManager.find(BookingClass.class, bookingClass.getBookingClassId());
                 try {
@@ -263,12 +267,14 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
         List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers = new ArrayList<>();
         try {
             for (CabinClass cabinClass : getFlightScheduleCabinCalsses(flightScheduleId)) {
-                AircraftCabinClass aircraftCabinClass = aircraftSession.getAircraftCabinClassById(flightScheduleId, cabinClass.getCabinClassId());
-                FlightSchCabinClsTicFamBookingClsHelper helper = new FlightSchCabinClsTicFamBookingClsHelper(cabinClass, aircraftCabinClass.getSeatQty(), 
-                        ticketFamilySession.getTicketFamilyBookingClassHelpers(flightScheduleId, aircraftCabinClass.getAircraftId(), cabinClass.getCabinClassId()));
+                Aircraft aircraft = getFlightScheduleAircraft(flightScheduleId);
+                AircraftCabinClass aircraftCabinClass = aircraftSession.getAircraftCabinClassById(aircraft.getAircraftId(), cabinClass.getCabinClassId());
+                FlightSchCabinClsTicFamBookingClsHelper helper = new FlightSchCabinClsTicFamBookingClsHelper(cabinClass, aircraftCabinClass.getSeatQty(),
+                        ticketFamilySession.getTicketFamilyBookingClassHelpers(flightScheduleId, aircraft.getAircraftId(), cabinClass.getCabinClassId()));
                 flightSchCabinClsTicFamBookingClsHelpers.add(helper);
             }
-        } catch (NoSuchCabinClassException | NoSuchAircraftCabinClassException ex) {
+        } catch (NoSuchCabinClassException | NoSuchAircraftCabinClassException | NoSuchAircraftException ex) {
+            System.out.println(ex.getMessage());
         }
         return flightSchCabinClsTicFamBookingClsHelpers;
     }
@@ -287,4 +293,20 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
         }
         return flightScheduleBookingClasses;
     }
+
+    @Override
+    public void verifyTicketFamilyHasBookingClass(TicketFamily ticketFamily, List<SeatClassHelper> seatClassHelpers) throws NeedBookingClassException {
+        if (!seatClassHelpers.isEmpty()) {
+            for (SeatClassHelper seatClassHelper : seatClassHelpers) {
+                if (seatClassHelper.getTicketFamilyName().equals(ticketFamily.getName())) {
+                    if (seatClassHelper.getBookingClasses().isEmpty()) {
+                        throw new NeedBookingClassException(AisMsg.NEED_BOOKING_CLASS_ERROR);
+                    }
+                }
+            }
+        } else {
+            throw new NeedBookingClassException(AisMsg.NEED_BOOKING_CLASS_ERROR);
+        }
+    }
+
 }
