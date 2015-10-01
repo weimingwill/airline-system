@@ -4,18 +4,19 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+      xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu">
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <h:outputStylesheet name="./css/default.css"/>
         <h:outputStylesheet name="./css/cssLayout.css"/>
         <title><ui:insert name="title"></ui:insert></title>
+        <link rel="shortcut icon" type="image/x-icon" href="/MAS-war/resources/images/favicon.ico"/>
     </h:head>
 
     <h:body>
 
-        <ez:CCNavigationMenu id="navigation-menu" />
+        <me:CCNavigationMenu id="navigation-menu" />
         <p:growl id="messages" showDetail="true"/>
         <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
 
@@ -26,7 +27,7 @@
         <!--<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />-->
         <p:layout >
             <p:layoutUnit position="west" size="250" minSize="100" maxSize="400">
-                <ez:CCLeftMenu id="left-menu" />
+                <me:CCLeftMenu id="left-menu" />
             </p:layoutUnit>
 
             <p:layoutUnit position="center">

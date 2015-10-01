@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/ApsTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="form"> 
+            <p:panel id="retired-fleet-panel" header="Obsolete Fleet" style="margin-bottom:20px">
+                <p:messages autoUpdate="true"/>
+                <p:dataTable id="retired-fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="10" selection="#{fleetTableController.selectedAircrafts}" 
+                             paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="10,15" rowKey="#{aircraft.aircraftId}" tableStyle="width:auto; font-size:small">
+                    <p:messages autoUpdate="true"/>
+
+                    <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                    <p:column headerText="Id" sortBy="#{aircraft.aircraftId}">
+                        <h:outputText value="#{aircraft.aircraftId}" />
+                    </p:column>
+
+                    <p:column headerText="Tail Number" sortBy="#{aircraft.tailNo}">
+                        <h:outputText value="#{aircraft.tailNo}" />
+                    </p:column>
+
+                    <p:column headerText="Type Code" sortBy="#{aircraft.aircraftType.typeCode}">
+                        <h:outputText value="#{aircraft.aircraftType.typeCode}" />
+                    </p:column>
+
+                    <p:column headerText="Brand" sortBy="#{aircraft.aircraftType.mfdBy}">
+                        <h:outputText value="#{aircraft.aircraftType.mfdBy}" />
+                    </p:column>
+
+                    <p:column headerText="Source" sortBy="#{aircraft.source}">
+                        <h:outputText value="#{aircraft.source}" />
+                    </p:column>
+
+                    <p:column headerText="Cost (mio USD)" sortBy="#{aircraft.cost}">
+                        <h:outputText value="#{aircraft.cost}" />
+                    </p:column>
+
+                    <p:column headerText="Liftspan (yrs)" sortBy="#{aircraft.lifetime}">
+                        <h:outputText value="#{aircraft.lifetime}" />
+                    </p:column>
+
+                    <p:column headerText="Average Oil Usage (L /psg /100km)" sortBy="#{aircraft.avgUnitOilUsage}">
+                        <h:outputText value="#{aircraft.avgUnitOilUsage}" />
+                    </p:column>
+
+                    <p:column headerText="Status" sortBy="#{aircraft.status}">
+                        <h:outputText value="#{aircraft.status}" />
+                    </p:column>
+
+                    <f:facet name="footer" >
+                        <p:commandButton process="retired-fleet-table" value="View Details" icon="ui-icon-search" />
+                    </f:facet>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

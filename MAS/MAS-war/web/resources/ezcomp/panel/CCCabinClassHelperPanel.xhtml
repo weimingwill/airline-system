@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:panel>
+            <p:panelGrid>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:graphicImage value="/resources/images/aircraft_model/#{fleetController.aircraftModel.typeCode}.png"/> 
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2" styleClass="ui-widget-header">
+                        <p:outputLabel value="Seating Restrictions"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="1">
+                        <p:outputLabel id="typical_seat" value="Typical seating:"/>
+                    </p:column>
+                    <p:column colspan="1">
+                        <p:outputLabel value="#{fleetController.aircraftModel.typicalSeating}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="1">
+                        <p:outputLabel value="Maximum seating:"/>
+                    </p:column>
+                    <p:column colspan="1">
+                        <p:outputLabel value="#{fleetController.aircraftModel.maxSeating}"/>
+                    </p:column>
+                </p:row>
+                <p:row rendered="#{not empty fleetController.selectedModelCabinClassesSet}">
+                    <p:column colspan="2" styleClass="ui-widget-header">
+                        <p:outputLabel value="Used Cabin Class Configuration"/>
+                    </p:column>
+                </p:row>
+                <ui:repeat var="cabinClassList" value="#{fleetController.selectedModelCabinClassesSet}" varStatus="status">
+                    <p:row>
+                        <p:column colspan="2" styleClass="ui-widget-header">
+                            <p:outputLabel value="Configuration #{status.index+1}"/>
+                        </p:column>
+                    </p:row>
+                    <ui:repeat var="cabinClass" value="#{cabinClassList}">
+                        <p:row>
+                            <p:column colspan="1">
+                                <p:outputLabel value="#{cabinClass.name}"/>
+                            </p:column>
+                            <p:column colspan="1">
+                                <p:outputLabel value="#{cabinClass.seatQty}"/>
+                            </p:column>
+                        </p:row>
+                    </ui:repeat>
+                </ui:repeat>
+            </p:panelGrid>
+        </p:panel>
+    </cc:implementation>
+</html>
