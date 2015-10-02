@@ -10,26 +10,40 @@ package ams.ais.helper;
  * @author Bowen
  */
 public class TicketFamilyRuleHelper {
-    private Long id;
-    
+
+    private Long ruleId;
+    private Long ticketFamilyId;
     private String name;
     private double ruleValue;
 
-    public TicketFamilyRuleHelper(Long id,  String name, double ruleValue) {
-        this.id = id;
+    public TicketFamilyRuleHelper(Long ruleId, String name, double ruleValue) {
         this.name = name;
+        this.ruleId = ruleId;
         this.ruleValue = ruleValue;
     }
-    
-    public Long getId() {
-        return id;
+
+    public TicketFamilyRuleHelper(Long ticketFamilyId, Long ruleId, String name, double ruleValue) {
+        this.name = name;
+        this.ticketFamilyId = ticketFamilyId;
+        this.ruleId = ruleId;
+        this.ruleValue = ruleValue;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getTicketFamilyId() {
+        return ticketFamilyId;
     }
 
-   
+    public void setTicketFamilyId(Long ticketFamilyId) {
+        this.ticketFamilyId = ticketFamilyId;
+    }
+
+    public Long getRuleId() {
+        return ruleId;
+    }
+
+    public void setRuleId(Long ruleId) {
+        this.ruleId = ruleId;
+    }
 
     public String getName() {
         return name;
@@ -46,5 +60,5 @@ public class TicketFamilyRuleHelper {
     public void setRuleValue(double ruleValue) {
         this.ruleValue = ruleValue;
     }
-    
+
 }
