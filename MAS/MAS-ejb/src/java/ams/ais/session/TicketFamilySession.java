@@ -69,14 +69,15 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     
     
     @Override
-    public void createTicketFamily(String type, String name, String cabinclassname,List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers) throws ExistSuchTicketFamilyException {
+    public void createTicketFamily(String type, String name, String cabinclassname,List<TicketFamilyRuleHelper> displayRuleList) throws ExistSuchTicketFamilyException {
         verifyTicketFamilyExistence(type, name, cabinclassname);
         TicketFamily ticketFamily = new TicketFamily();
         ticketFamily.create(type, name);
+        System.out.print("The cabinclass name is: "+ cabinclassname);
         ticketFamily.setCabinClass(cabinClassSession.getCabinClassByName(cabinclassname));
         entityManager.persist(ticketFamily);
         entityManager.flush(); 
-        addTicketFamilyRule(ticketFamily, newTicketFamilyRuleHelpers);
+        addTicketFamilyRule(ticketFamily, displayRuleList);
     }
     
     private void addTicketFamilyRule(TicketFamily ticketFamily, List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers){
@@ -84,6 +85,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         List<TicketFamilyRule> ticketFamilyRuleList = new ArrayList(); //too be added at aircraft side
 
         for (TicketFamilyRuleHelper ticketFamilyRuleHelper : newTicketFamilyRuleHelpers) {
+            
             TicketFamilyRule thisTicketFamilyRule = new TicketFamilyRule();
             thisRule = entityManager.find(Rule.class, ticketFamilyRuleHelper.getRuleId());
             // add necessary attributes to aircraftCabinClass object
@@ -92,6 +94,10 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
             thisTicketFamilyRule.setRule(thisRule);
             thisTicketFamilyRule.setRuleId(thisRule.getRuleId());
             thisTicketFamilyRule.setRuleValue((float)ticketFamilyRuleHelper.getRuleValue());
+            
+            System.out.print("this display rule ticketfamily id is:" +ticketFamilyRuleHelper.getTicketFamilyId());
+            System.out.print("this display rule id is: "+ticketFamilyRuleHelper.getRuleId());
+            System.out.print("this display rule value is: "+ticketFamilyRuleHelper.getRuleValue());
             entityManager.persist(thisTicketFamilyRule);
             ticketFamilyRuleList.add(thisTicketFamilyRule);
         }
