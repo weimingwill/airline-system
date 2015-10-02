@@ -22,9 +22,10 @@ public class SeatAllocationHistory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long seatAllocationHistoryId;
-    private int number;
+    private int seatNoBefore;
+    private int seatNoAfter;
     private Date allocateTime;
-    private int modified;
+//  private int modified;
     private FlightScheduleBookingClass flightScheduleBookingClass = new FlightScheduleBookingClass();
 
     public Long getSeatAllocationHistoryId() {
@@ -35,14 +36,23 @@ public class SeatAllocationHistory implements Serializable {
         this.seatAllocationHistoryId = seatAllocationHistoryId;
     }
 
-    public int getNumber() {
-        return number;
+    public int getSeatNoBefore() {
+        return seatNoBefore;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public void setSeatNoBefore(int seatNoBefore) {
+        this.seatNoBefore = seatNoBefore;
     }
 
+    public int getSeatNoAfter() {
+        return seatNoAfter;
+    }
+
+    public void setSeatNoAfter(int seatNoAfter) {
+        this.seatNoAfter = seatNoAfter;
+    }
+    
+    
     public Date getAllocateTime() {
         return allocateTime;
     }
@@ -51,13 +61,13 @@ public class SeatAllocationHistory implements Serializable {
         this.allocateTime = allocateTime;
     }
 
-    public int getModified() {
-        return modified;
-    }
-
-    public void setModified(int modified) {
-        this.modified = modified;
-    }
+//    public int getModified() {
+//        return modified;
+//    }
+//
+//    public void setModified(int modified) {
+//        this.modified = modified;
+//    }
 
     public FlightScheduleBookingClass getFlightScheduleBookingClass() {
         return flightScheduleBookingClass;

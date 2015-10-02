@@ -47,6 +47,12 @@ public class FlightScheduleBookingClass implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightScheduleBookingClass")
     @Column(name = "SEATALLOCATIONHISTORY")
     private List<SeatAllocationHistory> seatAllocationHistory = new ArrayList<>();
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightScheduleBookingClass")
+    @Column(name = "PHASEDEMAND")
+    private List<PhaseDemand> phaseDemands = new ArrayList<PhaseDemand>();
+    
+    
 
 
     @Column(name = "SEATQTY")
@@ -143,7 +149,13 @@ public class FlightScheduleBookingClass implements Serializable {
     public void setSeatAllocationHistory(List<SeatAllocationHistory> seatAllocationHistory) {
         this.seatAllocationHistory = seatAllocationHistory;
     }
-    
-    
+
+    public List<PhaseDemand> getPhaseDemands() {
+        return phaseDemands;
+    }
+
+    public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
+        this.phaseDemands = phaseDemands;
+    }  
     
 }

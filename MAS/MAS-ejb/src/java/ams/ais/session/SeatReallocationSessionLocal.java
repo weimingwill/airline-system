@@ -7,7 +7,10 @@ package ams.ais.session;
 
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.NormalDistribution;
+import ams.ais.entity.PhaseDemand;
 import ams.ais.entity.SeatAllocationHistory;
+import ams.ais.util.exception.ExistSuchCheckPointException;
+import ams.ais.util.exception.NoSuchPhaseDemandException;
 import java.sql.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -19,10 +22,18 @@ import javax.ejb.Local;
 @Local
 public interface SeatReallocationSessionLocal {
     
-    public void reallocateSeats();
+//    public void reallocateSeats();
     public List<SeatAllocationHistory> getAllReallocationHitorys();
-    public void yieldManagement (List<Integer> checkpoints);
+    public void yieldManagement ();
     public List<FlightScheduleBookingClass> getAllFlightScheduleBookingClasses();
     public List<NormalDistribution> getAllNormalDistributions();
+    public void reallocateBookingClassSeats (FlightScheduleBookingClass f, float demandMean, float demandDev);
+    public List<PhaseDemand> getAllPhaseDemands();
+    public void addPhaseDemand(FlightScheduleBookingClass f, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException;
+    public void deletePhaseDemand(int daysBeforeDeparture) throws NoSuchPhaseDemandException;
+    public PhaseDemand searchPhaseDemand(int daysBeforeDeparture) throws NoSuchPhaseDemandException;
+    public void validatePhaseDemand(int daysBeforeDeparture, FlightScheduleBookingClass f) throws ExistSuchCheckPointException;
+    
+
     
 }
