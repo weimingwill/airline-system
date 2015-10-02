@@ -38,34 +38,18 @@
                                 <h:outputText id = "selectlist" value="#{ticketFamilyController.cabinclassname}" />
                             </p:column>
                         </p:selectOneListbox>
-
-
                     </p:column>
                 </h:panelGroup>
-                
-                
+
+
                 <p:outputLabel value="Update value for each rule:" />
                 <h:panelGrid columns="2" columnClasses="label, value">
-                <c:forEach var="ticketFamilyRule" items="#{ticketFamilyController.getAvailableRules()}">
-                    <p:outputLabel value="Input value for #{ticketFamilyRule.name}:"/>
-                    <h:inputText required="true" requiredMessage="Please input rule value" id="#{ticketFamilyRule.name}" value="#{ticketFamilyRule.ruleValue}"/>
-                    
-                </c:forEach>
+                    <c:forEach var="ticketFamilyRule" items="#{ticketFamilyController.displayRuleList}">
+                        <p:outputLabel value="Input value for #{ticketFamilyRule.name}:"/>
+                        <p:inputText required="true" requiredMessage="Please input rule value" value="#{ticketFamilyRule.ruleValue}"/>
+                    </c:forEach>
                 </h:panelGrid>
 
-
-<!--                <p:selectManyMenu id="assignTicketFamilyRules-ruleList" value="#{ticketFamilyController.ruleList}" converter="ruleConverter"
-                                  var="rule" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:400px;">
-                    <f:selectItems value="#{ruleController.allRule}" var="rule" itemLabel="#{rule.name}" itemValue="#{rule}"/>
-
-                    <p:column>
-                        <h:outputText value="#{rule.name}"  />
-                    </p:column>
-                    <p:column>
-                        <p:inputText required="true" requiredMessage="Please enter rule value" id="rulevalue" value="#{ticketFamilyController.ruleValue}"/>
-                    </p:column>
-
-                </p:selectManyMenu>-->
                 <p:commandButton action="#{ticketFamilyController.createTicketFamily()}" value="Create" update="messages"/> 
             </h:form>
         </p:panel>
