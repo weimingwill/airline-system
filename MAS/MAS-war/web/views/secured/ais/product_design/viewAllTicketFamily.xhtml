@@ -3,46 +3,72 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/AisTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <ui:define name="title">
         View All Ticket Family
     </ui:define>
 
     <ui:define name="content">
-        <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily">
+        <h:form>
+            <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily">
 
-            <p:column headerText="Cabin Class">
-                <p:outputLabel value="#{ticketfamily.getCabinClass().name}" />
-            </p:column>
-            <p:column headerText="Ticket Family Type">
-                <p:outputLabel value="#{ticketfamily.type}"/>
-            </p:column>
+                <p:column headerText="Cabin Class">
+                    <p:outputLabel value="#{ticketfamily.getCabinClass().name}" />
+                </p:column>
+                <p:column headerText="Ticket Family Type">
+                    <p:outputLabel value="#{ticketfamily.type}"/>
+                </p:column>
 
-            <p:column headerText="Ticket Family Name">
-                <p:outputLabel value="#{ticketfamily.name}" />
-            </p:column>
+                <p:column headerText="Ticket Family Name">
+                    <p:outputLabel value="#{ticketfamily.name}" />
+                </p:column>
 
-            <p:column headerText="Rule">
-
-                    <p:dataTable value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(ticketfamily.ticketFamilyId)}" var="rule">
-                        
-                            <p:column>
-                                <p:outputLabel value="#{rule.rule.name}" />
-                            </p:column>
-                            <p:column>
-                                <p:outputLabel value="#{rule.ruleValue}" />
-                            </p:column>
-                       
+                <p:column headerText="Rule">
+                    <p:dataTable value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(ticketfamily.ticketFamilyId)}" var="ticketfamilyrule">
+                        <p:column>
+                            <p:outputLabel value="#{ticketfamilyrule.rule.name}" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{ticketfamilyrule.ruleValue}" >
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
+                        </p:column>
                     </p:dataTable>  
+                </p:column>
 
-            </p:column>
+                <p:column headerText="Edit Rule Values" style="width:32px;text-align: center">
+                    <p:commandButton update="ruleDialog" action="#{ticketFamilyController.onEditBtnCick}" oncomplete="PF('ruleDialog').show()" icon="ui-icon-pencil">
+                        <f:setPropertyActionListener value="#{ticketfamily}" target="#{ticketFamilyController.selectedTicketFamily}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
 
-
-
-        </p:dataTable>
-
-        <p:commandButton value="Edit" action="#{navigationController.redirectToEditTicketFamily()}"  />
+        <p:dialog id="ruleDialog" header="Edit Rules for #{ticketFamilyController.selectedTicketFamily.cabinClass.name}: #{ticketFamilyController.selectedTicketFamily.name}" widgetVar="ruleDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form>
+                <p:panel id="ruleDetail">
+                    <p:panelGrid>
+                        <ui:repeat var="ticketFamilyRuleHelper" value="#{ticketFamilyController.ticketFamilyRuleHelpers}" varStatus="status">
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{ticketFamilyRuleHelper.name}" />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{ticketFamilyRuleHelper.ruleValue}" >
+                                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                    </p:inputText>
+                                </p:column>
+                            </p:row>
+                        </ui:repeat>
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton value="Submit" action="#{navigationController.redirectToViewAllTicketFamily()}" actionListener="#{ticketFamilyController.editRuleValues()}" oncomplete="PF('ruleDialog').hide()"/>
+            </h:form>
+        </p:dialog>
+        <!--<p:commandButton value="Edit" action="#{navigationController.redirectToEditTicketFamily()}"  />-->
     </ui:define>
 
 </ui:composition>
