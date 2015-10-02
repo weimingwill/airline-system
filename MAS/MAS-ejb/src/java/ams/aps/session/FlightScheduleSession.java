@@ -33,6 +33,7 @@ import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
+import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.ApsMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,8 +105,10 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
 
     @Override
     public Aircraft getFlightScheduleAircraft(Long id) throws NoSuchAircraftException {
-        Query query = entityManager.createQuery("SELECT a FROM FlightSchedule f, Aircraft a WHERE f.flightScheduleId = :inId and f.aircraft.aircraftId = a.aircraftId and a.status <> 'Retired'");
+        Query query = entityManager.createQuery("SELECT a FROM FlightSchedule f, Aircraft a WHERE f.flightScheduleId = :inId and f.aircraft.aircraftId = a.aircraftId and a.status <> :inRetired and a.status <> :inCrashed");
         query.setParameter("inId", id);
+        query.setParameter("inCrashed", AircraftStatus.CRASHED);
+        query.setParameter("inRetired", AircraftStatus.RETIRED);
         Aircraft aircraft = null;
         try {
             aircraft = (Aircraft) query.getSingleResult();

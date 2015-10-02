@@ -35,7 +35,7 @@ public class Aircraft implements Serializable {
     private Float cost;
     private Date addOnDate;
     private Float avgUnitOilUsage;
-    private boolean isScheduled;
+//    private boolean isScheduled;
     
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraft")
     private List<AircraftCabinClass> aircraftCabinClasses = new ArrayList<>();
@@ -208,13 +208,13 @@ public class Aircraft implements Serializable {
         this.flightSchedules = flightSchedules;
     }
 
-    public boolean isIsScheduled() {
-        return isScheduled;
-    }
-
-    public void setIsScheduled(boolean isScheduled) {
-        this.isScheduled = isScheduled;
-    }
+//    public boolean isIsScheduled() {
+//        return isScheduled;
+//    }
+//
+//    public void setIsScheduled(boolean isScheduled) {
+//        this.isScheduled = isScheduled;
+//    }
 
     
 }

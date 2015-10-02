@@ -280,4 +280,10 @@ public class NavigationController implements Serializable {
     public String redirectToSeatAllocation(){
         return "/views/secured/ais/booking_class/seatAllocation.xhtml" + REDIRECT;
     }
+   
+    public String redirectToProductDesign(){
+        return "/views/secured/ais/product_design/productDesign.xhtml" + REDIRECT;
+    }
+
+   
 }

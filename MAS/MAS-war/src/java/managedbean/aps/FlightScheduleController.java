@@ -93,7 +93,7 @@ public class FlightScheduleController implements Serializable {
                         //initialize flightScheduleBookingClassHelpers if fligtSchedule have booking classes
                         List<TicketFamily> ticketFamilys = new ArrayList<>();
                         try {
-                            ticketFamilys = cabinClassSession.getCabinClassTicketFamilyFromCTJoinTable(aircraft.getAircraftId(), cabinClass.getCabinClassId());
+                            ticketFamilys = cabinClassSession.getCabinClassTicketFamilysFromJoinTable(aircraft.getAircraftId(), cabinClass.getCabinClassId());
                         } catch (NoSuchTicketFamilyException e) {
                             msgController.addErrorMessage(e.getMessage());
                         }

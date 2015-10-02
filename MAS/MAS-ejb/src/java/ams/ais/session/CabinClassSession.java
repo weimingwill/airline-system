@@ -10,13 +10,13 @@ import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
-import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
-import ams.ais.util.helper.TicketFamilyBookingClassHelper;
-import ams.aps.helper.AircraftCabinClassId;
+import ams.ais.util.helper.CabinClassTicketFamilyHelper;
+import ams.aps.session.AircraftSessionLocal;
+import ams.aps.util.helper.AircraftCabinClassHelper;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -36,6 +36,8 @@ public class CabinClassSession implements CabinClassSessionLocal {
 
     @EJB
     private TicketFamilySessionLocal ticketFamilySession;
+    @EJB
+    private AircraftSessionLocal aircraftSession;
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
@@ -86,7 +88,7 @@ public class CabinClassSession implements CabinClassSessionLocal {
     }
 
     @Override
-    public CabinClass getCabinClassByName(String name) throws NoSuchCabinClassException{
+    public CabinClass getCabinClassByName(String name) throws NoSuchCabinClassException {
         Query query = entityManager.createQuery("SELECT c FROM CabinClass c WHERE c.name = :inCabinClassName and c.deleted = FALSE");
         query.setParameter("inCabinClassName", name);
         CabinClass cabinclass = null;
@@ -165,9 +167,9 @@ public class CabinClassSession implements CabinClassSessionLocal {
 
     @Override
     public List<TicketFamily> getCabinClassTicketFamilys(String type) throws NoSuchTicketFamilyException {
-       Query query = entityManager.createQuery("SELECT t FROM CabinClass c, TicketFamily t WHERE c.type = :inType and c.cabinClassId = t.cabinClass.cabinClassId and c.deleted = FALSE and t.deleted = FALSE");
-       query.setParameter("inType", type);
-       List<TicketFamily> ticketFamilys = new ArrayList<>();
+        Query query = entityManager.createQuery("SELECT t FROM CabinClass c, TicketFamily t WHERE c.type = :inType and c.cabinClassId = t.cabinClass.cabinClassId and c.deleted = FALSE and t.deleted = FALSE");
+        query.setParameter("inType", type);
+        List<TicketFamily> ticketFamilys = new ArrayList<>();
         try {
             ticketFamilys = query.getResultList();
         } catch (NoResultException e) {
@@ -176,11 +178,11 @@ public class CabinClassSession implements CabinClassSessionLocal {
         return ticketFamilys;
     }
 
-        @Override
+    @Override
     public List<TicketFamily> getCabinClassTicketFamilysByName(String name) throws NoSuchTicketFamilyException {
-       Query query = entityManager.createQuery("SELECT t FROM CabinClass c, TicketFamily t WHERE c.name = :inName and c.cabinClassId = t.cabinClass.cabinClassId and c.deleted = FALSE and t.deleted = FALSE");
-       query.setParameter("inName", name);
-       List<TicketFamily> ticketFamilys = new ArrayList<>();
+        Query query = entityManager.createQuery("SELECT t FROM CabinClass c, TicketFamily t WHERE c.name = :inName and c.cabinClassId = t.cabinClass.cabinClassId and c.deleted = FALSE and t.deleted = FALSE");
+        query.setParameter("inName", name);
+        List<TicketFamily> ticketFamilys = new ArrayList<>();
         try {
             ticketFamilys = query.getResultList();
         } catch (NoResultException e) {
@@ -189,7 +191,6 @@ public class CabinClassSession implements CabinClassSessionLocal {
         return ticketFamilys;
     }
 
-    
     @Override
     public List<String> getCabinClassTicketFamilyNames(String type) {
         List<String> ticketFamilyNames = new ArrayList<>();
@@ -218,15 +219,14 @@ public class CabinClassSession implements CabinClassSessionLocal {
 //        }
 //        return ticketFamilyBookingClassHelpers;
 //    }
-
     @Override
-    public List<TicketFamily> getCabinClassTicketFamilyFromCTJoinTable(Long aircraftId, Long cabinClassId) throws NoSuchTicketFamilyException {
+    public List<TicketFamily> getCabinClassTicketFamilysFromJoinTable(Long aircraftId, Long cabinClassId) throws NoSuchTicketFamilyException {
         Query query = entityManager.createQuery("SELECT ct FROM CabinClassTicketFamily ct WHERE ct.aircraftCabinClass.aircraftId = :inAircraftId and ct.aircraftCabinClass.cabinClassId = :inCabinClassId and ct.aircraftCabinClass.cabinClass.deleted = FALSE and ct.ticketFamily.deleted = FALSE");
         query.setParameter("inAircraftId", aircraftId);
         query.setParameter("inCabinClassId", cabinClassId);
         List<TicketFamily> ticketFamilys = new ArrayList<>();
         try {
-            for (CabinClassTicketFamily cabinClassTicketFamily : SafeHelper.emptyIfNull((List<CabinClassTicketFamily>)query.getResultList())){
+            for (CabinClassTicketFamily cabinClassTicketFamily : SafeHelper.emptyIfNull((List<CabinClassTicketFamily>) query.getResultList())) {
                 ticketFamilys.add(cabinClassTicketFamily.getTicketFamily());
             }
         } catch (NoResultException e) {
@@ -246,13 +246,13 @@ public class CabinClassSession implements CabinClassSessionLocal {
         query.setParameter("inTicketFamilyId", ticketFamilyId);
         CabinClassTicketFamily cabinClassTicketFamily = null;
         try {
-            cabinClassTicketFamily = (CabinClassTicketFamily)query.getSingleResult();
+            cabinClassTicketFamily = (CabinClassTicketFamily) query.getSingleResult();
         } catch (NoResultException e) {
             throw new NoSuchCabinClassTicketFamilyException(AisMsg.NO_SUCH_CABINCLASS_TICKETFAMILY_ERROR);
         }
         return cabinClassTicketFamily;
     }
-    
+
 //    @Override
 //    public List<CabinClassTicketFamily> getCabinClassTicketFamilyJoinTables(AircraftCabinClassId aircraftCabinClassId) throws NoSuchCabinClassTicketFamilyException {
 //        Query query = entityManager.createQuery("SELECT ct FROM CabinClassTicketFamily ct WHERE ct.cabinClassTicketFamilyId.aircraftCabinClassId = :inId "
@@ -268,7 +268,6 @@ public class CabinClassSession implements CabinClassSessionLocal {
 //        }
 //        return cabinClassTicketFamilys;
 //    }
-    
     @Override
     public List<CabinClassTicketFamily> getCabinClassTicketFamilyJoinTables(Long aircraftId, Long cabinClassId) throws NoSuchCabinClassTicketFamilyException {
         Query query = entityManager.createQuery("SELECT ct FROM CabinClassTicketFamily ct WHERE ct.aircraftCabinClass.aircraftId = :inAircraftId "
@@ -277,13 +276,27 @@ public class CabinClassSession implements CabinClassSessionLocal {
         query.setParameter("inCabinClassId", cabinClassId);
         List<CabinClassTicketFamily> cabinClassTicketFamilys = null;
         try {
-            cabinClassTicketFamilys = (List<CabinClassTicketFamily>)query.getResultList();
+            cabinClassTicketFamilys = (List<CabinClassTicketFamily>) query.getResultList();
             System.out.println("CabinClassTicketFamily in function: " + cabinClassTicketFamilys);
         } catch (NoResultException e) {
             throw new NoSuchCabinClassTicketFamilyException(AisMsg.NO_SUCH_CABINCLASS_TICKETFAMILY_ERROR);
         }
         return cabinClassTicketFamilys;
     }
-    
-    
+
+    @Override
+    public List<CabinClassTicketFamilyHelper> getCabinClassTicketFamilyHelpers(Long aircraftId) throws NoSuchCabinClassException, NoSuchTicketFamilyException{
+        List<CabinClassTicketFamilyHelper> helpers = new ArrayList<>();
+        for (CabinClass cabinClass : aircraftSession.getAircraftCabinClasses(aircraftId)) {
+            CabinClassTicketFamilyHelper helper = new CabinClassTicketFamilyHelper();
+            List<TicketFamily> ticketFamilys = getCabinClassTicketFamilysFromJoinTable(aircraftId, cabinClass.getCabinClassId());
+            if (ticketFamilys.isEmpty()) {
+                helper.setHaveTicketFamily(false);
+            }
+            helper.setCabinClass(cabinClass);
+            helper.setTicketFamilys(ticketFamilys);
+            helpers.add(helper);
+        }
+        return helpers;
+    }
 }

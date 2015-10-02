@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/AisTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="title">
+        Product Design
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <p:panel id="productDesign" header="Product Design" style="width: 700px; margin-bottom:20px">
+                <p:panelGrid columns="2">
+                    <p:panel id="ticketFamilySelection" header="Select Aircraft and Ticket Family">
+                        <p:panelGrid columns="2" style="margin-bottom: 10px;">
+                            <p:outputLabel for="selectAircraft" value="Select Aircraft: " />
+                            <p:selectOneMenu id="selectAircraft" value="#{ticketFamilyController.selectedAircraft}" converter="aircraftConverter" panelStyle="width:180px"
+                                             effect="fade" var="aircraft" style="width:160px" filter="true" filterMatchMode="startsWith">
+                                <p:ajax listener="#{ticketFamilyController.onAircraftChange()}" update="selectTicketFamily" />
+                                <f:selectItems value="#{ticketFamilyController.scheduledAircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}" itemValue="#{aircraft}" />
+                                <p:column>
+                                    <h:outputText value="#{aircraft.aircraftType.typeCode}" />
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="#{aircraft.tailNo}" />
+                                </p:column>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+
+                        <p:panel id="selectTicketFamily" header="Select Ticket Family">
+                            <c:forEach items="#{ticketFamilyController.cabinClassTicketFamilyHelpers}" var="ctf">
+                                <c:if test="#{not ctf.haveTicketFamily}" >
+                                    <p:row>
+                                        <p:column>#{ctf.cabinClass.name} Class</p:column>
+                                        <p:column>
+                                            <p:selectManyMenu value="#{ctf.ticketFamilys}" converter="ticketFamilyConverter"
+                                                              var="ticketFamily" showCheckbox="true" style="width:200px;">
+                                                <f:selectItems value="#{cabinClassController.getCabinClassTicketFamilys(ctf.cabinClass.type)}" var="ticketFamily" itemLabel="#{ticketFamily.name}" itemValue="#{ticketFamily}"/>
+                                                <p:column>
+                                                    <h:outputText value="#{ticketFamily.name}"  />
+                                                </p:column>
+                                            </p:selectManyMenu>
+                                        </p:column>
+                                    </p:row>
+                                </c:if>
+                            </c:forEach>
+                        </p:panel>
+                    </p:panel>
+
+                    <p:panel id="ticketFamilyRule" header="Ticket Family Rules">
+                    </p:panel>
+                </p:panelGrid>
+                <p:commandButton value="Save" action="#{ticketFamilyController.assignAircraftTicketFamily()}" update="messages" />
+        </p:panel>
+
+
+    </h:form>        
+</ui:define>
+
+</ui:composition>

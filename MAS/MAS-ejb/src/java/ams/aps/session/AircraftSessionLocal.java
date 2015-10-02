@@ -7,6 +7,7 @@ package ams.aps.session;
 
 import ams.ais.entity.CabinClass;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
@@ -21,4 +22,7 @@ import javax.ejb.Local;
 public interface AircraftSessionLocal {
 //    public List<CabinClass> getAircraftCabinClasses(Long id) throws NoSuchCabinClassException, NoSuchAircraftException;
     public AircraftCabinClass getAircraftCabinClassById(Long aircraftId, Long cabinCalssId) throws NoSuchAircraftCabinClassException;
+    public Aircraft getAircraftById(Long id) throws NoSuchAircraftException;
+    public List<Aircraft> getScheduledAircrafts() throws NoSuchAircraftException;
+    public List<CabinClass> getAircraftCabinClasses(Long aircraftId) throws NoSuchCabinClassException;
 }
