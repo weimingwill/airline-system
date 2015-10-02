@@ -85,7 +85,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
 
         for (TicketFamilyRuleHelper ticketFamilyRuleHelper : newTicketFamilyRuleHelpers) {
             TicketFamilyRule thisTicketFamilyRule = new TicketFamilyRule();
-            thisRule = entityManager.find(Rule.class, ticketFamilyRuleHelper.getId());
+            thisRule = entityManager.find(Rule.class, ticketFamilyRuleHelper.getRuleId());
             // add necessary attributes to aircraftCabinClass object
             thisTicketFamilyRule.setTicketFamily(ticketFamily);
             thisTicketFamilyRule.setTicketFamilyId(ticketFamily.getTicketFamilyId());
@@ -219,6 +219,30 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         return rules;
     }
     
+    
+    @Override
+    public void updateTicketFamilyRuleVlaue(TicketFamilyRule ticketFamilyRule){
+        TicketFamilyRule thisTicketFamilyRule = getTicketFamilyRuleByTwoId(ticketFamilyRule.getTicketFamilyId(),ticketFamilyRule.getRuleId());
+        thisTicketFamilyRule.setRuleValue(ticketFamilyRule.getRuleValue());
+        entityManager.merge(thisTicketFamilyRule);
+        entityManager.flush();
+        
+    }
+   
+    public TicketFamilyRule getTicketFamilyRuleByTwoId(long ticketFamilyId, long ruleId){
+        
+        Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId AND u.ruleId = :inruleId");
+        query.setParameter("inticketFamilyId", ticketFamilyId);
+        query.setParameter("inruleId",ruleId);
+        TicketFamilyRule tfr = null;
+        try {
+            tfr = (TicketFamilyRule) query.getSingleResult();
+        } catch (NoResultException ex) {
+            tfr = null;
+        }
+        return tfr;
+    }
+    
 //    private boolean addTicketFamilyRule(TicketFamily newTicketFamily, List<TicketFamilyRuleHelper> newAircraftCabinClassHelpers) {
 //        CabinClass thisCabinClass;
 //        List<AircraftCabinClass> aircraftCabinClassList = new ArrayList(); //too be added at aircraft side
@@ -240,4 +264,30 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
 //        entityManager.flush();
 //        return true;
 //    }
+
+    @Override
+    public List<TicketFamilyRule> getTicketFamilyRuleByTicketFamilyId(long ticketFamilyId) {
+        Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId");
+        query.setParameter("inticketFamilyId", ticketFamilyId);
+        List<TicketFamilyRule> ticketFamilyRules = null;
+        
+        
+            ticketFamilyRules = (List<TicketFamilyRule>) query.getResultList();
+           
+        
+        return ticketFamilyRules;
+    }
+
+    @Override
+    public TicketFamilyRule getTicketFamilyRuleByTicketFamilyType(String ticketFamilyType) {
+       Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.type = :inticketFamilyType");
+        query.setParameter("inticketFamilyType", ticketFamilyType);
+        TicketFamilyRule ticketFamilyRule = null;
+       
+        
+            ticketFamilyRule = (TicketFamilyRule) query.getSingleResult();
+           
+        
+        return ticketFamilyRule;
+    }
 }

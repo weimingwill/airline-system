@@ -9,6 +9,7 @@ import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.Rule;
 import ams.ais.entity.TicketFamily;
+import ams.ais.entity.TicketFamilyRule;
 import ams.ais.helper.TicketFamilyRuleHelper;
 import ams.ais.util.exception.ExistSuchTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
@@ -25,8 +26,8 @@ import javax.ejb.Local;
 public interface TicketFamilySessionLocal {
     public List<TicketFamily> getAllTicketFamily();
     public List<CabinClass> getAllCabinClass();
-    public TicketFamily getTicketFamilyByName (String ticketFamilyName);
-    public TicketFamily getTicketFamilyByTypeAndCabinClass (String ticketFamilyType,String cabinClassName);
+    public TicketFamily getTicketFamilyByName(String ticketFamilyName);
+    public TicketFamily getTicketFamilyByTypeAndCabinClass(String ticketFamilyType,String cabinClassName);
     public void createTicketFamily(String type, String name, String cabinclassname,List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers) throws ExistSuchTicketFamilyException;
     public void verifyTicketFamilyExistence(String type, String name,String cabinclass) throws ExistSuchTicketFamilyException;
     public void deleteTicketFamily(String type, String cabinClassName) throws NoSuchTicketFamilyException;
@@ -35,4 +36,7 @@ public interface TicketFamilySessionLocal {
     public List<TicketFamily> getAllOtherTicketFamilyByTypeAndCabinClass(String type, String cabinclassname);
     public List<BookingClass> getTicketFamilyBookingClass(String name) throws NoSuchBookingClassException;
     public List<Rule> getAllRules() throws EmptyTableException;
+    public List<TicketFamilyRule> getTicketFamilyRuleByTicketFamilyId(long ticketFamilyId);
+    public TicketFamilyRule getTicketFamilyRuleByTicketFamilyType(String ticketFamilyType);
+    public void updateTicketFamilyRuleVlaue(TicketFamilyRule ticketFamilyRule);
 }
