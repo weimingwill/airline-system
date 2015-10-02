@@ -46,7 +46,7 @@
                 
                 <p:outputLabel value="Update value for each rule:" />
                 <h:panelGrid columns="2" columnClasses="label, value">
-                <c:forEach var="ticketFamilyRule" items="#{ticketFamilyController.ticketFamilyRuleHelpers}">
+                <c:forEach var="ticketFamilyRule" items="#{ticketFamilyController.getAvailableRules()}">
                     <p:outputLabel value="Input value for #{ticketFamilyRule.name}:"/>
                     <h:inputText required="true" requiredMessage="Please input rule value" id="#{ticketFamilyRule.name}" value="#{ticketFamilyRule.ruleValue}"/>
                     
