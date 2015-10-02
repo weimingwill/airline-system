@@ -44,6 +44,9 @@
                         <f:setPropertyActionListener value="#{ticketfamily}" target="#{ticketFamilyController.selectedTicketFamily}" />
                     </p:commandButton>
                 </p:column>
+                <f:facet name="footer">
+                    <p:commandButton value="Edit" action="#{navigationController.redirectToEditTicketFamily()}"  />
+                </f:facet>
             </p:dataTable>
         </h:form>
 
@@ -68,7 +71,7 @@
                 <p:commandButton value="Submit" action="#{navigationController.redirectToViewAllTicketFamily()}" actionListener="#{ticketFamilyController.editRuleValues()}" oncomplete="PF('ruleDialog').hide()"/>
             </h:form>
         </p:dialog>
-        <!--<p:commandButton value="Edit" action="#{navigationController.redirectToEditTicketFamily()}"  />-->
+
     </ui:define>
 
 </ui:composition>
