@@ -81,7 +81,7 @@ public class CabinClassSession implements CabinClassSessionLocal {
 
     @Override
     public CabinClass getCabinClassByName(String name) {
-        Query query = entityManager.createQuery("SELECT c FROM CabinClass c WHERE c.name = :inCabinClassName");
+        Query query = entityManager.createQuery("SELECT c FROM CabinClass c WHERE c.name = :inCabinClassName AND c.deleted = FALSE");
         query.setParameter("inCabinClassName", name);
         CabinClass cabinclass = null;
         try {
