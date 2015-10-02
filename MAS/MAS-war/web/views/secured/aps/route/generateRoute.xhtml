@@ -51,6 +51,7 @@
 
                 <f:facet name="footer">
                     <p:commandButton value="Add Routes" type="submit" update=":myForm:confirmDlg"  oncomplete="PF('confirmDlg').show();" />
+                    <p:commandButton value="Customize Routes" type="submit" action = "#{navigationController.toCustomizeRoute}"/>
                 </f:facet>
             </p:dataTable>
 

@@ -48,6 +48,8 @@ public interface RoutePlanningSessionLocal {
     public List<Route> getRoutesByOD(Airport ori, Airport dest);
 
     public boolean cancelHub(String icaoCode);
+    
+    public boolean checkHub(String icaoCode);
 
     public boolean addHub(String icaoCode);
     

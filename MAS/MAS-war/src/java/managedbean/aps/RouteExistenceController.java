@@ -33,6 +33,9 @@ public class RouteExistenceController implements Serializable {
 
     @Inject
     RouteController routeController;
+    
+    @Inject
+    RoutePlanningController routePlanningController;
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
@@ -76,6 +79,7 @@ public class RouteExistenceController implements Serializable {
         Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         map.put("origin", origin);
         map.put("destination", destination);
+        routePlanningController.odPass();
     }
 
     /**

@@ -14,12 +14,12 @@ import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.helper.RouteDisplayHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
@@ -29,7 +29,7 @@ import managedbean.application.MsgController;
  * @author ChuningLiu
  */
 @Named(value = "routeController")
-@SessionScoped
+@ViewScoped
 public class RouteController implements Serializable {
 
     @Inject
@@ -68,14 +68,6 @@ public class RouteController implements Serializable {
     public RouteController() {
     }
 
-    @PostConstruct
-    public void init() {
-        countries = (List<Country>) routePlanningSession.getCountryList();
-        hubs = (List<Airport>) routePlanningSession.getHubs();
-        viewRoutes();
-        viewObsoleteRoutes();
-    }
-
     public Country getCountryByCode(String isoCode) {
         return routePlanningSession.getCountryByCode(isoCode);
     }
@@ -96,21 +88,21 @@ public class RouteController implements Serializable {
         System.out.println("RouteController: addHub()");
         if (routePlanningSession.addHub(airport.getIcaoCode())) {
             msgController.addMessage("Add a hub successfully!");
-            cleanGlobalVariable();
         } else {
             msgController.addErrorMessage("Failed to add hub!");
-            cleanGlobalVariable();
         }
     }
 
     public void cancelHub(ActionEvent event) {
         System.out.println("RouteController: cancelHub()");
-        if (routePlanningSession.cancelHub(hub.getIcaoCode())) {
-            msgController.addMessage("Cancel a hub successfully!");
-            cleanGlobalVariable();
+        if (routePlanningSession.checkHub(hub.getIcaoCode())) {
+            if (routePlanningSession.cancelHub(hub.getIcaoCode())) {
+                msgController.addMessage("Cancel a hub successfully!");
+            } else {
+                msgController.addErrorMessage("Failed to cancel hub!");
+            }
         } else {
-            msgController.addErrorMessage("Failed to cancel hub!");
-            cleanGlobalVariable();
+            msgController.addErrorMessage("Hub is in operation, cannot be cancelled!");
         }
     }
 
@@ -118,7 +110,7 @@ public class RouteController implements Serializable {
         setCities((List<City>) routePlanningSession.getCityListByCountry(country.getIsoCode()));
         city = null;
         airport = null;
-        airportsNotHub = new ArrayList<Airport>();
+        airportsNotHub = new ArrayList();
     }
 
     public void onCityChange() {
@@ -147,7 +139,7 @@ public class RouteController implements Serializable {
     }
 
     public void addRouteSimple(ActionEvent event) {
-        List<Airport> allStops = new ArrayList<Airport>();
+        List<Airport> allStops = new ArrayList();
         allStops.add(hub);
         if (stopover != null) {
             allStops.add(stopover);
@@ -155,17 +147,13 @@ public class RouteController implements Serializable {
         allStops.add(destination);
         if (routePlanningSession.checkRouteExistence(allStops) != null) {
             msgController.addErrorMessage("Route exists already!");
-            cleanGlobalVariable();
         } else {
             if (routePlanningSession.addRoute(allStops)) {
                 msgController.addMessage("Add route and return route successfully!");
-                cleanGlobalVariable();
             } else {
                 msgController.addErrorMessage("Fail to add route!");
-                cleanGlobalVariable();
             }
         }
-        viewRoutes();
     }
 
     public void deleteRoute(ActionEvent event) {
@@ -174,59 +162,63 @@ public class RouteController implements Serializable {
             if (!routePlanningSession.softDeleteRoute(r.getId())) {
                 deleted = false;
                 msgController.addErrorMessage("Fail to delete routes and return routes!");
-                cleanGlobalVariable();
+//                cleanGlobalVariable();
                 break;
             }
         }
         if (deleted) {
             msgController.addMessage("Routes and return routes deleted successfully!");
-            cleanGlobalVariable();
         }
-        viewRoutes();
-        viewObsoleteRoutes();
     }
 
-    public void viewRoutes() {
+    public List<RouteDisplayHelper> viewRoutes() {
         setRouteList(routePlanningSession.getAllRoutes());
         setRouteDisplayList(new ArrayList());
         createRouteDisplayHelpers(routeList, routeDisplayList);
+        return routeDisplayList;
     }
 
-    public void viewObsoleteRoutes() {
+    public List<RouteDisplayHelper> viewObsoleteRoutes() {
         List<Route> obRouteList = routePlanningSession.getAllObsoleteRoutes();
         setObsRouteDisplayList(new ArrayList());
         createRouteDisplayHelpers(obRouteList, obsRouteDisplayList);
+        return obsRouteDisplayList;
     }
 
     public void createRouteDisplayHelpers(List<Route> routeList, List<RouteDisplayHelper> displayHelperList) {
         for (Route thisRoute : routeList) {
             RouteDisplayHelper routeDisplayHelper = new RouteDisplayHelper();
             String legString = "";
+            Dictionary legAirports = new Hashtable();
+            int numOfLegs = thisRoute.getRouteLegs().size();
+
             routeDisplayHelper.setId(thisRoute.getRouteId());
 
-            List<String> legAirports = new ArrayList();
             System.out.println("Route Controller: viewRoutes(): thisRoute = " + thisRoute.getRouteId());
             for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
-                System.out.println("Route Controller: viewRoutes(): FROM - TO (" + thisRouteLeg.getLegSeq() + "): " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                if (thisRoute.getRouteLegs().size() == 1) {
+                int legSeq = thisRouteLeg.getLegSeq();
+
+                System.out.println("Route Controller: viewRoutes(): FROM - TO (" + legSeq + "): " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
+                if (numOfLegs == 1) {
                     routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
                     routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
                 } else {
-                    if (thisRouteLeg.getLegSeq() == 0) {
+                    if (legSeq == 0) {
                         routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                    } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
-                        legAirports.add(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
+                    } else if (legSeq == (numOfLegs - 1)) {
+                        legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport().getAirportName());
                         routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
                     } else {
-                        legAirports.add(thisRouteLeg.getLegSeq() - 1, thisRouteLeg.getLeg().getDepartAirport().getAirportName());
+                        System.out.println(thisRouteLeg.getLegSeq() - 1);
+                        legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport().getAirportName());
                     }
                 }
             }
             if (legAirports.isEmpty()) {
                 legString = "N.A.";
             } else {
-                for (int i = 0; i < legAirports.size(); i++) {
-                    if (i < legAirports.size() - 1) {
+                for (int i = 1; i <= legAirports.size(); i++) {
+                    if (i < legAirports.size()) {
                         legString += legAirports.get(i) + "-";
                     } else {
                         legString += legAirports.get(i);
@@ -236,21 +228,6 @@ public class RouteController implements Serializable {
             routeDisplayHelper.setLegs(legString);
             displayHelperList.add(routeDisplayHelper);
         }
-    }
-
-    private void cleanGlobalVariable() {
-        country = null;
-        cities = null;
-        city = null;
-        airports = null;
-        airport = null;
-        hub = null;
-        airportsNotHub = null;
-        route = null;
-        routeList = null;
-        setStopover(null);
-        setDestination(null);
-        hubs = (List<Airport>) routePlanningSession.getHubs();
     }
 
     /**
@@ -272,7 +249,7 @@ public class RouteController implements Serializable {
      * @return the countries
      */
     public List<Country> getCountries() {
-        return countries;
+        return (List<Country>) routePlanningSession.getCountryList();
     }
 
     /**
@@ -342,7 +319,7 @@ public class RouteController implements Serializable {
      * @return the hubs
      */
     public List<Airport> getHubs() {
-        return hubs;
+        return routePlanningSession.getHubs();
     }
 
     /**

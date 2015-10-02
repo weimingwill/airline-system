@@ -148,7 +148,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public List<Route> getRoutesByOD(Airport ori, Airport dest) {
-        Query query = em.createQuery("SELECT r FROM Route r WHERE :inOriICAO IN (SELECT rl2.leg.departAirport.icaoCode FROM RouteLeg rl2 WHERE rl2.routeId = r.routeId AND rl2.legSeq=0) AND :inDesICAO IN (SELECT rl3.leg.arrivalAirport.icaoCode FROM RouteLeg rl3 WHERE rl3.routeId = r.routeId AND rl3.legSeq = (SELECT COUNT(rl.routeId) FROM RouteLeg rl WHERE rl.routeId = r.routeId)-1)");
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted =0 AND :inOriICAO IN (SELECT rl2.leg.departAirport.icaoCode FROM RouteLeg rl2 WHERE rl2.routeId = r.routeId AND rl2.legSeq=0) AND :inDesICAO IN (SELECT rl3.leg.arrivalAirport.icaoCode FROM RouteLeg rl3 WHERE rl3.routeId = r.routeId AND rl3.legSeq = (SELECT COUNT(rl.routeId) FROM RouteLeg rl WHERE rl.routeId = r.routeId)-1)");
 //        Query query = em.createQuery("SELECT r FROM Route r WHERE r.routeId = (SELECT rl.routeId FROM RouteLeg rl WHERE rl.leg.departAirport.icaoCode=:inOriICAO AND rl.leg.arrivalAirport.icaoCode = :inDesICAO)");
         query.setParameter("inOriICAO", ori.getIcaoCode());
         query.setParameter("inDesICAO", dest.getIcaoCode());
@@ -160,11 +160,28 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     @Override
     public boolean cancelHub(String icaoCode) {
         try {
-            Airport hub = em.find(Airport.class, getAirportByICAOCode(icaoCode).getId());
+            Airport hub = em.find(Airport.class, getAirportByICAOCode(icaoCode));
             hub.setIsHub(FALSE);
             em.merge(hub);
             return true;
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkHub(String icaoCode) {
+            Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted =0 AND :inOriICAO IN (SELECT rl.leg.departAirport.icaoCode FROM RouteLeg rl WHERE rl.routeId = r.routeId AND rl.legSeq=0)");
+            query.setParameter("inOriICAO", icaoCode);
+            
+        try {
+            List<Route> routes = query.getResultList();
+            if (routes.isEmpty()) {
+                return true;
+            }else{
+                return false;
+            }
+        } catch (Exception e) {
             return false;
         }
     }
@@ -237,7 +254,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             return null;
         } // All legs exits -> Check if the legs has the same route id
         else {
-            String CHECK_EXIST_QUERY = "SELECT r FROM Route r WHERE r.deleted = FALSE AND ";
+            String CHECK_EXIST_QUERY = "SELECT r FROM Route r WHERE r.deleted = 0 AND ";
             Long legId;
             for (int i = 0; i < legs.size(); i++) {
                 legId = legs.get(i).getLegId();
@@ -390,37 +407,37 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         double totDist = 0;
         double minFlyingTime;
         double maxFlyingTime;
-        
+
         System.out.println("sessionbean:compareRoutePreparation()");
 
         Query query = em.createQuery("SELECT MAX(atype.maxMachNo) FROM AircraftType atype, IN (atype.aircrafts) craft");
         float maxV = (float) query.getSingleResult();
-        
+
         System.out.println("sessionbean:compareRoutePreparation(): " + maxV);
-        
+
         query = em.createQuery("SELECT MIN(atype.maxMachNo) FROM AircraftType atype, IN (atype.aircrafts) craft");
         float minV = (float) query.getSingleResult();
-        
+
         System.out.println("sessionbean:compareRoutePreparation(): " + minV);
 
-        for (int i = 0;i < stopList.size()-1;i++) {  
-            totDist += distance(stopList.get(i), stopList.get(i+1)) / 1000;
-            if(i>0 && i<stopList.size()-2){
-                stopString += stopList.get(i).getAirportName()+"-";
-            }else if(i == stopList.size()-2){
+        for (int i = 0; i < stopList.size() - 1; i++) {
+            totDist += distance(stopList.get(i), stopList.get(i + 1)) / 1000;
+            if (i > 0 && i < stopList.size() - 2) {
+                stopString += stopList.get(i).getAirportName() + "-";
+            } else if (i == stopList.size() - 2) {
                 stopString += stopList.get(i).getAirportName();
             }
         }
-        
+
         System.out.println("sessionbean:compareRoutePreparation(): " + totDist);
 
         minFlyingTime = totDist / (maxV * 1225.044);
         maxFlyingTime = totDist / (minV * 1225.044);
 
-        if(type.equals("O-D")){
+        if (type.equals("O-D")) {
             stopString = "N.A.";
         }
-        RouteCompareHelper rch = new RouteCompareHelper(type, stopList.get(0).getAirportName(), stopString, stopList.get(stopList.size()-1).getAirportName(), totDist, minFlyingTime, maxFlyingTime);
+        RouteCompareHelper rch = new RouteCompareHelper(type, stopList.get(0).getAirportName(), stopString, stopList.get(stopList.size() - 1).getAirportName(), totDist, minFlyingTime, maxFlyingTime);
 
         return rch;
     }
@@ -475,7 +492,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         }
         return airport;
     }
-    
+
     @Override
     public Airport getAirportByName(String name) {
         System.out.println("RoutePlanningSession: getAirportByName(): " + name);

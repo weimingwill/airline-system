@@ -238,6 +238,10 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/generateRoute.xhtml?faces-redirect=true";
     }
     
+    public String toCustomizeRoute(){
+        return "/views/secured/aps/route/customizeRoute.xhtml?faces-redirect=true";
+    }
+    
 
     public String redirectToCurrentPage() {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
