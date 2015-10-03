@@ -3,7 +3,8 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/AisTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
         Delete Ticket Family
@@ -11,18 +12,32 @@
 
     <ui:define name="content">
         <h:form id="deleteTicketFamilyForm">
-            <h:panelGrid columns="2" columnClasses="label, value">
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="3">
+                
+                <p:outputLabel for="type" value="Ticket Family Type:" />
+                <p:selectOneMenu id="type" var="tc" value="#{ticketFamilyController.selectedTicketFamily}" converter="ticketFamilyConverter" style="width:300px" filter="true" filterMatchMode="startsWith">
+                    <f:selectItem itemLabel="Select" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{ticketFamilyController.allTicketFamily}" var="ticketFamily" itemLabel="#{ticketFamily.type}-#{ticketFamily.cabinClass.name}:#{ticketFamily.name}"/>
+                    <p:column>
+                        <h:outputText value="#{tc.type}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{tc.cabinClass.name}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{tc.name}"/>
+                    </p:column>
+                </p:selectOneMenu>
 
-
-                <h:outputText value="Delete Ticket Type"/>
-                <p:inputText required="true" requiredMessage="Please enter ticket family type you want to delete" id="type" value="#{ticketFamilyController.type}">
+<!--                <h:outputText value="Delete Ticket Type"/>
+                <p:inputText required="true" requiredMessage="Please enter ticket family type you want to delete" id="type" value="{ticketFamilyController.type}">
                 </p:inputText>
                 <h:outputText value="Delete Ticket Type associate Cabin Class"/>
-                <p:inputText required="true" requiredMessage="Please enter associate cabin class you want to delete" id="cabinclass" value="#{ticketFamilyController.cabinclassname}">
+                <p:inputText required="true" requiredMessage="Please enter associate cabin class you want to delete" id="cabinclass" value="{ticketFamilyController.cabinclassname}">
 
-                </p:inputText>
+                </p:inputText>-->
 
-                <p:commandButton action="#{ticketFamilyController.deleteTicketFamily()}" value="Delete" update="messages"/>    
+                <p:commandButton actionListener="#{ticketFamilyController.deleteTicketFamily()}" action="#{navigationController.redirectToDeleteTicketFamily()}" value="Delete" update="messages"/>    
 
             </h:panelGrid>
         </h:form>
