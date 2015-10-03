@@ -56,13 +56,21 @@ public class TicketFamilyController implements Serializable {
     private TicketFamily selectedTicketFamily;
     private List<TicketFamilyRule> selectedticketFamilyRules;
     private List<TicketFamilyRuleHelper> displayRuleList = new ArrayList();
+    private List<TicketFamily> ticketFamilys = new ArrayList();
 
-    
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
+    }
+
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
+    }
+
     @PostConstruct
     public void init(){
         getAvailableRules();
     }
-    
+
     public List<TicketFamilyRuleHelper> getDisplayRuleList() {
         return displayRuleList;
     }
@@ -226,7 +234,7 @@ public class TicketFamilyController implements Serializable {
 
     public void deleteTicketFamily() {
         try {
-            ticketFamilySession.deleteTicketFamily(type, cabinclassname);
+            ticketFamilySession.deleteTicketFamilyByType(selectedTicketFamily.getType());
             msgController.addMessage("Delete ticket family successfully");
         } catch (NoSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
