@@ -7,32 +7,38 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
+        
+        <f:facet name="header">
+            Add an airport as hub
+        </f:facet>
+        
         <h:form>
             <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+
                 <p:outputLabel for="country" value="Country:" />
                 <p:selectOneMenu id="country" value="#{routeController.country}" converter="countryConverter"  style="width:200px" filter="true" filterMatchMode="contains">
                     <p:ajax listener="#{routeController.onCountryChange}" update="city,airport" />
                     <f:selectItem itemLabel="Select Country" itemValue="" noSelectionOption="true"/>
                     <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.countryName}" itemValue="#{country}" />
                 </p:selectOneMenu>
-                
+
                 <p:outputLabel for="city" value="City:" />
                 <p:selectOneMenu id="city" value="#{routeController.city}" converter="cityConverter" style="width:200px">
                     <p:ajax listener="#{routeController.onCityChange}" update="airport" />
                     <f:selectItem itemValue="" itemLabel="Select City" noSelectionOption="true"/>
                     <f:selectItems value="#{routeController.cities}" var="city" itemLabel="#{city.cityName}" itemValue="#{city}"/>
                 </p:selectOneMenu>
-                
+
                 <p:outputLabel for="airport" value="Airport:" />
                 <p:selectOneMenu id="airport" value="#{routeController.airport}" converter="airportConverter" style="width:200px">
                     <f:selectItem itemLabel="Select Airport" itemValue="" noSelectionOption="true" />
                     <f:selectItems value="#{routeController.airportsNotHub}" var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}"/>
                 </p:selectOneMenu>
                 <p:commandButton value="Add as hub" update="messages" action="#{navigationController.redirectToAddHub()}" actionListener="#{routeController.addNewHub}" icon="ui-icon-check"/>
-           
+
             </h:panelGrid>
-            
-            
+
+
         </h:form>
     </ui:define>
 

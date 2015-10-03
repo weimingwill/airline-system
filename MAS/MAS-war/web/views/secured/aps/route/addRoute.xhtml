@@ -7,8 +7,9 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-        Create a route (The return route will be automatically created for you):
-        
+        <f:facet name="header">
+            Create a route and its return route
+        </f:facet> 
         <h:form>
             <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
                 <p:outputLabel for="origin" value="Origin:" />
@@ -17,7 +18,7 @@
                     <f:selectItem itemLabel="Select Origin" itemValue="" noSelectionOption="true" />
                     <f:selectItems value="#{routeController.hubs}" var="hub" itemLabel="#{hub.airportName}" itemValue="#{hub}"/>
                 </p:selectOneMenu>
-                
+
                 <p:outputLabel for="stopover" value="Stopover:" />
                 <p:selectOneMenu id="stopover" value="#{routeController.stopover}" converter="airportConverter" style="width:200px" filter="true" filterMatchMode="contains">
                     <p:ajax listener="#{routeController.onStopoverChange}" update="destination" />
@@ -30,11 +31,11 @@
                     <f:selectItem itemLabel="Select Destination" itemValue="" noSelectionOption="true" />
                     <f:selectItems value="#{routeController.destList}" var="destination" itemLabel="#{destination.airportName}" itemValue="#{destination}"/>
                 </p:selectOneMenu>
-                
+
                 <p:commandButton value="Add route" update="messages" action="#{navigationController.redirectToAddRoute()}" actionListener="#{routeController.addRouteSimple}" icon="ui-icon-check" />
 
             </h:panelGrid>
-                         
+
         </h:form>
     </ui:define>
 

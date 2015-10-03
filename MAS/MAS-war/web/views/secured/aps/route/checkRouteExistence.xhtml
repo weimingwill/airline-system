@@ -7,18 +7,24 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
+        <f:facet name="header">
+            Plan a returned route
+        </f:facet>
         <h:form id="myForm">
-            <h:panelGrid columns="4" style="margin-bottom:10px" cellpadding="5">
+            <h:panelGrid columns="5" style="margin-bottom:10px;alignment-adjust: central" cellpadding="5">
+
                 <p:outputLabel for="origin" value="Origin:" />
                 <p:selectOneMenu id="origin" value="#{routeExistenceController.origin}" converter="airportConverter"  style="width:200px" required="true" requiredMessage="Field required" filter="true" filterMatchMode="contains">
                     <p:ajax listener="#{routeExistenceController.onOriginChange()}" update="destination" />
-                    
+
                     <f:selectItems value="#{routeExistenceController.hubs}" var="origin" itemLabel="#{origin.airportName}" itemValue="#{origin}" />
                 </p:selectOneMenu>
 
+                <p:outputLabel value=" - " />
+
                 <p:outputLabel for="destination" value="Destination:" />
                 <p:selectOneMenu id="destination" value="#{routeExistenceController.destination}" converter="airportConverter"  style="width:200px" required="true" filter="true" filterMatchMode="contains">
-                    
+
                     <f:selectItems value="#{routeExistenceController.airports}" var="destination" itemLabel="#{destination.airportName}" itemValue="#{destination}" />
                 </p:selectOneMenu>
 
