@@ -111,6 +111,13 @@ public class BookingClassSession implements BookingClassSessionLocal {
     }
 
     @Override
+    public BookingClassHelper getBookingClassHelperById(Long Id) throws NoSuchBookingClassException {
+        BookingClassHelper bookingClassHelper = new BookingClassHelper();
+        bookingClassHelper.setBookingClass(getBookingClassById(Id));
+        return bookingClassHelper;
+    }
+
+    @Override
     public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId) {
         List<BookingClassHelper> bookingClassHelpers = new ArrayList<>();
         try {

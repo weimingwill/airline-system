@@ -15,6 +15,7 @@ import ams.ais.util.exception.NeedTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
+import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.aps.entity.Aircraft;
 import ams.aps.session.AircraftSessionLocal;
@@ -22,11 +23,10 @@ import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
@@ -46,67 +46,65 @@ public class TicketFamilyController {
     private NavigationController navigationController;
     @Inject
     private MsgController msgController;
-    
-    
+
     @EJB
     private TicketFamilySessionLocal ticketFamilySession;
     @EJB
     private AircraftSessionLocal aircraftSession;
     @EJB
     private CabinClassSessionLocal cabinClassSession;
-    
+
     private String oldtype;
     private String oldCabinClassname;
     private String type;
     private String name;
     private String cabinclassname;
     private List<String> bookingClassNames;
-    private List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers;
-    private Aircraft selectedAircraft;
-    
-    
+    private List<BookingClassHelper> bookingClassHelpers;
+
     public TicketFamilyController() {
     }
-    
+
     public String createTicketFamily() {
         try {
-            ticketFamilySession.createTicketFamily(type, name,cabinclassname);
+            ticketFamilySession.createTicketFamily(type, name, cabinclassname);
             msgController.addMessage("Create ticket family successfully!");
         } catch (ExistSuchTicketFamilyException | NoSuchCabinClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToCreateTicketFamily();
     }
-    
+
     public List<TicketFamily> getAllTicketFamily() {
         return ticketFamilySession.getAllTicketFamily();
     }
-    
+
     public List<CabinClass> getAllCabinClass() {
         return ticketFamilySession.getAllCabinClass();
-        
+
     }
+
     public void deleteTicketFamily() {
-        try{
-        ticketFamilySession.deleteTicketFamily(type,cabinclassname);
-        msgController.addMessage("Delete ticket family successfully");
+        try {
+            ticketFamilySession.deleteTicketFamily(type, cabinclassname);
+            msgController.addMessage("Delete ticket family successfully");
         } catch (NoSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
     }
-    
+
     public String updateTicketFamily() {
         try {
-            ticketFamilySession.updateTicketFamily(oldtype,oldCabinClassname,type,name,cabinclassname);
+            ticketFamilySession.updateTicketFamily(oldtype, oldCabinClassname, type, name, cabinclassname);
             msgController.addMessage("Edit ticket family successfully!");
-        }catch( ExistSuchTicketFamilyException | NoSuchTicketFamilyException | NoSuchCabinClassException ex) {
+        } catch (ExistSuchTicketFamilyException | NoSuchTicketFamilyException | NoSuchCabinClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToViewAllTicketFamily();
     }
-    
-    public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName){
-        List<BookingClass>  bookingClasses;
+
+    public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) {
+        List<BookingClass> bookingClasses;
         try {
             bookingClasses = ticketFamilySession.getTicketFamilyBookingClasses(cabinClassName, ticketFamilyName);
         } catch (NoSuchBookingClassException e) {
@@ -114,64 +112,21 @@ public class TicketFamilyController {
         }
         return bookingClasses;
     }
-    
-    public List<String> getTicketFamilyBookingClassNames(String cabinClassName, String ticketFamilyName){
+
+    public void getTicketFamilyBookingClassHelpers(String cabinClassName, String ticketFamilyName) {
+        System.out.println("Get BookingClass Helper");
+        bookingClassHelpers = ticketFamilySession.getTicketFamilyBookingClassHelpers(cabinClassName, ticketFamilyName);
+    }
+
+    public List<String> getTicketFamilyBookingClassNames(String cabinClassName, String ticketFamilyName) {
         return ticketFamilySession.getTicketFamilyBookingClassNames(cabinClassName, ticketFamilyName);
     }
-    
-    public void OnTicketFamilyChange(String cabinClassName, String ticketFamilyName){
+
+    public void OnTicketFamilyChange(String cabinClassName, String ticketFamilyName) {
         bookingClassNames = ticketFamilySession.getTicketFamilyBookingClassNames(cabinClassName, ticketFamilyName);
     }
-    
-    public List<Aircraft> getScheduledAircrafts(){
-        List<Aircraft> aircrafts;
-        try {
-            aircrafts = aircraftSession.getScheduledAircrafts();
-        } catch (NoSuchAircraftException ex) {
-            aircrafts = new ArrayList<>();
-        }
-        return aircrafts;
-    }
-    
-    public void onAircraftChange(){
-        try {
-            cabinClassTicketFamilyHelpers = cabinClassSession.getCabinClassTicketFamilyHelpers(selectedAircraft.getAircraftId());
-        } catch (NoSuchCabinClassException | NoSuchTicketFamilyException ex) {
-            msgController.addErrorMessage(ex.getMessage());
-        }
-    }
-    
-    public String assignAircraftTicketFamily(){
-        try {
-            ticketFamilySession.assignAircraftTicketFamily(selectedAircraft, cabinClassTicketFamilyHelpers);
-            msgController.addMessage("Assign ticket family to aircraft successfully!");
-        } catch (NeedTicketFamilyException | NoSuchAircraftCabinClassException ex) {
-            msgController.addErrorMessage(ex.getMessage());
-            return "";
-        }
-        return navigationController.redirectToAIS();
-    }
-//    public List<BookingClass> getTicketFamilyBookingClasses(Long cabinClassId, String type){
-//        List<BookingClass>  bookingClasses;
-//        try {
-//            bookingClasses = ticketFamilySession.getTicketFamilyBookingClasses(cabinClassId, type);
-//        } catch (NoSuchBookingClassException e) {
-//            return null;
-//        }
-//        return bookingClasses;
-//    }
-//    
-//    public List<String> getTicketFamilyBookingClassNames(Long cabinClassId, String type){
-//        return ticketFamilySession.getTicketFamilyBookingClassNames(cabinClassId, type);
-//    }
-//    
-//    public void OnTicketFamilyChange(Long cabinClassId, String name){
-//        bookingClassNames = ticketFamilySession.getTicketFamilyBookingClassNames(cabinClassId, name);
-//    }
-   
-    
-    //Getter and setter
 
+    //Getter and setter
     public NavigationController getNavigationController() {
         return navigationController;
     }
@@ -228,22 +183,11 @@ public class TicketFamilyController {
         this.bookingClassNames = bookingClassNames;
     }
 
-    public List<CabinClassTicketFamilyHelper> getCabinClassTicketFamilyHelpers() {
-        return cabinClassTicketFamilyHelpers;
+    public List<BookingClassHelper> getBookingClassHelpers() {
+        return bookingClassHelpers;
     }
 
-    public void setCabinClassTicketFamilyHelpers(List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers) {
-        this.cabinClassTicketFamilyHelpers = cabinClassTicketFamilyHelpers;
+    public void setBookingClassHelpers(List<BookingClassHelper> bookingClassHelpers) {
+        this.bookingClassHelpers = bookingClassHelpers;
     }
-
-    public Aircraft getSelectedAircraft() {
-        return selectedAircraft;
-    }
-
-    public void setSelectedAircraft(Aircraft selectedAircraft) {
-        this.selectedAircraft = selectedAircraft;
-    }
-
-
-
 }

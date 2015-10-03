@@ -7,6 +7,7 @@ package ams.aps.session;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.NeedBookingClassException;
@@ -41,7 +42,7 @@ public interface FlightScheduleSessionLocal {
 
     public List<CabinClass> getFlightScheduleCabinCalsses(Long id) throws NoSuchCabinClassException;
 
-    public void addBookingClass(Long flightScheduleId, List<FlightScheduleBookingClassHelper> flightScheduleBoookingClassHelpers, List<SeatClassHelper> seatClassHelpers, String method)
+    public void addBookingClass2(Long flightScheduleId, List<FlightScheduleBookingClassHelper> flightScheduleBoookingClassHelpers, List<SeatClassHelper> seatClassHelpers, String method)
             throws NoSuchAircraftCabinClassException, NoSuchTicketFamilyException, NoSuchAircraftException,
             NoSuchCabinClassException, NoSuchFlightSchedulException, NeedTicketFamilyException, NeedBookingClassException;
 
@@ -51,8 +52,12 @@ public interface FlightScheduleSessionLocal {
 
     public List<BookingClass> getFlightScheduleBookingClassesOfTicketFamily(Long flightScheduleId, Long ticketFamilyId) throws NoSuchBookingClassException;
     
-    public void assignFlightScheduleBookingClass(Long flightScheduleId, List<SeatClassHelper> seatClassHelpers, boolean isEdit) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException;
+//    public void assignFlightScheduleBookingClass(Long flightScheduleId, List<SeatClassHelper> seatClassHelpers, boolean isEdit) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException;
 
+    public void assignFlightScheduleBookingClass(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException;
+
+    public List<BookingClass> getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(List<FlightSchCabinClsTicFamBookingClsHelper> helpers);
+    
     public FlightScheduleBookingClass getFlightScheduleBookingClass(Long flightScheduleId, Long bookingClassId) throws NoSuchFlightScheduleBookingClassException;
     
     public List<FlightScheduleBookingClass> getFlightScheduleBookingClassJoinTables(Long flightScheduleId) throws NoSuchFlightScheduleBookingClassException;
@@ -62,4 +67,7 @@ public interface FlightScheduleSessionLocal {
     public List<FlightScheduleBookingClass> getFlightScheduleBookingClassJoinTablesOfTicketFamily(Long flightScheduleId, Long ticketFamilyId) throws NoSuchFlightScheduleBookingClassException;
 
     public void verifyTicketFamilyHasBookingClass(TicketFamily ticketFamily, List<SeatClassHelper> seatClassHelpers) throws NeedBookingClassException;
+
+    public boolean dislinkFlightScheduleBookingClass(CabinClassTicketFamily cabinClassTicketFamily);
+    
 }

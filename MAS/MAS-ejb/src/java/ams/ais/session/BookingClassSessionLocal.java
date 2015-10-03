@@ -31,4 +31,5 @@ public interface BookingClassSessionLocal {
     public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId);
     public void allocateSeats(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightHelpers) 
             throws NoSuchAircraftException, NoSuchAircraftCabinClassException, NoSuchFlightScheduleBookingClassException;
+    public BookingClassHelper getBookingClassHelperById(Long Id) throws NoSuchBookingClassException;
 }

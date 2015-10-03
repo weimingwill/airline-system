@@ -18,10 +18,10 @@
                     <p:panel id="ticketFamilySelection" header="Select Aircraft and Ticket Family">
                         <p:panelGrid columns="2" style="margin-bottom: 10px;">
                             <p:outputLabel for="selectAircraft" value="Select Aircraft: " />
-                            <p:selectOneMenu id="selectAircraft" value="#{ticketFamilyController.selectedAircraft}" converter="aircraftConverter" panelStyle="width:180px"
+                            <p:selectOneMenu id="selectAircraft" value="#{productDesignController.selectedAircraft}" converter="aircraftConverter" panelStyle="width:180px"
                                              effect="fade" var="aircraft" style="width:160px" filter="true" filterMatchMode="startsWith">
-                                <p:ajax listener="#{ticketFamilyController.onAircraftChange()}" update="selectTicketFamily" />
-                                <f:selectItems value="#{ticketFamilyController.scheduledAircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}" itemValue="#{aircraft}" />
+                                <p:ajax listener="#{productDesignController.onAircraftChange()}" update="selectTicketFamily" />
+                                <f:selectItems value="#{productDesignController.scheduledAircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}" itemValue="#{aircraft}" />
                                 <p:column>
                                     <h:outputText value="#{aircraft.aircraftType.typeCode}" />
                                 </p:column>
@@ -34,7 +34,7 @@
 
 
                         <p:panel id="selectTicketFamily" header="Select Ticket Family">
-                            <c:forEach items="#{ticketFamilyController.cabinClassTicketFamilyHelpers}" var="ctf">
+                            <c:forEach items="#{productDesignController.cabinClassTicketFamilyHelpers}" var="ctf">
                                 <c:if test="#{not ctf.haveTicketFamily}" >
                                     <p:row>
                                         <p:column>#{ctf.cabinClass.name} Class</p:column>
@@ -56,7 +56,7 @@
                     <p:panel id="ticketFamilyRule" header="Ticket Family Rules">
                     </p:panel>
                 </p:panelGrid>
-                <p:commandButton value="Save" action="#{ticketFamilyController.assignAircraftTicketFamily()}" update="messages" />
+                <p:commandButton value="Save" action="#{productDesignController.assignAircraftTicketFamily()}" update="messages" />
         </p:panel>
 
 

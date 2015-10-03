@@ -37,35 +37,35 @@ public class BookingClassController {
     private MsgController msgController;
     @Inject
     private NavigationController navigationController;
-    
-    
+
     @EJB
     private BookingClassSessionLocal bookingClassSession;
     @EJB
     private FlightScheduleSessionLocal flightScheduleSession;
-    
+
     private String bookingClassName;
     private Long flightScheduleId;
     private List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers;
+
     /**
      * Creates a new instance of BookingClassController
      */
-    
+
     @PostConstruct
-    public void Init(){
+    public void Init() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, Object> sessionMap = externalContext.getSessionMap();
-        this.flightScheduleId = (Long)sessionMap.get("flightScheduleId");
+        this.flightScheduleId = (Long) sessionMap.get("flightScheduleId");
         System.out.println("Initialize Booking Class Controler: ");
         System.out.println("FlightScheduleId: " + flightScheduleId);
         initialHelper();
         System.out.println("Helper: " + flightSchCabinClsTicFamBookingClsHelpers);
     }
-    
+
     public BookingClassController() {
     }
-    
-    public String createBookingClass(){
+
+    public String createBookingClass() {
         try {
             bookingClassSession.createBookingClass(bookingClassName);
             msgController.addMessage("Create booking class successfully!");
@@ -74,18 +74,18 @@ public class BookingClassController {
         }
         return navigationController.redirectToCreateBookingClass();
     }
-    
-    public String deleteBookingClass(){
+
+    public String deleteBookingClass() {
         try {
             bookingClassSession.deleteBookingClass(bookingClassName);
             msgController.addMessage("Booking class is deleted successfully!");
         } catch (NoSuchBookingClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
-        return navigationController.redirectToDeleteBookingClass(); 
+        return navigationController.redirectToDeleteBookingClass();
     }
 
-    public String allocateSeats(){
+    public String allocateSeats() {
         try {
             bookingClassSession.allocateSeats(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
             msgController.addMessage("Allocate seats succesfully!");
@@ -95,7 +95,11 @@ public class BookingClassController {
         }
         return navigationController.redirectToViewFlightSchedule();
     }
-    
+
+    private void initialHelper() {
+        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+    }
+
     //Getter and Setter
     public String getBookingClassName() {
         return bookingClassName;
@@ -121,9 +125,4 @@ public class BookingClassController {
         this.flightScheduleId = flightScheduleId;
     }
 
-    private void initialHelper() {
-        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
-    }
-    
-    
 }
