@@ -296,4 +296,32 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         
         return ticketFamilyRule;
     }
+
+    @Override
+    public void deleteTicketFamilyByType(String type) throws NoSuchTicketFamilyException {
+        TicketFamily ticketfamily = getTicketFamilyByType(type);
+        if (ticketfamily == null) {
+            throw new NoSuchTicketFamilyException(AisMsg.NO_SUCH_TICKET_FAMILY_ERROR);
+        } else {
+            ticketfamily.setDeleted(true);
+            entityManager.merge(ticketfamily);
+        }
+    }
+
+    private TicketFamily getTicketFamilyByType(String type) {
+        Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.type = :inticketFamilyType AND t.deleted = FALSE");
+        query.setParameter("inticketFamilyType", type);
+        TicketFamily ticketFamily = null;
+        try {
+            ticketFamily = (TicketFamily) query.getSingleResult();
+        } catch (NoResultException ex) {
+            ticketFamily = null;
+        }
+        return ticketFamily;
+    }
+
+    @Override
+    public TicketFamily getTicketFamilyById(long ticketFamilyId) {
+        return entityManager.find(TicketFamily.class,ticketFamilyId );
+    }
 }

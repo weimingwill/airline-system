@@ -27,6 +27,7 @@ public interface TicketFamilySessionLocal {
     public List<TicketFamily> getAllTicketFamily();
     public List<CabinClass> getAllCabinClass();
     public TicketFamily getTicketFamilyByName(String ticketFamilyName);
+    public TicketFamily getTicketFamilyById(long ticketFamilyId);
     public TicketFamily getTicketFamilyByTypeAndCabinClass(String ticketFamilyType,String cabinClassName);
     public void createTicketFamily(String type, String name, String cabinclassname,List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers) throws ExistSuchTicketFamilyException;
     public void verifyTicketFamilyExistence(String type, String name,String cabinclass) throws ExistSuchTicketFamilyException;
@@ -39,4 +40,5 @@ public interface TicketFamilySessionLocal {
     public List<TicketFamilyRule> getTicketFamilyRuleByTicketFamilyId(long ticketFamilyId);
     public TicketFamilyRule getTicketFamilyRuleByTicketFamilyType(String ticketFamilyType);
     public void updateTicketFamilyRuleVlaue(TicketFamilyRule ticketFamilyRule);
+    public void deleteTicketFamilyByType (String type)throws NoSuchTicketFamilyException;
 }
