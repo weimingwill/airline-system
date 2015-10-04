@@ -44,17 +44,12 @@ public class FlightScheduleBookingClass implements Serializable {
     @PrimaryKeyJoinColumn(name = "BOOKINGCLASSID", referencedColumnName = "BOOKINGCLASSID")
     private BookingClass bookingClass;
     
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightScheduleBookingClass")
-    @Column(name = "SEATALLOCATIONHISTORY")
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SeatAllocationHistory> seatAllocationHistory = new ArrayList<>();
     
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightScheduleBookingClass")
-    @Column(name = "PHASEDEMAND")
-    private List<PhaseDemand> phaseDemands = new ArrayList<PhaseDemand>();
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<PhaseDemand> phaseDemands = new ArrayList<>();    
     
-    
-
-
     @Column(name = "SEATQTY")
     private int seatQty;
     
@@ -64,11 +59,8 @@ public class FlightScheduleBookingClass implements Serializable {
     @Column(name = "PRICECOEFFICIENT")
     private float priceCoefficient;
 
-    @Column(name = "DEMANDMEAN")
-    private float demandMean;
-    
-    @Column(name = "DEMANDDEV")
-    private float demandDev;
+    @Column(name = "DEMAND")
+    private int demand;
 
     public Long getFlightScheduleId() {
         return flightScheduleId;
@@ -126,20 +118,12 @@ public class FlightScheduleBookingClass implements Serializable {
         this.priceCoefficient = priceCoefficient;
     }
 
-    public float getDemandMean() {
-        return demandMean;
+    public int getDemand() {
+        return demand;
     }
 
-    public void setDemandMean(float demandMean) {
-        this.demandMean = demandMean;
-    }
-
-    public float getDemandDev() {
-        return demandDev;
-    }
-
-    public void setDemandDev(float demandDev) {
-        this.demandDev = demandDev;
+    public void setDemand(int demand) {
+        this.demand = demand;
     }
 
     public List<SeatAllocationHistory> getSeatAllocationHistory() {
@@ -156,6 +140,5 @@ public class FlightScheduleBookingClass implements Serializable {
 
     public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
         this.phaseDemands = phaseDemands;
-    }  
-    
+    }
 }

@@ -19,7 +19,7 @@ import javax.persistence.Id;
 public class PhaseDemand implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int daysBeforeDeparture;
     private float demandMean;
@@ -30,7 +30,7 @@ public class PhaseDemand implements Serializable {
         this.daysBeforeDeparture = daysBeforeDeparture;
         this.demandMean = demandMean;
         this.demandDev = demandDev;
-        this.setIsDeleted(false);
+        this.isDeleted = false;
     }
 
     public Long getId() {

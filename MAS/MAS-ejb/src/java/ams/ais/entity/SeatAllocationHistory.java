@@ -20,13 +20,11 @@ import javax.persistence.Id;
 public class SeatAllocationHistory implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seatAllocationHistoryId;
     private int seatNoBefore;
     private int seatNoAfter;
     private Date allocateTime;
-//  private int modified;
-    private FlightScheduleBookingClass flightScheduleBookingClass = new FlightScheduleBookingClass();
 
     public Long getSeatAllocationHistoryId() {
         return seatAllocationHistoryId;
@@ -34,6 +32,14 @@ public class SeatAllocationHistory implements Serializable {
 
     public void setSeatAllocationHistoryId(Long seatAllocationHistoryId) {
         this.seatAllocationHistoryId = seatAllocationHistoryId;
+    }
+    
+    public Date getAllocateTime() {
+        return allocateTime;
+    }
+
+    public void setAllocateTime(Date allocateTime) {
+        this.allocateTime = allocateTime;
     }
 
     public int getSeatNoBefore() {
@@ -51,33 +57,6 @@ public class SeatAllocationHistory implements Serializable {
     public void setSeatNoAfter(int seatNoAfter) {
         this.seatNoAfter = seatNoAfter;
     }
-    
-    
-    public Date getAllocateTime() {
-        return allocateTime;
-    }
-
-    public void setAllocateTime(Date allocateTime) {
-        this.allocateTime = allocateTime;
-    }
-
-//    public int getModified() {
-//        return modified;
-//    }
-//
-//    public void setModified(int modified) {
-//        this.modified = modified;
-//    }
-
-    public FlightScheduleBookingClass getFlightScheduleBookingClass() {
-        return flightScheduleBookingClass;
-    }
-
-    public void setFlightScheduleBookingClass(FlightScheduleBookingClass flightScheduleBookingClass) {
-        this.flightScheduleBookingClass = flightScheduleBookingClass;
-    }
-    
-
 
     @Override
     public int hashCode() {

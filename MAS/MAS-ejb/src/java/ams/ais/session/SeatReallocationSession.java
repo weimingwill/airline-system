@@ -183,7 +183,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         seatAllocationHistory.setAllocateTime(date);
         seatAllocationHistory.setSeatNoBefore(fsbc.getSeatQty());
         seatAllocationHistory.setSeatNoAfter(sum + fsbc.getSeatQty());
-        seatAllocationHistory.setFlightScheduleBookingClass(fsbc);
+//        seatAllocationHistory.setFlightScheduleBookingClass(fsbc);
 
         //update the seat allocation history of a booking class
         List<SeatAllocationHistory> seatAllocationHistorys = fsbc.getSeatAllocationHistory();
