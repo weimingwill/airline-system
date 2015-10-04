@@ -97,6 +97,7 @@ public class TicketFamilyController implements Serializable {
     }
 
     public void editRuleValues() {
+        
         for (TicketFamilyRuleHelper thisHelper : ticketFamilyRuleHelpers) {
             System.out.println("id = " + thisHelper.getTicketFamilyId() + " " + thisHelper.getRuleId() + " " + thisHelper.getName() + ": " + thisHelper.getRuleValue());
             TicketFamilyRule updatedTicketFamilyRule = new TicketFamilyRule();
