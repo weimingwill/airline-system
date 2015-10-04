@@ -212,41 +212,59 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
 //        }
 //    }
     @Override
-    public void assignFlightScheduleBookingClass(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException {
-        
+    public void assignFlightScheduleBookingClass(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers)
+            throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException {
+        List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
         FlightScheduleBookingClass flightScheduleBookingClass;
+
+        System.out.println("Helpers: " + helpers);
+        //Get Flight Schedule
+        FlightSchedule flightSchedule = getFlightScheduleById(flightScheduleId);
+        flightSchedule = entityManager.find(FlightSchedule.class, flightSchedule.getFlightScheduleId());
+
         List<BookingClass> bookingClasses = getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
-        System.out.println("begin assinment");
+        System.out.println("begin assignment - bookingClasses: " + bookingClasses);
+
         for (BookingClass bc : bookingClasses) {
             System.out.println("In Session assign method - Booking Class " + bc.getName());
         }
         for (BookingClass bookingClass : bookingClasses) {
             System.out.println("BookingClass: " + bookingClass.getName());
             try {
-
                 flightScheduleBookingClass = getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
                 flightScheduleBookingClass.setBookingClass(bookingClass);
                 System.out.println("T: " + flightScheduleBookingClass.getBookingClass().getName());
                 entityManager.merge(flightScheduleBookingClass);
             } catch (NoSuchFlightScheduleBookingClassException e) {
                 flightScheduleBookingClass = new FlightScheduleBookingClass();
+                flightScheduleBookingClass.setFlightSchedule(flightSchedule);
+                flightScheduleBookingClass.setFlightScheduleId(flightScheduleId);
                 flightScheduleBookingClass.setBookingClass(bookingClass);
+                flightScheduleBookingClass.setBookingClassId(bookingClass.getBookingClassId());
                 System.out.println("F: " + flightScheduleBookingClass.getBookingClass().getName());
                 entityManager.persist(flightScheduleBookingClass);
             }
+            flightScheduleBookingClasses.add(flightScheduleBookingClass);
         }
+        System.out.println("FlightSchedule: " + flightSchedule.getFlightScheduleId()
+                + " FlightSchedule Booking Class: " + flightScheduleBookingClasses);
+        flightSchedule.setFlightScheduleBookingClasses(flightScheduleBookingClasses);
+        entityManager.merge(flightSchedule);
     }
 
     @Override
     public List<BookingClass> getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(List<FlightSchCabinClsTicFamBookingClsHelper> helpers) {
         List<BookingClass> bookingClasses = new ArrayList<>();
         for (FlightSchCabinClsTicFamBookingClsHelper helper : helpers) {
+            System.out.println("In Session Funciton - TicketFamilyHelpers: " + helper.getTicketFamilyBookingClassHelpers());
             for (TicketFamilyBookingClassHelper tfbcHelper : helper.getTicketFamilyBookingClassHelpers()) {
-                for (BookingClass bookingClass : bookingClasses) {
+                for (BookingClass bookingClass : tfbcHelper.getBookingClasses()) {
                     bookingClasses.add(bookingClass);
+                    System.out.println("In Session Funciton - Booking Class " + bookingClass.getName());
                 }
             }
         }
+        System.out.println("In function - BookingClasses: " + bookingClasses);
         return bookingClasses;
     }
 
