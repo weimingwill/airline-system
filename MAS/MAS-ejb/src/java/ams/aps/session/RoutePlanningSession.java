@@ -160,7 +160,8 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     @Override
     public boolean cancelHub(String icaoCode) {
         try {
-            Airport hub = em.find(Airport.class, getAirportByICAOCode(icaoCode));
+            Airport hub = em.find(Airport.class, getAirportByICAOCode(icaoCode).getId());
+            System.out.println("SessionBean: cancelHub():"+hub.getAirportName());
             hub.setIsHub(FALSE);
             em.merge(hub);
             return true;
