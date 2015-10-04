@@ -41,4 +41,5 @@ public interface TicketFamilySessionLocal {
     public TicketFamilyRule getTicketFamilyRuleByTicketFamilyType(String ticketFamilyType);
     public void updateTicketFamilyRuleVlaue(TicketFamilyRule ticketFamilyRule);
     public void deleteTicketFamilyByType (String type)throws NoSuchTicketFamilyException;
+    public void updateTicketFamilyByType(long ticketFamilyId, String oldCabinClassName, String type, String name) throws ExistSuchTicketFamilyException,NoSuchTicketFamilyException;
 }

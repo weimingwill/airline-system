@@ -324,4 +324,49 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     public TicketFamily getTicketFamilyById(long ticketFamilyId) {
         return entityManager.find(TicketFamily.class,ticketFamilyId );
     }
-}
+
+    @Override
+    public void updateTicketFamilyByType(long ticketFamilyId, String oldCabinClassName, String type, String name) throws ExistSuchTicketFamilyException,NoSuchTicketFamilyException{
+       TicketFamily c = getTicketFamilyById(ticketFamilyId);
+        if (c == null) {
+            throw new NoSuchTicketFamilyException(AisMsg.NO_SUCH_TICKET_FAMILY_ERROR);
+        } else {
+            List<TicketFamily> ticketFamilys = getAllOtherTicketFamilyByTypeAndCabinClass(c.getType(), oldCabinClassName);
+            System.out.print("we are here");
+            System.out.println("ticketFamlyList: " + ticketFamilys);
+            for (TicketFamily tk : ticketFamilys) {
+                System.out.println("tk = " + tk);
+                if (tk != null) {
+                    System.out.print(tk.getType());
+                    System.out.print(tk.getName());
+                    System.out.print("CabinClass = " + tk.getCabinClass());
+                } else {
+                    System.out.println("Tk is null");
+                }
+
+            }
+            if (ticketFamilys != null) {
+                for (TicketFamily tk : ticketFamilys) {
+                    if (type.equals(tk.getType()) && tk.getCabinClass().getName().equals(oldCabinClassName)) {
+                        throw new ExistSuchTicketFamilyException(AisMsg.EXIST_SUCH_TICKET_FAMILY_ERROR);
+
+                    }
+                    if (name.equals(tk.getName()) && tk.getCabinClass().getName().equals(oldCabinClassName)) {
+                        throw new ExistSuchTicketFamilyException(AisMsg.EXIST_SUCH_TICKET_FAMILY_ERROR);
+
+                    }
+                    if (type.equals(tk.getType())) {
+                        throw new ExistSuchTicketFamilyException(AisMsg.EXIST_SUCH_TICKET_FAMILY_ERROR);
+
+                    }
+                }
+            }
+        }
+        c.setName(name);
+        c.setType(type);
+        
+        entityManager.merge(c);
+        entityManager.flush();
+    } 
+    }
+
