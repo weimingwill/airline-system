@@ -36,16 +36,24 @@ public class AircraftType implements Serializable {
     private Float maxMachNo;
     private Float maxTakeOffWeight;
     private Float maxZeroFuelWeight;
+    private Float maxLandingWeight;
+    private Float maxRampWeight;
+    private Float maxPayload;
+    private Float cabinLength;
+    private Float cabinWidth;
+    private Float cabinHeight;
     private Float overallLengthInM;
     private Float wingspanInM;
     private Float heightInM;
     private Float trackInM;
     private Float wheelbaseInM;
+    private Float approxCost;
+    private Float fuelCostPerKm;
 
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraftType")
-    private Collection<Aircraft> aircrafts = new ArrayList<Aircraft>();
+    private Collection<Aircraft> aircrafts = new ArrayList();
     
-
+    
     public Long getId() {
         return id;
     }
@@ -301,6 +309,118 @@ public class AircraftType implements Serializable {
      */
     public void setAircrafts(Collection<Aircraft> aircrafts) {
         this.aircrafts = aircrafts;
+    }
+
+    /**
+     * @return the maxLandingWeight
+     */
+    public Float getMaxLandingWeight() {
+        return maxLandingWeight;
+    }
+
+    /**
+     * @param maxLandingWeight the maxLandingWeight to set
+     */
+    public void setMaxLandingWeight(Float maxLandingWeight) {
+        this.maxLandingWeight = maxLandingWeight;
+    }
+
+    /**
+     * @return the maxRampWeight
+     */
+    public Float getMaxRampWeight() {
+        return maxRampWeight;
+    }
+
+    /**
+     * @param maxRampWeight the maxRampWeight to set
+     */
+    public void setMaxRampWeight(Float maxRampWeight) {
+        this.maxRampWeight = maxRampWeight;
+    }
+
+    /**
+     * @return the maxPayload
+     */
+    public Float getMaxPayload() {
+        return maxPayload;
+    }
+
+    /**
+     * @param maxPayload the maxPayload to set
+     */
+    public void setMaxPayload(Float maxPayload) {
+        this.maxPayload = maxPayload;
+    }
+
+    /**
+     * @return the cabinLength
+     */
+    public Float getCabinLength() {
+        return cabinLength;
+    }
+
+    /**
+     * @param cabinLength the cabinLength to set
+     */
+    public void setCabinLength(Float cabinLength) {
+        this.cabinLength = cabinLength;
+    }
+
+    /**
+     * @return the cabinWidth
+     */
+    public Float getCabinWidth() {
+        return cabinWidth;
+    }
+
+    /**
+     * @param cabinWidth the cabinWidth to set
+     */
+    public void setCabinWidth(Float cabinWidth) {
+        this.cabinWidth = cabinWidth;
+    }
+
+    /**
+     * @return the cabinHeight
+     */
+    public Float getCabinHeight() {
+        return cabinHeight;
+    }
+
+    /**
+     * @param cabinHeight the cabinHeight to set
+     */
+    public void setCabinHeight(Float cabinHeight) {
+        this.cabinHeight = cabinHeight;
+    }
+
+    /**
+     * @return the approxCost
+     */
+    public Float getApproxCost() {
+        return approxCost;
+    }
+
+    /**
+     * @param approxCost the approxCost to set
+     */
+    public void setApproxCost(Float approxCost) {
+        this.approxCost = approxCost;
+    }
+
+    /**
+     * @return the fuelCostPerKm
+     */
+    public Float getFuelCostPerKm() {
+        return fuelCostPerKm;
+    }
+
+    /**
+     * @param fuelCostPerKm the fuelCostPerKm to set
+     */
+    public void setFuelCostPerKm(Float fuelCostPerKm) {
+        this.fuelCostPerKm = fuelCostPerKm;
     }
     
 }
