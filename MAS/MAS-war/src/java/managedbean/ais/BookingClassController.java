@@ -13,6 +13,7 @@ import ams.ais.session.FlightScheduleSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -31,7 +32,7 @@ import managedbean.application.NavigationController;
  */
 @Named(value = "bookingClassController")
 @RequestScoped
-public class BookingClassController {
+public class BookingClassController implements Serializable{
 
     @Inject
     private MsgController msgController;

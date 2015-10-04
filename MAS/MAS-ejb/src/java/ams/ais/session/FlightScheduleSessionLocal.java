@@ -68,6 +68,6 @@ public interface FlightScheduleSessionLocal {
 
     public void verifyTicketFamilyHasBookingClass(TicketFamily ticketFamily, List<SeatClassHelper> seatClassHelpers) throws NeedBookingClassException;
 
-    public boolean dislinkFlightScheduleBookingClass(CabinClassTicketFamily cabinClassTicketFamily);
+    public List<FlightScheduleBookingClass> dislinkFlightScheduleBookingClass(CabinClassTicketFamily cabinClassTicketFamily);
     
 }

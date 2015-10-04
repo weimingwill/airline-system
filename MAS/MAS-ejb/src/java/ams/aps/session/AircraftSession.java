@@ -38,9 +38,14 @@ public class AircraftSession implements AircraftSessionLocal {
 
     @Override
     public AircraftCabinClass getAircraftCabinClassById(Long aircraftId, Long cabinCalssId) throws NoSuchAircraftCabinClassException {
-        Query query = entityManager.createQuery("SELECT ac FROM AircraftCabinClass ac WHERE ac.aircraftId = :inAircraftId and ac.cabinClassId = :inCabinClassId and ac.cabinClass.deleted = FALSE and ac.aircraft.status NOT LIKE 'Retired'");
+        Query query = entityManager.createQuery("SELECT ac FROM AircraftCabinClass ac "
+                + "WHERE ac.aircraftId = :inAircraftId "
+                + "AND ac.cabinClassId = :inCabinClassId "
+                + "AND ac.cabinClass.deleted = FALSE "
+                + "AND ac.aircraft.status <> :inRetried");
         query.setParameter("inAircraftId", aircraftId);
         query.setParameter("inCabinClassId", cabinCalssId);
+        query.setParameter("inRetried", AircraftStatus.RETIRED);
         AircraftCabinClass aircraftCabinClass = new AircraftCabinClass();
         try {
             aircraftCabinClass = (AircraftCabinClass) query.getSingleResult();

@@ -35,7 +35,7 @@
 
                         <p:panel id="selectTicketFamily" header="Select Ticket Family">
                             <c:forEach items="#{productDesignController.cabinClassTicketFamilyHelpers}" var="ctf">
-                                <c:if test="#{not ctf.haveTicketFamily}" >
+                                <!--<c:if test="{ctf.haveTicketFamily}" >-->
                                     <p:row>
                                         <p:column>#{ctf.cabinClass.name} Class</p:column>
                                         <p:column>
@@ -48,7 +48,7 @@
                                             </p:selectManyMenu>
                                         </p:column>
                                     </p:row>
-                                </c:if>
+                                <!--</c:if>-->
                             </c:forEach>
                         </p:panel>
                     </p:panel>

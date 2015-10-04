@@ -16,7 +16,6 @@ import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.aps.session.AircraftSessionLocal;
-import ams.aps.util.helper.AircraftCabinClassHelper;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -55,7 +54,6 @@ public class CabinClassSession implements CabinClassSessionLocal {
     @Override
     public List<CabinClass> getAllCabinClass() {
         Query query = entityManager.createQuery("SELECT c FROM CabinClass c WHERE c.deleted = false");
-
         return query.getResultList();
     }
 
@@ -221,7 +219,11 @@ public class CabinClassSession implements CabinClassSessionLocal {
 //    }
     @Override
     public List<TicketFamily> getCabinClassTicketFamilysFromJoinTable(Long aircraftId, Long cabinClassId) throws NoSuchTicketFamilyException {
-        Query query = entityManager.createQuery("SELECT ct FROM CabinClassTicketFamily ct WHERE ct.aircraftCabinClass.aircraftId = :inAircraftId and ct.aircraftCabinClass.cabinClassId = :inCabinClassId and ct.aircraftCabinClass.cabinClass.deleted = FALSE and ct.ticketFamily.deleted = FALSE");
+        Query query = entityManager.createQuery("SELECT ct FROM CabinClassTicketFamily ct "
+                + "WHERE ct.aircraftCabinClass.aircraftId = :inAircraftId "
+                + "AND ct.aircraftCabinClass.cabinClassId = :inCabinClassId "
+                + "AND ct.aircraftCabinClass.cabinClass.deleted = FALSE "
+                + "AND ct.ticketFamily.deleted = FALSE");
         query.setParameter("inAircraftId", aircraftId);
         query.setParameter("inCabinClassId", cabinClassId);
         List<TicketFamily> ticketFamilys = new ArrayList<>();
@@ -289,8 +291,8 @@ public class CabinClassSession implements CabinClassSessionLocal {
         for (CabinClass cabinClass : aircraftSession.getAircraftCabinClasses(aircraftId)) {
             CabinClassTicketFamilyHelper helper = new CabinClassTicketFamilyHelper();
             List<TicketFamily> ticketFamilys = getCabinClassTicketFamilysFromJoinTable(aircraftId, cabinClass.getCabinClassId());
-            if (ticketFamilys.isEmpty()) {
-                helper.setHaveTicketFamily(false);
+            if (!ticketFamilys.isEmpty()) {
+                helper.setHaveTicketFamily(true);
             }
             helper.setCabinClass(cabinClass);
             helper.setTicketFamilys(ticketFamilys);

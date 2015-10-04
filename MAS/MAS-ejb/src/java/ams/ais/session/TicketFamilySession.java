@@ -312,8 +312,9 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                 throw new NeedTicketFamilyException(AisMsg.NEED_TICKET_FAMILY_ERROR);
             }
             for (TicketFamily ticketFamily : ticketFamilys) {
+                TicketFamily originTicketFamily = entityManager.find(TicketFamily.class, ticketFamily.getTicketFamilyId());
                 //Create CabinClassTicketFamilyId
-                CabinClassTicketFamilyId cabinClassTicketFamilyId = new CabinClassTicketFamilyId(aircraftCabinClassId, ticketFamily.getTicketFamilyId());
+                CabinClassTicketFamilyId cabinClassTicketFamilyId = new CabinClassTicketFamilyId(aircraftCabinClassId, originTicketFamily.getTicketFamilyId());
                 CabinClassTicketFamily cabinClassTicketFamily;
                 cabinClassTicketFamily = entityManager.find(CabinClassTicketFamily.class, cabinClassTicketFamilyId);
                 if (cabinClassTicketFamily != null) {
@@ -321,16 +322,18 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                     cctfMap.put(cabinClassTicketFamily, false);
                     cabinClassTicketFamily.setAircraftCabinClass(aircraftCabinClass);
                     cabinClassTicketFamily.setCabinClassTicketFamilyId(cabinClassTicketFamilyId);
-                    cabinClassTicketFamily.setTicketFamily(ticketFamily);
+                    cabinClassTicketFamily.setTicketFamily(originTicketFamily);
                     cabinClassTicketFamily.setSeatQty(0);
                     entityManager.merge(cabinClassTicketFamily);
+                    entityManager.flush();
                 } else {
                     //Create CabinClassTicketFamily
                     cabinClassTicketFamily = new CabinClassTicketFamily(cabinClassTicketFamilyId, 0);
                     entityManager.persist(cabinClassTicketFamily);
+                    entityManager.flush();
                 }
                 /**
-                 ** Dislink booking class relationship with flight schedule,
+                 ** DisLink booking class relationship with flight schedule,
                  * whose ticket family has been deleted.
                  *
                  */
@@ -345,6 +348,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
             //Set CabinClassTicketFamily to AircraftCabinClass
             aircraftCabinClass.setCabinClassTicketFamilys(cabinClassTicketFamilys);
             entityManager.merge(aircraftCabinClass);
+            entityManager.flush();
         }
     }
 

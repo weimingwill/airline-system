@@ -12,6 +12,7 @@ import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +29,7 @@ import managedbean.application.NavigationController;
  */
 @Named(value = "cabinClassController")
 @RequestScoped
-public class CabinClassController {
+public class CabinClassController implements Serializable{
 
     @Inject
     private NavigationController navigationController;

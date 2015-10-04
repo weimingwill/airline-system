@@ -21,6 +21,7 @@ import ams.aps.entity.Aircraft;
 import ams.aps.session.AircraftSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -37,7 +38,7 @@ import managedbean.application.NavigationController;
  */
 @Named(value = "ticketFamilyController")
 @RequestScoped
-public class TicketFamilyController {
+public class TicketFamilyController implements Serializable{
 
     /**
      * Creates a new instance of TicketFamilyController
