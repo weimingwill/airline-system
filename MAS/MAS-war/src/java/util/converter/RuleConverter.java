@@ -40,7 +40,7 @@ public class RuleConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if (object != null) {
+        if (object != null&& !(object instanceof String)) {
             return String.valueOf(((Rule) object).getName());
         } else {
             return null;
