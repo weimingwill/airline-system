@@ -39,7 +39,7 @@
                     </p:dataTable>  
                 </p:column>
 
-                <p:column headerText="Edit Rule Values" style="width:32px;text-align: center">
+                <p:column headerText="Edit" style="width:32px;text-align: center">
                     <p:commandButton update="ruleDialog" action="#{ticketFamilyController.onEditBtnCick}" oncomplete="PF('ruleDialog').show()" icon="ui-icon-pencil">
                         <f:setPropertyActionListener value="#{ticketfamily}" target="#{ticketFamilyController.selectedTicketFamily}" />
                     </p:commandButton>
@@ -54,6 +54,29 @@
             <h:form>
                 <p:panel id="ruleDetail">
                     <p:panelGrid>
+                        <ui:repeat var="ticketFamily" value="#{ticketFamilyController.selectedTicketFamily}" varStatus="status">
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Ticket Family Name: " />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{ticketFamily.name}" />
+                                </p:column>
+                            </p:row>  
+                            
+                             <p:row> 
+                                <p:column>
+                                    <p:outputLabel value="Ticket Family Type: " />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{ticketFamily.type}" >
+                                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                    </p:inputText>
+                                </p:column>
+                            </p:row>
+                        </ui:repeat>
+                        
+                        
                         <ui:repeat var="ticketFamilyRuleHelper" value="#{ticketFamilyController.ticketFamilyRuleHelpers}" varStatus="status">
                             <p:row>
                                 <p:column>
