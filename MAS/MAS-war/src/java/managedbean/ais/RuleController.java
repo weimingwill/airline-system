@@ -33,6 +33,15 @@ public class RuleController {
     
     private String oldname;
     private String name;
+    private Rule selectedRule;
+
+    public Rule getSelectedRule() {
+        return selectedRule;
+    }
+
+    public void setSelectedRule(Rule selectedRule) {
+        this.selectedRule = selectedRule;
+    }
 
     public String getOldname() {
         return oldname;
@@ -72,7 +81,8 @@ public class RuleController {
     
     public void deleteRule() {
         try{
-        ruleSession.deleteRule(name);
+        ruleSession.deleteRule(selectedRule.getName());
+        System.out.printf("name is :"+selectedRule.getName());
         msgController.addMessage("Delete rule successfully");
         } catch (NoSuchRuleException ex) {
         msgController.addErrorMessage(ex.getMessage());
