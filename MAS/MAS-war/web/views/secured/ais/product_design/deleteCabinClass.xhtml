@@ -3,7 +3,8 @@
 <ui:composition template="./../../../../template/AisTemplate.xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 
     <ui:define name="title">
@@ -12,13 +13,23 @@
 
     <ui:define name="content">
         <h:form id="deleteCabinClassForm">
-            <h:panelGrid columns="2" columnClasses="label, value">
+            <h:panelGrid columns="2" columnClasses="label, value" style="margin-bottom:10px" cellpadding="3">
+                <p:outputLabel for="cabinclass" value="Delete Cabin Class:" />
+                <p:selectOneMenu id="cabinclass" var="cc" value="#{cabinClassController.selectedCabinClass}" converter="cabinClassConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
+                    <f:selectItem itemLabel="Select" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{cabinClassController.allCabinClass}" var="cabinClass" itemLabel="#{cabinClass.type}--#{cabinClass.name}"/>
+                    <p:column>
+                        <h:outputText value="#{cc.type}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{cc.name}"/>
+                    </p:column>
+                </p:selectOneMenu>
 
+<!--                <h:outputText value="Delete through Cabin Class Name"/>
+                <p:inputText required="true" requiredMessage="Please enter cabin class name you want to delete" id="name" value="{cabinClassController.name}">
 
-                <h:outputText value="Delete through Cabin Class Name"/>
-                <p:inputText required="true" requiredMessage="Please enter cabin class name you want to delete" id="name" value="#{cabinClassController.name}">
-
-                </p:inputText>
+                </p:inputText>-->
 
                 <p:commandButton action="#{cabinClassController.deleteCabinClass()}" value="Delete" update="messages"/>    
 
