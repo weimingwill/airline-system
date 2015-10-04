@@ -50,7 +50,7 @@
             </p:dataTable>
         </h:form>
 
-        <p:dialog id="ruleDialog" header="Edit Rules for #{ticketFamilyController.selectedTicketFamily.cabinClass.name}: #{ticketFamilyController.selectedTicketFamily.name}" widgetVar="ruleDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+        <p:dialog id="ruleDialog" header="Edit #{ticketFamilyController.selectedTicketFamily.cabinClass.name}: #{ticketFamilyController.selectedTicketFamily.name}" widgetVar="ruleDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form>
                 <p:panel id="ruleDetail">
                     <p:panelGrid>
@@ -70,7 +70,6 @@
                                 </p:column>
                                 <p:column>
                                     <p:inputText value="#{ticketFamily.type}" >
-                                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                                     </p:inputText>
                                 </p:column>
                             </p:row>
