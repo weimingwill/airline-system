@@ -3,29 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package managedbean.aps;
+package managedbean.ais;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
-import ams.ais.entity.TicketFamily;
 import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
-import ams.ais.util.exception.NeedBookingClassException;
-import ams.ais.util.exception.NeedTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
-import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
 import ams.ais.util.helper.FlightScheduleBookingClassHelper;
 import ams.ais.util.helper.SeatClassHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
-import ams.aps.entity.Aircraft;
 import ams.aps.entity.FlightSchedule;
-import ams.aps.session.FlightScheduleSessionLocal;
-import ams.aps.util.exception.NoSuchAircraftCabinClassException;
-import ams.aps.util.exception.NoSuchAircraftException;
+import ams.ais.session.FlightScheduleSessionLocal;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.util.helper.ApsMessage;
@@ -41,7 +34,6 @@ import javax.inject.Named;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
-import mas.util.helper.SafeHelper;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -72,6 +64,7 @@ public class FlightScheduleController implements Serializable {
     private List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers;
     private List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers;
     private List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers;
+    private List<BookingClassHelper> bookingClassHelpers;
 
     public FlightScheduleController() {
     }
@@ -90,75 +83,42 @@ public class FlightScheduleController implements Serializable {
         if (selectedFlightSchedule != null) {
             flightScheduleId = selectedFlightSchedule.getFlightScheduleId();
             flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
-            return navigationController.redirectToAddFlightScheduleBookingClass();
+            return navigationController.redirectToAssignFlightScheduleBookingClass();
         }
         msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
         return "";
     }
 
-    public List<BookingClassHelper> getTicketFamilyBookingClassHelpers(String cabinClassName, String ticketFamilyName) {
-        System.out.println("Get BookingClass Helper");
-        return ticketFamilySession.getTicketFamilyBookingClassHelpers(cabinClassName, ticketFamilyName);
+//    public List<BookingClassHelper> getTicketFamilyBookingClassHelpers(String cabinClassName, String ticketFamilyName) {
+//        System.out.println("Get BookingClass Helper");
+//        return ticketFamilySession.getTicketFamilyBookingClassHelpers(cabinClassName, ticketFamilyName);
+//    }
+    public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) {
+        List<BookingClass> bookingClasses;
+        try {
+            bookingClasses = ticketFamilySession.getTicketFamilyBookingClasses(cabinClassName, ticketFamilyName);
+        } catch (NoSuchBookingClassException e) {
+            bookingClasses = new ArrayList<>();
+        }
+        return bookingClasses;
     }
 
-    public String toAddFlightScheduleBookingClass2() {
-        if (selectedFlightSchedule != null) {
-            flightScheduleId = selectedFlightSchedule.getFlightScheduleId();
-            int i = 1;
-            flightScheduleBookingClassHelpers = new ArrayList<>();
-            seatClassHelpers = new ArrayList<>();
-            Aircraft aircraft;
-            try {
-                aircraft = flightScheduleSession.getFlightScheduleAircraft(flightScheduleId);
-                for (CabinClass cabinClass : SafeHelper.emptyIfNull(getFlightScheduleCabinClasses())) {
-                    FlightScheduleBookingClassHelper flightScheduleBookingClassHelper;
-                    if (flightScheduleSession.haveBookingClass(flightScheduleId)) {
-                        //initialize flightScheduleBookingClassHelpers if fligtSchedule have booking classes
-                        List<TicketFamily> ticketFamilys = new ArrayList<>();
-                        try {
-                            ticketFamilys = cabinClassSession.getCabinClassTicketFamilysFromJoinTable(aircraft.getAircraftId(), cabinClass.getCabinClassId());
-                        } catch (NoSuchTicketFamilyException e) {
-                            msgController.addErrorMessage(e.getMessage());
-                        }
-                        flightScheduleBookingClassHelper = new FlightScheduleBookingClassHelper(i, cabinClass, ticketFamilys);
-
-                        //initialize seatClassHelpers
-                        for (TicketFamily ticketFamily : ticketFamilys) {
-                            List<BookingClass> bookingClasses;
-                            try {
-                                System.out.println("TicketFamily: " + ticketFamily);
-                                bookingClasses = flightScheduleSession.getFlightScheduleBookingClassesOfTicketFamily(flightScheduleId, ticketFamily.getTicketFamilyId());
-                                System.out.println("BookingClass: " + bookingClasses);
-                            } catch (NoSuchBookingClassException e) {
-                                bookingClasses = new ArrayList<>();
-                            }
-                            SeatClassHelper seatClassHelper = new SeatClassHelper(cabinClass.getName(), ticketFamily.getName(), bookingClasses);
-                            seatClassHelpers.add(seatClassHelper);
-                            System.out.println("SeatClassHelper: " + seatClassHelper.getCabinClassName() + ":" + seatClassHelper.getTicketFamilyName()
-                                    + ":" + seatClassHelper.getBookingClasses());
-                        }
-                        System.out.println("SeatClassHelpers: " + seatClassHelpers);
-                    } else {
-                        flightScheduleBookingClassHelper = new FlightScheduleBookingClassHelper(i, cabinClass);
+    public String assignFlightScheduleBookingClass() {
+        try {
+            flightScheduleSession.assignFlightScheduleBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+            for (FlightSchCabinClsTicFamBookingClsHelper helper : flightSchCabinClsTicFamBookingClsHelpers) {
+                for (TicketFamilyBookingClassHelper tfbcHelper : helper.getTicketFamilyBookingClassHelpers()) {
+                    for (BookingClass bc : tfbcHelper.getBookingClasses()) {
+                        System.out.println("In Controller - Booking Class " + bc.getName());
                     }
-                    try {
-                        if (cabinClassSession.getCabinClassTicketFamilys(cabinClass.getType()).isEmpty()) {
-                            flightScheduleBookingClassHelper.setHaveTicketFamily(true);
-                        }
-                    } catch (NoSuchTicketFamilyException e) {
-                        flightScheduleBookingClassHelper.setHaveTicketFamily(false);
-                    }
-                    i++;
-                    flightScheduleBookingClassHelpers.add(flightScheduleBookingClassHelper);
                 }
-                return navigationController.redirectToAddFlightScheduleBookingClass();
-            } catch (NoSuchAircraftException ex) {
-                msgController.addErrorMessage(ex.getMessage());
-                return "";
             }
+            msgController.addMessage("assign flight schedule booking class succesffully!");
+            return navigationController.redirectToViewFlightSchedule();
+        } catch (NoSuchFlightSchedulException | NoSuchFlightScheduleBookingClassException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+            return navigationController.redirectToAssignFlightScheduleBookingClass();
         }
-        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
-        return "";
     }
 
     public String toSeatAllocation() {
@@ -173,19 +133,6 @@ public class FlightScheduleController implements Serializable {
         return "";
     }
 
-//    public void onTicketFamilyChange() {
-//        System.out.println("On Ticket Family Change");
-//        seatClassHelpers = new ArrayList<>();
-//        for (FlightScheduleBookingClassHelper fsbc : SafeHelper.emptyIfNull(flightScheduleBookingClassHelpers)) {
-//            for (TicketFamily ticketFamily : SafeHelper.emptyIfNull(fsbc.getTicketFamilys())) {
-//                List<BookingClass> bookingClasses = new ArrayList<>();
-////                System.out.println("CabinClass: " + fsbc.getCabinClass().getName() + ". TicketFamily: " + ticketFamily.getName());
-//                SeatClassHelper seatClassHelper = new SeatClassHelper(fsbc.getCabinClass().getName(), ticketFamily.getName(), bookingClasses);
-//                System.out.println("CabinClass: " + seatClassHelper.getCabinClassName() + ". TicketFamily: " + seatClassHelper.getTicketFamilyName());
-//                seatClassHelpers.add(seatClassHelper);
-//            }
-//        }
-//    }
     public List<CabinClass> getFlightScheduleCabinClasses() {
         List<CabinClass> cabinClasses;
         try {
@@ -204,16 +151,83 @@ public class FlightScheduleController implements Serializable {
         }
     }
 
-    public String assignFlightScheduleBookingClass() {
-        try {
-            flightScheduleSession.assignFlightScheduleBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
-            msgController.addMessage("assign flight schedule booking class succesffully!");
-            return navigationController.redirectToViewFlightSchedule();
-        } catch (NoSuchFlightSchedulException | NoSuchFlightScheduleBookingClassException ex) {
-            msgController.addErrorMessage(ex.getMessage());
-            return navigationController.redirectToAddFlightScheduleBookingClass();
-        }
+    public boolean haveBookingClass() {
+        return flightScheduleSession.haveBookingClass(flightScheduleId);
     }
+
+//
+//    public String toAddFlightScheduleBookingClass2() {
+//        if (selectedFlightSchedule != null) {
+//            flightScheduleId = selectedFlightSchedule.getFlightScheduleId();
+//            int i = 1;
+//            flightScheduleBookingClassHelpers = new ArrayList<>();
+//            seatClassHelpers = new ArrayList<>();
+//            Aircraft aircraft;
+//            try {
+//                aircraft = flightScheduleSession.getFlightScheduleAircraft(flightScheduleId);
+//                for (CabinClass cabinClass : SafeHelper.emptyIfNull(getFlightScheduleCabinClasses())) {
+//                    FlightScheduleBookingClassHelper flightScheduleBookingClassHelper;
+//                    if (flightScheduleSession.haveBookingClass(flightScheduleId)) {
+//                        //initialize flightScheduleBookingClassHelpers if fligtSchedule have booking classes
+//                        List<TicketFamily> ticketFamilys = new ArrayList<>();
+//                        try {
+//                            ticketFamilys = cabinClassSession.getCabinClassTicketFamilysFromJoinTable(aircraft.getAircraftId(), cabinClass.getCabinClassId());
+//                        } catch (NoSuchTicketFamilyException e) {
+//                            msgController.addErrorMessage(e.getMessage());
+//                        }
+//                        flightScheduleBookingClassHelper = new FlightScheduleBookingClassHelper(i, cabinClass, ticketFamilys);
+//
+//                        //initialize seatClassHelpers
+//                        for (TicketFamily ticketFamily : ticketFamilys) {
+//                            List<BookingClass> bookingClasses;
+//                            try {
+//                                System.out.println("TicketFamily: " + ticketFamily);
+//                                bookingClasses = flightScheduleSession.getFlightScheduleBookingClassesOfTicketFamily(flightScheduleId, ticketFamily.getTicketFamilyId());
+//                                System.out.println("BookingClass: " + bookingClasses);
+//                            } catch (NoSuchBookingClassException e) {
+//                                bookingClasses = new ArrayList<>();
+//                            }
+//                            SeatClassHelper seatClassHelper = new SeatClassHelper(cabinClass.getName(), ticketFamily.getName(), bookingClasses);
+//                            seatClassHelpers.add(seatClassHelper);
+//                            System.out.println("SeatClassHelper: " + seatClassHelper.getCabinClassName() + ":" + seatClassHelper.getTicketFamilyName()
+//                                    + ":" + seatClassHelper.getBookingClasses());
+//                        }
+//                        System.out.println("SeatClassHelpers: " + seatClassHelpers);
+//                    } else {
+//                        flightScheduleBookingClassHelper = new FlightScheduleBookingClassHelper(i, cabinClass);
+//                    }
+//                    try {
+//                        if (cabinClassSession.getCabinClassTicketFamilys(cabinClass.getType()).isEmpty()) {
+//                            flightScheduleBookingClassHelper.setHaveTicketFamily(true);
+//                        }
+//                    } catch (NoSuchTicketFamilyException e) {
+//                        flightScheduleBookingClassHelper.setHaveTicketFamily(false);
+//                    }
+//                    i++;
+//                    flightScheduleBookingClassHelpers.add(flightScheduleBookingClassHelper);
+//                }
+//                return navigationController.redirectToAssignFlightScheduleBookingClass();
+//            } catch (NoSuchAircraftException ex) {
+//                msgController.addErrorMessage(ex.getMessage());
+//                return "";
+//            }
+//        }
+//        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
+//        return "";
+//    }
+//    public void onTicketFamilyChange() {
+//        System.out.println("On Ticket Family Change");
+//        seatClassHelpers = new ArrayList<>();
+//        for (FlightScheduleBookingClassHelper fsbc : SafeHelper.emptyIfNull(flightScheduleBookingClassHelpers)) {
+//            for (TicketFamily ticketFamily : SafeHelper.emptyIfNull(fsbc.getTicketFamilys())) {
+//                List<BookingClass> bookingClasses = new ArrayList<>();
+////                System.out.println("CabinClass: " + fsbc.getCabinClass().getName() + ". TicketFamily: " + ticketFamily.getName());
+//                SeatClassHelper seatClassHelper = new SeatClassHelper(fsbc.getCabinClass().getName(), ticketFamily.getName(), bookingClasses);
+//                System.out.println("CabinClass: " + seatClassHelper.getCabinClassName() + ". TicketFamily: " + seatClassHelper.getTicketFamilyName());
+//                seatClassHelpers.add(seatClassHelper);
+//            }
+//        }
+//    }
 //    public String addBookingClass(String method) {
 //        try {
 //            flightScheduleSession.addBookingClass(flightScheduleId, flightScheduleBookingClassHelpers, seatClassHelpers, method);
@@ -221,14 +235,9 @@ public class FlightScheduleController implements Serializable {
 //            return navigationController.redirectToViewFlightSchedule();
 //        } catch (NoSuchAircraftCabinClassException | NoSuchTicketFamilyException | NoSuchAircraftException | NoSuchCabinClassException | NoSuchFlightSchedulException | NeedBookingClassException | NeedTicketFamilyException ex) {
 //            msgController.addErrorMessage(ex.getMessage());
-//            return navigationController.redirectToAddFlightScheduleBookingClass();
+//            return navigationController.redirectToAssignFlightScheduleBookingClass();
 //        }
 //    }
-
-    public boolean haveBookingClass() {
-        return flightScheduleSession.haveBookingClass(flightScheduleId);
-    }
-
     //Getter and setter
     public Long getFlightScheduleId() {
         return flightScheduleId;
@@ -301,4 +310,13 @@ public class FlightScheduleController implements Serializable {
     public void setFlightSchCabinClsTicFamBookingClsHelpers(List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers) {
         this.flightSchCabinClsTicFamBookingClsHelpers = flightSchCabinClsTicFamBookingClsHelpers;
     }
+
+    public List<BookingClassHelper> getBookingClassHelpers() {
+        return bookingClassHelpers;
+    }
+
+    public void setBookingClassHelpers(List<BookingClassHelper> bookingClassHelpers) {
+        this.bookingClassHelpers = bookingClassHelpers;
+    }
+
 }

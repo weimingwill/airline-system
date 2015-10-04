@@ -52,6 +52,8 @@ public interface TicketFamilySessionLocal {
 
     public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) throws NoSuchBookingClassException;
 
+    public List<BookingClass> getTicketFamilyBookingClasses(Long cabinClassId, Long ticketFamilyId) throws NoSuchBookingClassException;
+
     public List<BookingClassHelper> getTicketFamilyBookingClassHelpers(String cabinClassName, String ticketFamilyName);
     
     public List<String> getTicketFamilyBookingClassNames(String cabinClassName, String ticketFamilyName);

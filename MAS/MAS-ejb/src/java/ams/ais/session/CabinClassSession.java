@@ -277,7 +277,6 @@ public class CabinClassSession implements CabinClassSessionLocal {
         List<CabinClassTicketFamily> cabinClassTicketFamilys = null;
         try {
             cabinClassTicketFamilys = (List<CabinClassTicketFamily>) query.getResultList();
-            System.out.println("CabinClassTicketFamily in function: " + cabinClassTicketFamilys);
         } catch (NoResultException e) {
             throw new NoSuchCabinClassTicketFamilyException(AisMsg.NO_SUCH_CABINCLASS_TICKETFAMILY_ERROR);
         }

@@ -5,6 +5,7 @@
  */
 package ams.ais.util.helper;
 
+import ams.ais.entity.BookingClass;
 import ams.ais.entity.TicketFamily;
 import java.util.List;
 
@@ -16,6 +17,9 @@ public class TicketFamilyBookingClassHelper {
     private TicketFamily ticketFamily;
     private int seatQty;
     private List<BookingClassHelper> bookingClassHelpers;
+    private List<BookingClass> bookingClasses;
+
+    
 
     public TicketFamilyBookingClassHelper() {
     }
@@ -49,5 +53,14 @@ public class TicketFamilyBookingClassHelper {
     public void setSeatQty(int seatQty) {
         this.seatQty = seatQty;
     }
+
+    public List<BookingClass> getBookingClasses() {
+        return bookingClasses;
+    }
+
+    public void setBookingClasses(List<BookingClass> bookingClasses) {
+        this.bookingClasses = bookingClasses;
+    }
+    
     
 }

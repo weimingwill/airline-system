@@ -25,13 +25,13 @@ import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.helper.AircraftCabinClassId;
 import ams.aps.session.AircraftSessionLocal;
-import ams.aps.session.FlightScheduleSession;
-import ams.aps.session.FlightScheduleSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -223,8 +223,21 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         query.setParameter("inTicketFamilyName", ticketFamilyName);
         List<BookingClass> bookingClasses = new ArrayList<>();
         try {
-            System.out.println("BookingClass Results: " + query.getResultList());
-            bookingClasses = (List<BookingClass>)query.getResultList();
+            bookingClasses = (List<BookingClass>) query.getResultList();
+        } catch (NoResultException e) {
+            throw new NoSuchBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
+        }
+        return bookingClasses;
+    }
+    
+    @Override
+    public List<BookingClass> getTicketFamilyBookingClasses(Long cabinClassId, Long ticketFamilyId) throws NoSuchBookingClassException {
+        Query query = entityManager.createQuery("SELECT b FROM TicketFamily t, BookingClass b WHERE t.cabinClass.cabinClassId = :inCabinClassId and t.ticketFamilyId = :inTicketFamilyId and b.ticketFamily.ticketFamilyId = t.ticketFamilyId and b.deleted = FALSE and t.deleted = FALSE");
+        query.setParameter("inCabinClassId", cabinClassId);
+        query.setParameter("inTicketFamilyId", ticketFamilyId);
+        List<BookingClass> bookingClasses = new ArrayList<>();
+        try {
+            bookingClasses = (List<BookingClass>) query.getResultList();
         } catch (NoResultException e) {
             throw new NoSuchBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
         }
@@ -241,6 +254,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                 bookingClassHelpers.add(bookingClassHelper);
             }
         } catch (NoSuchBookingClassException e) {
+            System.out.println(e.getMessage());
         }
         return bookingClassHelpers;
     }
@@ -250,18 +264,21 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         List<CabinClassTicketFamily> cabinClassTicketFamilys;
         try {
             cabinClassTicketFamilys = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraftId, cabinClassId);
-//            AircraftCabinClassId aircraftCabinClassId = new AircraftCabinClassId(aircraftId, cabinClassId);
-//            cabinClassTicketFamilys = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraftCabinClassId);
         } catch (NoSuchCabinClassTicketFamilyException e) {
             cabinClassTicketFamilys = new ArrayList<>();
         }
-        System.out.println("CabinClassTicketFamilys: " + cabinClassTicketFamilys);
 
         List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers = new ArrayList<>();
         for (CabinClassTicketFamily cabinClassTicketFamily : cabinClassTicketFamilys) {
-            TicketFamilyBookingClassHelper helper
-                    = new TicketFamilyBookingClassHelper(cabinClassTicketFamily.getTicketFamily(), cabinClassTicketFamily.getSeatQty(),
-                            bookingClassSession.getBookingClassHelpers(flightScheduleId, cabinClassTicketFamily.getTicketFamily().getTicketFamilyId()));
+            Long ticketFamilyId = cabinClassTicketFamily.getTicketFamily().getTicketFamilyId();
+            TicketFamilyBookingClassHelper helper = new TicketFamilyBookingClassHelper();
+            helper.setSeatQty(cabinClassTicketFamily.getSeatQty());
+            helper.setTicketFamily(cabinClassTicketFamily.getTicketFamily());
+            helper.setBookingClassHelpers(bookingClassSession.getBookingClassHelpers(flightScheduleId, ticketFamilyId));
+            try {
+                helper.setBookingClasses(flightScheduleSession.getFlightScheduleBookingClassesOfTicketFamily(flightScheduleId, ticketFamilyId));
+            } catch (NoSuchBookingClassException ex) {
+            }
             ticketFamilyBookingClassHelpers.add(helper);
         }
         return ticketFamilyBookingClassHelpers;
@@ -315,7 +332,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                 /**
                  ** Dislink booking class relationship with flight schedule,
                  * whose ticket family has been deleted.
-                *
+                 *
                  */
                 List<CabinClassTicketFamily> deletedCctfs = (List<CabinClassTicketFamily>) TicketFamilyMapHelper.getKeysFromValue(cctfMap, true);
                 for (CabinClassTicketFamily deletedCctf : deletedCctfs) {

@@ -226,6 +226,23 @@ public class NavigationController implements Serializable {
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }
+    
+    //Flight Schedule Booking Class
+    public String redirectToAssignFlightScheduleBookingClass(){
+        return "/views/secured/ais/booking_class/assignFlightScheduleBookingClasses.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewFlightSchedule(){
+        return "/views/secured/ais/booking_class/viewFlightSchedule.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToSeatAllocation(){
+        return "/views/secured/ais/booking_class/seatAllocation.xhtml" + REDIRECT;
+    }
+   
+    public String redirectToProductDesign(){
+        return "/views/secured/ais/product_design/productDesign.xhtml" + REDIRECT;
+    }    
 
     //APS
     public String redirectToAPS() {
@@ -266,23 +283,6 @@ public class NavigationController implements Serializable {
     
     public String toAddRoute(){
         return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
-    }
-    
-        //FlightSchedule
-    public String redirectToAddFlightScheduleBookingClass(){
-        return "/views/secured/aps/flight_schedule/addBookingClasses.xhtml" + REDIRECT;
-    }
-    
-    public String redirectToViewFlightSchedule(){
-        return "/views/secured/aps/flight_schedule/viewFlightSchedule.xhtml" + REDIRECT;
-    }
-    
-    public String redirectToSeatAllocation(){
-        return "/views/secured/ais/booking_class/seatAllocation.xhtml" + REDIRECT;
-    }
-   
-    public String redirectToProductDesign(){
-        return "/views/secured/ais/product_design/productDesign.xhtml" + REDIRECT;
     }
 
    

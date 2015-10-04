@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.aps.session;
+package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
@@ -28,6 +28,7 @@ import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.helper.AircraftCabinClassId;
+import ams.aps.session.AircraftSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
@@ -212,16 +213,27 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
 //    }
     @Override
     public void assignFlightScheduleBookingClass(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException {
+        
         FlightScheduleBookingClass flightScheduleBookingClass;
         List<BookingClass> bookingClasses = getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
+        System.out.println("begin assinment");
+        for (BookingClass bc : bookingClasses) {
+            System.out.println("In Session assign method - Booking Class " + bc.getName());
+        }
         for (BookingClass bookingClass : bookingClasses) {
+            System.out.println("BookingClass: " + bookingClass.getName());
             try {
+
                 flightScheduleBookingClass = getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
+                flightScheduleBookingClass.setBookingClass(bookingClass);
+                System.out.println("T: " + flightScheduleBookingClass.getBookingClass().getName());
+                entityManager.merge(flightScheduleBookingClass);
             } catch (NoSuchFlightScheduleBookingClassException e) {
                 flightScheduleBookingClass = new FlightScheduleBookingClass();
+                flightScheduleBookingClass.setBookingClass(bookingClass);
+                System.out.println("F: " + flightScheduleBookingClass.getBookingClass().getName());
+                entityManager.persist(flightScheduleBookingClass);
             }
-            flightScheduleBookingClass.setBookingClass(bookingClass);
-            entityManager.merge(flightScheduleBookingClass);
         }
     }
 
@@ -230,8 +242,8 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
         List<BookingClass> bookingClasses = new ArrayList<>();
         for (FlightSchCabinClsTicFamBookingClsHelper helper : helpers) {
             for (TicketFamilyBookingClassHelper tfbcHelper : helper.getTicketFamilyBookingClassHelpers()) {
-                for (BookingClassHelper bcHelper : tfbcHelper.getBookingClassHelpers()) {
-                    bookingClasses.add(bcHelper.getBookingClass());
+                for (BookingClass bookingClass : bookingClasses) {
+                    bookingClasses.add(bookingClass);
                 }
             }
         }
