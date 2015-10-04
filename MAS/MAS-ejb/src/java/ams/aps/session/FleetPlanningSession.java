@@ -254,7 +254,7 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
                 double minFuelCapacity = Math.floor(resultSet.getFloat(3));
                 double minLifespan = Math.floor(resultSet.getFloat(4));
                 double maxLifespan = Math.floor(resultSet.getFloat(5));
-                System.out.println(minAddOnDate.toString() + ", " + minAvgFuelUsage
+                System.out.println(minAddOnDate + ", " + minAvgFuelUsage
                         + ", " + minFuelCapacity + ", " + minLifespan
                         + ", " + maxLifespan);
                 

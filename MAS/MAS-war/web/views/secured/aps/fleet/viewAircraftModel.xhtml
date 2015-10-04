@@ -14,7 +14,7 @@
                 <h:form id="aircraftModelForm">
                     <ez:CCAircraftModelFilterRibbon/>
                     <p:panel id="basic" header="Available Aircraft Models in the Market" style="margin-bottom:20px">
-                        <p:outputLabel for="myTableId" value="#{fleetController.msg}"/>
+                        <p:outputLabel for="aircraftModelTable" value="#{fleetController.msg}"/>
                         <p:dataTable binding="#{fleetTableController.theDataTable}" id="aircraftModelTable" var="model" value="#{fleetController.aircraftModels}" rows="10"
                                      paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      rowsPerPageTemplate="10,15" widgetVar="aircraftModelTable"
