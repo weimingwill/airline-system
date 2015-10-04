@@ -32,7 +32,7 @@ public class TicketFamily implements Serializable {
     private Long ticketFamilyId;
     private String type;
     private String name;
-    private boolean deleted;
+    private Boolean deleted;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
     private List<TicketFamilyRule> ticketFamilyRules = new ArrayList<>();
@@ -86,13 +86,14 @@ public class TicketFamily implements Serializable {
         this.type = type;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
 
     @Override
     public int hashCode() {
