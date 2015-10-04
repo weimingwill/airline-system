@@ -29,7 +29,7 @@ public class Channel implements Serializable {
     private Long channelId;
     private String type;
     private String name;
-    private boolean deleted;
+    private Boolean deleted;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "channel")
     private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
@@ -50,13 +50,14 @@ public class Channel implements Serializable {
         this.name = name;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
 
     public String getType() {
         return type;

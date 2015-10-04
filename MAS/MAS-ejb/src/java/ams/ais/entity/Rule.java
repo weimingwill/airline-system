@@ -27,7 +27,7 @@ public class Rule implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ruleId;
     private String name;
-    private boolean deleted;
+    private Boolean deleted;
     
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rule")
     private List<TicketFamilyRule> ticketFamilyRules = new ArrayList<>();
@@ -60,15 +60,14 @@ public class Rule implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
-    public boolean isDeleted() {
+
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
-
     
 
     @Override
