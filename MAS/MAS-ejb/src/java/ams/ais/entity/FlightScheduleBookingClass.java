@@ -51,17 +51,20 @@ public class FlightScheduleBookingClass implements Serializable {
     private List<PhaseDemand> phaseDemands = new ArrayList<>();    
     
     @Column(name = "SEATQTY")
-    private int seatQty;
+    private Integer seatQty;
     
     @Column(name = "PRICE")
-    private float price;
+    private Float price;
     
     @Column(name = "PRICECOEFFICIENT")
-    private float priceCoefficient;
+    private Float priceCoefficient;
 
     @Column(name = "DEMAND")
-    private int demand;
+    private Integer demand;
 
+    @Column(name = "DELETED")
+    private Boolean deleted;
+    
     public Long getFlightScheduleId() {
         return flightScheduleId;
     }
@@ -94,36 +97,44 @@ public class FlightScheduleBookingClass implements Serializable {
         this.bookingClass = bookingClass;
     }
 
-    public int getSeatQty() {
+    public Integer getSeatQty() {
         return seatQty;
     }
 
-    public void setSeatQty(int seatQty) {
+    public void setSeatQty(Integer seatQty) {
         this.seatQty = seatQty;
     }
 
-    public float getPrice() {
+    public Float getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 
-    public float getPriceCoefficient() {
+    public Float getPriceCoefficient() {
         return priceCoefficient;
     }
 
-    public void setPriceCoefficient(float priceCoefficient) {
+    public void setPriceCoefficient(Float priceCoefficient) {
         this.priceCoefficient = priceCoefficient;
     }
 
-    public int getDemand() {
+    public Integer getDemand() {
         return demand;
     }
 
-    public void setDemand(int demand) {
+    public void setDemand(Integer demand) {
         this.demand = demand;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public List<SeatAllocationHistory> getSeatAllocationHistory() {

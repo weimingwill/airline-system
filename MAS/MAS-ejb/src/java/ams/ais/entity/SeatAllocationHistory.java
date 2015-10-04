@@ -22,8 +22,8 @@ public class SeatAllocationHistory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seatAllocationHistoryId;
-    private int seatNoBefore;
-    private int seatNoAfter;
+    private Integer seatNoBefore;
+    private Integer seatNoAfter;
     private Date allocateTime;
 
     public Long getSeatAllocationHistoryId() {
@@ -42,21 +42,22 @@ public class SeatAllocationHistory implements Serializable {
         this.allocateTime = allocateTime;
     }
 
-    public int getSeatNoBefore() {
+    public Integer getSeatNoBefore() {
         return seatNoBefore;
     }
 
-    public void setSeatNoBefore(int seatNoBefore) {
+    public void setSeatNoBefore(Integer seatNoBefore) {
         this.seatNoBefore = seatNoBefore;
     }
 
-    public int getSeatNoAfter() {
+    public Integer getSeatNoAfter() {
         return seatNoAfter;
     }
 
-    public void setSeatNoAfter(int seatNoAfter) {
+    public void setSeatNoAfter(Integer seatNoAfter) {
         this.seatNoAfter = seatNoAfter;
     }
+
 
     @Override
     public int hashCode() {

@@ -27,7 +27,7 @@ public class CabinClass implements Serializable {
     private Long cabinClassId;
     private String type;
     private String name;
-    private boolean deleted;
+    private Boolean deleted;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="cabinClass")
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
@@ -63,12 +63,12 @@ public class CabinClass implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
-    
-    public boolean isDeleted() {
+
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
