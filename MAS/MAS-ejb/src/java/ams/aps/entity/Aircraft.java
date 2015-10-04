@@ -35,10 +35,10 @@ public class Aircraft implements Serializable {
     private Float cost;
     private Date addOnDate;
     private Float avgUnitOilUsage;
+    private Boolean scheduled;
     
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraft")
     private List<AircraftCabinClass> aircraftCabinClasses = new ArrayList<>();
-            
     
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraft")
     private List<FlightSchedule> flightSchedules = new ArrayList<>();
@@ -207,5 +207,11 @@ public class Aircraft implements Serializable {
         this.flightSchedules = flightSchedules;
     }
 
-    
+    public Boolean getScheduled() {
+        return scheduled;
+    }
+
+    public void setScheduled(Boolean scheduled) {
+        this.scheduled = scheduled;
+    }
 }

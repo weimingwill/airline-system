@@ -8,14 +8,12 @@ package ams.ais.entity;
 import ams.ais.helper.CabinClassTicketFamilyId;
 import ams.aps.entity.AircraftCabinClass;
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.PrimaryKeyJoinColumns;
@@ -32,7 +30,6 @@ public class CabinClassTicketFamily implements Serializable {
     @EmbeddedId
     private CabinClassTicketFamilyId cabinClassTicketFamilyId;
 
-//    @MapsId("aircraftCabinClassId")
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumns({
         @PrimaryKeyJoinColumn(name = "AIRCRAFTID", referencedColumnName = "AIRCRAFTID"),
@@ -40,7 +37,6 @@ public class CabinClassTicketFamily implements Serializable {
     })
     private AircraftCabinClass aircraftCabinClass;
 
-//    @MapsId("ticketFamilyId")
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "TICKETFAMILYID", referencedColumnName = "TICKETFAMILYID")
     private TicketFamily ticketFamily;
