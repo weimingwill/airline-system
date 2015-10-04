@@ -41,7 +41,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
 
     @Override
     public TicketFamily getTicketFamilyByName(String ticketFamilyName) {
-        Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.name = :inticketFamilyName");
+        Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.name = :inticketFamilyName AND t.deleted = FALSE");
         query.setParameter("inticketFamilyName", ticketFamilyName);
         TicketFamily ticketFamily = null;
         try {
@@ -273,7 +273,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
 
     @Override
     public List<TicketFamilyRule> getTicketFamilyRuleByTicketFamilyId(long ticketFamilyId) {
-        Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId");
+        Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId AND u.rule.deleted = FALSE");
         query.setParameter("inticketFamilyId", ticketFamilyId);
         List<TicketFamilyRule> ticketFamilyRules = null;
         
