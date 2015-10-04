@@ -97,7 +97,8 @@ public class TicketFamilyController implements Serializable {
     }
 
     public void editRuleValues() {
-        
+        updateTicketFamilyByType();
+        System.out.print("we are here");
         for (TicketFamilyRuleHelper thisHelper : ticketFamilyRuleHelpers) {
             System.out.println("id = " + thisHelper.getTicketFamilyId() + " " + thisHelper.getRuleId() + " " + thisHelper.getName() + ": " + thisHelper.getRuleValue());
             TicketFamilyRule updatedTicketFamilyRule = new TicketFamilyRule();
@@ -253,7 +254,18 @@ public class TicketFamilyController implements Serializable {
         return navigationController.redirectToViewAllTicketFamily();
 
     }
-
+    
+    // For update Ticket Family (edit ticket Family name and type
+    public String updateTicketFamilyByType(){
+        try {
+            ticketFamilySession.updateTicketFamilyByType(selectedTicketFamily.getTicketFamilyId(), selectedTicketFamily.getCabinClass().getName(), selectedTicketFamily.getType(), selectedTicketFamily.getName());
+            msgController.addMessage("Edit ticket family successfully!");
+        } catch (ExistSuchTicketFamilyException|NoSuchTicketFamilyException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllTicketFamily();
+    }
+    
     /**
      * @return the selectedTicketFamily
      */
