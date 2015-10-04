@@ -68,8 +68,9 @@
                 <p:column headerText="Status" sortBy="#{aircraft.status}">
                     <h:outputText value="#{aircraft.status}" />
                 </p:column>
+                
                 <p:column style="width:32px;text-align: center">
-                    <p:commandButton action="#{fleetTableController.onEditButtonClick()}" icon="fa fa-pencil-square-o" title="Edit Aircraft Information">
+                    <p:commandButton action="#{fleetTableController.onEditAircraftBtnClick()}" icon="fa fa-pencil-square-o" title="Edit Aircraft Information">
                         <f:setPropertyActionListener value="#{aircraft}" target="#{fleetTableController.selectedAircraft}" />
                     </p:commandButton>
                 </p:column>

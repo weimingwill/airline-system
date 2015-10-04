@@ -6,6 +6,7 @@
 package managedbean.aps;
 
 import ams.aps.entity.Aircraft;
+import ams.aps.entity.AircraftType;
 import ams.aps.session.FleetPlanningSessionLocal;
 import ams.aps.util.helper.AircraftStatus;
 import java.io.Serializable;
@@ -22,6 +23,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import managedbean.application.MsgController;
+import managedbean.application.NavigationController;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -46,6 +48,9 @@ public class FleetTableController implements Serializable {
 
     @Inject
     MsgController msgController;
+    
+    @Inject
+    NavigationController navigationController;
 
     @Inject
     FleetFilterController fleetFilterController;
@@ -53,6 +58,8 @@ public class FleetTableController implements Serializable {
     private List<Aircraft> fleetList = new ArrayList<>();
     private List<Aircraft> selectedAircrafts;
     private Aircraft selectedAircraft;
+    private AircraftType selectedAircraftType;
+    private AircraftType newAircraftType = new AircraftType();
     private DashboardModel model;
     private List<String> aircraftStatusList = new ArrayList<String>(Arrays.asList(AircraftStatus.IDLE, AircraftStatus.IN_MAINT, AircraftStatus.IN_USE));
     private String selectedAircraftStatus;
@@ -131,15 +138,20 @@ public class FleetTableController implements Serializable {
     private void onOpenDialogBtnClick(String dialogId) {
         System.out.println("onOpenDialogBtnClick(): DialogId = " + dialogId);
         System.out.println("onOpenDialogBtnClick(): SelectedAircraft = " + selectedAircraft);
-        if (!(selectedAircraft == null)) {
+        System.out.println("onOpenDialogBtnClick(): SelectedAircraftModel = " + selectedAircraftType);
+        if (!(selectedAircraft == null) || !(selectedAircraftType == null)) {
             RequestContext context = RequestContext.getCurrentInstance();
             context.update(dialogId);
             context.execute("PF(\'" + dialogId + "\').show();");
         }
     }
 
-    public void onEditButtonClick() {
+    public void onEditAircraftBtnClick() {
         onOpenDialogBtnClick("editAircraftDlg");
+    }
+
+    public void onEditModelBtnClick() {
+        onOpenDialogBtnClick("editAircraftModelDlg");
     }
 
     public void onViewMaintRcdBtnClick() {
@@ -156,10 +168,10 @@ public class FleetTableController implements Serializable {
     }
 
     public void resetRetireAicraftFilters() {
-        fleetFilterController.setInitialValue();
-
+        fleetFilterController.setInitialValue("Retire");
         status[0] = AircraftStatus.IDLE;
         status[1] = AircraftStatus.IN_MAINT;
+        setFleetList(new ArrayList());
         getFleet(status);
     }
 
@@ -174,8 +186,28 @@ public class FleetTableController implements Serializable {
         if (fleetPlanningSession.updateAircraftInfo(selectedAircraft)) {
             msgController.addMessage("Update aircraft " + selectedAircraft.getTailNo() + " information");
         } else {
-            msgController.addMessage("Update aircraft " + selectedAircraft.getTailNo() + " information");
+            msgController.addErrorMessage("Update aircraft " + selectedAircraft.getTailNo() + " information");
         }
+    }
+
+    public String addNewAircraftModel() {
+        System.out.println("FleetTableController: addNewAircraftModel()");
+        if (fleetPlanningSession.addNewAircraftModel(newAircraftType)) {
+            msgController.addMessage("Add new aircraft model " + newAircraftType.getTypeCode());
+        } else {
+            msgController.addErrorMessage("Add new aircraft model " + newAircraftType.getTypeCode());
+        }
+        return navigationController.redirectToCurrentPage();
+    }
+
+    public String updateAircraftModel() {
+        System.out.println("FleetTableController: updateAircraftModel()");
+        if (fleetPlanningSession.updateAircraftModel(selectedAircraftType)) {
+            msgController.addMessage("Update aircraft model " + selectedAircraftType.getTypeCode());
+        } else {
+            msgController.addErrorMessage("Update aircraft model " + selectedAircraftType.getTypeCode());
+        }
+        return navigationController.redirectToCurrentPage();
     }
 
     public void createDashboardModel() {
@@ -306,4 +338,33 @@ public class FleetTableController implements Serializable {
     public void setTheDataTable(DataTable theDataTable) {
         this.theDataTable = theDataTable;
     }
+
+    /**
+     * @return the selectedAircraftType
+     */
+    public AircraftType getSelectedAircraftType() {
+        return selectedAircraftType;
+    }
+
+    /**
+     * @param selectedAircraftType the selectedAircraftType to set
+     */
+    public void setSelectedAircraftType(AircraftType selectedAircraftType) {
+        this.selectedAircraftType = selectedAircraftType;
+    }
+
+    /**
+     * @return the newAircraftType
+     */
+    public AircraftType getNewAircraftType() {
+        return newAircraftType;
+    }
+
+    /**
+     * @param newAircraftType the newAircraftType to set
+     */
+    public void setNewAircraftType(AircraftType newAircraftType) {
+        this.newAircraftType = newAircraftType;
+    }
+
 }

@@ -97,11 +97,12 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
         Date addOnDate = new Date(cal.getTimeInMillis());
         Float avgUnitOilUsage = (model.getMaxFuelCapacity() / model.getRangeInKm() * 100) / model.getTypicalSeating();
         String status = AircraftStatus.IDLE;
-        
+
         newAircraft.setAddOnDate(addOnDate);
         newAircraft.setAvgUnitOilUsage(avgUnitOilUsage);
         newAircraft.setStatus(status);
         newAircraft.setAircraftType(model);
+        newAircraft.setScheduled(Boolean.FALSE);
 
         entityManager.persist(newAircraft);
         entityManager.flush();
@@ -257,18 +258,38 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
                 System.out.println(minAddOnDate + ", " + minAvgFuelUsage
                         + ", " + minFuelCapacity + ", " + minLifespan
                         + ", " + maxLifespan);
-                
-                
+
                 retireAircraftFilterHelper.setFromAddOnDate(minAddOnDate);
-                retireAircraftFilterHelper.setMinAvgFuelUsage((float)minAvgFuelUsage);
-                retireAircraftFilterHelper.setMinFuelCapacity((float)minFuelCapacity);
-                retireAircraftFilterHelper.setMinLifespan((float)minLifespan);
-                retireAircraftFilterHelper.setMaxLifespan((float)maxLifespan);
+                retireAircraftFilterHelper.setMinAvgFuelUsage((float) minAvgFuelUsage);
+                retireAircraftFilterHelper.setMinFuelCapacity((float) minFuelCapacity);
+                retireAircraftFilterHelper.setMinLifespan((float) minLifespan);
+                retireAircraftFilterHelper.setMaxLifespan((float) maxLifespan);
             }
 
             stmt.close();
         } catch (SQLException ex) {
             Logger.getLogger(FleetPlanningSession.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public boolean addNewAircraftModel(AircraftType newAircraftModel) {
+        try {
+            entityManager.persist(newAircraftModel);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateAircraftModel(AircraftType updatedAircraftModel) {
+        try{
+            entityManager.find(AircraftType.class, updatedAircraftModel.getId());
+            entityManager.merge(updatedAircraftModel);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
     }
 }
