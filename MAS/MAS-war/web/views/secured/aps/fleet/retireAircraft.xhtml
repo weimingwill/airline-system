@@ -4,89 +4,106 @@
                 template="./../../../../template/ApsTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:fo="http://xmlns.jcp.org/jsf/composite/ezcomp/form"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
 
     <ui:define name="content">
-        <h:form id="form"> 
-            <p:panel id="retire-fleet-panel" header="Fleet Can Be Retired" style="margin-bottom:20px">
+        <h:form id="form">
+            <ez:CCRetireAircraftFilterRibbon/>
+            <p:separator/>
+            <p:dataTable id="retire-fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="5" selection="#{fleetTableController.selectedAircrafts}" 
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" rowKey="#{aircraft.aircraftId}" tableStyle="width:auto; font-size:small">
                 <p:messages autoUpdate="true"/>
-                <p:dataTable id="retire-fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="10" selection="#{fleetTableController.selectedAircrafts}" 
-                             paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                             rowsPerPageTemplate="10,15" rowKey="#{aircraft.aircraftId}" tableStyle="width:auto; font-size:small">
-                    <p:messages autoUpdate="true"/>
+                <f:facet name="header">
+                    <p:outputLabel value="Aircrafts Can be Retired"/>
+                </f:facet>
+                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                <p:column headerText="Id" sortBy="#{aircraft.aircraftId}">
+                    <h:outputText value="#{aircraft.aircraftId}" />
+                </p:column>
 
-                    <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-                    <p:column headerText="Id" sortBy="#{aircraft.aircraftId}">
-                        <h:outputText value="#{aircraft.aircraftId}" />
-                    </p:column>
+                <p:column headerText="Tail Number" sortBy="#{aircraft.tailNo}">
+                    <h:outputText value="#{aircraft.tailNo}" />
+                </p:column>
 
-                    <p:column headerText="Tail Number" sortBy="#{aircraft.tailNo}">
-                        <h:outputText value="#{aircraft.tailNo}" />
-                    </p:column>
+                <p:column headerText="Type Code" sortBy="#{aircraft.aircraftType.typeCode}">
+                    <h:outputText value="#{aircraft.aircraftType.typeCode}" />
+                </p:column>
 
-                    <p:column headerText="Type Code" sortBy="#{aircraft.aircraftType.typeCode}">
-                        <h:outputText value="#{aircraft.aircraftType.typeCode}" />
-                    </p:column>
+                <p:column headerText="Brand" sortBy="#{aircraft.aircraftType.mfdBy}">
+                    <h:outputText value="#{aircraft.aircraftType.mfdBy}" />
+                </p:column>
 
-                    <p:column headerText="Brand" sortBy="#{aircraft.aircraftType.mfdBy}">
-                        <h:outputText value="#{aircraft.aircraftType.mfdBy}" />
-                    </p:column>
+                <p:column headerText="Source" sortBy="#{aircraft.source}">
+                    <h:outputText value="#{aircraft.source}" />
+                </p:column>
 
-                    <p:column headerText="Source" sortBy="#{aircraft.source}">
-                        <h:outputText value="#{aircraft.source}" />
-                    </p:column>
+                <p:column headerText="Cost (mio USD)" sortBy="#{aircraft.cost}">
+                    <h:outputText value="#{aircraft.cost}" />
+                </p:column>
 
-                    <p:column headerText="Cost (mio USD)" sortBy="#{aircraft.cost}">
-                        <h:outputText value="#{aircraft.cost}" />
-                    </p:column>
+                <p:column headerText="Liftspan (yrs)" sortBy="#{aircraft.lifetime}">
+                    <h:outputText value="#{aircraft.lifetime}" />
+                </p:column>
 
-                    <p:column headerText="Liftspan (yrs)" sortBy="#{aircraft.lifetime}">
-                        <h:outputText value="#{aircraft.lifetime}" />
-                    </p:column>
+                <p:column headerText="Average Fuel Usage (L /psg /100km)" sortBy="#{aircraft.avgUnitOilUsage}">
+                    <h:outputText value="#{aircraft.avgUnitOilUsage}" >
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Fuel Capacity (Litre)">
+                    <h:outputText value="#{aircraft.aircraftType.maxFuelCapacity}">
+                        <f:convertNumber maxFractionDigits="2" groupingUsed="true"/>
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Add on Date" sortBy="#{aircraft.addOnDate}">
+                    <h:outputText value="#{aircraft.addOnDate}">
+                        <f:convertDateTime type="date" pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Status" sortBy="#{aircraft.status}">
+                    <h:outputText value="#{aircraft.status}" />
+                </p:column>
 
-                    <p:column headerText="Average Oil Usage (L /psg /100km)" sortBy="#{aircraft.avgUnitOilUsage}">
-                        <h:outputText value="#{aircraft.avgUnitOilUsage}" />
-                    </p:column>
+                <p:column headerText="Maint Records" style="width:32px;text-align: center">
+                    <p:commandButton action="#{fleetTableController.onViewMaintRcdBtnClick()}" icon="fa fa-file-text-o" title="View Maintenace Records">
+                        <f:setPropertyActionListener value="#{aircraft}" target="#{fleetTableController.selectedAircraft}" />
+                    </p:commandButton>
+                </p:column>
 
-                    <p:column headerText="Status" sortBy="#{aircraft.status}">
-                        <h:outputText value="#{aircraft.status}" />
-                    </p:column>
+                <p:column headerText="Flight History" style="width:32px;text-align: center">
+                    <p:commandButton action="#{fleetTableController.onViewFlightHistBtnClick()}" icon="fa fa-calendar" title="View Flight Schedules">
+                        <f:setPropertyActionListener value="#{aircraft}" target="#{fleetTableController.selectedAircraft}" />
+                    </p:commandButton>
+                </p:column>
 
-                    <f:facet name="footer" >
-                        <p:commandButton process="retire-fleet-table" value="Retire" actionListener="#{fleetTableController.onMinusBtnClick}" update="retireFleetDlg" icon="ui-icon-minusthick" />
-                    </f:facet>
-                </p:dataTable>
-            </p:panel>
+                <f:facet name="footer" >
+                    <p:commandButton process="retire-fleet-table" value="Retire" actionListener="#{fleetTableController.onMinusBtnClick}" update="retireFleetDlg" icon="ui-icon-minusthick" />
+                </f:facet>
+            </p:dataTable>
             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                 <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
                 <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" oncomplete="PF('retireFleetDialog').hide();"/>
             </p:confirmDialog>
         </h:form>
+        
         <p:dialog id="retireFleetDlg" widgetVar="retireFleetDialog" modal="true" appendTo="@(body)" resizable="false">
-            <h:form>
-                <p:outputLabel value="The following aircrafts has been selected" style="font-weight:bold"/>
-                <p:separator />
-                <p:outputPanel id="multiAircraftDetail" style="text-align:center;">
-                    <p:dataGrid var="aircraft" value="#{fleetTableController.selectedAircrafts}" columns="3" layout="grid"
-                                rows="3" paginator="true" id="aircraft"
-                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                rowsPerPageTemplate="3">
-                        <p:panel header="Aircraft: #{aircraft.aircraftId}" style="text-align:center">
-                            <h:panelGrid columns="1" style="width:100%">
-                                <p:outputLabel value="#{aircraft.tailNo}" />
-                                <p:outputLabel value="#{aircraft.aircraftType.typeCode}" />
-                                <p:outputLabel value="#{aircraft.aircraftType.mfdBy}" />
-                            </h:panelGrid>
-                        </p:panel>
-                    </p:dataGrid>
-                    <p:separator />
-                    <p:commandButton value="Retire"  type="submit" action="#{navigationController.toRetireAicraft()}" actionListener="#{fleetTableController.retireAircrafts}" update="messages">
-                        <p:confirm header="Confirmation" message="Are you sure you want to retire selected aircraft(s)?" icon="ui-icon-alert" />
-                    </p:commandButton>
-                </p:outputPanel>
-            </h:form>
+            <fo:CCRetireAircraftForm/>
         </p:dialog>
-
+        <p:dialog id="aircraftMaintRcdDlg" widgetVar="aircraftMaintRcdDlg" header="Maintenance Record for #{fleetTableController.selectedAircraft.tailNo}" 
+                  modal="true" appendTo="@(body)" resizable="false">
+            <pa:CCAircraftMaintRcdPanel/>
+        </p:dialog>
+        <p:dialog id="aircraftFlightHistDlg" widgetVar="aircraftFlightHistDlg" header="Flight History for #{fleetTableController.selectedAircraft.tailNo}"
+                  modal="true" appendTo="@(body)" resizable="false">
+            <pa:CCAircraftFlightHistPanel/>
+        </p:dialog>
     </ui:define>
 
 </ui:composition>

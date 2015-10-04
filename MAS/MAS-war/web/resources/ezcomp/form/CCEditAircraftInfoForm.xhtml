@@ -30,13 +30,18 @@
                 <p:outputLabel value="Cost (million):" for="cost"/>
                 <p:inputText id="cost" binding="#{newCost}" value="#{fleetTableController.selectedAircraft.cost}"/>
 
+                <p:outputLabel value="Average Fuel Usage (L/psg/100km):" for="cost"/>
+                <p:inputText id="oilUsage" binding="#{newOilUsage}" value="#{fleetTableController.selectedAircraft.avgUnitOilUsage}">
+                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                </p:inputText>
+
                 <p:outputLabel value="Status:" for="statusMenu"/>
                 <p:selectOneMenu id="statusMenu" value="#{fleetTableController.selectedAircraftStatus}">
                     <f:selectItems value="#{fleetTableController.aircraftStatusList}" var="status" itemLabel="#{status}" itemValue="#{status}"/>
                 </p:selectOneMenu>
             </p:panelGrid>
             <p:separator/>
-            <p:commandButton value="Update" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{fleetTableController.updateAircraftInfo(newLifespan.value,newCost.value)}"/>
+            <p:commandButton value="Update" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{fleetTableController.updateAircraftInfo(newLifespan.value,newCost.value,newOilUsage.value)}"/>
         </h:form>
     </cc:implementation>
 </html>

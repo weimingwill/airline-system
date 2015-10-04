@@ -10,6 +10,7 @@ import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftType;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.helper.AircraftCabinClassHelper;
+import ams.aps.util.helper.RetireAircraftFilterHelper;
 import javax.ejb.Local;
 import java.util.List;
 
@@ -28,4 +29,6 @@ public interface FleetPlanningSessionLocal {
     public CabinClass getCabinClassById(Long id);
     public List<List<AircraftCabinClassHelper>> getCabinClassByAircraftType(String typeCode);
     public boolean retireSelectedAircrafts(List<Aircraft> aircrafts);
+    public List<Aircraft> filterAircraftsForRetire(RetireAircraftFilterHelper filters);
+    public void initRetireAicraftFilter(RetireAircraftFilterHelper retireAircraftFilterHelper);
 }

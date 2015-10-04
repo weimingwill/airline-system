@@ -13,15 +13,23 @@ import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.helper.AircraftCabinClassHelper;
 import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.Message;
+import ams.aps.util.helper.RetireAircraftFilterHelper;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import mas.common.util.helper.MySQLConnection;
 
 /**
  *
@@ -73,6 +81,7 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
             thisAircraft.setLifetime(updatedAircraft.getLifetime());
             thisAircraft.setCost(updatedAircraft.getCost());
             thisAircraft.setStatus(updatedAircraft.getStatus());
+            thisAircraft.setAvgUnitOilUsage(updatedAircraft.getAvgUnitOilUsage());
             entityManager.merge(thisAircraft);
         } catch (IllegalArgumentException ex) {
             return false;
@@ -88,7 +97,7 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
         Date addOnDate = new Date(cal.getTimeInMillis());
         Float avgUnitOilUsage = (model.getMaxFuelCapacity() / model.getRangeInKm() * 100) / model.getTypicalSeating();
         String status = AircraftStatus.IDLE;
-
+        
         newAircraft.setAddOnDate(addOnDate);
         newAircraft.setAvgUnitOilUsage(avgUnitOilUsage);
         newAircraft.setStatus(status);
@@ -198,6 +207,68 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
             return (List<Long>) query.getResultList();
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    @Override
+    public List<Aircraft> filterAircraftsForRetire(RetireAircraftFilterHelper filters) {
+        // Maintenance and flight cycle filters will be implemented once Flight Scheduling and Maintenance Scheduling modules are developed
+        Query query = entityManager.createQuery("SELECT a FROM Aircraft a "
+                + "WHERE a.addOnDate >= :inAddOnDate "
+                + "AND a.avgUnitOilUsage >= :inMinAvgUnitOilUsage "
+                + "AND (a.lifetime BETWEEN :inMinLifetime AND :inMaxLifetime) "
+                + "AND a.aircraftType.maxFuelCapacity >= :inMinFuelCapacity "
+                + "AND a.status <> :inRetired AND a.status <> :inCrashed");
+        query.setParameter("inAddOnDate", filters.getFromAddOnDate());
+        query.setParameter("inMinAvgUnitOilUsage", filters.getMinAvgFuelUsage());
+        query.setParameter("inMinLifetime", filters.getMinLifespan());
+        query.setParameter("inMaxLifetime", filters.getMaxLifespan());
+        query.setParameter("inMinFuelCapacity", filters.getMinFuelCapacity());
+        query.setParameter("inRetired", AircraftStatus.RETIRED);
+        query.setParameter("inCrashed", AircraftStatus.CRASHED);
+
+        List<Aircraft> filteredAircrafts = new ArrayList();
+        try {
+            filteredAircrafts = (List<Aircraft>) query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("FleetPlanningSession: filterAircraftsForRetire()" + filteredAircrafts);
+        return filteredAircrafts;
+    }
+
+    @Override
+    public void initRetireAicraftFilter(RetireAircraftFilterHelper retireAircraftFilterHelper) {
+        // TODO: Maintenance and Flight Cycle will be implemented
+        Connection conn = MySQLConnection.establishConnection();
+        String query = "SELECT MIN(A.ADDONDATE), MIN(A.AVGUNITOILUSAGE), MIN(T.MAXFUELCAPACITY), MIN(A.LIFETIME), MAX(A.LIFETIME) FROM `mas`.`AIRCRAFT` A, `mas`.`AIRCRAFTTYPE` T WHERE A.AIRCRAFTTYPE_ID = T.ID";
+        Statement stmt = null;
+
+        try {
+            stmt = conn.createStatement();
+            ResultSet resultSet = stmt.executeQuery(query);
+
+            while (resultSet.next()) {
+                Date minAddOnDate = resultSet.getDate(1);
+                double minAvgFuelUsage = Math.floor(resultSet.getFloat(2));
+                double minFuelCapacity = Math.floor(resultSet.getFloat(3));
+                double minLifespan = Math.floor(resultSet.getFloat(4));
+                double maxLifespan = Math.floor(resultSet.getFloat(5));
+                System.out.println(minAddOnDate.toString() + ", " + minAvgFuelUsage
+                        + ", " + minFuelCapacity + ", " + minLifespan
+                        + ", " + maxLifespan);
+                
+                
+                retireAircraftFilterHelper.setFromAddOnDate(minAddOnDate);
+                retireAircraftFilterHelper.setMinAvgFuelUsage((float)minAvgFuelUsage);
+                retireAircraftFilterHelper.setMinFuelCapacity((float)minFuelCapacity);
+                retireAircraftFilterHelper.setMinLifespan((float)minLifespan);
+                retireAircraftFilterHelper.setMaxLifespan((float)maxLifespan);
+            }
+
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(FleetPlanningSession.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

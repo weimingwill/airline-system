@@ -118,11 +118,11 @@ tr.hide{
 }
 
 .cabinClassHelperDlg{
-/*    top: 10% !important;*/
+    /*    top: 10% !important;*/
 }
 
 .addNewAircraftDlg{
-/*    top: 20% !important;*/
+    /*    top: 20% !important;*/
 }
 
 .aircraftModelImage{
@@ -131,4 +131,19 @@ tr.hide{
 
 .ui-paginator-bottom{
     display: none !important;
+}
+.filterBtn{
+    background-color: #dfeffc !important;
+    color: #2e6e9e !important;
+}
+.filterBtn:hover{
+    background-color: #d0e5f5 !important;
+}
+.filterBtn:active{
+    background-color: #f5f8f9 !important;
+    color:#e17009 !important;
+}
+.ui-ribbon-group-content{
+    height: 150px !important;
+    margin-bottom: 10px;
 }

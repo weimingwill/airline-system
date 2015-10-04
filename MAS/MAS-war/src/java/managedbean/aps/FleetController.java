@@ -7,6 +7,7 @@ package managedbean.aps;
 
 import ams.ais.entity.CabinClass;
 import ams.aps.entity.Aircraft;
+import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.AircraftType;
 import ams.aps.session.FleetPlanningSessionLocal;
 import ams.aps.util.exception.EmptyTableException;
@@ -28,9 +29,10 @@ import managedbean.application.MsgController;
 @Named(value = "fleetController")
 @RequestScoped
 public class FleetController implements Serializable {
+
     @Inject
     MsgController msgController;
-    
+
     @EJB
     private FleetPlanningSessionLocal fleetPlanningSession;
 
@@ -44,8 +46,7 @@ public class FleetController implements Serializable {
     private List<AircraftCabinClassHelper> aircraftCabinClassHelpers = new ArrayList<>();
     private List<List<AircraftCabinClassHelper>> selectedModelCabinClassesSet;
     private List<AircraftCabinClassHelper> selectedModelCabinClassList;
-    
-    
+
     /**
      * Creates a new instance of FleetController
      */
@@ -70,17 +71,25 @@ public class FleetController implements Serializable {
         try {
             setCabinClasses(fleetPlanningSession.getAllCabinClasses());
             for (CabinClass cabinClass : cabinClasses) {
-                aircraftCabinClassHelpers.add(new AircraftCabinClassHelper(cabinClass.getCabinClassId(),cabinClass.getType(), cabinClass.getName(), 0));
+                aircraftCabinClassHelpers.add(new AircraftCabinClassHelper(cabinClass.getCabinClassId(), cabinClass.getType(), cabinClass.getName(), 0));
             }
         } catch (EmptyTableException ex) {
             setMsg(ex.getMessage());
         }
     }
-    
-    private void getCabinClassByAircraftModel(String typeCode){
+
+    private void getCabinClassByAircraftModel(String typeCode) {
         setSelectedModelCabinClassesSet(fleetPlanningSession.getCabinClassByAircraftType(typeCode));
     }
-    
+
+    public int calculateTotalSeat(Aircraft aircraft) {
+        int totalSeat = 0;
+        for (AircraftCabinClass cabinClass : aircraft.getAircraftCabinClasses()) {
+            totalSeat += cabinClass.getSeatQty();
+        }
+        return totalSeat;
+    }
+
     public void addNewAircraft(String tailNo, String lifespan, String source, String cost, String seatConfig) {
         System.out.println("FleetController: addNewAircraft():");
         Aircraft newAircraft = new Aircraft();
@@ -91,26 +100,26 @@ public class FleetController implements Serializable {
         newAircraft.setAircraftType(aircraftModel);
         newAircraft.setAircraftCabinClasses(null);
         List<AircraftCabinClassHelper> cabinClassHelpers = new ArrayList();
-        for(AircraftCabinClassHelper thisHelper: aircraftCabinClassHelpers){
-            if(thisHelper.getSeatQty() != 0){
+        for (AircraftCabinClassHelper thisHelper : aircraftCabinClassHelpers) {
+            if (thisHelper.getSeatQty() != 0) {
                 cabinClassHelpers.add(thisHelper);
             }
         }
-        if(fleetPlanningSession.addNewAircraft(newAircraft, cabinClassHelpers)){
+        if (fleetPlanningSession.addNewAircraft(newAircraft, cabinClassHelpers)) {
             msgController.addMessage("Add New Aircraft");
         } else {
             msgController.addErrorMessage("Add New Aircraft");
         }
     }
-    
-    public void onModelSelectChange(){
+
+    public void onModelSelectChange() {
         getCabinClassByAircraftModel(aircraftModel.getTypeCode());
     }
-    
-    public List<Aircraft> getFleet(String status){
+
+    public List<Aircraft> getFleet(String status) {
         return fleetPlanningSession.getFleet(status);
     }
-    
+
     public AircraftType getAircraftModelById(Long id) {
         return fleetPlanningSession.getAircraftTypeById(id);
     }
@@ -235,7 +244,8 @@ public class FleetController implements Serializable {
     }
 
     /**
-     * @param selectedModelCabinClassesSet the selectedModelCabinClassesSet to set
+     * @param selectedModelCabinClassesSet the selectedModelCabinClassesSet to
+     * set
      */
     public void setSelectedModelCabinClassesSet(List<List<AircraftCabinClassHelper>> selectedModelCabinClassesSet) {
         this.selectedModelCabinClassesSet = selectedModelCabinClassesSet;
@@ -254,6 +264,5 @@ public class FleetController implements Serializable {
     public void setSelectedModelCabinClassList(List<AircraftCabinClassHelper> selectedModelCabinClassList) {
         this.selectedModelCabinClassList = selectedModelCabinClassList;
     }
-
 
 }

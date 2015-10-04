@@ -11,10 +11,8 @@ import ams.aps.util.helper.AircraftStatus;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
@@ -26,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import managedbean.application.MsgController;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
@@ -48,6 +47,9 @@ public class FleetTableController implements Serializable {
     @Inject
     MsgController msgController;
 
+    @Inject
+    FleetFilterController fleetFilterController;
+
     private List<Aircraft> fleetList = new ArrayList<>();
     private List<Aircraft> selectedAircrafts;
     private Aircraft selectedAircraft;
@@ -55,6 +57,7 @@ public class FleetTableController implements Serializable {
     private List<String> aircraftStatusList = new ArrayList<String>(Arrays.asList(AircraftStatus.IDLE, AircraftStatus.IN_MAINT, AircraftStatus.IN_USE));
     private String selectedAircraftStatus;
     private DataTable theDataTable;
+    private String[] status = new String[2];
 
     /**
      * Creates a new instance of FleetTableController
@@ -67,7 +70,7 @@ public class FleetTableController implements Serializable {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String uri = request.getRequestURI();
         uri = uri.substring(uri.lastIndexOf("/") + 1, uri.indexOf('.', uri.lastIndexOf("/")));
-        String[] status = new String[2];
+
         switch (uri) {
             case "retireAircraft":
                 status[0] = AircraftStatus.IDLE;
@@ -115,7 +118,8 @@ public class FleetTableController implements Serializable {
         return "";
     }
 
-    public void viewAircraftDetail(ActionEvent event) {
+    public void viewAircraftDetail(SelectEvent event) {
+        System.out.println("viewAircraftDetail: " + selectedAircraft);
         if (!(selectedAircraft == null)) {
             createDashboardModel();
             RequestContext context = RequestContext.getCurrentInstance();
@@ -124,19 +128,48 @@ public class FleetTableController implements Serializable {
         }
     }
 
-    public void onEditButtonClick(ActionEvent event) {
+    private void onOpenDialogBtnClick(String dialogId) {
+        System.out.println("onOpenDialogBtnClick(): DialogId = " + dialogId);
+        System.out.println("onOpenDialogBtnClick(): SelectedAircraft = " + selectedAircraft);
         if (!(selectedAircraft == null)) {
             RequestContext context = RequestContext.getCurrentInstance();
-            context.update("editAircraftDlg");
-            context.execute("PF('editAircraftDlg').show();");
+            context.update(dialogId);
+            context.execute("PF(\'" + dialogId + "\').show();");
         }
     }
 
-    public void updateAircraftInfo(String newLifespan, String newCost) {
+    public void onEditButtonClick() {
+        onOpenDialogBtnClick("editAircraftDlg");
+    }
+
+    public void onViewMaintRcdBtnClick() {
+        System.out.println("FleetTableController: onViewMaintRcdBtnClick()");
+        onOpenDialogBtnClick("aircraftMaintRcdDlg");
+    }
+
+    public void onViewFlightHistBtnClick() {
+        onOpenDialogBtnClick("aircraftFlightHistDlg");
+    }
+
+    public void applyRetireAicraftFilters() {
+        setFleetList(fleetFilterController.getFilteredAircrafts());
+    }
+
+    public void resetRetireAicraftFilters() {
+        fleetFilterController.setInitialValue();
+
+        status[0] = AircraftStatus.IDLE;
+        status[1] = AircraftStatus.IN_MAINT;
+        getFleet(status);
+    }
+
+    public void updateAircraftInfo(String newLifespan, String newCost, String newOilUsage) {
         System.out.println("new lifespan = " + newLifespan);
         System.out.println("new Cost = " + newCost);
+        System.out.println("new Oil Usage = " + newOilUsage);
         selectedAircraft.setLifetime(Float.parseFloat(newLifespan));
         selectedAircraft.setCost(Float.parseFloat(newCost));
+        selectedAircraft.setAvgUnitOilUsage(Float.parseFloat(newOilUsage));
         selectedAircraft.setStatus(selectedAircraftStatus);
         if (fleetPlanningSession.updateAircraftInfo(selectedAircraft)) {
             msgController.addMessage("Update aircraft " + selectedAircraft.getTailNo() + " information");
@@ -150,8 +183,12 @@ public class FleetTableController implements Serializable {
         DashboardColumn column1 = new DefaultDashboardColumn();
         DashboardColumn column2 = new DefaultDashboardColumn();
 
-        column1.addWidget("testTile");
-        column2.addWidget("testTile2");
+//        column1.addWidget("testTile");
+//        column2.addWidget("testTile2");
+        column1.addWidget("cost");
+        column1.addWidget("dimension");
+        column2.addWidget("performance");
+        column2.addWidget("capacity");
 
         model.addColumn(column1);
         model.addColumn(column2);
@@ -269,5 +306,4 @@ public class FleetTableController implements Serializable {
     public void setTheDataTable(DataTable theDataTable) {
         this.theDataTable = theDataTable;
     }
-
 }
