@@ -4,47 +4,41 @@
                 template="./../../../../template/ApsTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-
-        <p:dataTable var="routeList" value="#{routeController.routeDisplayList}" style="margin-bottom:40px" rows="10"
-                     paginator="true"
-                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     rowsPerPageTemplate="5,10,15">
-            <f:facet name="header">
-                Routes
-            </f:facet>
-            <p:column headerText="Id" sortBy="#{routeList.id}">
-                <h:outputText value="#{routeList.id}" />
-            </p:column>
-
-            <p:column headerText="Origin" sortBy="#{routeList.origin}">
-                <h:outputText value="#{routeList.origin}" />
-            </p:column>
-            
-            <p:column headerText="Stopovers" sortBy="#{routeList.legs}">
-                <h:outputText value="#{routeList.legs}" />
-            </p:column>
-            
-            <p:column headerText="Destination" sortBy="#{routeList.destination}">
-                <h:outputText value="#{routeList.destination}" />
-            </p:column>
-
-            
-        </p:dataTable>
-
         <h:form>
-            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
-                <p:outputLabel for="route" value="Route:"/>
-                <p:selectOneMenu id="route" value="#{routeController.route}" converter="routeConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
-                    <f:selectItem itemLabel="Select" itemValue="" />
-                    <f:selectItems value="#{routeController.routeList}" var="route" itemLabel="#{route.routeId}" itemValue="#{route}" />
-                </p:selectOneMenu>
 
-            </h:panelGrid>
-            <p:commandButton value="Delete route and return route" update="messages" action="#{navigationController.redirectToViewRoutes()}" actionListener="#{routeController.deleteRoute}" style="left:27px" icon="ui-icon-check"/>
+            <p:dataTable var="routeList" value="#{routeController.viewRoutes()}" selection="#{routeController.routesToBeDeleted}" rowKey="#{routeList.id}" style="margin-bottom:40px; width:auto;" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                <f:facet name="header">
+                    Current Routes In Operation
+                </f:facet>
+                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                <p:column headerText="Id" sortBy="#{routeList.id}">
+                    <h:outputText value="#{routeList.id}" />
+                </p:column>
+
+                <p:column headerText="Origin" sortBy="#{routeList.origin}">
+                    <h:outputText value="#{routeList.origin}" />
+                </p:column>
+
+                <p:column headerText="Stopovers" sortBy="#{routeList.legs}">
+                    <h:outputText value="#{routeList.legs}" />
+                </p:column>
+
+                <p:column headerText="Destination" sortBy="#{routeList.destination}">
+                    <h:outputText value="#{routeList.destination}" />
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Delete route and return route" update="messages" action="#{navigationController.redirectToViewRoutes()}" actionListener="#{routeController.deleteRoute}" style="left:27px" icon="ui-icon-check" />
+                </f:facet>
+
+            </p:dataTable>
+
 
         </h:form>
 
