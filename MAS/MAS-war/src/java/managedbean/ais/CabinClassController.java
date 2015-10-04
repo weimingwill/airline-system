@@ -47,6 +47,15 @@ public class CabinClassController {
     }
     private String type;
     private String name;
+    private CabinClass selectedCabinClass;
+
+    public CabinClass getSelectedCabinClass() {
+        return selectedCabinClass;
+    }
+
+    public void setSelectedCabinClass(CabinClass selectedCabinClass) {
+        this.selectedCabinClass = selectedCabinClass;
+    }
     /**
      * Creates a new instance of CabinClassController
      */
@@ -69,7 +78,7 @@ public class CabinClassController {
     
     public void deleteCabinClass() {
         try{
-        cabinClassSession.deleteCabinClass(name);
+        cabinClassSession.deleteCabinClass(selectedCabinClass.getName());
         msgController.addMessage("Delete cabin class successfully");
         } catch (NoSuchCabinClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
