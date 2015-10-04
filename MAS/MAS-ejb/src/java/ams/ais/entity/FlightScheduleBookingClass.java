@@ -8,6 +8,8 @@ package ams.ais.entity;
 import ams.ais.helper.FlightScheduleBookingClassId;
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +17,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -40,7 +43,13 @@ public class FlightScheduleBookingClass implements Serializable {
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "BOOKINGCLASSID", referencedColumnName = "BOOKINGCLASSID")
     private BookingClass bookingClass;
-
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<SeatAllocationHistory> seatAllocationHistory = new ArrayList<>();
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<PhaseDemand> phaseDemands = new ArrayList<>();    
+    
     @Column(name = "SEATQTY")
     private int seatQty;
     
@@ -126,6 +135,20 @@ public class FlightScheduleBookingClass implements Serializable {
     public void setDemand(int demand) {
         this.demand = demand;
     }
-    
-    
+
+    public List<SeatAllocationHistory> getSeatAllocationHistory() {
+        return seatAllocationHistory;
+    }
+
+    public void setSeatAllocationHistory(List<SeatAllocationHistory> seatAllocationHistory) {
+        this.seatAllocationHistory = seatAllocationHistory;
+    }
+
+    public List<PhaseDemand> getPhaseDemands() {
+        return phaseDemands;
+    }
+
+    public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
+        this.phaseDemands = phaseDemands;
+    }
 }

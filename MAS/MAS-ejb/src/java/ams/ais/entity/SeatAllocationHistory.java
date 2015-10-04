@@ -20,11 +20,11 @@ import javax.persistence.Id;
 public class SeatAllocationHistory implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seatAllocationHistoryId;
-    private int number;
+    private int seatNoBefore;
+    private int seatNoAfter;
     private Date allocateTime;
-    private int modified;
 
     public Long getSeatAllocationHistoryId() {
         return seatAllocationHistoryId;
@@ -33,15 +33,7 @@ public class SeatAllocationHistory implements Serializable {
     public void setSeatAllocationHistoryId(Long seatAllocationHistoryId) {
         this.seatAllocationHistoryId = seatAllocationHistoryId;
     }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
+    
     public Date getAllocateTime() {
         return allocateTime;
     }
@@ -50,15 +42,21 @@ public class SeatAllocationHistory implements Serializable {
         this.allocateTime = allocateTime;
     }
 
-    public int getModified() {
-        return modified;
+    public int getSeatNoBefore() {
+        return seatNoBefore;
     }
 
-    public void setModified(int modified) {
-        this.modified = modified;
+    public void setSeatNoBefore(int seatNoBefore) {
+        this.seatNoBefore = seatNoBefore;
     }
-    
 
+    public int getSeatNoAfter() {
+        return seatNoAfter;
+    }
+
+    public void setSeatNoAfter(int seatNoAfter) {
+        this.seatNoAfter = seatNoAfter;
+    }
 
     @Override
     public int hashCode() {
