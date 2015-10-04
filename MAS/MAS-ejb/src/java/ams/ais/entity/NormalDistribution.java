@@ -21,9 +21,9 @@ public class NormalDistribution implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long normalDistributionId;
-    private float zScore;
-    private float p;
-    private boolean deleted;
+    private Float zScore;
+    private Float p;
+    private Boolean deleted;
 
     
     public Long getNormalDistributionId() {
@@ -34,31 +34,32 @@ public class NormalDistribution implements Serializable {
         this.normalDistributionId = normalDistributionId;
     }
 
-    public float getZscore() {
+    public Float getzScore() {
         return zScore;
     }
 
-    public void setZscore(float zscore) {
-        this.zScore = zscore;
+    public void setzScore(Float zScore) {
+        this.zScore = zScore;
     }
 
-    public float getP() {
+    public Float getP() {
         return p;
     }
 
-    public void setP(float p) {
+    public void setP(Float p) {
         this.p = p;
     }
-    
-    
-    public boolean isDeleted() {
+
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;

@@ -42,7 +42,7 @@ public class CabinClassTicketFamily implements Serializable {
     private TicketFamily ticketFamily;
 
     @Column(name = "SEATQTY")
-    private int seatQty;
+    private Integer seatQty;
 
     public CabinClassTicketFamily() {
     }
@@ -83,12 +83,13 @@ public class CabinClassTicketFamily implements Serializable {
         this.ticketFamily = ticketFamily;
     }
 
-    public int getSeatQty() {
+    public Integer getSeatQty() {
         return seatQty;
     }
 
-    public void setSeatQty(int seatQty) {
+    public void setSeatQty(Integer seatQty) {
         this.seatQty = seatQty;
     }
+
 
 }

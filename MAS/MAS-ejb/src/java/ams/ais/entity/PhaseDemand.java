@@ -21,10 +21,10 @@ public class PhaseDemand implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int daysBeforeDeparture;
-    private float demandMean;
-    private float demandDev;
-    private boolean isDeleted;
+    private Integer daysBeforeDeparture;
+    private Float demandMean;
+    private Float demandDev;
+    private Boolean isDeleted;
     
     public void create(int daysBeforeDeparture, float demandMean, float demandDev){
         this.daysBeforeDeparture = daysBeforeDeparture;
@@ -41,37 +41,39 @@ public class PhaseDemand implements Serializable {
         this.id = id;
     }
 
-    public int getDaysBeforeDeparture() {
+    public Integer getDaysBeforeDeparture() {
         return daysBeforeDeparture;
     }
 
-    public void setDaysBeforeDeparture(int daysBeforeDeparture) {
+    public void setDaysBeforeDeparture(Integer daysBeforeDeparture) {
         this.daysBeforeDeparture = daysBeforeDeparture;
     }
 
-    public float getDemandMean() {
+    public Float getDemandMean() {
         return demandMean;
     }
 
-    public void setDemandMean(float demandMean) {
+    public void setDemandMean(Float demandMean) {
         this.demandMean = demandMean;
     }
 
-    public float getDemandDev() {
+    public Float getDemandDev() {
         return demandDev;
     }
 
-    public void setDemandDev(float demandDev) {
+    public void setDemandDev(Float demandDev) {
         this.demandDev = demandDev;
     }
 
-    public boolean isIsDeleted() {
+    public Boolean getIsDeleted() {
         return isDeleted;
     }
 
-    public void setIsDeleted(boolean isDeleted) {
+    public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
+
+    
 
     @Override
     public int hashCode() {

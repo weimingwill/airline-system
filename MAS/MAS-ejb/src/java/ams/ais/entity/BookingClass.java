@@ -29,7 +29,7 @@ public class BookingClass implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingClassId;
     private String name;
-    private boolean deleted;
+    private Boolean deleted;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "bookingClass")
     private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
@@ -74,11 +74,11 @@ public class BookingClass implements Serializable {
         this.name = name;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
