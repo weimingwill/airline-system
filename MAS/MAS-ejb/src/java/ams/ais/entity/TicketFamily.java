@@ -38,17 +38,6 @@ public class TicketFamily implements Serializable {
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private CabinClass cabinClass;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
-    private List<BookingClass> bookingClasses = new ArrayList<>();
-
-    public List<BookingClass> getBookingClasses() {
-        return bookingClasses;
-    }
-
-    public void setBookingClasses(List<BookingClass> bookingClasses) {
-        this.bookingClasses = bookingClasses;
-    }
-    
     public CabinClass getCabinClass() {
         return cabinClass;
     }
