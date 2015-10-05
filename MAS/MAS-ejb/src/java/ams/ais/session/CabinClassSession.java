@@ -208,7 +208,8 @@ public class CabinClassSession implements CabinClassSessionLocal {
                 + "WHERE ct.aircraftCabinClass.aircraftId = :inAircraftId "
                 + "AND ct.aircraftCabinClass.aircraft.status <> :inRetired AND ct.aircraftCabinClass.aircraft.status <> :inCrashed "
                 + "AND ct.aircraftCabinClass.cabinClassId = :inCabinClassId AND ct.aircraftCabinClass.cabinClass.deleted = FALSE "
-                + "AND ct.ticketFamily.ticketFamilyId = t.ticketFamilyId AND t.deleted = FALSE ");
+                + "AND ct.ticketFamily.ticketFamilyId = t.ticketFamilyId AND t.deleted = FALSE "
+                + "AND ct.deleted = FALSE");
         query.setParameter("inAircraftId", aircraftId);
         query.setParameter("inCabinClassId", cabinClassId);
         query.setParameter("inRetired", AircraftStatus.RETIRED);
@@ -233,7 +234,8 @@ public class CabinClassSession implements CabinClassSessionLocal {
                 + "AND ct.ticketFamily.ticketFamilyId = :inTicketFamilyId "
                 + "AND ct.aircraftCabinClass.cabinClass.deleted = FALSE "
                 + "AND ct.aircraftCabinClass.aircraft.status <> :inRetired AND ct.aircraftCabinClass.aircraft.status <> :inCrashed "
-                + "AND ct.ticketFamily.deleted = FALSE");
+                + "AND ct.ticketFamily.deleted = FALSE "
+                + "AND ct.deleted = FALSE");
         query.setParameter("inAircraftId", aircraftId);
         query.setParameter("inCabinClassId", cabinClassId);
         query.setParameter("inTicketFamilyId", ticketFamilyId);
@@ -254,7 +256,8 @@ public class CabinClassSession implements CabinClassSessionLocal {
                 + "WHERE ct.aircraftCabinClass.aircraftId = :inAircraftId "
                 + "AND ct.aircraftCabinClass.cabinClassId = :inCabinClassId "
                 + "AND ct.aircraftCabinClass.cabinClass.deleted = FALSE "
-                + "AND ct.ticketFamily.deleted = FALSE");
+                + "AND ct.ticketFamily.deleted = FALSE "
+                + "AND ct.deleted = FALSE");
         query.setParameter("inAircraftId", aircraftId);
         query.setParameter("inCabinClassId", cabinClassId);
         List<CabinClassTicketFamily> cabinClassTicketFamilys = null;

@@ -7,11 +7,13 @@ package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchTicketFamilyException;
 import ams.ais.util.exception.NeedTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
@@ -60,5 +62,8 @@ public interface TicketFamilySessionLocal {
 
     public List<TicketFamilyBookingClassHelper> getTicketFamilyBookingClassHelpers(Long flightScheduleId, Long aircraftId, Long cabinClassId);
     
-    public void assignAircraftTicketFamily(Aircraft aircraft, List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers) throws NeedTicketFamilyException, NoSuchAircraftCabinClassException;
+    public void assignAircraftTicketFamily(Aircraft aircraft, List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers)
+            throws NeedTicketFamilyException, NoSuchAircraftCabinClassException, NoSuchCabinClassTicketFamilyException;
+    
+    public void disLinkCabinClassTicketFamily(List<CabinClassTicketFamily> cabinClassTicketFamilys);
 }

@@ -404,8 +404,6 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
                 List<FlightScheduleBookingClass> tfBookingClasses
                         = getFlightScheduleBookingClassJoinTablesOfTicketFamily(flightSchedule.getFlightScheduleId(), cabinClassTicketFamily.getTicketFamily().getTicketFamilyId());
                 for (FlightScheduleBookingClass tfBookingClass : tfBookingClasses) {
-//                    allBookingClasses.remove(tfBookingClass);
-//                    bookingClasses.add(tfBookingClass);
                     tfBookingClass.setDeleted(true);
                 }
 //                flightSchedule.setFlightScheduleBookingClasses(allBookingClasses);

@@ -9,6 +9,7 @@ import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.NeedTicketFamilyException;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.aps.entity.Aircraft;
@@ -71,7 +72,7 @@ public class ProductDesignController implements Serializable {
             ticketFamilySession.assignAircraftTicketFamily(selectedAircraft, cabinClassTicketFamilyHelpers);
             cleanAttribute();
             msgController.addMessage("Assign ticket family to aircraft successfully!");
-        } catch (NeedTicketFamilyException | NoSuchAircraftCabinClassException ex) {
+        } catch (NeedTicketFamilyException | NoSuchAircraftCabinClassException | NoSuchCabinClassTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
             return "";
         }
