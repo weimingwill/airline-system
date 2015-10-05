@@ -27,6 +27,7 @@ public class UserConverter implements Converter {
     @EJB
     private SystemUserSessionLocal systemUserSession;
     
+   
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
@@ -41,6 +42,7 @@ public class UserConverter implements Converter {
         }
     }
 
+   
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
         if (object != null) {
             return String.valueOf(((SystemUser) object).getUsername());

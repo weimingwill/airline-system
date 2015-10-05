@@ -5,6 +5,13 @@
  */
 package util.converter;
 
+
+import ams.ais.entity.TicketFamily;
+import ams.ais.session.TicketFamilySessionLocal;
+import javax.ejb.EJB;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
@@ -19,8 +26,10 @@ import javax.faces.convert.FacesConverter;
 
 /**
  *
- * @author winga_000
+ * @author Bowen
  */
+
+
 @FacesConverter("ticketFamilyConverter")
 public class TicketFamilyConverter implements Converter {
     
@@ -41,12 +50,13 @@ public class TicketFamilyConverter implements Converter {
         }
     }
 
+    @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if (object != null) {
-            return String.valueOf(((TicketFamily) object).getTicketFamilyId());
+        if (object != null && !(object instanceof String)) {
+            return String.valueOf(((TicketFamily)object).getTicketFamilyId());
         } else {
             return null;
         }
-    }
+    } 
 
 }

@@ -5,47 +5,51 @@
  */
 package util.converter;
 
- 
 import ams.ais.entity.CabinClass;
-import ams.aps.entity.Country;
+import ams.ais.session.CabinClassSessionLocal;
+import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.helper.AisMsg;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.inject.Inject;
-import managedbean.ais.SeatReallocationController;
-import managedbean.aps.RouteController;
- 
- 
+
+/**
+ *
+ * @author Bowen
+ */
+
+
 @FacesConverter("cabinClassConverter")
 public class CabinClassConverter implements Converter {
-    @Inject
-    private SeatReallocationController SeatReallocationController;
-    
+
+    @EJB
+    private CabinClassSessionLocal cabinClassSession;
+
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-        if(value != null && value.trim().length() > 0) {
+        if (value != null && value.trim().length() > 0) {
             try {
-                return SeatReallocationController.getCabinClassbyName(value);
-            } catch(NullPointerException e) {
+                return cabinClassSession.getCabinClassByName(value);
+            } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
+            } catch (NoSuchCabinClassException ex) {
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", AisMsg.NO_SUCH_CABIN_CLASS_ERROR));
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
- 
+
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if(object != null && !(object instanceof String)) {
+        if (object != null && !(object instanceof String)) {
             return String.valueOf(((CabinClass) object).getName());
-        }
-        else {
+        } else {
             return null;
         }
-    }   
-}         
-           
+    }
+}
