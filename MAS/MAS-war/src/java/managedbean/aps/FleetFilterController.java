@@ -12,9 +12,11 @@ import ams.aps.util.helper.AircraftModelFilterHelper;
 import ams.aps.util.helper.RetireAircraftFilterHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
@@ -22,7 +24,7 @@ import javax.inject.Named;
  * @author Lewis
  */
 @Named(value = "fleetFilterController")
-@SessionScoped
+@RequestScoped
 public class FleetFilterController implements Serializable {
 
     @EJB
@@ -30,6 +32,14 @@ public class FleetFilterController implements Serializable {
 
     private RetireAircraftFilterHelper retireAircraftFilterHelper = new RetireAircraftFilterHelper();
     private AircraftModelFilterHelper aircraftModelFilterHelper = new AircraftModelFilterHelper();
+    private List<String> manufacturerList;
+    private List<String> typeFamilyList;
+
+    @PostConstruct
+    public void init() {
+        setManufacturerList(fleetPlanningSession.getAllManufacturer());
+        setTypeFamilyList(fleetPlanningSession.getAllTypeFamily());
+    }
 
     /**
      * Creates a new instance of FleetFilterController
@@ -66,9 +76,10 @@ public class FleetFilterController implements Serializable {
 
     }
 
-    private void printAircraftModelFilters() {
+    public void printAircraftModelFilters() {
         System.out.println("FleetFilterController: printAircraftModelFilters()");
         System.out.println("Manufacturer: " + aircraftModelFilterHelper.getManufacturers());
+        System.out.println("Type Family: " + aircraftModelFilterHelper.getTypeFamilies());
         System.out.println("Max Seating: (" + aircraftModelFilterHelper.getMinMaxSeating() + ", " + aircraftModelFilterHelper.getMaxMaxSeating() + ")");
         System.out.println("Approx Price: (" + aircraftModelFilterHelper.getMinApproxPrice() + ", " + aircraftModelFilterHelper.getMaxApproxPrice() + ")");
         System.out.println("Fuel Cost: (" + aircraftModelFilterHelper.getMinFuelCostPerKm() + ", " + aircraftModelFilterHelper.getMaxFuelCostPerKm() + ")");
@@ -105,6 +116,34 @@ public class FleetFilterController implements Serializable {
 
     public void setAircraftModelFilterHelper(AircraftModelFilterHelper aircraftModelFilterHelper) {
         this.aircraftModelFilterHelper = aircraftModelFilterHelper;
+    }
+
+    /**
+     * @return the manufacturerList
+     */
+    public List<String> getManufacturerList() {
+        return manufacturerList;
+    }
+
+    /**
+     * @param manufacturerList the manufacturerList to set
+     */
+    public void setManufacturerList(List<String> manufacturerList) {
+        this.manufacturerList = manufacturerList;
+    }
+
+    /**
+     * @return the typeFamilyList
+     */
+    public List<String> getTypeFamilyList() {
+        return typeFamilyList;
+    }
+
+    /**
+     * @param typeFamilyList the typeFamilyList to set
+     */
+    public void setTypeFamilyList(List<String> typeFamilyList) {
+        this.typeFamilyList = typeFamilyList;
     }
 
 }

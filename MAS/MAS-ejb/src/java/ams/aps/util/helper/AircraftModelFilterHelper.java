@@ -5,6 +5,8 @@
  */
 package ams.aps.util.helper;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +33,18 @@ public class AircraftModelFilterHelper {
     private float maxFuelCapacity;
 
     public AircraftModelFilterHelper() {
+    }
+
+    public List<Point.Float> getAllNumericValues() {
+        List<Point.Float> values = new ArrayList();
+        values.add(new Point.Float(this.minMaxSeating, this.maxMaxSeating));
+        values.add(new Point.Float(this.minApproxPrice, this.maxApproxPrice));
+        values.add(new Point.Float(this.minFuelCostPerKm, this.maxFuelCostPerKm));
+        values.add(new Point.Float(this.minRange, this.maxRange));
+        values.add(new Point.Float(this.minPayload, this.maxPayload));
+        values.add(new Point.Float(this.minMaxMachNum, this.maxMaxMachNum));
+        values.add(new Point.Float(this.minFuelCapacity, this.maxFuelCapacity));
+        return values;
     }
 
     /**

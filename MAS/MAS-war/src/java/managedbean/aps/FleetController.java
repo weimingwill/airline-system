@@ -35,10 +35,8 @@ public class FleetController implements Serializable {
 
     @EJB
     private FleetPlanningSessionLocal fleetPlanningSession;
-
     private List<CabinClass> cabinClasses;
     private List<AircraftType> aircraftModels;
-    private List<AircraftType> filteredAircraftModels;
     private AircraftType aircraftModel;
     private String msg = "";
     private int[] seatQtyList = new int[10];
@@ -55,16 +53,19 @@ public class FleetController implements Serializable {
 
     @PostConstruct
     public void init() {
+        System.out.println("FleetController: init()");
         getAvailableAircraftModels();
         getAvailableCabinClasses();
     }
 
-    public void getAvailableAircraftModels() {
+    public List<AircraftType> getAvailableAircraftModels() {
+        System.out.println("FleetController: getAvailableAircraftModels()");
         try {
             setAircraftModels(fleetPlanningSession.getAircraftModels());
         } catch (EmptyTableException ex) {
             setMsg(ex.getMessage());
         }
+        return aircraftModels;
     }
 
     public void getAvailableCabinClasses() {
@@ -220,20 +221,6 @@ public class FleetController implements Serializable {
      */
     public void setAircraftCabinClassHelpers(List<AircraftCabinClassHelper> aircraftCabinClassHelpers) {
         this.aircraftCabinClassHelpers = aircraftCabinClassHelpers;
-    }
-
-    /**
-     * @return the filteredAircraftModels
-     */
-    public List<AircraftType> getFilteredAircraftModels() {
-        return filteredAircraftModels;
-    }
-
-    /**
-     * @param filteredAircraftModels the filteredAircraftModels to set
-     */
-    public void setFilteredAircraftModels(List<AircraftType> filteredAircraftModels) {
-        this.filteredAircraftModels = filteredAircraftModels;
     }
 
     /**

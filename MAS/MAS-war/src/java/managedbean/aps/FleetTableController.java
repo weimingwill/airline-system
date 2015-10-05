@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DashboardColumn;
@@ -56,6 +55,7 @@ public class FleetTableController implements Serializable {
     FleetFilterController fleetFilterController;
 
     private List<Aircraft> fleetList = new ArrayList<>();
+    private List<AircraftType> aircraftModelList = new ArrayList();
     private List<Aircraft> selectedAircrafts;
     private Aircraft selectedAircraft;
     private AircraftType selectedAircraftType;
@@ -63,7 +63,7 @@ public class FleetTableController implements Serializable {
     private DashboardModel model;
     private List<String> aircraftStatusList = new ArrayList<String>(Arrays.asList(AircraftStatus.IDLE, AircraftStatus.IN_MAINT, AircraftStatus.IN_USE));
     private String selectedAircraftStatus;
-    private DataTable theDataTable;
+
     private String[] status = new String[2];
 
     /**
@@ -81,16 +81,20 @@ public class FleetTableController implements Serializable {
         switch (uri) {
             case "retireAircraft":
                 status[0] = AircraftStatus.IDLE;
-                status[1] = AircraftStatus.IN_MAINT;
+                status[1] = AircraftStatus.IN_MAINT;getFleet(status);
                 break;
             case "viewFleet":
-                status = null;
+                status = null;getFleet(status);
                 break;
             case "viewRetiredFleet":
                 status[0] = AircraftStatus.RETIRED;
                 status[1] = AircraftStatus.CRASHED;
+                getFleet(status);break;
+            case "viewAircraftModel":
+                setAircraftModelList(fleetController.getAvailableAircraftModels());
+                break;
         }
-        getFleet(status);
+        
     }
 
     public void getFleet(String[] status) {
@@ -170,7 +174,8 @@ public class FleetTableController implements Serializable {
                 setFleetList(fleetFilterController.getFilteredAircrafts());
                 break;
             case "Purchase":
-                fleetController.setAircraftModels(fleetFilterController.getFilteredAircraftModels());
+                setAircraftModelList(fleetFilterController.getFilteredAircraftModels());
+                System.out.println("FleetTableController: applyFilters(): afterSetFilteredAircraftModels");
                 break;
         }
     }
@@ -187,7 +192,7 @@ public class FleetTableController implements Serializable {
                 break;
             case "Purchase":
                 fleetFilterController.setInitialValue(target);
-                fleetController.getAvailableAircraftModels();
+                setAircraftModelList(fleetController.getAvailableAircraftModels());
                 break;
         }
     }
@@ -342,19 +347,6 @@ public class FleetTableController implements Serializable {
         this.selectedAircraftStatus = selectedAircraftStatus;
     }
 
-    /**
-     * @return the theDataTable
-     */
-    public DataTable getTheDataTable() {
-        return theDataTable;
-    }
-
-    /**
-     * @param theDataTable the theDataTable to set
-     */
-    public void setTheDataTable(DataTable theDataTable) {
-        this.theDataTable = theDataTable;
-    }
 
     /**
      * @return the selectedAircraftType
@@ -383,5 +375,21 @@ public class FleetTableController implements Serializable {
     public void setNewAircraftType(AircraftType newAircraftType) {
         this.newAircraftType = newAircraftType;
     }
+
+    /**
+     * @return the aircraftModelList
+     */
+    public List<AircraftType> getAircraftModelList() {
+        return aircraftModelList;
+    }
+
+    /**
+     * @param aircraftModelList the aircraftModelList to set
+     */
+    public void setAircraftModelList(List<AircraftType> aircraftModelList) {
+        this.aircraftModelList = aircraftModelList;
+    }
+
+
 
 }
