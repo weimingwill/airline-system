@@ -11,13 +11,15 @@
 
     <ui:define name="content">
         <h:form>
-            <h:panelGrid columns="2" columnClasses="label, value">
-                <p:outputLabel value="Permission system: "/>
-                <p:inputText required="true" requiredMessage="Permission system is required" binding="#{system}"/>
-                <p:outputLabel value="Permission module: "/>
-                <p:inputText required="true" requiredMessage="Permission module is required" binding="#{module}"/>
-                <p:commandButton action="#{permissionController.createPermission(system.value, module.value)}" value="create" update="messages"/>
-            </h:panelGrid>
+            <p:panel header="Create permission">
+                <h:panelGrid columns="2" columnClasses="label, value">
+                    <p:outputLabel value="Permission system: "/>
+                    <p:inputText required="true" requiredMessage="Permission system is required" binding="#{system}"/>
+                    <p:outputLabel value="Permission module: "/>
+                    <p:inputText required="true" requiredMessage="Permission module is required" binding="#{module}"/>
+                    <p:commandButton action="#{permissionController.createPermission(system.value, module.value)}" value="create" update="messages"/>
+                </h:panelGrid>
+            </p:panel>
         </h:form>
     </ui:define>
 

@@ -12,29 +12,31 @@
 
     <ui:define name="content">
         <h:form>
-            <h:panelGrid>
-                <p:row>
+            <p:panel header="Create Role">
+                <h:panelGrid columns="2">
                     <p:outputLabel value="Role name: "/>
                     <p:inputText binding="#{roleName}"/>
-                </p:row>
+                    <p:outputLabel value="Select Permission: "/>
+                    <p:selectCheckboxMenu id="menu" binding="#{permissions}" label="Select permissions"
+                                          filter="true" filterMatchMode="startsWith"> 
+                        <f:selectItems value="#{permissionController.permissionList}" />
+                        <p:ajax update ="display"/>
+                    </p:selectCheckboxMenu>
 
-                
-                <p:selectCheckboxMenu id="menu" binding="#{permissions}" label="Select permissions"
-                                      filter="true" filterMatchMode="startsWith" panelStyle="width:250px"> 
-                    <f:selectItems value="#{permissionController.permissionList}" />
-                    <p:ajax update ="display"/>
-                </p:selectCheckboxMenu>
+                    <p:outputLabel value=""/>
+                    <p:outputPanel id="display">
+                        <p:dataList value="#{permissions.value}" var="permission" emptyMessage="No permission selected">
+                            #{permission}
+                        </p:dataList>
+                    </p:outputPanel>
 
-                <p:outputPanel id="display" style="width:250px;">
-                    <p:dataList value="#{permissions.value}" var="permission" emptyMessage="No permission selected">
-                        #{permission}
-                    </p:dataList>
-                </p:outputPanel>
+                    <p:commandButton action="#{roleController.createSystemRole(roleName.value, permissions.value)}"  value="create" update="messages"/>
 
-                <p:commandButton action="#{roleController.createSystemRole(roleName.value, permissions.value)}"  value="create" update="messages"/>
+                </h:panelGrid>
+            </p:panel>
 
-            </h:panelGrid>
         </h:form>
+
     </ui:define>
 
 </ui:composition>

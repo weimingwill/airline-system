@@ -12,35 +12,30 @@
 
     <ui:define name="content">
         <h:form>
-            <h:panelGrid columns="2">
-                <p:outputLabel value="Username:"/>
-                
-                <p:outputLabel value="#{username}" rendered="#{not username}"/>
-                <p:outputLabel value="Name:"/>
-                <p:inputText value="#{userController.name}" />                
-                <h:outputText value="Email:"/>
-                <p:inputText required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" id="email" value="#{userController.email}" >
-                    <p:ajax update="messages" event="blur" />
-                    <f:validateRegex
-                        pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                </p:inputText>
-                <p:outputLabel value="Phone:"/>
-                <p:inputText value="#{userController.phone}" />
-                <p:outputLabel value="Address:"/>
-                <p:inputText value="#{userController.address}" />
-                <p:outputLabel value="Department:"/>
-                <p:inputText value="#{userController.department}" />
+            <p:panel header="User Profile">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Username:"/>
+
+                    <p:outputLabel value="#{username}" rendered="#{not username}"/>
+                    <p:outputLabel value="Name:"/>
+                    <p:inputText value="#{userController.name}" />                
+                    <p:outputLabel value="Email:"/>
+                    <p:inputText required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" 
+                                 id="email" value="#{userController.email}">
+                        <p:ajax update="messages" event="blur" />
+                        <f:validateRegex
+                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                    </p:inputText>
+                    <p:outputLabel value="Phone:"/>
+                    <p:inputText value="#{userController.phone}" />
+                    <p:outputLabel value="Address:"/>
+                    <p:inputText value="#{userController.address}" />
+                    <p:outputLabel value="Department:"/>
+                    <p:inputText value="#{userController.department}" />
+                </p:panelGrid>
                 <p:commandButton value="save" action="#{userController.updateUserProfile()}" update="messages"/>
 
-                <!--            Click and show the contents in panel
-                            <h:panelGrid>
-                                <p:commandButton value="Change password" type="button" onclick="PF('passwordChangePanel').show()" />
-                                <p:outputLabel />
-                                <p:panel widgetVar="passwordChangePanel" visible="false" closable="true" toggleable="true">  
-                                </p:panel>
-                            </h:panelGrid>-->
-
-            </h:panelGrid>
+            </p:panel>
         </h:form>
 
 

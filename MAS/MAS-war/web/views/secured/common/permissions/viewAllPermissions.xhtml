@@ -10,21 +10,23 @@
     </ui:define>
 
     <ui:define name="content">
-        <p:dataTable value="#{permissionController.allPermissions}" var="permission">
-            <p:column headerText="System">
-                <p:outputLabel value="#{permission.system}" />
-            </p:column>
+        <p:panel header="View permissions">
+            <p:dataTable value="#{permissionController.allPermissions}" var="permission">
+                <p:column headerText="System">
+                    <p:outputLabel value="#{permission.system}" />
+                </p:column>
 
-            <p:column headerText="Module">
-                <p:outputLabel value="#{permission.systemModule}" />
-            </p:column>
-            <p:column headerText="Action">
-                <h:form>
-                    <p:commandButton action="#{permissionController.deletePermission(permission.system, permission.systemModule)}"
-                                     value="Delete" update="messages"/>
-                </h:form>
-            </p:column>
-        </p:dataTable>
+                <p:column headerText="Module">
+                    <p:outputLabel value="#{permission.systemModule}" />
+                </p:column>
+                <p:column headerText="Action">
+                    <h:form>
+                        <p:commandButton action="#{permissionController.deletePermission(permission.system, permission.systemModule)}"
+                                         value="Delete" update="messages"/>
+                    </h:form>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
     </ui:define>
 
 </ui:composition>

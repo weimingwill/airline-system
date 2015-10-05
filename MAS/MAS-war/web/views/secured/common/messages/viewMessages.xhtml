@@ -11,7 +11,7 @@
     </ui:define>
 
     <ui:define name="content">
-
+        <p:panel header="View Messgae">
         <p:dataTable value="#{internalMsgController.userMessages}" rowStyleClass="#{message.deleted ? 'hide' : 'show' }" var="message">
             <p:column headerText="From">
                 <p:outputLabel value="#{message.messageFrom}"/>
@@ -37,6 +37,7 @@
                 </h:form>
             </p:column>
         </p:dataTable>
+        </p:panel>
     </ui:define>
 
 </ui:composition>

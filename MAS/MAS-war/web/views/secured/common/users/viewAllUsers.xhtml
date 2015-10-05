@@ -10,44 +10,46 @@
     </ui:define>
 
     <ui:define name="content">
-        <p:dataTable value="#{userController.allUsers}" var="user">
-            <p:column headerText="Username">
-                <p:outputLabel value="#{user.username}"/>
-            </p:column>
+        <p:panel header="View Users">
+            <p:dataTable value="#{userController.allUsers}" var="user">
+                <p:column headerText="Username">
+                    <p:outputLabel value="#{user.username}"/>
+                </p:column>
 
-            <p:column headerText="Email">
-                <p:outputLabel value="#{user.email}" />
-            </p:column>
+                <p:column headerText="Email">
+                    <p:outputLabel value="#{user.email}" />
+                </p:column>
 
-            <p:column headerText="Role">
-                <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
-                    <p:column>
-                        <p:outputLabel value="#{role.roleName}" />
-                    </p:column>
-                </p:dataTable>
-            </p:column>
+                <p:column headerText="Role">
+                    <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
+                        <p:column>
+                            <p:outputLabel value="#{role.roleName}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:column>
 
 
-            <p:column headerText="Permissions">
-                <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
-                    <p:column>
-                        <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
-                            <p:column>
-                                <p:outputLabel value="#{permission.permissionName}"/>
-                            </p:column>
-                        </p:dataTable>
-                    </p:column>
-                </p:dataTable>
-            </p:column>
+                <p:column headerText="Permissions">
+                    <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
+                        <p:column>
+                            <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                                <p:column>
+                                    <p:outputLabel value="#{permission.permissionName}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:dataTable>
+                </p:column>
 
-            <p:column headerText="Action">
-                <h:form>
-                    <p:commandButton action="#{userController.deleteUser(user.username)}" value="Delete" update="messages"/>
-                    <p:commandButton action="#{userController.lockUser(user.username)}" value="Lock user" update="messages" rendered="#{!user.locked}" />
-                    <p:commandButton action="#{userController.unlockUser(user.username)}" value="Unlock user" update="messages" rendered="#{user.locked}" />
-                </h:form>
-            </p:column>
-        </p:dataTable>
+                <p:column headerText="Action">
+                    <h:form>
+                        <p:commandButton action="#{userController.deleteUser(user.username)}" value="Delete" update="messages"/>
+                        <p:commandButton action="#{userController.lockUser(user.username)}" value="Lock user" update="messages" rendered="#{!user.locked}" />
+                        <p:commandButton action="#{userController.unlockUser(user.username)}" value="Unlock user" update="messages" rendered="#{user.locked}" />
+                    </h:form>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
     </ui:define>
 
 </ui:composition>

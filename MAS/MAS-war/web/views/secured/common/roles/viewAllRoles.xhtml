@@ -10,25 +10,27 @@
     </ui:define>
 
     <ui:define name="content">
-        <p:dataTable value="#{roleController.allRoles}" var="role">
-            <p:column headerText="Role">
-                <p:outputLabel value="#{role.roleName}" />
-            </p:column>
+        <p:panel header="View Roles">
+            <p:dataTable value="#{roleController.allRoles}" var="role">
+                <p:column headerText="Role">
+                    <p:outputLabel value="#{role.roleName}" />
+                </p:column>
 
-            <p:column headerText="Permission">
-                <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
-                    <p:column>
-                        <p:outputLabel value="#{permission.permissionName}" />
-                    </p:column>
-                </p:dataTable>
-            </p:column>
+                <p:column headerText="Permission">
+                    <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                        <p:column>
+                            <p:outputLabel value="#{permission.permissionName}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:column>
 
-            <p:column headerText="Action">
-                <h:form>
-                    <p:commandButton action="#{roleController.deleteRole(role.roleName)}" value="Delete" update="messages"/>
-                </h:form>
-            </p:column>
-        </p:dataTable>
+                <p:column headerText="Action">
+                    <h:form>
+                        <p:commandButton action="#{roleController.deleteRole(role.roleName)}" value="Delete" update="messages"/>
+                    </h:form>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
     </ui:define>
 
 </ui:composition>

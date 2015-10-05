@@ -12,9 +12,9 @@
     </ui:define>
 
     <ui:define name="content">
+        <p:panel header="Creat User">
         <h:form id="createUserForm">
             <h:panelGrid columns="2" columnClasses="label, value">
-
                 <h:outputText value="Username"/>
                 <p:inputText required="true" requiredMessage="Please enter username" id="username" binding="#{newUsername}"/>
                 <h:outputText value="Password"/>
@@ -49,9 +49,8 @@
                     </p:outputPanel>
                 </ui:remove>
 
-
                 <p:selectManyMenu id="advanced" value="#{userController.roleList}" converter="roleConverter"
-                                  var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:200px;">
+                                  var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:300px;">
                     <f:selectItems value="#{roleController.roles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
                     <!--<p:ajax update="display"/>-->
                     <p:column>
@@ -70,6 +69,7 @@
 
             </h:panelGrid>
         </h:form>
+        </p:panel>
     </ui:define>
 
 </ui:composition>

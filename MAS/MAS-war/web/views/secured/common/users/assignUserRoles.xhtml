@@ -11,64 +11,56 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form id="assignUserRoles">
-            <h:panelGrid class="access-control">
-                <f:facet name="header">
-                    <h:outputText value="Assign User Roles"/>
-                </f:facet>
-                <h:panelGroup>
-                    <p:column headerText="Select user: ">
-                        <p:outputLabel value="Select user:" />
+        <p:panel header="Assign Roles To Users">
+            <h:form id="assignUserRoles">
+                <p:panelGrid class="access-control" columns="2">
+                    <p:panel header="Select user">
                         <p:selectOneListbox id="assignUserRoles-userList" value="#{userController.selectedUser}"  converter="userConverter" 
-                                            var="user" filter="true" filterMatchMode="contains" style="width:300px;">
+                                         var="user" filter="true" filterMatchMode="contains" style="width:300px;">
 
-                            <p:ajax update="assignUserRoles-rolePanel" listener="#{userController.onUserSelected()}"/>
+                            <p:ajax update="assignUserRolesPanel,selectRoles" listener="#{userController.onUserSelected()}"/>
                             <f:selectItems value="#{userController.allUsers}" var="user" itemLabel="#{user.username}" itemValue="#{user}" />
                             <p:column>
                                 <h:outputText value="#{user.username}" />
                             </p:column>
 
                         </p:selectOneListbox>
-                    </p:column>
-                </h:panelGroup>
+                    </p:panel>
 
-                <p:outputPanel id="assignUserRoles-rolePanel">
-                    <p:column>
-                        <p:dataTable value="#{userController.roleList}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
-                            <f:facet name="header">
-                                Existing user roles
-                            </f:facet>
-                            <p:column headerText="Roles">
-                                <h:outputText value="#{role.roleName}" />
+                    <p:panel header="Select user roles" id="selectRoles">
+                        <p:outputLabel value="Select user roles:" />
+
+                        <p:selectManyMenu id="assignUserRoles-roleList" value="#{userController.roleList}" converter="roleConverter"
+                                          var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:600px;">
+                            <f:selectItems value="#{roleController.allRoles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
+
+                            <p:column>
+                                <h:outputText value="#{role.roleName}"  />
                             </p:column>
+                        </p:selectManyMenu>
+                    </p:panel>
+                </p:panelGrid>
+                
+                <p:dataTable id="assignUserRolesPanel" value="#{userController.roleList}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
+                    <f:facet name="header">
+                        Existing user roles
+                    </f:facet>
+                    <p:column headerText="Roles">
+                        <h:outputText value="#{role.roleName}" />
+                    </p:column>
 
-                            <p:column headerText="Permisssions">
-                                <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
-                                    <p:column>
-                                        <p:outputLabel value="#{permission.permissionName}"/>
-                                    </p:column>
-                                </p:dataTable>
+                    <p:column headerText="Permisssions">
+                        <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                            <p:column>
+                                <p:outputLabel value="#{permission.permissionName}"/>
                             </p:column>
                         </p:dataTable>
                     </p:column>
-
-                    <p:outputLabel value="Select user roles:" />
-
-                    <p:selectManyMenu id="assignUserRoles-roleList" value="#{userController.roleList}" converter="roleConverter"
-                                      var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:400px;">
-                        <f:selectItems value="#{roleController.allRoles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
-
-                        <p:column>
-                            <h:outputText value="#{role.roleName}"  />
-                        </p:column>
-                    </p:selectManyMenu>
-                </p:outputPanel>
-
+                </p:dataTable>
                 <p:commandButton action="#{userController.assignUserRoles()}" value="Assign" update="messages"/>    
 
-            </h:panelGrid>
-        </h:form>        
-
+            </h:form>        
+        </p:panel>
     </ui:define>
 
 </ui:composition>
