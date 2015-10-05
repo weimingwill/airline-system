@@ -132,8 +132,8 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         int sum = 0;
         for (FlightScheduleBookingClass flightScheduleBookingClassTemp : SafeHelper.emptyIfNull(flightScheduleBookingClasses)) {
             int count = 0;
-            if (flightScheduleBookingClassTemp.getFlightScheduleId() == fsbc.getFlightScheduleId()) {
-                if (flightScheduleBookingClassTemp.getBookingClassId() != fsbc.getBookingClassId()) {
+            if (flightScheduleBookingClassTemp.getFlightScheduleBookingClassId().getFlightScheduleId() == fsbc.getFlightScheduleBookingClassId().getFlightScheduleId()) {
+                if (flightScheduleBookingClassTemp.getFlightScheduleBookingClassId().getBookingClassId() != fsbc.getFlightScheduleBookingClassId().getBookingClassId()) {
                     if (flightScheduleBookingClassTemp.getPrice() < fsbc.getPrice()) {
                         float lowerClassPrice = flightScheduleBookingClassTemp.getPrice();
                         float p = lowerClassPrice / price;

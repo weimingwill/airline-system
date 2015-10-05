@@ -43,7 +43,25 @@ public class CabinClassTicketFamily implements Serializable {
 
     @Column(name = "SEATQTY")
     private Integer seatQty;
+    
+    @Column(name = "DELETED")
+    private Boolean deleted;
 
+    public CabinClassTicketFamily() {
+    }
+
+    public CabinClassTicketFamily(AircraftCabinClass aircraftCabinClass, TicketFamily ticketFamily, int seatQty) {
+        this.aircraftCabinClass = aircraftCabinClass;
+        this.ticketFamily = ticketFamily;
+        this.seatQty = seatQty;
+    }
+    
+    
+    public CabinClassTicketFamily(CabinClassTicketFamilyId cabinClassTicketFamilyId, int seatQty) {
+        this.cabinClassTicketFamilyId = cabinClassTicketFamilyId;
+        this.seatQty = seatQty;
+    }
+    
     public CabinClassTicketFamilyId getCabinClassTicketFamilyId() {
         return cabinClassTicketFamilyId;
     }
@@ -76,5 +94,11 @@ public class CabinClassTicketFamily implements Serializable {
         this.seatQty = seatQty;
     }
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
 
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
 }

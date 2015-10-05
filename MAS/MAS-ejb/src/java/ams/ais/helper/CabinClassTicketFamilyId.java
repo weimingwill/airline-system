@@ -28,6 +28,14 @@ public class CabinClassTicketFamilyId implements Serializable {
     @Column(name = "TICKETFAMILYID")
     private Long ticketFamilyId;
 
+    public CabinClassTicketFamilyId() {
+    }
+    
+    public CabinClassTicketFamilyId(AircraftCabinClassId aircraftCabinClassId, Long ticketFamilyId) {
+        this.aircraftCabinClassId = aircraftCabinClassId;
+        this.ticketFamilyId = ticketFamilyId;
+    }
+    
     public AircraftCabinClassId getAircraftCabinClassId() {
         return aircraftCabinClassId;
     }

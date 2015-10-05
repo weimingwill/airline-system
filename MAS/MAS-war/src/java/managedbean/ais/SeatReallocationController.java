@@ -12,23 +12,34 @@ import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.session.CabinClassSessionLocal;
+import ams.ais.session.FlightScheduleSessionLocal;
 import ams.ais.session.SeatReallocationSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
-import ams.ais.util.exception.NoSuchFlightScheduleBookingClassException;
+import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchTicketFamilyException;
+import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
+import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.FlightSchedule;
+import ams.aps.util.helper.ApsMessage;
+import com.sun.faces.context.SessionMap;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
+import managedbean.application.NavigationController;
 
 /**
  *
@@ -41,6 +52,9 @@ public class SeatReallocationController implements Serializable {
     @Inject
     private MsgController msgController;
 
+    @Inject
+    private NavigationController navigationController;
+
     @EJB
     private CabinClassSessionLocal cabinClassSession;
 
@@ -52,6 +66,9 @@ public class SeatReallocationController implements Serializable {
 
     @EJB
     private SeatReallocationSessionLocal seatReallocationSession;
+
+    @EJB
+    private FlightScheduleSessionLocal flightScheduleSession;
 
     private FlightSchedule flightSchedule;
     private Aircraft aircraft;
@@ -66,6 +83,10 @@ public class SeatReallocationController implements Serializable {
     private FlightScheduleBookingClass flightScheduleBookingClass;
     private BookingClass bookingClass;
     private List<BookingClass> bookingClasses;
+    private Long flightScheduleId;
+    private List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers;
+    private float newDemandMean;
+    private float newDemandDev;
 
     /**
      * Creates a new instance of SeatReallocationController
@@ -75,25 +96,59 @@ public class SeatReallocationController implements Serializable {
 
     @PostConstruct
     public void init() {
+
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        Map<String, Object> sessionMap = externalContext.getSessionMap();
+        this.flightScheduleId = (Long) sessionMap.get("flightScheduleId");
+        System.out.println("Initialize Seat Reallocation Controller: ");
+        System.out.println("FlightScheduleId: " + flightScheduleId);
+        initialHelper();
+        System.out.println("Helper: " + flightSchCabinClsTicFamBookingClsHelpers);
+    }
+
+    private void initialHelper() {
+        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+    }
+    
+    public String toYieldManagement() {
+        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        if(flightSchCabinClsTicFamBookingClsHelpers!=null){
+            return navigationController.redirectToYieldManagement();
+        }
+        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
+        return "";
+    }
+
+    public String toReallocateBookingClassSeats() {
+        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        if(flightSchCabinClsTicFamBookingClsHelpers!=null){
+            return navigationController.redirectToReallocationBookingClassSeats();
+        }
+        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
+        return "";
+    }
+    
+    public void reallocateBookingClassSeats(){
         
-        flightSchedule = 
-
-        aircraft = flightSchedule.getAircraft();
-        aircraftCabinClasses = aircraft.getAircraftCabinClasses();
-
-//        countries = (List<Country>) routePlanningSession.getCountryList();
-//        hubs = (List<Airport>) routePlanningSession.getHubs();
-//        viewRoutes();
-//        viewObsoleteRoutes();
+        
     }
 
     public CabinClass getCabinClassbyName(String cabinClassName) {
-        return cabinClassSession.getCabinClassByName(cabinClassName);
-
+        CabinClass cabinClass = new CabinClass();
+        try {
+            cabinClass = cabinClassSession.getCabinClassByName(cabinClassName);
+        } catch (NoSuchCabinClassException e) {
+        }
+        return cabinClass;
     }
 
     public TicketFamily getTicketFamilybyName(String ticketFamilyName) {
-        return ticketFamilySession.getTicketFamilyByName(ticketFamilyName);
+        TicketFamily ticketFamily = new TicketFamily();
+        try {
+            ticketFamily = ticketFamilySession.getTicketFamilyByName(ticketFamilyName);
+        } catch (NoSuchTicketFamilyException e) {
+        }
+        return ticketFamily;
     }
 
     public FlightScheduleBookingClass getFlightScheduleBookingClassbyIDs(Long flightScheduleID, Long bookingClassIS) {
@@ -123,7 +178,8 @@ public class SeatReallocationController implements Serializable {
 
     public void onTicketFamilyChange() {
         try {
-            setFlightScheduleBookingClasses(ticketFamilySession.getFlightScheduleBookingClassesbyTicketFamily(ticketFamily.getName()));
+            setFlightScheduleBookingClasses(flightScheduleSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(
+                    flightSchedule.getFlightScheduleId(), ticketFamily.getTicketFamilyId()));
         } catch (NoSuchFlightScheduleBookingClassException ex) {
             Logger.getLogger(SeatReallocationController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -297,11 +353,5 @@ public class SeatReallocationController implements Serializable {
     public void setBookingClasses(List<BookingClass> bookingClasses) {
         this.bookingClasses = bookingClasses;
     }
-    
-    
-    
-    
-
-
 
 }

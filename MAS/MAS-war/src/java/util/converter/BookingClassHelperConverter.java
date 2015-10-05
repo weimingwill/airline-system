@@ -5,10 +5,10 @@
  */
 package util.converter;
 
-import ams.ais.entity.BookingClass;
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.AisMsg;
+import ams.ais.util.helper.BookingClassHelper;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -21,8 +21,8 @@ import javax.faces.convert.FacesConverter;
  *
  * @author winga_000
  */
-@FacesConverter("bookingClassConverter")
-public class BookingClassConverter implements Converter {
+@FacesConverter("bookingClassHelperConverter")
+public class BookingClassHelperConverter implements Converter {
     
     @EJB
     private BookingClassSessionLocal bookingClassSession;
@@ -30,11 +30,11 @@ public class BookingClassConverter implements Converter {
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                return bookingClassSession.getBookingClassById(Long.parseLong(value));
+                return bookingClassSession.getBookingClassHelperById(Long.parseLong(value));
             } catch (NumberFormatException e) {
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid business helper class."));
             } catch (NoSuchBookingClassException ex) {
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", AisMsg.EXIST_SUCH_BOOKING_CLASS_ERROR));
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", AisMsg.NO_SUCH_BOOKING_CLASS_ERROR));
             }
         } else {
             return null;
@@ -43,7 +43,7 @@ public class BookingClassConverter implements Converter {
 
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
         if (object != null) {
-            return String.valueOf(((BookingClass) object).getBookingClassId());
+            return String.valueOf(((BookingClassHelper) object).getBookingClass().getBookingClassId());
         } else {
             return null;
         }

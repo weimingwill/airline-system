@@ -15,6 +15,14 @@ public class AircraftCabinClassId implements Serializable{
     private Long aircraftId;
     private Long cabinClassId;    
 
+    public AircraftCabinClassId() {
+    }
+    
+    public AircraftCabinClassId(Long aircraftId, Long cabinClassId) {
+        this.aircraftId = aircraftId;
+        this.cabinClassId = cabinClassId;
+    }
+    
     public Long getAircraftId() {
         return aircraftId;
     }
