@@ -76,7 +76,11 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
 
     @Override
     public FlightScheduleBookingClass getFlightScheduleBookingClass(Long flightScheduleId, Long bookingClassId) throws NoSuchFlightScheduleBookingClassException {
-        Query query = entityManager.createQuery("SELECT fb FROM FlightScheduleBookingClass fb WHERE fb.flightScheduleId = :inFid and fb.bookingClassId = :inBid and fb.bookingClass.deleted = FALSE");
+        Query query = entityManager.createQuery("SELECT fb FROM FlightScheduleBookingClass fb "
+                + "WHERE fb.flightScheduleId = :inFid "
+                + "AND fb.bookingClassId = :inBid "
+                + "AND fb.bookingClass.deleted = FALSE "
+                + "AND fb.deleted = FALSE");
         query.setParameter("inFid", flightScheduleId);
         query.setParameter("inBid", bookingClassId);
         FlightScheduleBookingClass flightScheduleBookingClass = null;
@@ -122,7 +126,7 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
         try {
             for (AircraftCabinClass aircraftCabinClass : SafeHelper.emptyIfNull(getFlightScheduleAircraft(id).getAircraftCabinClasses())) {
                 CabinClass cabinClass = aircraftCabinClass.getCabinClass();
-                if (!cabinClass.isDeleted()) {
+                if (!cabinClass.getDeleted()) {
                     cabinClasses.add(cabinClass);
                 }
             }
@@ -281,7 +285,11 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
 
     @Override
     public List<BookingClass> getFlightScheduleBookingClasses(Long flightScheduleId) throws NoSuchBookingClassException {
-        Query query = entityManager.createQuery("SELECT b FROM FlightScheduleBookingClass fb, BookingClass b WHERE fb.flightScheduleId = :inId and fb.bookingClassId = b.bookingClassId and fb.bookingClass.deleted  = FALSE");
+        Query query = entityManager.createQuery("SELECT b FROM FlightScheduleBookingClass fb, BookingClass b "
+                + "WHERE fb.flightScheduleId = :inId "
+                + "AND fb.bookingClassId = b.bookingClassId "
+                + "AND fb.bookingClass.deleted  = FALSE "
+                + "AND fb.deleted = FALSE");
         query.setParameter("inId", flightScheduleId);
         List<BookingClass> bookingClasses = null;
         try {
@@ -294,8 +302,13 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
 
     @Override
     public List<BookingClass> getFlightScheduleBookingClassesOfTicketFamily(Long flightScheduleId, Long ticketFamilyId) throws NoSuchBookingClassException {
-        Query query = entityManager.createQuery("SELECT b FROM FlightScheduleBookingClass fb, BookingClass b WHERE fb.flightScheduleId = :inFlightScheduleId "
-                + "and fb.bookingClassId = b.bookingClassId and b.ticketFamily.ticketFamilyId = :inTicketFamilyId and b.deleted = FALSE and b.ticketFamily.deleted = FALSE");
+        Query query = entityManager.createQuery("SELECT b FROM FlightScheduleBookingClass fb, BookingClass b "
+                + "WHERE fb.flightScheduleId = :inFlightScheduleId "
+                + "AND fb.bookingClassId = b.bookingClassId "
+                + "AND b.ticketFamily.ticketFamilyId = :inTicketFamilyId "
+                + "AND b.deleted = FALSE "
+                + "AND b.ticketFamily.deleted = FALSE "
+                + "AND fb.deleted = FALSE");
         query.setParameter("inFlightScheduleId", flightScheduleId);
         query.setParameter("inTicketFamilyId", ticketFamilyId);
         List<BookingClass> bookingClasses = null;
@@ -309,7 +322,11 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
 
     @Override
     public List<FlightScheduleBookingClass> getFlightScheduleBookingClassJoinTables(Long flightScheduleId) throws NoSuchFlightScheduleBookingClassException {
-        Query query = entityManager.createQuery("SELECT fb FROM FlightScheduleBookingClass fb, BookingClass b WHERE fb.flightScheduleId = :inId and fb.bookingClassId = b.bookingClassId and fb.bookingClass.deleted  = FALSE");
+        Query query = entityManager.createQuery("SELECT fb FROM FlightScheduleBookingClass fb, BookingClass b "
+                + "WHERE fb.flightScheduleId = :inId "
+                + "AND fb.bookingClassId = b.bookingClassId "
+                + "AND fb.bookingClass.deleted  = FALSE"
+                + "AND fb.deleted = FALSE");
         query.setParameter("inId", flightScheduleId);
         List<FlightScheduleBookingClass> flightScheduleBookingClasses = null;
         try {
@@ -343,8 +360,13 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
 
     @Override
     public List<FlightScheduleBookingClass> getFlightScheduleBookingClassJoinTablesOfTicketFamily(Long flightScheduleId, Long ticketFamilyId) throws NoSuchFlightScheduleBookingClassException {
-        Query query = entityManager.createQuery("SELECT fb FROM FlightScheduleBookingClass fb, BookingClass b WHERE fb.flightScheduleId = :inFlightScheduleId "
-                + "and fb.bookingClassId = b.bookingClassId and b.ticketFamily.ticketFamilyId = :inTicketFamilyId and b.deleted = FALSE and b.ticketFamily.deleted = FALSE");
+        Query query = entityManager.createQuery("SELECT fb FROM FlightScheduleBookingClass fb, BookingClass b "
+                + "WHERE fb.flightScheduleId = :inFlightScheduleId "
+                + "AND fb.bookingClassId = b.bookingClassId "
+                + "AND b.ticketFamily.ticketFamilyId = :inTicketFamilyId "
+                + "AND b.deleted = FALSE "
+                + "AND b.ticketFamily.deleted = FALSE "
+                + "AND fb.deleted = FALSE");
         query.setParameter("inFlightScheduleId", flightScheduleId);
         query.setParameter("inTicketFamilyId", ticketFamilyId);
         List<FlightScheduleBookingClass> flightScheduleBookingClasses = null;
@@ -378,15 +400,16 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
             Aircraft aircraft = aircraftSession.getAircraftById(cabinClassTicketFamily.getAircraftCabinClass().getAircraftId());
             for (FlightSchedule fs : aircraft.getFlightSchedules()) {
                 FlightSchedule flightSchedule = entityManager.find(FlightSchedule.class, fs.getFlightScheduleId());
-                List<FlightScheduleBookingClass> allBookingClasses = getFlightScheduleBookingClassJoinTables(flightSchedule.getFlightScheduleId());
+//                List<FlightScheduleBookingClass> allBookingClasses = getFlightScheduleBookingClassJoinTables(flightSchedule.getFlightScheduleId());
                 List<FlightScheduleBookingClass> tfBookingClasses
                         = getFlightScheduleBookingClassJoinTablesOfTicketFamily(flightSchedule.getFlightScheduleId(), cabinClassTicketFamily.getTicketFamily().getTicketFamilyId());
                 for (FlightScheduleBookingClass tfBookingClass : tfBookingClasses) {
-                    allBookingClasses.remove(tfBookingClass);
-                    bookingClasses.add(tfBookingClass);
+//                    allBookingClasses.remove(tfBookingClass);
+//                    bookingClasses.add(tfBookingClass);
+                    tfBookingClass.setDeleted(true);
                 }
-                flightSchedule.setFlightScheduleBookingClasses(allBookingClasses);
-                entityManager.merge(flightSchedule);
+//                flightSchedule.setFlightScheduleBookingClasses(allBookingClasses);
+//                entityManager.merge(flightSchedule);
             }
         } catch (NoSuchAircraftException | NoSuchFlightScheduleBookingClassException ex) {
             System.out.println("Dislink Flight Schedule Booking Class: " + ex.getMessage());

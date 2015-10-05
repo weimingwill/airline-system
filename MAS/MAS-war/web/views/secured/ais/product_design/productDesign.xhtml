@@ -34,22 +34,22 @@
 
 
                         <p:panel id="selectTicketFamily" header="Select Ticket Family">
-                            <c:forEach items="#{productDesignController.cabinClassTicketFamilyHelpers}" var="ctf">
-                                <!--<c:if test="{ctf.haveTicketFamily}" >-->
-                                    <p:row>
-                                        <p:column>#{ctf.cabinClass.name} Class</p:column>
-                                        <p:column>
-                                            <p:selectManyMenu value="#{ctf.ticketFamilys}" converter="ticketFamilyConverter"
-                                                              var="ticketFamily" showCheckbox="true" style="width:200px;">
-                                                <f:selectItems value="#{cabinClassController.getCabinClassTicketFamilys(ctf.cabinClass.type)}" var="ticketFamily" itemLabel="#{ticketFamily.name}" itemValue="#{ticketFamily}"/>
-                                                <p:column>
-                                                    <h:outputText value="#{ticketFamily.name}"  />
-                                                </p:column>
-                                            </p:selectManyMenu>
-                                        </p:column>
-                                    </p:row>
-                                <!--</c:if>-->
-                            </c:forEach>
+                            <ui:repeat value="#{productDesignController.cabinClassTicketFamilyHelpers}" var="ctf" >
+                            <!--<c:forEach items="{productDesignController.cabinClassTicketFamilyHelpers}" var="ctf">-->
+                                <p:row>
+                                    <p:column>#{ctf.cabinClass.name} Class</p:column>
+                                    <p:column>
+                                        <p:selectManyMenu value="#{ctf.ticketFamilys}" converter="ticketFamilyConverter"
+                                                          var="ticketFamily" showCheckbox="true" style="width:200px;">
+                                            <f:selectItems value="#{cabinClassController.getCabinClassTicketFamilys(ctf.cabinClass.type)}" var="ticketFamily" itemLabel="#{ticketFamily.name}" itemValue="#{ticketFamily}"/>
+                                            <p:column>
+                                                <h:outputText value="#{ticketFamily.name}"  />
+                                            </p:column>
+                                        </p:selectManyMenu>
+                                    </p:column>
+                                </p:row>
+                            <!--</c:forEach>-->
+                            </ui:repeat>
                         </p:panel>
                     </p:panel>
 
@@ -57,10 +57,10 @@
                     </p:panel>
                 </p:panelGrid>
                 <p:commandButton value="Save" action="#{productDesignController.assignAircraftTicketFamily()}" update="messages" />
-        </p:panel>
+            </p:panel>
 
 
-    </h:form>        
-</ui:define>
+        </h:form>        
+    </ui:define>
 
 </ui:composition>

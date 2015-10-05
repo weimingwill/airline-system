@@ -56,7 +56,9 @@ public class ProductDesignController implements Serializable {
 
     public void onAircraftChange() {
         try {
+            System.out.println("Selected Aircraft: " + selectedAircraft);
             cabinClassTicketFamilyHelpers = cabinClassSession.getCabinClassTicketFamilyHelpers(selectedAircraft.getAircraftId());
+            System.out.println("CabinClassHelper: " + cabinClassTicketFamilyHelpers);
         } catch (NoSuchCabinClassException | NoSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }

@@ -87,17 +87,30 @@ public class AircraftSession implements AircraftSessionLocal {
 
     @Override
     public List<CabinClass> getAircraftCabinClasses(Long aircraftId) throws NoSuchCabinClassException {
+        Query query = entityManager.createQuery("SELECT c FROM Aircraft a, AircraftCabinClass ac, CabinClass c "
+                + "WHERE ac.aircraftId = :inId "
+                + "AND ac.cabinClassId = c.cabinClassId AND c.deleted = FALSE "
+                + "AND ac.aircraftId = a.aircraftId AND a.status <> :inRetired AND a.status <> :inCrashed");
+        query.setParameter("inId", aircraftId);
+        query.setParameter("inRetired", AircraftStatus.RETIRED);
+        query.setParameter("inCrashed", AircraftStatus.CRASHED);
+        List<CabinClass> cabinClasses = new ArrayList<>();
         try {
-            List<CabinClass> cabinClasses = new ArrayList<>();
-            for (AircraftCabinClass aircraftCabinClass : SafeHelper.emptyIfNull(getAircraftById(aircraftId).getAircraftCabinClasses())) {
-                CabinClass cabinClass = aircraftCabinClass.getCabinClass();
-                if (!cabinClass.isDeleted()) {
-                    cabinClasses.add(cabinClass);
-                }
-            }
-            return cabinClasses;
-        } catch (NoSuchAircraftException ex) {
+            cabinClasses = (List<CabinClass>)query.getResultList();
+        } catch (NoResultException e) {
             throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
         }
+        return cabinClasses;
+//        try {
+//            for (AircraftCabinClass aircraftCabinClass : SafeHelper.emptyIfNull(getAircraftById(aircraftId).getAircraftCabinClasses())) {
+//                CabinClass cabinClass = aircraftCabinClass.getCabinClass();
+//                if (!cabinClass.getDeleted()) {
+//                    cabinClasses.add(cabinClass);
+//                }
+//            }
+//            return cabinClasses;
+//        } catch (NoSuchAircraftException ex) {
+//            throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
+//        }
     }
 }

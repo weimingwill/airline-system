@@ -21,6 +21,12 @@ public class CabinClassTicketFamilyHelper {
     public CabinClassTicketFamilyHelper() {
     }
 
+    public CabinClassTicketFamilyHelper(CabinClass cabinClass, List<TicketFamily> ticketFamilys, boolean haveTicketFamily) {
+        this.cabinClass = cabinClass;
+        this.ticketFamilys = ticketFamilys;
+        this.haveTicketFamily = haveTicketFamily;
+    }
+    
     public CabinClass getCabinClass() {
         return cabinClass;
     }
