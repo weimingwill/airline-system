@@ -55,8 +55,11 @@ public class FlightScheduleBookingClass implements Serializable {
     @Column(name = "PRICECOEFFICIENT")
     private Float priceCoefficient;
 
-    @Column(name = "DEMAND")
-    private Integer demand;
+    @Column(name = "DEMANDMEAN")
+    private Float demandMean;
+
+    @Column(name = "DEMANDDEV")
+    private Float demandDev;
 
     @Column(name = "DELETED")
     private Boolean deleted;
@@ -109,14 +112,6 @@ public class FlightScheduleBookingClass implements Serializable {
         this.priceCoefficient = priceCoefficient;
     }
 
-    public Integer getDemand() {
-        return demand;
-    }
-
-    public void setDemand(Integer demand) {
-        this.demand = demand;
-    }
-
     public Boolean getDeleted() {
         return deleted;
     }
@@ -140,4 +135,22 @@ public class FlightScheduleBookingClass implements Serializable {
     public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
         this.phaseDemands = phaseDemands;
     }
+
+    public Float getDemandMean() {
+        return demandMean;
+    }
+
+    public void setDemandMean(Float demandMean) {
+        this.demandMean = demandMean;
+    }
+
+    public Float getDemandDev() {
+        return demandDev;
+    }
+
+    public void setDemandDev(Float demandDev) {
+        this.demandDev = demandDev;
+    }
+    
+    
 }
