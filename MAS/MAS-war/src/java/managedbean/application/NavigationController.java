@@ -119,7 +119,6 @@ public class NavigationController implements Serializable {
     }
 
     //Role
-
     public String toCreateRole() {
         return "/views/secured/common/roles/createRole.xhtml";
     }
@@ -198,22 +197,23 @@ public class NavigationController implements Serializable {
     public String redirectToEditRule() {
         return "/views/secured/ais/product_design/editRule.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToCreateTicketFamily() {
         return "/views/secured/ais/product_design/createTicketFamily.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToViewAllTicketFamily() {
         return "/views/secured/ais/product_design/viewAllTicketFamily.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToDeleteTicketFamily() {
         return "/views/secured/ais/product_design/deleteTicketFamily.xhtml" + REDIRECT;
     }
+
     public String redirectToEditTicketFamily() {
         return "/views/secured/ais/product_design/editTicketFamily.xhtml" + REDIRECT;
     }
-    
+
     //Pricing
     public String redirectToCreateBookingClass() {
         return "/views/secured/ais/booking_class/createBookingClass.xhtml" + REDIRECT;
@@ -226,41 +226,44 @@ public class NavigationController implements Serializable {
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }
-    
+
     //Flight Schedule Booking Class
-    public String redirectToAssignFlightScheduleBookingClass(){
+    public String redirectToAssignFlightScheduleBookingClass() {
         return "/views/secured/ais/booking_class/assignFlightScheduleBookingClasses.xhtml" + REDIRECT;
     }
-    
-    public String redirectToViewFlightSchedule(){
+
+    public String redirectToViewFlightSchedule() {
         return "/views/secured/ais/booking_class/viewFlightSchedule.xhtml" + REDIRECT;
     }
-    
-    public String redirectToSeatAllocation(){
+
+    public String redirectToSeatAllocation() {
         return "/views/secured/ais/booking_class/seatAllocation.xhtml" + REDIRECT;
     }
-   
-    public String redirectToProductDesign(){
+
+    public String redirectToProductDesign() {
         return "/views/secured/ais/product_design/productDesign.xhtml" + REDIRECT;
-    }    
-    
+    }
+
+    public String redirectToPriceBookingClasses() {
+        return "/views/secured/ais/booking_class/priceBookingClasses.xhtml" + REDIRECT;
+    }
+
     //Yield Management 
-    public String redirectToYieldManagement(){
+    public String redirectToYieldManagement() {
         return "/views/secured/ais/yield_management/yieldManagement.xhtml" + REDIRECT;
     }
-    
-    public String redirectToReallocationBookingClassSeats(){
+
+    public String redirectToReallocationBookingClassSeats() {
         return "/views/secured/ais/yield_management/reallocateBookingClassSeats.xhtml" + REDIRECT;
     }
-    
-    public String redirectToUpdateYieldManagementModel(){
+
+    public String redirectToUpdateYieldManagementModel() {
         return "/views/secured/ais/yield_management/updateYieldManagementModel.xhtml" + REDIRECT;
     }
-    
-    public String redirectToViewSeatsReallocationHistroy(){
+
+    public String redirectToViewSeatsReallocationHistroy() {
         return "/views/secured/ais/yield_management/viewSeatsReallocationHistory.xhtml" + REDIRECT;
     }
-    
 
     //APS
     public String redirectToAPS() {
@@ -283,25 +286,24 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToAddRoute() {
         return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToViewRoutes() {
         return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToViewObsoleteRoutes() {
         return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
 
     }
-    
-    public String toAddRoute(){
+
+    public String toAddRoute() {
         return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
     }
 
-   
 }

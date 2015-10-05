@@ -183,4 +183,17 @@ public class BookingClassSession implements BookingClassSessionLocal {
         }
     }
 
+    @Override
+    public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightHelpers) throws NoSuchFlightScheduleBookingClassException {
+        for (FlightSchCabinClsTicFamBookingClsHelper flightHelper : SafeHelper.emptyIfNull(flightHelpers)) {
+            for (TicketFamilyBookingClassHelper tfbcHelper : SafeHelper.emptyIfNull(flightHelper.getTicketFamilyBookingClassHelpers())) {
+                for (BookingClassHelper bookingClassHelper : SafeHelper.emptyIfNull(tfbcHelper.getBookingClassHelpers())) {
+                    FlightScheduleBookingClass flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClassHelper.getBookingClass().getBookingClassId());
+                    flightScheduleBookingClass.setSeatQty(bookingClassHelper.getSeatQty());
+                    entityManager.merge(flightScheduleBookingClass);
+                }
+            }
+        }
+    }
+
 }
