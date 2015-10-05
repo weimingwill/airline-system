@@ -16,17 +16,10 @@ public class BookingClassHelper {
     private int seatQty;
     private float price;
     private float priceCoefficient;
-    private int demand;
+    private float demandMean;
+    private float demandDev;
 
     public BookingClassHelper() {
-    }
-
-    public BookingClassHelper(BookingClass bookingClass, int seatQty, float price, float priceCoefficient, int demand) {
-        this.bookingClass = bookingClass;
-        this.seatQty = seatQty;
-        this.price = price;
-        this.priceCoefficient = priceCoefficient;
-        this.demand = demand;
     }
     
     public BookingClass getBookingClass() {
@@ -61,13 +54,20 @@ public class BookingClassHelper {
         this.priceCoefficient = priceCoefficient;
     }
 
-    public int getDemand() {
-        return demand;
+    public float getDemandMean() {
+        return demandMean;
     }
 
-    public void setDemand(int demand) {
-        this.demand = demand;
+    public void setDemandMean(float demandMean) {
+        this.demandMean = demandMean;
     }
-    
+
+    public float getDemandDev() {
+        return demandDev;
+    }
+
+    public void setDemandDev(float demandDev) {
+        this.demandDev = demandDev;
+    }
     
 }
