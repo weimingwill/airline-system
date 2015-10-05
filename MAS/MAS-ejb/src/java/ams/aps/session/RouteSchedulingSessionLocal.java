@@ -26,11 +26,13 @@ public interface RouteSchedulingSessionLocal {
     
     public boolean createFlight(String flightNo, Long routeID);
     
-    public boolean checkFlightNotExisted(String flightNo, Long routeID);
+    public boolean checkFlightNotExisted(String flightNo);
+    
+    public boolean checkFlightNoExistence(String flightNo);
     
     public boolean changeFlightNo(String flightNo, String newFlightNo);
     
-    public List<AircraftType> getCapableAircraftTypesForRoute(List<Airport> allStops);
+    public List<AircraftType> getCapableAircraftTypesForRoute(Route route);
     
     public List<Aircraft> getAvailableAircraftsByType(AircraftType type);
     
@@ -39,5 +41,7 @@ public interface RouteSchedulingSessionLocal {
     public void assignFlightScheduleToAircraft(FlightSchedule flightSchedule);
       
     public void modifyFlightSchedule(FlightSchedule newFlightSchedule);
+    
+    public List<Route> getAvailableRoutes();
 
 }
