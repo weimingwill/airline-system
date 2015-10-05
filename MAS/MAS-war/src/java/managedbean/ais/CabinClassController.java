@@ -89,7 +89,7 @@ public class CabinClassController implements Serializable{
     
     public String updateCabinClass() {
         try {
-            cabinClassSession.updateCabinClass(oldname,type, name);
+            cabinClassSession.updateCabinClass(selectedCabinClass.getName(),type, name);
             msgController.addMessage("Edit cabin class successfully!");
         }catch( ExistSuchCabinClassNameException | NoSuchCabinClassException | ExistSuchCabinClassTypeException ex) {
             msgController.addErrorMessage(ex.getMessage());

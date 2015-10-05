@@ -157,7 +157,7 @@ public class CabinClassSession implements CabinClassSessionLocal {
 
     @Override
     public List<CabinClass> getAllOtherCabinClass(String name) {
-        Query query = entityManager.createQuery("SELECT c FROM CabinClass c where c.name <> :name");
+        Query query = entityManager.createQuery("SELECT c FROM CabinClass c where c.name <> :name AND c.deleted=FALSE");
         query.setParameter("name", name);
         return query.getResultList();
 
