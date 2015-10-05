@@ -22,9 +22,12 @@ import mas.common.util.helper.CreateToken;
 import util.helper.CountdownHelper;
 import util.security.CryptographicHelper;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import managedbean.application.MsgController;
+import mas.common.entity.Permission;
 import mas.common.entity.SystemRole;
 import mas.common.session.RoleSessionLocal;
 import mas.common.util.exception.ExistSuchUserEmailException;
@@ -65,6 +68,10 @@ public class UserController implements Serializable {
     private List<UserRolePermission> userRolePermissionList;
     private List<RolePermission> rolePermissionList;
     private List<String> otherUsernames;
+    private String name;
+    private String address;
+    private String department;
+    private String phone;
 
     public UserController() {
     }
@@ -74,11 +81,7 @@ public class UserController implements Serializable {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         this.username = (String) sessionMap.get("username");
-        try {
-            email = getUserByUsername().getEmail();
-        } catch (NoSuchUsernameException ex) {
-            email = null;
-        }
+        initializeUser();
     }
 
     public String resetPasswordSendEmail() throws InterruptedException {
@@ -132,11 +135,12 @@ public class UserController implements Serializable {
         return CreateToken.createNewToken();
     }
 
-    public String createUser(String username, String password, String email) {
+    public String createUser(String username, String password, String name, String email, 
+            String phone, String address, String department) {
         try {
             CryptographicHelper cryptographicHelper = new CryptographicHelper();
             password = cryptographicHelper.doMD5Hashing(password);
-            systemUserSession.createUser(username, password, email, roleList);
+            systemUserSession.createUser(username, password, name, email, phone, address, department, roleList);
             String resetDigest = createNewToken();
             String subject = "Reset Password";
             String mailContent = "Please reset password first using the following link: \n" + navigationController.toUnsecuredUsersFolder() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + resetDigest + "&email=" + email;
@@ -207,7 +211,7 @@ public class UserController implements Serializable {
     public String updateUserProfile() {
         try {
             System.out.println("Begin update user.");
-            systemUserSession.updateUserProfile(username, email);
+            systemUserSession.updateUserProfile(username, name, email, phone, address, department);
             msgController.addMessage("Update user profile successfully!");
         } catch (NoSuchUsernameException | ExistSuchUserEmailException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -232,10 +236,74 @@ public class UserController implements Serializable {
         }
         return navigationController.toChangePassword();
     }
+
+    public List<Permission> getUserPermissions() {
+        return systemUserSession.getUserPermissions(username);
+    }
+
+    public List<String> getUserPermissionSystems() {
+        return systemUserSession.getUserPermissionSystems(username);
+    }
+
+    public void initializeUser() {
+        try {
+            System.out.println("Initializae User");
+            SystemUser user = getUserByUsername();
+            email = user.getEmail();
+            name = user.getName();
+            address = user.getAddress();
+            department = user.getDepartment();
+            phone = user.getPhone();
+        } catch (NoSuchUsernameException ex) {
+            email = null;
+            name = null;
+            address = null;
+            department = null;
+            phone = null;
+        }
+    }
+    
+    public String deleteUser(String username){
+        try {
+            systemUserSession.deleteUser(username);
+            msgController.addMessage("Delete user:" + username + " successfully!");
+        } catch (NoSuchUsernameException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllUsers();
+    }
+
+    public String lockUser(String username){
+        try {
+            systemUserSession.lockUser(username);
+            msgController.addMessage("Lock user:" + username + "successfully!");
+        } catch (NoSuchUsernameException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllUsers();
+    }
+
+    public String unlockUser(String username){
+        try {
+            systemUserSession.unlockUser(username);
+            msgController.addMessage("unlock user:" + username + "successfully!");
+        } catch (NoSuchUsernameException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllUsers();
+    }
+//    public boolean hasSystemPermission(String systemAbbr){
+//        return systemUserSession.hasSystemPermission(username, systemAbbr);
+//    }
+//    
+//    public boolean hasSystemModulePermission(String systemAbbr, String systemModule){
+//        return systemUserSession.hasSystemModulePermission(username, systemAbbr, systemModule);
+//    }
+//    
+
 //
 //Getter and Setter
 //
-
     /**
      * @return the username
      */
@@ -366,6 +434,38 @@ public class UserController implements Serializable {
 
     public void setOtherUsernames(List<String> otherUsernames) {
         this.otherUsernames = otherUsernames;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
 }

@@ -17,11 +17,20 @@ import mas.common.util.exception.NoSuchPermissionException;
  */
 @Local
 public interface PermissionSessionLocal {
+
     public List<Permission> getAllPermissions();
+
     public Permission getPermissionById(Long permissionId) throws NoSuchPermissionException;
+
     public Permission getPermission(String system, String systemModule) throws NoSuchPermissionException;
-    public List<Permission> getPermissionsByModule(String system) throws NoSuchPermissionException;
+
+    public List<String> getSystemModulesBySystem(String sysetm);
+
+    public List<Permission> getPermissionsBySystem(String system) throws NoSuchPermissionException;
+
     public void createPermission(String system, String systemModule) throws ExistSuchPermissionException;
+
     public void verifyPermission(String system, String systemModule) throws ExistSuchPermissionException;
-//    public Permission deletePermission(String roleName, String module, String title) throws NoSuchPermissionException;
+
+    public String deletePermission(String system, String systemModule) throws NoSuchPermissionException;
 }

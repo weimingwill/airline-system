@@ -153,3 +153,19 @@ tr.hide{
     color: #2e6e9e;
     font-weight: bold;
 }
+
+.systemHeader{
+    font-size: 15px;
+}
+
+.modulePanelTable table tr td {
+    width: 800px;
+    padding: 20px;
+    border: none;
+    text-align: left;
+}
+
+.modulePanel{
+    width: 200px;
+    height: 200px;
+}

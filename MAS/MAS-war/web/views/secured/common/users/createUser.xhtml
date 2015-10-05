@@ -19,11 +19,21 @@
                 <p:inputText required="true" requiredMessage="Please enter username" id="username" binding="#{newUsername}"/>
                 <h:outputText value="Password"/>
                 <p:password required="true" requiredMessage="Please enter password" id="password" binding="#{newPassword}"/>
+                <h:outputText value="Name"/>
+                <p:inputText required="true" requiredMessage="Please enter name" id="name" binding="#{newName}"/>           
                 <h:outputText value="Email"/>
                 <p:inputText required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" id="email" binding="#{newEmail}">
-                <f:validateRegex
-                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                    <p:ajax update="messages" event="blur" />
+                    <f:validateRegex
+                        pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
                 </p:inputText>
+                <h:outputText value="Phone"/>
+                <p:inputText binding="#{newPhone}"/>
+                <h:outputText value="Address"/>
+                <p:inputText binding="#{newAddress}"/>
+                <h:outputText value="Department"/>
+                <p:inputText binding="#{newDepartment}"/>
+
                 <h:outputText value="Select Roles"/>
                 <ui:remove>
                     <p:selectCheckboxMenu id="menu" binding="#{roleNames}" label="Roles"
@@ -54,7 +64,9 @@
                     <p:outputLabel id="display" value="#{roleList.value}" />
                 </ui:remove>  
 
-                <p:commandButton action="#{userController.createUser(newUsername.value, newPassword.value, newEmail.value)}" value="Create" update="messages"/>    
+                <p:commandButton action="#{userController.createUser(newUsername.value, newName.value, 
+                                           newPassword.value, newEmail.value, newPhone.value, newAddress.value, newDepartment.value)}" 
+                                           value="Create" update="messages"/>    
 
             </h:panelGrid>
         </h:form>

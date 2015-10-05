@@ -5,6 +5,7 @@
  */
 package mas.common.session;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -28,9 +29,22 @@ public class PermissionSession implements PermissionSessionLocal {
     @PersistenceContext
     private EntityManager entityManager;
     
+        @Override
+    public Permission getPermissionById(Long permissionId) throws NoSuchPermissionException{
+        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.permissionId = :inId and p.deleted = FALSE");
+        query.setParameter("inId", permissionId);
+        Permission permission = null;
+        try {
+            permission = (Permission) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
+        }
+        return permission;        
+    }
+    
     @Override
-    public List<Permission> getPermissionsByModule(String system) throws NoSuchPermissionException{
-        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.system = :inSystem");
+    public List<Permission> getPermissionsBySystem(String system) throws NoSuchPermissionException{
+        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.system = :inSystem and p.deleted = FALSE");
         query.setParameter("inSystem", system);
         List<Permission> permissions = null;
         try {
@@ -43,13 +57,14 @@ public class PermissionSession implements PermissionSessionLocal {
 
     @Override
     public List<Permission> getAllPermissions() {
-        Query query = entityManager.createQuery("SELECT p FROM Permission p");
+        Query query = entityManager.createQuery("SELECT p FROM Permission p where p.deleted = FALSE");
         return query.getResultList();        
     }
 
     @Override
     public Permission getPermission(String system, String systemModule) throws NoSuchPermissionException{
-        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.system = :inSystem AND p.systemModule = :inModule");
+        Query query = entityManager.createQuery("SELECT p FROM Permission p "
+                + "WHERE p.system = :inSystem AND p.systemModule = :inModule and p.deleted = FALSE");
         query.setParameter("inSystem", system);
         query.setParameter("inModule", systemModule);
         Permission permission = null;
@@ -61,6 +76,19 @@ public class PermissionSession implements PermissionSessionLocal {
         return permission;
     }
 
+    @Override
+    public List<String> getSystemModulesBySystem(String sysetm) {
+        List<String> systemModules = new ArrayList<>();
+        try {
+            for (Permission permission : getPermissionsBySystem(sysetm)) {
+                systemModules.add(permission.getSystemModule().replace(" Module", ""));
+            }
+        } catch (NoSuchPermissionException ex) {
+            return null;
+        }
+        return systemModules;
+    }
+    
     @Override
     public void createPermission(String system, String systemModule) throws ExistSuchPermissionException{
         verifyPermission(system, systemModule);
@@ -82,20 +110,14 @@ public class PermissionSession implements PermissionSessionLocal {
     }
 
     @Override
-    public Permission getPermissionById(Long permissionId) throws NoSuchPermissionException{
-        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.permissionId = :inId");
-        query.setParameter("inId", permissionId);
-        Permission permission = null;
-        try {
-            permission = (Permission) query.getSingleResult();
-        } catch (NoResultException ex) {
+    public String deletePermission(String system, String systemModule) throws NoSuchPermissionException {
+        Permission permission = getPermission(system, systemModule);
+        if (permission == null) {
             throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
+        } else {
+            permission.setDeleted(true);
+            entityManager.merge(permission);
         }
-        return permission;        
+        return permission.getPermissionName();
     }
-
-//    @Override
-//    public Permission deletePermission(String roleName, String system, String systemModule) throws NoSuchPermissionException {
-//        
-//    }
 }

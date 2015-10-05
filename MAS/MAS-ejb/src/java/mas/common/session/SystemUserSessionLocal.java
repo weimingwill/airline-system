@@ -7,6 +7,7 @@ package mas.common.session;
 
 import java.util.List;
 import javax.ejb.Local;
+import mas.common.entity.Permission;
 import mas.common.entity.SystemMsg;
 import mas.common.entity.SystemRole;
 import mas.common.entity.SystemUser;
@@ -27,45 +28,26 @@ import mas.common.util.helper.UserRolePermission;
 @Local
 public interface SystemUserSessionLocal {
 
+    //Users
     public SystemUser getSystemUserByName(String username) throws NoSuchUsernameException;
 
     public SystemUser getSystemUserByEmail(String email) throws NoSuchEmailException;
-    
-    //Messages
-    public List<SystemMsg> getUserMessages(String username);
 
-    public List<SystemMsg> getUserUnreadMessages(String username);
-
-    public void readUnreadMessages(String username) throws NoSuchMessageException;
-
-    public void flagMessage(String username, String message) throws NoSuchMessageException;
-    
-    public void unFlagMessage(String username, String message) throws NoSuchMessageException;
-    
-    public String deleteMessage(String username, String message) throws NoSuchMessageException;
-    
-    public void verifySystemUserPassword(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException;
-
-    public void verifySystemUserEmail(String email) throws NoSuchEmailException;
-
-    public void verifySystemUserExistence(String useranme, String email) throws ExistSuchUserException;
-    
-    public void verifyUserEmailExistence(String email) throws ExistSuchUserEmailException;
-    
     public List<SystemUser> getAllUsers();
 
     public List<SystemUser> getAllOtherUsers(String username);
 
     public List<String> getAllOtherUsernames(String username);
-    
-    public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException;
-//    public void createUser(String username, String password, String[] roleNames) throws ExistSuchUserException, NoSuchRoleException;
 
-    public void updateUserProfile(String username, String email) throws NoSuchUsernameException, ExistSuchUserEmailException;
-    
-    public void changePassword(String username, String password) throws NoSuchUsernameException;
-    
     public List<String> getSystemUsernameList();
+
+    public void createUser(String username, String password, String name, String email, String phone,
+            String address, String department, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException;
+
+    public void updateUserProfile(String username, String name, String email, String phone,
+            String address, String department) throws NoSuchUsernameException, ExistSuchUserEmailException;
+
+    public void changePassword(String username, String password) throws NoSuchUsernameException;
 
     public void resetPassword(String email, String password) throws NoSuchEmailException;
 
@@ -76,18 +58,51 @@ public interface SystemUserSessionLocal {
     public void lockUser(String username) throws NoSuchUsernameException;
 
     public void unlockUser(String username) throws NoSuchUsernameException;
+    
+    //Messages
+
+    public List<SystemMsg> getUserMessages(String username);
+
+    public List<SystemMsg> getUserUnreadMessages(String username);
+
+    public void readUnreadMessages(String username) throws NoSuchMessageException;
+
+    public void flagMessage(String username, String message) throws NoSuchMessageException;
+
+    public void unFlagMessage(String username, String message) throws NoSuchMessageException;
+
+    public String deleteMessage(String username, String message) throws NoSuchMessageException;
+
+    //Verification
+    public void verifySystemUserPassword(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException;
+
+    public void verifySystemUserEmail(String email) throws NoSuchEmailException;
+
+    public void verifySystemUserExistence(String useranme, String email) throws ExistSuchUserException;
+
+    public void verifyUserEmailExistence(String email) throws ExistSuchUserEmailException;
 
     public void assignUserToRole(List<SystemUser> users, List<SystemRole> roles);
 
     public void assignUserToRole(SystemUser user, List<SystemRole> roles);
 
-    public List<UserRolePermission> getAllUsersRolesPermissions();
+//    public List<UserRolePermission> getAllUsersRolesPermissions();
 
-    public List<RolePermission> getUserRolesPermissions(String username);
+//    public List<RolePermission> getUserRolesPermissions(String username);
 
     public List<SystemRole> getUserRoles(String username);
+
+    public List<Permission> getUserPermissions(String username);
+    
+    public List<String> getUserPermissionSystems(String username);
 
     public boolean hasRole(String username, String roleName);
 
     public boolean isAdmin(String username);
+    
+    public String deleteUser(String username) throws NoSuchUsernameException;
+
+//    public boolean hasSystemPermission(String username, String systemAbbr);
+//
+//    public boolean hasSystemModulePermission(String username, String systemAbbr, String systemModule);
 }

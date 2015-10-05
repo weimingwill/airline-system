@@ -11,7 +11,6 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.Map;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -36,7 +35,7 @@ public class LoginController implements Serializable {
     private NavigationController navigationController;
     @Inject
     private MsgController msgController;
-    
+
     @EJB
     private SystemUserSessionLocal systemUserSession;
 
@@ -55,12 +54,12 @@ public class LoginController implements Serializable {
 
     public String doLogin() throws NoSuchUsernameException, InvalidPasswordException, InterruptedException {
         CountdownHelper countdownHelper = new CountdownHelper(systemUserSession);
-//        boolean isHuman = captcha.validate(captchaCode);
+        boolean isHuman = captcha.validate(captchaCode);
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         try {
             if (systemUserSession.getSystemUserByName(username).isLocked()) {
-                msgController.addErrorMessage("Your account has been locked, please reset password or wait 30mins to try again");
+                msgController.addErrorMessage("Your account has been locked, please reset password or wait 30mins to try again or contact systme admin");
                 return navigationController.toLogin();
             }
         } catch (NoSuchUsernameException ex) {
@@ -68,15 +67,15 @@ public class LoginController implements Serializable {
             return navigationController.toLogin();
         }
 
-//        if (!isHuman) {
-//            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Captcha code entered is incorrect"));
-//            return navigationController.toLogin();
-//        }
+        if (!isHuman) {
+            msgController.addErrorMessage("Captcha code entered is incorrect");
+            return navigationController.toLogin();
+        }
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
         try {
             systemUserSession.verifySystemUserPassword(username, cryptographicHelper.doMD5Hashing(password));
         } catch (NoSuchUsernameException | InvalidPasswordException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
+            msgController.addErrorMessage(ex.getMessage());
             countTrial++;
             if (countTrial > 2) {
                 systemUserSession.lockUser(username);
@@ -94,7 +93,7 @@ public class LoginController implements Serializable {
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         sessionMap.put("username", username);
         externalContext.getFlash().setKeepMessages(true);
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Successful", UserMsg.LOGIN_SUCCESS_MSG));
+        msgController.addMessage(UserMsg.LOGIN_SUCCESS_MSG);
         captchaCode = null;
         return navigationController.redirectToWorkspace();
     }
@@ -102,14 +101,11 @@ public class LoginController implements Serializable {
     public String doLogout() {
         loggedIn = false;
         username = null;
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage("Successful", UserMsg.LOGIN_OUT_MSG));
+        msgController.addMessage(UserMsg.LOGIN_OUT_MSG);
         return navigationController.redirectToWorkspace();
     }
-    
-    
-    //Getter and Setter
 
+    //Getter and Setter
     public String getUsername() {
         return username;
     }
@@ -157,5 +153,5 @@ public class LoginController implements Serializable {
     public void setCaptchaCode(String captchaCode) {
         this.captchaCode = captchaCode;
     }
-    
+
 }
