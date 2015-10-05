@@ -6,14 +6,15 @@
 package managedbean.aps;
 
 import ams.aps.entity.Aircraft;
+import ams.aps.entity.AircraftType;
 import ams.aps.session.FleetPlanningSessionLocal;
+import ams.aps.util.helper.AircraftModelFilterHelper;
 import ams.aps.util.helper.RetireAircraftFilterHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 /**
@@ -21,13 +22,14 @@ import javax.inject.Named;
  * @author Lewis
  */
 @Named(value = "fleetFilterController")
-@RequestScoped
+@SessionScoped
 public class FleetFilterController implements Serializable {
 
     @EJB
     private FleetPlanningSessionLocal fleetPlanningSession;
 
-    RetireAircraftFilterHelper retireAircraftFilterHelper = new RetireAircraftFilterHelper();
+    private RetireAircraftFilterHelper retireAircraftFilterHelper = new RetireAircraftFilterHelper();
+    private AircraftModelFilterHelper aircraftModelFilterHelper = new AircraftModelFilterHelper();
 
     /**
      * Creates a new instance of FleetFilterController
@@ -36,27 +38,44 @@ public class FleetFilterController implements Serializable {
 
     }
 
-    @PostConstruct
-    public void init() {
-        setInitialValue();
-    }
-    
-    public List<Aircraft> getFilteredAircrafts(){
+    public List<Aircraft> getFilteredAircrafts() {
         printRetireAircraftFilters();
         List<Aircraft> filteredAircraft = fleetPlanningSession.filterAircraftsForRetire(retireAircraftFilterHelper);
         return filteredAircraft;
     }
 
-    public void onResetBtnClick() {
-        setInitialValue();
+    public List<AircraftType> getFilteredAircraftModels() {
+        printAircraftModelFilters();
+        List<AircraftType> filteredAircraftType = fleetPlanningSession.filterAircraftModels(aircraftModelFilterHelper);
+        return filteredAircraftType;
     }
 
-    public void setInitialValue() {
-        retireAircraftFilterHelper.setTimesOfMaint(0);
-        retireAircraftFilterHelper.setNumOfFlightCycle(0);
-        retireAircraftFilterHelper.setMaxTotalFlightDist(1000);
-        retireAircraftFilterHelper.setTypeOfMaint(new ArrayList<String>());
-        fleetPlanningSession.initRetireAicraftFilter(retireAircraftFilterHelper);
+    public void setInitialValue(String filterType) {
+        switch (filterType) {
+            case "Retire":
+                retireAircraftFilterHelper.setTimesOfMaint(0);
+                retireAircraftFilterHelper.setNumOfFlightCycle(0);
+                retireAircraftFilterHelper.setMaxTotalFlightDist(1000);
+                retireAircraftFilterHelper.setTypeOfMaint(new ArrayList<String>());
+                fleetPlanningSession.initRetireAicraftFilter(retireAircraftFilterHelper);
+                break;
+            case "Purchase":
+                fleetPlanningSession.initAircraftModelFilter(aircraftModelFilterHelper);
+                break;
+        }
+
+    }
+
+    private void printAircraftModelFilters() {
+        System.out.println("FleetFilterController: printAircraftModelFilters()");
+        System.out.println("Manufacturer: " + aircraftModelFilterHelper.getManufacturers());
+        System.out.println("Max Seating: (" + aircraftModelFilterHelper.getMinMaxSeating() + ", " + aircraftModelFilterHelper.getMaxMaxSeating() + ")");
+        System.out.println("Approx Price: (" + aircraftModelFilterHelper.getMinApproxPrice() + ", " + aircraftModelFilterHelper.getMaxApproxPrice() + ")");
+        System.out.println("Fuel Cost: (" + aircraftModelFilterHelper.getMinFuelCostPerKm() + ", " + aircraftModelFilterHelper.getMaxFuelCostPerKm() + ")");
+        System.out.println("Range: (" + aircraftModelFilterHelper.getMinRange() + ", " + aircraftModelFilterHelper.getMaxRange() + ")");
+        System.out.println("Pay Load: (" + aircraftModelFilterHelper.getMinPayload() + ", " + aircraftModelFilterHelper.getMaxPayload() + ")");
+        System.out.println("Max Mach Num: (" + aircraftModelFilterHelper.getMinMaxMachNum() + ", " + aircraftModelFilterHelper.getMaxMaxMachNum() + ")");
+        System.out.println("Fuel Capacity: (" + aircraftModelFilterHelper.getMinFuelCapacity() + ", " + aircraftModelFilterHelper.getMaxFuelCapacity() + ")");
     }
 
     private void printRetireAircraftFilters() {
@@ -80,5 +99,12 @@ public class FleetFilterController implements Serializable {
         this.retireAircraftFilterHelper = retireAircraftFilterHelper;
     }
 
+    public AircraftModelFilterHelper getAircraftModelFilterHelper() {
+        return aircraftModelFilterHelper;
+    }
+
+    public void setAircraftModelFilterHelper(AircraftModelFilterHelper aircraftModelFilterHelper) {
+        this.aircraftModelFilterHelper = aircraftModelFilterHelper;
+    }
 
 }

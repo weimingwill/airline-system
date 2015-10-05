@@ -147,3 +147,9 @@ tr.hide{
     height: 150px !important;
     margin-bottom: 10px;
 }
+
+.ui-widget-subheader{
+    background: #BEDEF9;
+    color: #2e6e9e;
+    font-weight: bold;
+}

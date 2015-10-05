@@ -12,12 +12,12 @@
         <h:form>
             <p:dataTable id="fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="10" tableStyle="width:auto; font-size:small"
                          paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15"
-                         selection="#{fleetTableController.selectedAircraft}" selectionMode="single" rowKey="#{aircraft.aircraftId}" editable="true">
+                         selection="#{fleetTableController.selectedAircraft}" selectionMode="single" rowKey="#{aircraft.aircraftId}">
                 <p:messages autoUpdate="true"/>
                 <f:facet name="header">
                     <p:outputLabel value="Owned Fleet"/>
                 </f:facet>
-                <!--                    <p:column selectionMode="single" style="width:16px;text-align:center"/>-->
+                
                 <p:ajax event="rowSelect" listener="#{fleetTableController.viewAircraftDetail}"/>                    
                 <p:column headerText="Id" sortBy="#{aircraft.aircraftId}">
                     <h:outputText value="#{aircraft.aircraftId}" />
@@ -68,14 +68,13 @@
                 <p:column headerText="Status" sortBy="#{aircraft.status}">
                     <h:outputText value="#{aircraft.status}" />
                 </p:column>
+                
                 <p:column style="width:32px;text-align: center">
-                    <p:commandButton action="#{fleetTableController.onEditButtonClick()}" icon="fa fa-pencil-square-o" title="Edit Aircraft Information">
+                    <p:commandButton action="#{fleetTableController.onEditAircraftBtnClick()}" icon="fa fa-pencil-square-o" title="Edit Aircraft Information">
                         <f:setPropertyActionListener value="#{aircraft}" target="#{fleetTableController.selectedAircraft}" />
                     </p:commandButton>
                 </p:column>
                 <f:facet name="footer" >
-                    <!--<p:commandButton process="fleet-table" value="Edit" icon="ui-icon-pencil" actionListener="{fleetTableController.onEditButtonClick}"/>-->
-                    <!--<p:commandButton process="fleet-table" value="View Details" icon="ui-icon-search" actionListener="{fleetTableController.viewAircraftDetail}"/>-->
                     <p:commandButton process="fleet-table" value="Add New" icon="ui-icon-plusthick" oncomplete="PF('addNewAircraftDlg').show()"/>
                 </f:facet>
             </p:dataTable>
