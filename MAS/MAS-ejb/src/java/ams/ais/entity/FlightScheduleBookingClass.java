@@ -12,10 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -27,14 +26,11 @@ import javax.persistence.Table;
  * @author winga_000
  */
 @Entity
-@IdClass(FlightScheduleBookingClassId.class)
 @Table(name = "FLIGHTSCHEDULE_BOOKINGCLASS")
 public class FlightScheduleBookingClass implements Serializable {
 
-    @Id
-    private Long flightScheduleId;
-    @Id
-    private Long bookingClassId;
+    @EmbeddedId
+    private FlightScheduleBookingClassId flightScheduleBookingClassId;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "FLIGHTSCHEDULEID", referencedColumnName = "FLIGHTSCHEDULEID")
@@ -64,21 +60,13 @@ public class FlightScheduleBookingClass implements Serializable {
 
     @Column(name = "DELETED")
     private Boolean deleted;
-    
-    public Long getFlightScheduleId() {
-        return flightScheduleId;
+
+    public FlightScheduleBookingClassId getFlightScheduleBookingClassId() {
+        return flightScheduleBookingClassId;
     }
 
-    public void setFlightScheduleId(Long flightScheduleId) {
-        this.flightScheduleId = flightScheduleId;
-    }
-
-    public Long getBookingClassId() {
-        return bookingClassId;
-    }
-
-    public void setBookingClassId(Long bookingClassId) {
-        this.bookingClassId = bookingClassId;
+    public void setFlightScheduleBookingClassId(FlightScheduleBookingClassId flightScheduleBookingClassId) {
+        this.flightScheduleBookingClassId = flightScheduleBookingClassId;
     }
 
     public FlightSchedule getFlightSchedule() {
