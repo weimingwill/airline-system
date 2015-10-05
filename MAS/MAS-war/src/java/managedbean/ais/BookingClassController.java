@@ -62,6 +62,7 @@ public class BookingClassController implements Serializable {
         System.out.println("Initialize Booking Class Controler: ");
         System.out.println("FlightScheduleId: " + flightScheduleId);
         initialHelper();
+//        initialBasicPrice();
         System.out.println("Helper: " + flightSchCabinClsTicFamBookingClsHelpers);
     }
 

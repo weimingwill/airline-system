@@ -164,8 +164,7 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
             flightScheduleBookingClassId.setFlightScheduleId(flightScheduleId);
             flightScheduleBookingClassId.setBookingClassId(bookingClass.getBookingClassId());
 
-            FlightScheduleBookingClass flightScheduleBookingClass;
-            flightScheduleBookingClass = entityManager.find(FlightScheduleBookingClass.class, flightScheduleBookingClassId);
+            FlightScheduleBookingClass flightScheduleBookingClass = entityManager.find(FlightScheduleBookingClass.class, flightScheduleBookingClassId);
             if (flightScheduleBookingClass != null) {
                 flightScheduleBookingClass.setDeleted(false);
                 entityManager.merge(flightScheduleBookingClass);
@@ -176,8 +175,8 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
                 flightScheduleBookingClass.setBookingClass(bookingClass);
                 flightScheduleBookingClass.setSeatQty(0);
                 flightScheduleBookingClass.setDeleted(false);
-                flightScheduleBookingClass.setPrice((float) 0);
-                flightScheduleBookingClass.setPriceCoefficient((float) 0);
+                flightScheduleBookingClass.setPrice((float)0);
+                flightScheduleBookingClass.setPriceCoefficient((float)0);
                 flightScheduleBookingClass.setDemandDev((float)0);
                 flightScheduleBookingClass.setDemandMean((float)0);
                 entityManager.persist(flightScheduleBookingClass);

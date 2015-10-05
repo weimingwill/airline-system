@@ -189,7 +189,8 @@ public class BookingClassSession implements BookingClassSessionLocal {
             for (TicketFamilyBookingClassHelper tfbcHelper : SafeHelper.emptyIfNull(flightHelper.getTicketFamilyBookingClassHelpers())) {
                 for (BookingClassHelper bookingClassHelper : SafeHelper.emptyIfNull(tfbcHelper.getBookingClassHelpers())) {
                     FlightScheduleBookingClass flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClassHelper.getBookingClass().getBookingClassId());
-                    flightScheduleBookingClass.setSeatQty(bookingClassHelper.getSeatQty());
+                    flightScheduleBookingClass.setPrice(bookingClassHelper.getPrice());
+                    flightScheduleBookingClass.setPriceCoefficient(bookingClassHelper.getPriceCoefficient());
                     entityManager.merge(flightScheduleBookingClass);
                 }
             }
