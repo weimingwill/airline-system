@@ -43,6 +43,9 @@ public class CabinClassTicketFamily implements Serializable {
 
     @Column(name = "SEATQTY")
     private Integer seatQty;
+    
+    @Column(name = "DELETED")
+    private Boolean deleted;
 
     public CabinClassTicketFamilyId getCabinClassTicketFamilyId() {
         return cabinClassTicketFamilyId;
@@ -76,5 +79,11 @@ public class CabinClassTicketFamily implements Serializable {
         this.seatQty = seatQty;
     }
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
 
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
 }
