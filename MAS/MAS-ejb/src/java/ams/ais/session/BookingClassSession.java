@@ -127,7 +127,7 @@ public class BookingClassSession implements BookingClassSessionLocal {
                 flightScheduleBookingClasses = flightScheduleSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(flightScheduleId, ticketFamilyId);
             }
             for (FlightScheduleBookingClass flightScheduleBookingClass : flightScheduleBookingClasses) {
-                BookingClass bookingClass = getBookingClassById(flightScheduleBookingClass.getBookingClassId());
+                BookingClass bookingClass = getBookingClassById(flightScheduleBookingClass.getBookingClass().getBookingClassId());
                 BookingClassHelper bookingClassHelper
                         = new BookingClassHelper(bookingClass, flightScheduleBookingClass.getSeatQty(), flightScheduleBookingClass.getPrice(),
                                 flightScheduleBookingClass.getPriceCoefficient(), flightScheduleBookingClass.getDemand());

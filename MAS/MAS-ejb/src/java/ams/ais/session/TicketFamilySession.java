@@ -20,25 +20,19 @@ import ams.ais.util.helper.AisMsg;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
-import ams.ais.util.helper.TicketFamilyMapHelper;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.helper.AircraftCabinClassId;
 import ams.aps.session.AircraftSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import mas.util.helper.MapUtils;
 import mas.util.helper.SafeHelper;
 
 /**
@@ -289,55 +283,38 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
             throws NeedTicketFamilyException, NoSuchAircraftCabinClassException, NoSuchCabinClassTicketFamilyException {
 
         List<CabinClassTicketFamily> cabinClassTicketFamilys = new ArrayList<>();
-        
+
         for (CabinClassTicketFamilyHelper helper : cabinClassTicketFamilyHelpers) {
-            Map<CabinClassTicketFamily, Boolean> cctfMap = new HashMap<>();
-            try {
-                List<CabinClassTicketFamily> originCabinClassTicketFamilys = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraft.getAircraftId(), helper.getCabinClass().getCabinClassId());
-                for (CabinClassTicketFamily cctf : originCabinClassTicketFamilys) {
-                    cctfMap.put(cctf, true);
-                }
-            } catch (NoSuchCabinClassTicketFamilyException ex) {
-            }
 
             //Get CabinClass
             CabinClass cabinClass = entityManager.find(CabinClass.class, helper.getCabinClass().getCabinClassId());
-            //Get original CabinClassTicketFamily
-            List<CabinClassTicketFamily> originCabinClassTicketFamilys = 
-                    cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraft.getAircraftId(), cabinClass.getCabinClassId());
+            
+            /**
+             * Get original CabinClassTicketFamily
+             * DisLink all CabinClassTicketFamily (set their deleted to true.),
+             * later if cabinClass exist, just set deleted to false
+             */
+            List<CabinClassTicketFamily> originCabinClassTicketFamilys
+                    = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraft.getAircraftId(), cabinClass.getCabinClassId());
+            disLinkCabinClassTicketFamily(originCabinClassTicketFamilys);
+
             //Get aircraftCabinClass
-            System.out.println("aircraft.getAircraftId(): " + aircraft.getAircraftId());
-            System.out.println("cabinClass.getCabinClassId():" + cabinClass.getCabinClassId());
             AircraftCabinClass aircraftCabinClass = aircraftSession.getAircraftCabinClassById(aircraft.getAircraftId(), cabinClass.getCabinClassId());
             //Create aircraftCabinClassId
             AircraftCabinClassId aircraftCabinClassId = new AircraftCabinClassId(aircraft.getAircraftId(), cabinClass.getCabinClassId());
-            System.out.println("TicketFamilys: " + helper.getTicketFamilys());
             List<TicketFamily> ticketFamilys = helper.getTicketFamilys();
             if (ticketFamilys.isEmpty()) {
                 throw new NeedTicketFamilyException(AisMsg.NEED_TICKET_FAMILY_ERROR);
             }
             for (TicketFamily ticketFamily : ticketFamilys) {
-                System.out.println("TicketFamily: " + ticketFamily.getName());
                 TicketFamily originTicketFamily = entityManager.find(TicketFamily.class, ticketFamily.getTicketFamilyId());
                 //Create CabinClassTicketFamilyId
                 CabinClassTicketFamilyId cabinClassTicketFamilyId = new CabinClassTicketFamilyId(aircraftCabinClassId, originTicketFamily.getTicketFamilyId());
                 CabinClassTicketFamily cabinClassTicketFamily;
                 cabinClassTicketFamily = entityManager.find(CabinClassTicketFamily.class, cabinClassTicketFamilyId);
                 if (cabinClassTicketFamily != null) {
-                    //set cabin class ticket family hash map if cabinClassTicketFamily still exist
-                    cctfMap.put(cabinClassTicketFamily, false);
-//                    cabinClassTicketFamily.setAircraftCabinClass(aircraftCabinClass);
-//                    cabinClassTicketFamily.setCabinClassTicketFamilyId(cabinClassTicketFamilyId);
-//                    cabinClassTicketFamily.setTicketFamily(originTicketFamily);
-//                    cabinClassTicketFamily.setSeatQty(0);
-//                    entityManager.merge(cabinClassTicketFamily);
-//                    entityManager.flush();
-                    if (cabinClassTicketFamily.getDeleted()) {
-                        cabinClassTicketFamily.setDeleted(false);
-                    }
+                    cabinClassTicketFamily.setDeleted(false);
                     entityManager.merge(cabinClassTicketFamily);
-                    System.out.println("T: CabinClassFamilyName: " + cabinClassTicketFamily.getTicketFamily().getName());
-                    originCabinClassTicketFamilys.remove(cabinClassTicketFamily);
                 } else {
                     //Create CabinClassTicketFamily
                     cabinClassTicketFamily = new CabinClassTicketFamily();
@@ -348,22 +325,17 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                     cabinClassTicketFamily.setDeleted(false);
                     entityManager.persist(cabinClassTicketFamily);
                     entityManager.flush();
-                    System.out.println("F: CabinClassFamilyName: " + cabinClassTicketFamily.getTicketFamily().getName());
                 }
-                /**
-                *DisLink CabinClassTicketFamily, who have been deleted
-                */
-                disLinkCabinClassTicketFamily(originCabinClassTicketFamilys);
-                
                 /**
                  ** DisLink booking class relationship with flight schedule,
                  * whose ticket family has been deleted.
                  *
                  */
-//                List<CabinClassTicketFamily> deletedCctfs = (List<CabinClassTicketFamily>) TicketFamilyMapHelper.getKeysFromValue(cctfMap, true);
-//                for (CabinClassTicketFamily deletedCctf : deletedCctfs) {
-//                    flightScheduleSession.dislinkFlightScheduleBookingClass(deletedCctf);
-//                }
+                for (CabinClassTicketFamily cctf : originCabinClassTicketFamilys) {
+                    if (cctf.getDeleted()) {
+                        flightScheduleSession.dislinkFlightScheduleBookingClass(cctf);
+                    }
+                }
                 //Add cabinClassFamily List
                 cabinClassTicketFamilys.add(cabinClassTicketFamily);
             }
