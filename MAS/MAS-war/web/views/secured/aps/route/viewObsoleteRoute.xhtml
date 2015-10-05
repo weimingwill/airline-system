@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/ApsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <p:dataTable var="routeObsoleted" value="#{routeController.viewObsoleteRoutes()}" style="margin-bottom:40px" rows="10"
+                     paginator="true"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="5,10,15">
+            <f:facet name="header">
+                Obsoleted Routes
+            </f:facet>
+            <p:column headerText="Id" sortBy="#{routeObsoleted.id}">
+                <h:outputText value="#{routeObsoleted.id}" />
+            </p:column>
+
+            <p:column headerText="Origin" sortBy="#{routeObsoleted.origin}">
+                <h:outputText value="#{routeObsoleted.origin}" />
+            </p:column>
+
+            <p:column headerText="Stopovers" sortBy="#{routeObsoleted.legs}">
+                <h:outputText value="#{routeObsoleted.legs}" />
+            </p:column>
+
+            <p:column headerText="Destination" sortBy="#{routeObsoleted.destination}">
+                <h:outputText value="#{routeObsoleted.destination}" />
+            </p:column>
+
+        </p:dataTable>
+
+    </ui:define>
+
+</ui:composition>

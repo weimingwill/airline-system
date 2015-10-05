@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/WorkspaceTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">
+        User Workspace
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <p:outputLabel style="font-size:20px;"> Welcome #{userController.username}</p:outputLabel>
+            <p:dashboard id="board" model="#{dashboardViewController.model}">
+                <p:ajax event="reorder" listener="#{dashboardView.handleReorder}" update="messages" />
+
+                <p:panel id="aps" header="Airline Planning System" rendered="#{userController.hasRole('Fleet planner')}">
+                    <h:outputText value="APS Content" />
+                </p:panel>
+
+                <p:panel id="ais" header="Airline Inventory System" rendered="#{userController.hasRole('Inventory Manager')}">
+                    <h:outputText value="AIS Content" />
+                </p:panel>
+
+                <p:panel id="apos" header="Airline Operation System" rendered="#{userController.hasRole('Cabin Crew')}">
+                    <h:outputText value="APOS Content"  />
+                </p:panel>
+
+                <p:panel id="ads" header="Airline Distribution System" rendered="#{userController.hasRole('IT Staff')}">
+                    <h:outputText value="ADS Content" />
+                </p:panel>
+
+                <p:panel id="crm" header="Customer Relationship Management System" rendered="#{userController.hasRole('Operations Analyst')}">
+                    <h:outputText value="CRM Content" />
+                </p:panel>
+            </p:dashboard>
+        </h:form>
+
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/ApsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="myForm">
+            <p:dataTable var="route" value="#{routePlanningController.routeList}" selection="#{routePlanningController.selectedRoutes}" rowKey="#{route.stops}" style="margin-bottom:40px" rows="5"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                <f:facet name="header">
+                    Plan Routes
+                </f:facet>
+                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                <p:column headerText="Type" sortBy="#{route.type}">
+                    <h:outputText value="#{route.type}" />
+                </p:column>
+
+                <p:column headerText="Origin" sortBy="#{route.origin}">
+                    <h:outputText value="#{route.origin}" />
+                </p:column>
+
+                <p:column headerText="Stopovers" sortBy="#{route.stops}">
+                    <h:outputText value="#{route.stops}" />
+                </p:column>
+
+                <p:column headerText="Destination" sortBy="#{route.destination}">
+                    <h:outputText value="#{route.destination}" />
+                </p:column>
+
+                <p:column headerText="Distance (km)" sortBy="#{route.distance}">
+                    <h:outputText value="#{route.distance}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Minimum Flying Time (hr)" sortBy="#{route.minFlyingTime}">
+                    <h:outputText value="#{route.minFlyingTime}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Maximum Flying Time (hr)" sortBy="#{route.maxFlyingTime}">
+                    <h:outputText value="#{route.maxFlyingTime}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="true"/>
+                    </h:outputText>
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Add Routes" type="submit" update=":myForm:confirmDlg"  oncomplete="PF('confirmDlg').show();" />
+                    <p:commandButton value="Customize Routes" type="submit" action = "#{navigationController.toCustomizeRoute}"/>
+                </f:facet>
+            </p:dataTable>
+
+            <p:dialog id="confirmDlg" header="Add routes" widgetVar="confirmDlg" showEffect="fade" hideEffect="fade">
+                <h:outputText id="confirmMsg" value="Are you sure you want to add following routes?"/>
+                <p:dataTable var="routeS" value="#{routePlanningController.selectedRoutes}" style="width:550px" rows="5" paginator="true">
+
+                    <p:column headerText="Type" sortBy="#{routeS.type}">
+                        <h:outputText value="#{routeS.type}" />
+                    </p:column>
+
+                    <p:column headerText="Origin" sortBy="#{routeS.origin}">
+                        <h:outputText value="#{routeS.origin}" />
+                    </p:column>
+
+                    <p:column headerText="Stopovers" sortBy="#{routeS.stops}">
+                        <h:outputText value="#{routeS.stops}" />
+                    </p:column>
+
+                    <p:column headerText="Destination" sortBy="#{routeS.destination}">
+                        <h:outputText value="#{routeS.destination}" />
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:separator/>
+                <p:commandButton value="Yes" type="submit" update="messages" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action = "#{navigationController.toCheckRoute}" actionListener="#{routePlanningController.addPlannedRoutes}"/>
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('confirmDlg').hide()"/>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/ApsTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:fo="http://xmlns.jcp.org/jsf/composite/ezcomp/form"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel">
+
+    <ui:define name="content">
+        <h:form>
+            <p:dataTable id="fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="10" tableStyle="width:auto; font-size:small"
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15"
+                         selection="#{fleetTableController.selectedAircraft}" selectionMode="single" rowKey="#{aircraft.aircraftId}">
+                <p:messages autoUpdate="true"/>
+                <f:facet name="header">
+                    <p:outputLabel value="Owned Fleet"/>
+                </f:facet>
+                
+                <p:ajax event="rowSelect" listener="#{fleetTableController.viewAircraftDetail}"/>                    
+                <p:column headerText="Id" sortBy="#{aircraft.aircraftId}">
+                    <h:outputText value="#{aircraft.aircraftId}" />
+                </p:column>
+
+                <p:column headerText="Tail Number" sortBy="#{aircraft.tailNo}">
+                    <h:outputText value="#{aircraft.tailNo}" />
+                </p:column>
+
+                <p:column headerText="Type Code" sortBy="#{aircraft.aircraftType.typeCode}">
+                    <h:outputText value="#{aircraft.aircraftType.typeCode}" />
+                </p:column>
+
+                <p:column headerText="Brand" sortBy="#{aircraft.aircraftType.mfdBy}">
+                    <h:outputText value="#{aircraft.aircraftType.mfdBy}" />
+                </p:column>
+
+                <p:column headerText="Source" sortBy="#{aircraft.source}">
+                    <h:outputText value="#{aircraft.source}" />
+                </p:column>
+
+                <p:column headerText="Cost (mio USD)" sortBy="#{aircraft.cost}">
+                    <h:outputText value="#{aircraft.cost}" />
+                </p:column>
+
+                <p:column headerText="Liftspan (yrs)" sortBy="#{aircraft.lifetime}">
+                    <h:outputText value="#{aircraft.lifetime}" />
+                </p:column>
+
+                <p:column headerText="Average Fuel Usage (L /psg /100km)" sortBy="#{aircraft.avgUnitOilUsage}">
+                    <h:outputText value="#{aircraft.avgUnitOilUsage}" >
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Max Range (km)" sortBy="#{aircraft.aircraftType.rangeInKm}">
+                    <h:outputText value="#{aircraft.aircraftType.rangeInKm}" />
+                </p:column>
+
+                <p:column headerText="Max Mach Number" sortBy="#{aircraft.aircraftType.maxMachNo}">
+                    <h:outputText value="#{aircraft.aircraftType.maxMachNo}" />
+                </p:column>
+
+                <p:column headerText="Total Seats" sortBy="#{fleetController.calculateTotalSeat(aircraft)}">
+                    <h:outputText value="#{fleetController.calculateTotalSeat(aircraft)}" />
+                </p:column>
+
+                <p:column headerText="Status" sortBy="#{aircraft.status}">
+                    <h:outputText value="#{aircraft.status}" />
+                </p:column>
+                
+                <p:column style="width:32px;text-align: center">
+                    <p:commandButton action="#{fleetTableController.onEditAircraftBtnClick()}" icon="fa fa-pencil-square-o" title="Edit Aircraft Information">
+                        <f:setPropertyActionListener value="#{aircraft}" target="#{fleetTableController.selectedAircraft}" />
+                    </p:commandButton>
+                </p:column>
+                <f:facet name="footer" >
+                    <p:commandButton process="fleet-table" value="Add New" icon="ui-icon-plusthick" oncomplete="PF('addNewAircraftDlg').show()"/>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog appendTo="@(body)" modal="true" header="Add a new aircraft" widgetVar="addNewAircraftDlg" resizable="false" styleClass="addNewAircraftDlg" position="230,60" onHide="PF('cabinClassHelperDlg').hide()">
+            <fo:CCAddNewAircraftForm/>
+        </p:dialog>
+        <p:dialog id="aircraftDetailsDlg" appendTo="@(body)" modal="true" header="Aircraft Details for #{fleetTableController.selectedAircraft.tailNo} (#{fleetTableController.selectedAircraft.aircraftType.typeCode})" widgetVar="aircraftDetailsDlg" resizable="false">
+            <pa:CCAircraftDetailsPanel/>
+        </p:dialog>
+        <p:dialog id="editAircraftDlg" appendTo="@(body)" modal="true" header="Edit Aircraft Information" widgetVar="editAircraftDlg" resizable="false">
+            <fo:CCEditAircraftInfoForm/>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>
