@@ -95,6 +95,14 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         return query.getResultList();
 
     }
+    
+    @Override
+    public FlightScheduleBookingClass getFlightScheduleBookingClassbyFlightScheduleIDandBookingClassID(Long flightScheduleID, Long bookingClassID){
+        Query query = entityManager.createQuery("SELECT c FROM FlightScheduleBookingClass c where c.bookingClassId = bookingClassId AND c.flightScheduleId = flightScheduleID");
+        return (FlightScheduleBookingClass) query.getResultList();
+        
+    }
+        
 
     @Override
     public List<NormalDistribution> getAllNormalDistributions() {
@@ -116,7 +124,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
     }
 
     @Override
-    public void reallocateBookingClassSeats(FlightScheduleBookingClass f, float newDemandMean, float newDemandDev) {
+    public boolean reallocateBookingClassSeats(FlightScheduleBookingClass f, float newDemandMean, float newDemandDev) {
         fsbc = f;
         float price = fsbc.getPrice();
         List<FlightScheduleBookingClass> flightScheduleBookingClasses = getAllFlightScheduleBookingClasses();
@@ -137,7 +145,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                                 float absZScore = zScore * -1;
                                 List<NormalDistribution> normalDistributions = getAllNormalDistributions();
                                 for (NormalDistribution normalDistribution : SafeHelper.emptyIfNull(normalDistributions)) {
-                                    if (normalDistribution.getZscore() == absZScore) {
+                                    if (normalDistribution.getzScore() == absZScore) {
                                         float pI = 1 - normalDistribution.getP();
                                         if (pI >= p) {
                                             if (i > count) {
@@ -150,7 +158,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                             } else {
                                 List<NormalDistribution> normalDistributions = getAllNormalDistributions();
                                 for (NormalDistribution normalDistribution : SafeHelper.emptyIfNull(normalDistributions)) {
-                                    if (normalDistribution.getZscore() == zScore) {
+                                    if (normalDistribution.getzScore() == zScore) {
                                         float pI = normalDistribution.getP();
                                         if (pI >= p) {
                                             if (i > count) {
@@ -171,7 +179,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                 }
 
             }
-
+        
         }
 
         //generate a seat reallocation record for each booking class
@@ -203,6 +211,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 //        } else {
 //            seatAllocationHistory.setModified(0);
 //        }
+        return true;
     }
 
 // reallocate seats for all exsiting booking classes 

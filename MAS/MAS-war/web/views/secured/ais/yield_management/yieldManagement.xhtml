@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/AisTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Reallocate seats for a booking class
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="cabinClass" value="Cabin Class:" />
+                <p:selectOneMenu id="cabinClass" value="#{seatReallocationController.cabinClass}" converter="cabinClassConverter"  style="width:200px" filter="true" filterMatchMode="startsWith">
+                    <p:ajax listener="#{seatReallocationController.onCabinClassChange()}" update="ticketFamily" />
+                    <f:selectItem itemLabel="Select Cabin Class" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{seatReallocationController.cabinClasses}" var="cabinClass" itemLabel="#{cabinClass.name}" itemValue="#{cabinClass}" />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="ticketFamily" value="Ticket Family:" />
+                <p:selectOneMenu id="ticketFamily" value="#{seatReallocationController.ticketFamily}" converter="ticketFamilyConverter" style="width:200px">
+                    <p:ajax listener="#{seatReallocationController.onTicketFamilyChange()}" update="flightScheduleBookingClass" />
+                    <f:selectItem itemValue="" itemLabel="Select Ticket Family" noSelectionOption="true"/>
+                    <f:selectItems value="#{seatReallocationController.ticketFamilys}" var="ticketFamily" itemLabel="#{ticketFamily.name}" itemValue="#{ticketFamily}"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel for="bookingClass" value="Booking Class:" />
+                <p:selectOneMenu id="bookingClass" value="#{seatReallocationController.bookingClass}" converter="bookingClassConverter" style="width:200px">
+                    <f:selectItem itemLabel="Select Booking Class" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{seatReallocationController.bookingClasses}" var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}"/>
+                </p:selectOneMenu>
+                <p:commandButton value="Reallocate Seats" update="messages" action="#{navigationController.redirectToAddHub()}" actionListener="#{routeController.addNewHub}" icon="ui-icon-check"/>
+                <p:commandButton value="View Reallocation History" update="messages" action="#{navigationController.redirectToAddHub()}" actionListener="#{routeController.addNewHub}" icon="ui-icon-check"/>
+                <p:commandButton value="Update Yield Management Model" update="messages" action="#{navigationController.redirectToAddHub()}" actionListener="#{routeController.addNewHub}" icon="ui-icon-check"/>
+
+            </h:panelGrid>
+
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

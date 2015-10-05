@@ -7,9 +7,11 @@ package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
+import ams.ais.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import java.util.ArrayList;
@@ -178,5 +180,21 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         }
         return bookingClasses;
     }
+    
+    public List<FlightScheduleBookingClass> getFlightScheduleBookingClassesbyTicketFamily(String name) throws NoSuchFlightScheduleBookingClassException{
+        Query query = entityManager.createQuery("SELECT f FROM TicketFamily t, BookingClass b, FlightScheduleBookingClass f WHERE t.name = :inName and b.ticketFamily.ticketFamilyId = t.ticketFamilyId and b.bookingClassId = f.bookingClassId and b.deleted = FALSE and t.deleted = FALSE and f.deleted = FALSE");
+        query.setParameter("inName", name);
+        List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
+        try {
+            flightScheduleBookingClasses = query.getResultList();
+        } catch (NoResultException e) {
+            throw new NoSuchFlightScheduleBookingClassException(AisMsg.NO_SUCH_FLIGHT_SCHEDULE_BOOKING_CLASS_ERROR);
+        }
+        return flightScheduleBookingClasses;
+        
+    }
+        
+
+
 
 }

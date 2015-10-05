@@ -26,5 +26,6 @@ public class AisMsg {
     public static final String EXIST_SUCH_TICKET_FAMILY_ERROR = "Ticket family already exists";
     public static final String EXIST_SUCH_CHECK_POINT_ERROR = "Check point already exists";
     public static final String NO_SUCH_PHASE_DEMAND_ERROR = "Phase demand doesn't exist";
+    public static final String NO_SUCH_FLIGHT_SCHEDULE_BOOKING_CLASS_ERROR = "Phase demand doesn't exist";
 
 }

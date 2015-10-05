@@ -7,6 +7,7 @@ package managedbean.ais;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.BookingClassSessionLocal;
@@ -14,25 +15,18 @@ import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.SeatReallocationSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
+import ams.ais.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
-
-import ams.aps.entity.Airport;
-import ams.aps.entity.City;
-import ams.aps.entity.Country;
 import ams.aps.entity.FlightSchedule;
-import ams.aps.entity.Route;
-import ams.aps.entity.RouteLeg;
-import ams.aps.session.RoutePlanningSessionLocal;
-import ams.aps.util.helper.RouteDisplayHelper;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 
@@ -48,9 +42,6 @@ public class SeatReallocationController implements Serializable {
     private MsgController msgController;
 
     @EJB
-    private RoutePlanningSessionLocal routePlanningSession;
-
-    @EJB
     private CabinClassSessionLocal cabinClassSession;
 
     @EJB
@@ -63,32 +54,18 @@ public class SeatReallocationController implements Serializable {
     private SeatReallocationSessionLocal seatReallocationSession;
 
     private FlightSchedule flightSchedule;
-    private Country country;
-    private List<Country> countries;
     private Aircraft aircraft;
+    private CabinClass cabinClass;
     private List<CabinClass> cabinClasses;
     private List<AircraftCabinClass> aircraftCabinClasses;
     private AircraftCabinClass aircraftCabinClass;
-
-    private City city;
-    private List<City> cities;
-
-    private Airport airport;
-    private Airport hub;
-    private Airport stopover;
-    private Airport destination;
-    private List<Airport> airports;
-    private List<Airport> stopList;
-    private List<Airport> destList;
-    private List<Airport> hubs;
-    private List<Airport> airportsNotHub;
-
-    private Route route;
-    private List<Route> routeList;
-    private List<Route> sameODRoutes;
-
-    private List<RouteDisplayHelper> routeDisplayList = new ArrayList<>();
-    private List<RouteDisplayHelper> obsRouteDisplayList = new ArrayList<>();
+    private List<CabinClassTicketFamily> cabinClassTicketFamily;
+    private List<TicketFamily> ticketFamilys;
+    private List<FlightScheduleBookingClass> flightScheduleBookingClasses;
+    private TicketFamily ticketFamily;
+    private FlightScheduleBookingClass flightScheduleBookingClass;
+    private BookingClass bookingClass;
+    private List<BookingClass> bookingClasses;
 
     /**
      * Creates a new instance of SeatReallocationController
@@ -98,14 +75,16 @@ public class SeatReallocationController implements Serializable {
 
     @PostConstruct
     public void init() {
+        
+        flightSchedule = 
 
         aircraft = flightSchedule.getAircraft();
         aircraftCabinClasses = aircraft.getAircraftCabinClasses();
 
-        countries = (List<Country>) routePlanningSession.getCountryList();
-        hubs = (List<Airport>) routePlanningSession.getHubs();
-        viewRoutes();
-        viewObsoleteRoutes();
+//        countries = (List<Country>) routePlanningSession.getCountryList();
+//        hubs = (List<Airport>) routePlanningSession.getHubs();
+//        viewRoutes();
+//        viewObsoleteRoutes();
     }
 
     public CabinClass getCabinClassbyName(String cabinClassName) {
@@ -117,421 +96,212 @@ public class SeatReallocationController implements Serializable {
         return ticketFamilySession.getTicketFamilyByName(ticketFamilyName);
     }
 
-    public FlightScheduleBookingClass getFlightScheduleBookingClassbyBookingClassName() {
-
+    public FlightScheduleBookingClass getFlightScheduleBookingClassbyIDs(Long flightScheduleID, Long bookingClassIS) {
+        return seatReallocationSession.getFlightScheduleBookingClassbyFlightScheduleIDandBookingClassID(flightScheduleID, bookingClassIS);
     }
 
     public BookingClass getBookingClassbyName(String bookingClassName) throws NoSuchBookingClassException {
         return bookingClassSession.search(bookingClassName);
     }
 
-    public void reallocateBookingClassSeats(BookingClass bc, float newDemandMean, float newDemandDev) {
+    public void reallocateBookingClassSeats(FlightScheduleBookingClass fsbc, float newDemandMean, float newDemandDev) {
         System.out.println("SeatReallocationController:reallocateBookingClassSeats() ");
-        if (seatReallocationSession.reallocateBookingClassSeats(bc, newDemandMean, newDemandDev)) {
-            
-        }
-    }
-
-    public void addNewHub(ActionEvent event) {
-        if (routePlanningSession.addHub(airport.getIcaoCode())) {
+        if (seatReallocationSession.reallocateBookingClassSeats(fsbc, newDemandMean, newDemandDev)) {
             msgController.addMessage("Add a hub successfully!");
-            cleanGlobalVariable();
+//            cleanGlobalVariable();
         } else {
             msgController.addErrorMessage("Failed to add hub!");
-            cleanGlobalVariable();
+//            cleanGlobalVariable();
         }
     }
 
-    public void cancelHub(ActionEvent event) {
-        System.out.println("RouteController: cancelHub()");
-        if (routePlanningSession.cancelHub(hub.getIcaoCode())) {
-            msgController.addMessage("Cancel a hub successfully!");
-            cleanGlobalVariable();
-        } else {
-            msgController.addErrorMessage("Failed to cancel hub!");
-            cleanGlobalVariable();
-        }
+    public void onCabinClassChange() {
+        setTicketFamilys(cabinClass.getTicketFamilys());
+        ticketFamily = null;
+        flightScheduleBookingClass = null;
     }
 
-    public void onCountryChange() {
-        setCities((List<City>) routePlanningSession.getCityListByCountry(country.getIsoCode()));
-        city = null;
-        airport = null;
-        airportsNotHub = new ArrayList<Airport>();
-    }
-
-    public void onCityChange() {
-        setAirportsNotHub((List<Airport>) routePlanningSession.getNonHubAirportListByCity(city.getId()));
-    }
-
-    public void onOriginChange() {
-        stopover = null;
-        destination = null;
-        stopList = null;
-        destList = null;
-        airports = routePlanningSession.getAllAirports();
-        setStopList(airports);
-        stopList.remove(hub);
-        setDestList(airports);
-        destList.remove(hub);
-    }
-
-    public void onStopoverChange() {
-        destination = null;
-        destList = null;
-        airports = routePlanningSession.getAllAirports();
-        setDestList(airports);
-        destList.remove(hub);
-        destList.remove(stopover);
-    }
-
-    public void addRouteSimple(ActionEvent event) {
-        List<Airport> allStops = new ArrayList<Airport>();
-        allStops.add(hub);
-        allStops.add(stopover);
-        allStops.add(destination);
-        if (routePlanningSession.checkRouteExistence(allStops) != null) {
-            msgController.addErrorMessage("Route exists already!");
-            cleanGlobalVariable();
-        } else {
-            if (routePlanningSession.addRoute(allStops)) {
-                msgController.addMessage("Add route and return route successfully!");
-                cleanGlobalVariable();
-            } else {
-                msgController.addErrorMessage("Fail to add route!");
-                cleanGlobalVariable();
-            }
-        }
-        viewRoutes();
-    }
-
-    public void deleteRoute(ActionEvent event) {
-        if (routePlanningSession.softDeleteRoute(route.getRouteId())) {
-            msgController.addMessage("Route and return route deleted successfully!");
-            cleanGlobalVariable();
-        } else {
-            msgController.addErrorMessage("Fail to delete route and return route!");
-            cleanGlobalVariable();
+    public void onTicketFamilyChange() {
+        try {
+            setFlightScheduleBookingClasses(ticketFamilySession.getFlightScheduleBookingClassesbyTicketFamily(ticketFamily.getName()));
+        } catch (NoSuchFlightScheduleBookingClassException ex) {
+            Logger.getLogger(SeatReallocationController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        viewRoutes();
-        viewObsoleteRoutes();
     }
 
-    public void viewRoutes() {
-        setRouteList(routePlanningSession.getAllRoutes());
-        setRouteDisplayList(new ArrayList());
-        for (Route thisRoute : routeList) {
-            RouteDisplayHelper routeDisplayHelper = new RouteDisplayHelper();
-            String legString = "";
-            routeDisplayHelper.setId(thisRoute.getRouteId());
-
-            System.out.println("Route Controller: viewRoutes(): thisRoute = " + thisRoute.getRouteId());
-            for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
-                System.out.println("Route Controller: viewRoutes(): FROM - TO: " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                if (thisRouteLeg.getLegSeq() == 0) {
-                    routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
-                    legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName();
-                    routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                } else {
-                    legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - ";
-                }
-            }
-            routeDisplayHelper.setLegs(legString);
-            routeDisplayList.add(routeDisplayHelper);
-        }
+//    public void onCabinClassChange() {
+//        setTicketFamilies((List<TicketFamily>) ticketFamilySession.getTicketFamilyByCabinClass());
+//        city = null;
+//        airport = null;
+//        airportsNotHub = new ArrayList<Airport>();
+//    }
+//
+//    public void onCityChange() {
+//        setAirportsNotHub((List<Airport>) routePlanningSession.getNonHubAirportListByCity(city.getId()));
+//    }
+//    private void cleanGlobalVariable() {
+//        country = null;
+//        cities = null;
+//        city = null;
+//        airports = null;
+//        airport = null;
+//        hub = null;
+//        airportsNotHub = null;
+//        route = null;
+//        routeList = null;
+//        setStopover(null);
+//        setDestination(null);
+//        hubs = (List<Airport>) routePlanningSession.getHubs();
+//    }
+    public MsgController getMsgController() {
+        return msgController;
     }
 
-    public void viewObsoleteRoutes() {
-        List<Route> obRouteList = routePlanningSession.getAllObsoleteRoutes();
-        setObsRouteDisplayList(new ArrayList());
-        for (Route thisRoute : obRouteList) {
-            RouteDisplayHelper routeDisplayHelper = new RouteDisplayHelper();
-            String legString = "";
-            routeDisplayHelper.setId(thisRoute.getRouteId());
-
-            for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
-                if (thisRouteLeg.getLegSeq() == 0) {
-                    routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                } else if (thisRouteLeg.getLegSeq() == (thisRoute.getRouteLegs().size() - 1)) {
-                    legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName();
-                    routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                } else {
-                    legString += thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - ";
-                }
-            }
-            routeDisplayHelper.setLegs(legString);
-            getObsRouteDisplayList().add(routeDisplayHelper);
-        }
+    public void setMsgController(MsgController msgController) {
+        this.msgController = msgController;
     }
 
-    private void cleanGlobalVariable() {
-        country = null;
-        cities = null;
-        city = null;
-        airports = null;
-        airport = null;
-        hub = null;
-        airportsNotHub = null;
-        route = null;
-        routeList = null;
-        setStopover(null);
-        setDestination(null);
-        hubs = (List<Airport>) routePlanningSession.getHubs();
+    public CabinClassSessionLocal getCabinClassSession() {
+        return cabinClassSession;
     }
 
-    /**
-     * @return the country
-     */
-    public Country getCountry() {
-        return country;
+    public void setCabinClassSession(CabinClassSessionLocal cabinClassSession) {
+        this.cabinClassSession = cabinClassSession;
     }
 
-    /**
-     * @param country the country to set
-     */
-    public void setCountry(Country country) {
-        System.out.println("RouteController: setCountry()");
-        this.country = country;
+    public TicketFamilySessionLocal getTicketFamilySession() {
+        return ticketFamilySession;
     }
 
-    /**
-     * @return the countries
-     */
-    public List<Country> getCountries() {
-        return countries;
+    public void setTicketFamilySession(TicketFamilySessionLocal ticketFamilySession) {
+        this.ticketFamilySession = ticketFamilySession;
     }
 
-    /**
-     * @param countries the countries to set
-     */
-    public void setCountries(List<Country> countries) {
-        this.countries = countries;
+    public BookingClassSessionLocal getBookingClassSession() {
+        return bookingClassSession;
     }
 
-    /**
-     * @return the city
-     */
-    public City getCity() {
-        return city;
+    public void setBookingClassSession(BookingClassSessionLocal bookingClassSession) {
+        this.bookingClassSession = bookingClassSession;
     }
 
-    /**
-     * @param city the city to set
-     */
-    public void setCity(City city) {
-        this.city = city;
+    public SeatReallocationSessionLocal getSeatReallocationSession() {
+        return seatReallocationSession;
     }
 
-    /**
-     * @return the cities
-     */
-    public List<City> getCities() {
-        return cities;
+    public void setSeatReallocationSession(SeatReallocationSessionLocal seatReallocationSession) {
+        this.seatReallocationSession = seatReallocationSession;
     }
 
-    /**
-     * @param cities the cities to set
-     */
-    public void setCities(List<City> cities) {
-        this.cities = cities;
+    public FlightSchedule getFlightSchedule() {
+        return flightSchedule;
     }
 
-    /**
-     * @return the airport
-     */
-    public Airport getAirport() {
-        return airport;
+    public void setFlightSchedule(FlightSchedule flightSchedule) {
+        this.flightSchedule = flightSchedule;
     }
 
-    /**
-     * @param airport the airport to set
-     */
-    public void setAirport(Airport airport) {
-        this.airport = airport;
+    public Aircraft getAircraft() {
+        return aircraft;
     }
 
-    /**
-     * @return the airports
-     */
-    public List<Airport> getAirports() {
-        return airports;
+    public void setAircraft(Aircraft aircraft) {
+        this.aircraft = aircraft;
     }
 
-    /**
-     * @param airports the airports to set
-     */
-    public void setAirports(List<Airport> airports) {
-        this.airports = airports;
+    public List<CabinClass> getCabinClasses() {
+        return cabinClasses;
     }
 
-    /**
-     * @return the hubs
-     */
-    public List<Airport> getHubs() {
-        return hubs;
+    public void setCabinClasses(List<CabinClass> cabinClasses) {
+        this.cabinClasses = cabinClasses;
     }
 
-    /**
-     * @param hubs the hubs to set
-     */
-    public void setHubs(List<Airport> hubs) {
-        this.hubs = hubs;
+    public List<AircraftCabinClass> getAircraftCabinClasses() {
+        return aircraftCabinClasses;
     }
 
-    /**
-     * @return the airportsNotHub
-     */
-    public List<Airport> getAirportsNotHub() {
-        return airportsNotHub;
+    public void setAircraftCabinClasses(List<AircraftCabinClass> aircraftCabinClasses) {
+        this.aircraftCabinClasses = aircraftCabinClasses;
     }
 
-    /**
-     * @param airportsNotHub the airportsNotHub to set
-     */
-    public void setAirportsNotHub(List<Airport> airportsNotHub) {
-        this.airportsNotHub = airportsNotHub;
+    public AircraftCabinClass getAircraftCabinClass() {
+        return aircraftCabinClass;
     }
 
-    /**
-     * @return the hub
-     */
-    public Airport getHub() {
-        return hub;
+    public void setAircraftCabinClass(AircraftCabinClass aircraftCabinClass) {
+        this.aircraftCabinClass = aircraftCabinClass;
     }
 
-    /**
-     * @param hub the hub to set
-     */
-    public void setHub(Airport hub) {
-        this.hub = hub;
+    public List<CabinClassTicketFamily> getCabinClassTicketFamily() {
+        return cabinClassTicketFamily;
     }
 
-    /**
-     * @return the route
-     */
-    public Route getRoute() {
-        return route;
+    public void setCabinClassTicketFamily(List<CabinClassTicketFamily> cabinClassTicketFamily) {
+        this.cabinClassTicketFamily = cabinClassTicketFamily;
     }
 
-    /**
-     * @param route the route to set
-     */
-    public void setRoute(Route route) {
-        this.route = route;
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
     }
 
-    /**
-     * @return the routeList
-     */
-    public List<Route> getRouteList() {
-        return routeList;
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
     }
 
-    /**
-     * @param routeList the routeList to set
-     */
-    public void setRouteList(List<Route> routeList) {
-        this.routeList = routeList;
+    public CabinClass getCabinClass() {
+        return cabinClass;
     }
 
-    /**
-     * @return the sameODRoutes
-     */
-    public List<Route> getSameODRoutes() {
-        return sameODRoutes;
+    public void setCabinClass(CabinClass cabinClass) {
+        this.cabinClass = cabinClass;
     }
 
-    /**
-     * @param sameODRoutes the sameODRoutes to set
-     */
-    public void setSameODRoutes(List<Route> sameODRoutes) {
-        this.sameODRoutes = sameODRoutes;
+    public List<FlightScheduleBookingClass> getFlightScheduleBookingClasses() {
+        return flightScheduleBookingClasses;
     }
 
-    /**
-     * @return the stopover
-     */
-    public Airport getStopover() {
-        return stopover;
+    public void setFlightScheduleBookingClasses(List<FlightScheduleBookingClass> flightScheduleBookingClasses) {
+        this.flightScheduleBookingClasses = flightScheduleBookingClasses;
     }
 
-    /**
-     * @param stopover the stopover to set
-     */
-    public void setStopover(Airport stopover) {
-        this.stopover = stopover;
+    public TicketFamily getTicketFamily() {
+        return ticketFamily;
     }
 
-    /**
-     * @return the destination
-     */
-    public Airport getDestination() {
-        return destination;
+    public void setTicketFamily(TicketFamily ticketFamily) {
+        this.ticketFamily = ticketFamily;
     }
 
-    /**
-     * @param destination the destination to set
-     */
-    public void setDestination(Airport destination) {
-        this.destination = destination;
+    public FlightScheduleBookingClass getFlightScheduleBookingClass() {
+        return flightScheduleBookingClass;
     }
 
-    /**
-     * @return the stopList
-     */
-    public List<Airport> getStopList() {
-        return stopList;
+    public void setFlightScheduleBookingClass(FlightScheduleBookingClass flightScheduleBookingClass) {
+        this.flightScheduleBookingClass = flightScheduleBookingClass;
     }
 
-    /**
-     * @param stopList the stopList to set
-     */
-    public void setStopList(List<Airport> stopList) {
-        this.stopList = stopList;
+    public BookingClass getBookingClass() {
+        return bookingClass;
     }
 
-    /**
-     * @return the destList
-     */
-    public List<Airport> getDestList() {
-        return destList;
+    public void setBookingClass(BookingClass bookingClass) {
+        this.bookingClass = bookingClass;
     }
 
-    /**
-     * @param destList the destList to set
-     */
-    public void setDestList(List<Airport> destList) {
-        this.destList = destList;
+    public List<BookingClass> getBookingClasses() {
+        return bookingClasses;
     }
 
-    /**
-     * @return the routeDisplayList
-     */
-    public List<RouteDisplayHelper> getRouteDisplayList() {
-        return routeDisplayList;
+    public void setBookingClasses(List<BookingClass> bookingClasses) {
+        this.bookingClasses = bookingClasses;
     }
+    
+    
+    
+    
 
-    /**
-     * @param routeDisplayList the routeDisplayList to set
-     */
-    public void setRouteDisplayList(List<RouteDisplayHelper> routeDisplayList) {
-        this.routeDisplayList = routeDisplayList;
-    }
 
-    /**
-     * @return the obsRouteDisplayList
-     */
-    public List<RouteDisplayHelper> getObsRouteDisplayList() {
-        return obsRouteDisplayList;
-    }
-
-    /**
-     * @param obsRouteDisplayList the obsRouteDisplayList to set
-     */
-    public void setObsRouteDisplayList(List<RouteDisplayHelper> obsRouteDisplayList) {
-        this.obsRouteDisplayList = obsRouteDisplayList;
-    }
 
 }

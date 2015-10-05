@@ -27,12 +27,13 @@ public interface SeatReallocationSessionLocal {
     public void yieldManagement ();
     public List<FlightScheduleBookingClass> getAllFlightScheduleBookingClasses();
     public List<NormalDistribution> getAllNormalDistributions();
-    public void reallocateBookingClassSeats (FlightScheduleBookingClass f, float demandMean, float demandDev);
+    public boolean reallocateBookingClassSeats (FlightScheduleBookingClass f, float demandMean, float demandDev);
     public List<PhaseDemand> getAllPhaseDemands();
     public void addPhaseDemand(FlightScheduleBookingClass f, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException;
     public void deletePhaseDemand(int daysBeforeDeparture) throws NoSuchPhaseDemandException;
     public PhaseDemand searchPhaseDemand(int daysBeforeDeparture) throws NoSuchPhaseDemandException;
     public void validatePhaseDemand(int daysBeforeDeparture, FlightScheduleBookingClass f) throws ExistSuchCheckPointException;
+    public FlightScheduleBookingClass getFlightScheduleBookingClassbyFlightScheduleIDandBookingClassID(Long flightScheduleID, Long bookingClassID);
     
 
     

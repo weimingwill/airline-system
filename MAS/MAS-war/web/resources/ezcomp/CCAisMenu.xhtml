@@ -19,13 +19,13 @@
                         <p:menuitem value="View all Cabin Class" action="#{navigationController.redirectToViewAllCabinClass()}"/>
                         <p:menuitem value="Delete Cabin Class" action="#{navigationController.redirectToDeleteCabinClass()}"/>
                     </p:submenu>
-                    
+
                     <p:submenu label="Rule">
                         <p:menuitem value="Create New Rule" action="#{navigationController.redirectToCreateRule()}"/>
                         <p:menuitem value="View all Rules" action="#{navigationController.redirectToViewAllRules()}"/>
                         <p:menuitem value="Delete Rule" action="#{navigationController.redirectToDeleteRule()}"/>
                     </p:submenu>
-                    
+
                     <p:submenu label="Ticket Family">
                         <p:menuitem value="Create New Ticket Family" action="#{navigationController.redirectToCreateTicketFamily()}"/>
                         <p:menuitem value="View all Ticket Families" action="#{navigationController.redirectToViewAllTicketFamily()}"/>
@@ -35,6 +35,9 @@
                 <p:submenu label="Pricing">
                     <p:menuitem value="Create booking class" action="#{navigationController.redirectToCreateBookingClass()}" />
                     <p:menuitem value="Delete booking class" action="#{navigationController.redirectToDeleteBookingClass()}" />
+                </p:submenu>
+                <p:submenu label="Yield Management">
+                    <p:menuitem value="Yield Management" action="#{navigationController.toYieldManagement()}"/>
                 </p:submenu>
             </p:menu>
         </h:form>

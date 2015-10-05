@@ -119,7 +119,6 @@ public class NavigationController implements Serializable {
     }
 
     //Role
-
     public String toCreateRole() {
         return "/views/secured/common/roles/createRole.xhtml";
     }
@@ -198,22 +197,23 @@ public class NavigationController implements Serializable {
     public String redirectToEditRule() {
         return "/views/secured/ais/product_design/editRule.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToCreateTicketFamily() {
         return "/views/secured/ais/product_design/createTicketFamily.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToViewAllTicketFamily() {
         return "/views/secured/ais/product_design/viewAllTicketFamily.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToDeleteTicketFamily() {
         return "/views/secured/ais/product_design/deleteTicketFamily.xhtml" + REDIRECT;
     }
+
     public String redirectToEditTicketFamily() {
         return "/views/secured/ais/product_design/editTicketFamily.xhtml" + REDIRECT;
     }
-    
+
     //Pricing
     public String redirectToCreateBookingClass() {
         return "/views/secured/ais/booking_class/createBookingClass.xhtml" + REDIRECT;
@@ -248,25 +248,40 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToAddRoute() {
         return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToViewRoutes() {
         return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
 
     }
-    
+
     public String redirectToViewObsoleteRoutes() {
         return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
 
     }
-    
-    public String toAddRoute(){
+
+    public String toAddRoute() {
         return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
     }
-    
-    
+
+    public String toReallocateBookingClassSeats() {
+        return "/views/secured/ais/yield_management/reallocateBookingClassSeats.xhtml";
+    }
+
+    public String toViewBookingClassReallocationHistory() {
+        return "/views/secured/ais/yield_management/viewSeatsReallocationHistory.xhtml";
+    }
+
+    public String toUpdateBookingClassYieldManagementModel() {
+        return "/views/secured/ais/yield_management/updateYieldManagementModel.xhtml";
+    }
+
+    public String toYieldManagement() {
+        return "/views/secured/ais/yield_management/yieldManagement.xhtml";
+    }
+
 }
