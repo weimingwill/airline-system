@@ -12,11 +12,13 @@
 
         <ui:composition template="./../../../../template/ApsTemplate.xhtml">
             <ui:define name="content">
-                <h:form id="aircraftModelForm">
+                <h:form>
                     <ez:CCAircraftModelFilterRibbon/>
+                </h:form>
+                
+                <h:form id="aircraftModelForm">
 
-                    <p:outputLabel for="aircraftModelTable" value="#{fleetController.msg}"/>
-                    <p:dataTable id="aircraftModelTable" var="model" value="#{fleetController.aircraftModels}" rows="5" 
+                    <p:dataTable id="aircraftModelTable" var="model" value="#{fleetTableController.aircraftModelList}" rows="5" 
                                  paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="5,10" selection="#{fleetTableController.selectedAircraftType}" selectionMode="single" rowKey="#{model.id}">
                         <f:facet name="header">

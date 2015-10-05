@@ -5,7 +5,8 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -13,8 +14,10 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
+
         <c:set var="target" value="Purchase"/>
         #{fleetFilterController.setInitialValue(target)}
+
         <p:ribbon id="aircraftModelFilters" styleClass="filterRibbon">
             <p:tab title="Filter and find the aircraft model">
                 <c:set var="aircraftModelFilterHelper" value="#{fleetFilterController.aircraftModelFilterHelper}"/>
@@ -22,12 +25,13 @@
                 <p:ribbonGroup label="Operational">
                     <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
                         <p:outputLabel for="manufacturer" value="Manufacturer"/>
-                        <p:selectCheckboxMenu id="manufacturer" label="Manufacturer" value="#{aircraftModelFilterHelper.manufacturers}" filter="true" filterMatchMode="contains">
-                            <f:selectItems value="#{aircraftModelFilterHelper.manufacturers}" var="manufacturer" itemLabel="#{manufacturer}" itemValue="#{manufacturer}"/>
+                        <p:selectCheckboxMenu id="manufacturer" label="Manufacturer" value="#{aircraftModelFilterHelper.manufacturers}" filter="true" filterMatchMode="startsWith">
+                            <f:selectItems value="#{fleetFilterController.manufacturerList}"/>
                         </p:selectCheckboxMenu>
                         <p:outputLabel for="typeFamily" value="Type Family"/>
-                        <p:selectCheckboxMenu id="typeFamily" label="Aircraft Type Families" value="#{aircraftModelFilterHelper.typeFamilies}" filter="true" filterMatchMode="contains">
-                            <f:selectItems value="#{aircraftModelFilterHelper.typeFamilies}" var="typeFamilies" itemLabel="#{typeFamilies}" itemValue="#{typeFamilies}"/>
+
+                        <p:selectCheckboxMenu id="typeFamily" label="Type Family" value="#{aircraftModelFilterHelper.typeFamilies}" filter="true" filterMatchMode="startsWith">
+                            <f:selectItems value="#{fleetFilterController.typeFamilyList}"/>                            
                         </p:selectCheckboxMenu>
                     </p:panelGrid>
                 </p:ribbonGroup>
@@ -111,11 +115,14 @@
 
                 <p:ribbonGroup label="Actions">
                     <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
-                        <p:commandButton value="Apply" update=":aircraftModelForm:aircraftModelTable" actionListener="#{fleetTableController.applyFilters(target)}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
-                        <p:commandButton value="Reset" update="aircraftModelFilters" actionListener="#{fleetTableController.resetFilters(target)}" icon="fa fa-refresh" styleClass="filterBtn"/>
+                        <p:commandButton value="Apply" update=":aircraftModelForm:aircraftModelTable" action="#{fleetTableController.applyFilters(target)}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
+                        <p:commandButton value="Reset" update=":aircraftModelForm:aircraftModelTable" action="#{fleetTableController.resetFilters(target)}" icon="fa fa-refresh" styleClass="filterBtn"/>
                     </p:panelGrid>
                 </p:ribbonGroup>
             </p:tab>
         </p:ribbon>
+
+
+
     </cc:implementation>
 </html>

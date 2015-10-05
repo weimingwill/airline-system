@@ -36,4 +36,6 @@ public interface FleetPlanningSessionLocal {
     public void initRetireAicraftFilter(RetireAircraftFilterHelper retireAircraftFilterHelper);
     public List<AircraftType> filterAircraftModels(AircraftModelFilterHelper filters);
     public void initAircraftModelFilter(AircraftModelFilterHelper aircraftModelFilterHelper);
+    public List<String> getAllManufacturer();
+    public List<String> getAllTypeFamily();
 }
