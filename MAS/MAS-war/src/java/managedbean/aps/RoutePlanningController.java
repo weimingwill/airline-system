@@ -59,7 +59,6 @@ public class RoutePlanningController implements Serializable {
 
         odPass();
         autoGenerateRoute();
-
     }
 
     public RoutePlanningController() {

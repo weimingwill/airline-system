@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/AisTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+
+    <ui:define name="title">
+        View All Cabin Class
+    </ui:define>
+
+    <ui:define name="content">
+        <p:dataTable value="#{cabinClassController.allCabinClass}" var="cabinclass">
+            <p:column headerText="Cabin Class Type">
+                <p:outputLabel value="#{cabinclass.type}"/>
+            </p:column>
+            
+            <p:column headerText="Cabin Class Name">
+                <p:outputLabel value="#{cabinclass.name}" />
+            </p:column>
+            
+          
+        </p:dataTable>
+        
+        <h:form> <p:commandButton value="Edit" action="#{navigationController.redirectToEditCabinClass()}"  /></h:form>
+    </ui:define>
+
+</ui:composition>

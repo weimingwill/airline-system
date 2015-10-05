@@ -163,29 +163,106 @@ public class NavigationController implements Serializable {
     }
 
     //AIS
+    public String redirectToAIS() {
+        return "/views/secured/ais/aisMain.xhtml" + REDIRECT;
+    }
+
     //Product Design
     public String redirectToCreateCabinClass() {
         return "/views/secured/ais/product_design/createCabinClass.xhtml" + REDIRECT;
     }
 
+    public String redirectToViewAllCabinClass() {
+        return "/views/secured/ais/product_design/viewAllCabinClass.xhtml" + REDIRECT;
+    }
+
+    public String redirectToDeleteCabinClass() {
+        return "/views/secured/ais/product_design/deleteCabinClass.xhtml" + REDIRECT;
+    }
+
+    public String redirectToEditCabinClass() {
+        return "/views/secured/ais/product_design/editCabinClass.xhtml" + REDIRECT;
+    }
+
+    public String redirectToCreateRule() {
+        return "/views/secured/ais/product_design/createRule.xhtml" + REDIRECT;
+    }
+
+    public String redirectToViewAllRules() {
+        return "/views/secured/ais/product_design/viewAllRule.xhtml" + REDIRECT;
+    }
+
+    public String redirectToDeleteRule() {
+        return "/views/secured/ais/product_design/deleteRule.xhtml" + REDIRECT;
+    }
+
+    public String redirectToEditRule() {
+        return "/views/secured/ais/product_design/editRule.xhtml" + REDIRECT;
+    }
+
+    public String redirectToCreateTicketFamily() {
+        return "/views/secured/ais/product_design/createTicketFamily.xhtml" + REDIRECT;
+    }
+
+    public String redirectToViewAllTicketFamily() {
+        return "/views/secured/ais/product_design/viewAllTicketFamily.xhtml" + REDIRECT;
+    }
+
+    public String redirectToDeleteTicketFamily() {
+        return "/views/secured/ais/product_design/deleteTicketFamily.xhtml" + REDIRECT;
+    }
+
+    public String redirectToEditTicketFamily() {
+        return "/views/secured/ais/product_design/editTicketFamily.xhtml" + REDIRECT;
+    }
+
     //Pricing
+    public String redirectToCreateBookingClass() {
+        return "/views/secured/ais/booking_class/createBookingClass.xhtml" + REDIRECT;
+    }
+
+    public String redirectToDeleteBookingClass() {
+        return "/views/secured/ais/booking_class/deleteBookingClass.xhtml" + REDIRECT;
+    }
+
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }
 
+    public String redirectToAssignFlightScheduleBookingClass() {
+        return "/views/secured/ais/booking_class/assignFlightScheduleBookingClasses.xhtml" + REDIRECT;
+    }
+
+    public String redirectToViewFlightSchedule() {
+        return "/views/secured/ais/booking_class/viewFlightSchedule.xhtml" + REDIRECT;
+    }
+
+    public String redirectToSeatAllocation() {
+        return "/views/secured/ais/booking_class/seatAllocation.xhtml" + REDIRECT;
+    }
+
+    public String redirectToProductDesign() {
+        return "/views/secured/ais/product_design/productDesign.xhtml" + REDIRECT;
+    }
+
+    //Yield Management 
+    public String redirectToYieldManagement() {
+        return "/views/secured/ais/yield_management/yieldManagement.xhtml" + REDIRECT;
+    }
+
+    public String redirectToReallocationBookingClassSeats() {
+        return "/views/secured/ais/yield_management/reallocateBookingClassSeats.xhtml" + REDIRECT;
+    }
+
+    public String redirectToUpdateYieldManagementModel() {
+        return "/views/secured/ais/yield_management/updateYieldManagementModel.xhtml" + REDIRECT;
+    }
+
+    public String redirectToViewSeatsReallocationHistroy() {
+        return "/views/secured/ais/yield_management/viewSeatsReallocationHistory.xhtml" + REDIRECT;
+    }
+
     //Airline Planning
-    public String redirectToAPS() {
-        return "/views/secured/aps/apsMain.xhtml" + REDIRECT;
-    }
-
-    public String toViewAircraftModel() {
-        return "/views/secured/aps/fleet/viewAircraftModel.xhtml" + REDIRECT;
-    }
-
-    public String toAddNewAircraft() {
-        return "/views/secured/aps/fleet/addNewAircraft.xhtml" + REDIRECT;
-    }
-
     public String toViewFleet() {
         return "/views/secured/aps/fleet/viewFleet.xhtml" + REDIRECT;
     }
@@ -200,6 +277,23 @@ public class NavigationController implements Serializable {
 
     public String toAddHub() {
         return "/views/secured/aps/route/addHub.xhtml?faces-redirect=true";
+    }
+
+    public String redirectToPriceBookingClasses() {
+        return "/views/secured/ais/booking_class/priceBookingClasses.xhtml" + REDIRECT;
+    }
+
+    //APS
+    public String redirectToAPS() {
+        return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
+    }
+
+    public String toViewAircraftModel() {
+        return "/views/secured/aps/fleet/viewAircraftModel.xhtml";
+    }
+
+    public String toAddNewAircraft() {
+        return "/views/secured/aps/fleet/addNewAircraft.xhtml";
     }
 
     public String redirectToAddHub() {
@@ -230,18 +324,17 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
     }
 
-    public String toCheckRoute(){
+    public String toCheckRoute() {
         return "/views/secured/aps/route/checkRouteExistence.xhtml?faces-redirect=true";
     }
-    
-    public String toGenerateRoute(){
+
+    public String toGenerateRoute() {
         return "/views/secured/aps/route/generateRoute.xhtml?faces-redirect=true";
     }
-    
-    public String toCustomizeRoute(){
+
+    public String toCustomizeRoute() {
         return "/views/secured/aps/route/customizeRoute.xhtml?faces-redirect=true";
     }
-    
 
     public String redirectToCurrentPage() {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();

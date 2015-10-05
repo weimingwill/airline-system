@@ -6,13 +6,19 @@
 package ams.ais.helper;
 
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 /**
  *
  * @author winga_000
  */
+@Embeddable
 public class FlightScheduleBookingClassId implements Serializable{
+    
+    @Column(name = "FLIGHTSCHEDULEID")
     private Long flightScheduleId;
+    @Column(name = "BOOKINGCLASSID")
     private Long bookingClassId;
 
     public Long getFlightScheduleId() {

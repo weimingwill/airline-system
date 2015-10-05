@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/AisTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="title">
+        APS - Assign Flight Schedule Booking Classes
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <p:panel id="seatAllocation" header="Assign Flight Schedule Booking Classes" style="margin-bottom:20px">
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="1">Cabin Class</p:column>
+                            <p:column colspan="1">Ticket Family</p:column>
+                            <p:column colspan="1">Booking Class</p:column>
+                        </p:row>
+                    </f:facet>
+                    <c:forEach var="helper" items="#{flightScheduleController.flightSchCabinClsTicFamBookingClsHelpers}">
+                        <p:row>
+                            <p:column colspan="1">#{helper.cabinClass.name}</p:column>
+                            <p:column colspan="2">
+                                <p:panelGrid columns="2" >
+                                    <c:forEach var="tf" items="#{helper.ticketFamilyBookingClassHelpers}">
+                                            <p:outputLabel value="#{tf.ticketFamily.name}" style="width: 80px;"/>
+                                            <p:selectManyMenu value="#{tf.bookingClasses}" converter="bookingClassConverter"
+                                                              var="bookingClass" showCheckbox="true" style="width:100px;">
+                                                <f:selectItems value="#{flightScheduleController.getTicketFamilyBookingClasses(helper.cabinClass.name, tf.ticketFamily.name)}" var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}" />
+                                                <p:column>
+                                                    <h:outputText value="#{bookingClass.name}"  />
+                                                </p:column>
+                                            </p:selectManyMenu>
+                                    </c:forEach>
+                                </p:panelGrid>
+                            </p:column>
+                        </p:row>
+                    </c:forEach>
+
+                </p:panelGrid>
+                <p:commandButton value="Save" action="#{flightScheduleController.assignFlightScheduleBookingClass()}" update="messages"/>
+
+            </p:panel>            
+        </h:form>
+    </ui:define>
+
+</ui:composition>

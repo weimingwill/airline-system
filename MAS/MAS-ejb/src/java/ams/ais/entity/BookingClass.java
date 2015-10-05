@@ -34,6 +34,11 @@ public class BookingClass implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "bookingClass")
     private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
 
+    public void create(String name){
+        this.setName(name);
+        this.setDeleted(false);
+    }
+    
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private TicketFamily ticketFamily;
 

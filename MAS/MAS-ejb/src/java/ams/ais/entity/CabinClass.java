@@ -29,15 +29,16 @@ public class CabinClass implements Serializable {
     private String name;
     private Boolean deleted;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="cabinClass")
+    
+    
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
-
-    public List<TicketFamily> getTicketFamilys() {
-        return ticketFamilys;
-    }
-
-    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
-        this.ticketFamilys = ticketFamilys;
+    
+    public void create(String type, String name) {
+        this.setType(type);
+        this.setName(name);
+        this.setDeleted(false);
     }
     
     public Long getCabinClassId() {
@@ -71,7 +72,14 @@ public class CabinClass implements Serializable {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+    
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
+    }
 
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
+    }
 
     @Override
     public int hashCode() {

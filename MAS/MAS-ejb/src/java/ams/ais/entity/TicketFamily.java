@@ -14,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -45,7 +47,13 @@ public class TicketFamily implements Serializable {
     public void setCabinClass(CabinClass cabinClass) {
         this.cabinClass = cabinClass;
     }
-
+    
+    public void create(String type, String name) {
+        this.setType(type);
+        this.setName(name);
+        this.setDeleted(false);
+    }
+    
     public Long getTicketFamilyId() {
         return ticketFamilyId;
     }
