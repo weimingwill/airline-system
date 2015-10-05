@@ -16,13 +16,17 @@
                     <ez:CCAircraftModelFilterRibbon/>
 
                     <p:outputLabel for="aircraftModelTable" value="#{fleetController.msg}"/>
-                    <p:dataTable binding="#{fleetTableController.theDataTable}" id="aircraftModelTable" var="model" value="#{fleetController.aircraftModels}" rows="5"
+                    <p:dataTable id="aircraftModelTable" var="model" value="#{fleetController.aircraftModels}" rows="5" 
                                  paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 rowsPerPageTemplate="5,10" widgetVar="aircraftModelTable" selectionMode="single" selection="#{fleetTableController.selectedAircraftType}" rowKey="#{model.id}">
+                                 rowsPerPageTemplate="5,10" selection="#{fleetTableController.selectedAircraftType}" selectionMode="single" rowKey="#{model.id}">
                         <f:facet name="header">
                             <h:outputText value="Available Aircraft Models in the Market" />
                         </f:facet>
-
+                        
+                        <p:column id="Id" headerText="Id" sortBy="#{model.id}">
+                            <h:outputText value="#{model.id}"/>
+                        </p:column>
+                        
                         <p:column id="typeCode" headerText="Type" sortBy="#{model.typeCode}">
                             <h:outputText value="#{model.typeCode}"/>
                         </p:column>

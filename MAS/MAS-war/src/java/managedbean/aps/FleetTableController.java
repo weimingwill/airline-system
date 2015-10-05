@@ -48,7 +48,7 @@ public class FleetTableController implements Serializable {
 
     @Inject
     MsgController msgController;
-    
+
     @Inject
     NavigationController navigationController;
 
@@ -163,16 +163,33 @@ public class FleetTableController implements Serializable {
         onOpenDialogBtnClick("aircraftFlightHistDlg");
     }
 
-    public void applyRetireAicraftFilters() {
-        setFleetList(fleetFilterController.getFilteredAircrafts());
+    public void applyFilters(String target) {
+        System.out.println("FleetTableController: applyFilters(): target = " + target);
+        switch (target) {
+            case "Retire":
+                setFleetList(fleetFilterController.getFilteredAircrafts());
+                break;
+            case "Purchase":
+                fleetController.setAircraftModels(fleetFilterController.getFilteredAircraftModels());
+                break;
+        }
     }
 
-    public void resetRetireAicraftFilters() {
-        fleetFilterController.setInitialValue("Retire");
-        status[0] = AircraftStatus.IDLE;
-        status[1] = AircraftStatus.IN_MAINT;
-        setFleetList(new ArrayList());
-        getFleet(status);
+    public void resetFilters(String target) {
+        System.out.println("FleetTableController: resetFilters() target = " + target);
+        switch (target) {
+            case "Retire":
+                fleetFilterController.setInitialValue(target);
+                status[0] = AircraftStatus.IDLE;
+                status[1] = AircraftStatus.IN_MAINT;
+                setFleetList(new ArrayList());
+                getFleet(status);
+                break;
+            case "Purchase":
+                fleetFilterController.setInitialValue(target);
+                fleetController.getAvailableAircraftModels();
+                break;
+        }
     }
 
     public void updateAircraftInfo(String newLifespan, String newCost, String newOilUsage) {

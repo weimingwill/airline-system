@@ -13,8 +13,10 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        #{fleetFilterController.setInitialValue("Retire")}
+        <c:set var="target" value="Retire"/>
+        #{fleetFilterController.setInitialValue(target)}
         <p:ribbon id="retireAircraftFilters" styleClass="filterRibbon">
+            
             <p:tab title="Filter and find the aircraft to retire">
                 <c:set var="retireAircraftFilterHelper" value="#{fleetFilterController.retireAircraftFilterHelper}"/>
                 <p:ribbonGroup label="Lifespan">
@@ -80,8 +82,8 @@
 
                 <p:ribbonGroup label="Actions">
                     <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
-                        <p:commandButton value="Apply" update=":form:retire-fleet-table" actionListener="#{fleetTableController.applyRetireAicraftFilters()}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
-                        <p:commandButton value="Reset" update="retireAircraftFilters,:form:retire-fleet-table" actionListener="#{fleetTableController.resetRetireAicraftFilters()}" icon="fa fa-refresh" styleClass="filterBtn"/>
+                        <p:commandButton value="Apply" update=":form:retire-fleet-table" actionListener="#{fleetTableController.applyFilters(target)}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
+                        <p:commandButton value="Reset" update="retireAircraftFilters,:form:retire-fleet-table" actionListener="#{fleetTableController.resetFilters(target)}" icon="fa fa-refresh" styleClass="filterBtn"/>
                     </p:panelGrid>
                 </p:ribbonGroup>
             </p:tab>

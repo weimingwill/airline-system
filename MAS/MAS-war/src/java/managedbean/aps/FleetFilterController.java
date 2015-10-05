@@ -6,6 +6,7 @@
 package managedbean.aps;
 
 import ams.aps.entity.Aircraft;
+import ams.aps.entity.AircraftType;
 import ams.aps.session.FleetPlanningSessionLocal;
 import ams.aps.util.helper.AircraftModelFilterHelper;
 import ams.aps.util.helper.RetireAircraftFilterHelper;
@@ -43,6 +44,12 @@ public class FleetFilterController implements Serializable {
         return filteredAircraft;
     }
 
+    public List<AircraftType> getFilteredAircraftModels() {
+        printAircraftModelFilters();
+        List<AircraftType> filteredAircraftType = fleetPlanningSession.filterAircraftModels(aircraftModelFilterHelper);
+        return filteredAircraftType;
+    }
+
     public void setInitialValue(String filterType) {
         switch (filterType) {
             case "Retire":
@@ -53,8 +60,22 @@ public class FleetFilterController implements Serializable {
                 fleetPlanningSession.initRetireAicraftFilter(retireAircraftFilterHelper);
                 break;
             case "Purchase":
+                fleetPlanningSession.initAircraftModelFilter(aircraftModelFilterHelper);
+                break;
         }
 
+    }
+
+    private void printAircraftModelFilters() {
+        System.out.println("FleetFilterController: printAircraftModelFilters()");
+        System.out.println("Manufacturer: " + aircraftModelFilterHelper.getManufacturers());
+        System.out.println("Max Seating: (" + aircraftModelFilterHelper.getMinMaxSeating() + ", " + aircraftModelFilterHelper.getMaxMaxSeating() + ")");
+        System.out.println("Approx Price: (" + aircraftModelFilterHelper.getMinApproxPrice() + ", " + aircraftModelFilterHelper.getMaxApproxPrice() + ")");
+        System.out.println("Fuel Cost: (" + aircraftModelFilterHelper.getMinFuelCostPerKm() + ", " + aircraftModelFilterHelper.getMaxFuelCostPerKm() + ")");
+        System.out.println("Range: (" + aircraftModelFilterHelper.getMinRange() + ", " + aircraftModelFilterHelper.getMaxRange() + ")");
+        System.out.println("Pay Load: (" + aircraftModelFilterHelper.getMinPayload() + ", " + aircraftModelFilterHelper.getMaxPayload() + ")");
+        System.out.println("Max Mach Num: (" + aircraftModelFilterHelper.getMinMaxMachNum() + ", " + aircraftModelFilterHelper.getMaxMaxMachNum() + ")");
+        System.out.println("Fuel Capacity: (" + aircraftModelFilterHelper.getMinFuelCapacity() + ", " + aircraftModelFilterHelper.getMaxFuelCapacity() + ")");
     }
 
     private void printRetireAircraftFilters() {

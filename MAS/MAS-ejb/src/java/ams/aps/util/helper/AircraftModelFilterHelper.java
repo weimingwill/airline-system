@@ -14,6 +14,7 @@ import java.util.List;
 public class AircraftModelFilterHelper {
 
     private List<String> manufacturers;
+    private List<String> typeFamilies;
     private int minMaxSeating;
     private int maxMaxSeating;
     private float minApproxPrice;
@@ -240,6 +241,20 @@ public class AircraftModelFilterHelper {
      */
     public void setManufacturers(List<String> manufacturers) {
         this.manufacturers = manufacturers;
+    }
+
+    /**
+     * @return the typeFamilies
+     */
+    public List<String> getTypeFamilies() {
+        return typeFamilies;
+    }
+
+    /**
+     * @param typeFamilies the typeFamilies to set
+     */
+    public void setTypeFamilies(List<String> typeFamilies) {
+        this.typeFamilies = typeFamilies;
     }
 
 }

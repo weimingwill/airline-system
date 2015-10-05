@@ -11,6 +11,7 @@ import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.AircraftType;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.helper.AircraftCabinClassHelper;
+import ams.aps.util.helper.AircraftModelFilterHelper;
 import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.Message;
 import ams.aps.util.helper.RetireAircraftFilterHelper;
@@ -284,12 +285,103 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
 
     @Override
     public boolean updateAircraftModel(AircraftType updatedAircraftModel) {
-        try{
+        try {
             entityManager.find(AircraftType.class, updatedAircraftModel.getId());
             entityManager.merge(updatedAircraftModel);
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
         return true;
     }
+
+    @Override
+    public List<AircraftType> filterAircraftModels(AircraftModelFilterHelper filters) {
+        Query query = entityManager.createQuery("SELECT t FROM AircraftType t WHERE "
+                + "(t.maxSeating BETWEEN :inMinMaxSeating AND :inMaxMaxSeating) AND "
+                + "(t.approxCost BETWEEN :inMinApproxPrice AND :inMaxApproxPrice) AND "
+                + "(t.fuelCostPerKm BETWEEN :inMinFuelCostPerKm AND :inMaxFuelCostPerKm) AND "
+                + "(t.rangeInKm BETWEEN :inMinRange AND :inMaxRange) AND "
+                + "(t.maxPayload BETWEEN :inMinPayload AND :inMaxPayload) AND "
+                + "(t.maxMachNo BETWEEN :inMinMaxMachNum AND :inMaxMaxMachNum) AND "
+                + "(t.maxFuelCapacity BETWEEN :inMinFuelCapacity AND :inMaxFuelCapacity)");
+//        query.setParameter("inManufacturer", filters.getManufacturers());
+//        query.setParameter("inTypeFamily", filters.getTypeFamilies());
+        query.setParameter("inMinMaxSeating", filters.getMinMaxSeating());
+        query.setParameter("inMaxMaxSeating", filters.getMaxMaxSeating());
+        query.setParameter("inMinApproxPrice", filters.getMinApproxPrice());
+        query.setParameter("inMaxApproxPrice", filters.getMaxApproxPrice());
+        query.setParameter("inMinFuelCostPerKm", filters.getMinFuelCostPerKm());
+        query.setParameter("inMaxFuelCostPerKm", filters.getMaxFuelCostPerKm());
+        query.setParameter("inMinRange", filters.getMinRange());
+        query.setParameter("inMaxRange", filters.getMaxRange());
+        query.setParameter("inMinPayload", filters.getMinPayload());
+        query.setParameter("inMaxPayload", filters.getMaxPayload());
+        query.setParameter("inMinMaxMachNum", filters.getMinMaxMachNum());
+        query.setParameter("inMaxMaxMachNum", filters.getMaxMaxMachNum());
+        query.setParameter("inMinFuelCapacity", filters.getMinFuelCapacity());
+        query.setParameter("inMaxFuelCapacity", filters.getMaxFuelCapacity());
+        
+        List<AircraftType> filteredAircraftModels = new ArrayList();
+        try {
+            filteredAircraftModels = (List<AircraftType>) query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("FleetPlanningSession: filterAircraftsForRetire()" + filteredAircraftModels);
+        return filteredAircraftModels;
+    }
+
+    @Override
+    public void initAircraftModelFilter(AircraftModelFilterHelper aircraftModelFilterHelper) {
+        List<String> manufacturers = getAllManufacturer();
+        List<String> typeFamilyList = getAllTypeFamily();
+        aircraftModelFilterHelper.setManufacturers(manufacturers);
+        aircraftModelFilterHelper.setTypeFamilies(typeFamilyList);
+        System.out.println(manufacturers);
+        System.out.println(typeFamilyList);
+        Connection conn = MySQLConnection.establishConnection();
+        String query = "SELECT FLOOR(MIN(T.RANGEINKM)), CEIL(MAX(T.RANGEINKM)), "
+                + "FLOOR(MIN(T.MAXPAYLOAD)), CEIL(MAX(T.MAXPAYLOAD)), "
+                + "ROUND(MIN(T.MAXMACHNO),2), ROUND(MAX(T.MAXMACHNO),2), "
+                + "FLOOR(MIN(T.MAXFUELCAPACITY)), CEIL(MAX(T.MAXFUELCAPACITY)), "
+                + "MIN(T.MAXSEATING), CEIL(T.MAXSEATING), "
+                + "FLOOR(MIN(T.APPROXCOST)), CEIL(MAX(T.APPROXCOST)), "
+                + "FLOOR(MIN(T.FUELCOSTPERKM)), CEIL(MAX(T.FUELCOSTPERKM)) FROM AIRCRAFTTYPE AS T";
+        Statement stmt = null;
+
+        try {
+            stmt = conn.createStatement();
+            ResultSet resultSet = stmt.executeQuery(query);
+
+            while (resultSet.next()) {
+                aircraftModelFilterHelper.setMinRange(resultSet.getFloat(1));
+                aircraftModelFilterHelper.setMaxRange(resultSet.getFloat(2));
+                aircraftModelFilterHelper.setMinPayload(resultSet.getFloat(3));
+                aircraftModelFilterHelper.setMaxPayload(resultSet.getFloat(4));
+                aircraftModelFilterHelper.setMinMaxMachNum(resultSet.getFloat(5));
+                aircraftModelFilterHelper.setMaxMaxMachNum(resultSet.getFloat(6));
+                aircraftModelFilterHelper.setMinFuelCapacity(resultSet.getFloat(7));
+                aircraftModelFilterHelper.setMaxFuelCapacity(resultSet.getFloat(8));
+                aircraftModelFilterHelper.setMinMaxSeating(resultSet.getInt(9));
+                aircraftModelFilterHelper.setMaxMaxSeating(resultSet.getInt(10));
+                aircraftModelFilterHelper.setMinApproxPrice(resultSet.getFloat(11));
+                aircraftModelFilterHelper.setMaxApproxPrice(resultSet.getFloat(12));
+                aircraftModelFilterHelper.setMinFuelCostPerKm(resultSet.getFloat(13));
+                aircraftModelFilterHelper.setMaxFuelCostPerKm(resultSet.getFloat(14));
+            }
+
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(FleetPlanningSession.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private List<String> getAllManufacturer() {
+        return (List<String>) entityManager.createQuery("SELECT DISTINCT t.mfdBy FROM AircraftType t").getResultList();
+    }
+
+    private List<String> getAllTypeFamily() {
+        return (List<String>) entityManager.createQuery("SELECT DISTINCT t.typeFamily FROM AircraftType t").getResultList();
+    }
+
 }
