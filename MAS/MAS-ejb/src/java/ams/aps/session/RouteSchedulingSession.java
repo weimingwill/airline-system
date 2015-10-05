@@ -60,11 +60,8 @@ public class RouteSchedulingSession implements RouteSchedulingSessionLocal {
     }
 
     @Override
-    public boolean checkFlightNotExisted(String flightNo, Long routeID) {
+    public boolean checkFlightNotExisted(String flightNo) {
         try {
-            Route route = em.find(Route.class, routeID);
-            List<Flight> flights = route.getFlights();
-
             Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo");
             query.setParameter("fNo", flightNo);
 
@@ -93,7 +90,8 @@ public class RouteSchedulingSession implements RouteSchedulingSessionLocal {
     }
 
     @Override
-    public List<AircraftType> getCapableAircraftTypesForRoute(List<Airport> allStops) {
+    public List<AircraftType> getCapableAircraftTypesForRoute(Route route) {
+        List<Airport> allStops = getAllStopsOfRoute(route);
         double totalDistance = 0;
         for (int i = 0; i < allStops.size() - 1; i++) {
             totalDistance += distance(allStops.get(i), allStops.get(i + 1));
@@ -248,4 +246,30 @@ public class RouteSchedulingSession implements RouteSchedulingSessionLocal {
         fs = newFlightSchedule;
         em.merge(fs);
     }
+
+    @Override
+    public List<Route> getAvailableRoutes() {
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = 0)");
+        try{
+            return query.getResultList();
+        }catch(Exception ex){
+            return null;
+        }
+    }
+
+    @Override
+    public boolean checkFlightNoExistence(String flightNo) {
+        Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo");
+        query.setParameter("fNo", flightNo);
+        try {
+            if (query.getSingleResult() != null) {
+                return true;
+            }else{
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
 }
