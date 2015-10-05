@@ -12,6 +12,16 @@ import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import ams.ais.entity.TicketFamily;
+import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.util.exception.NoSuchTicketFamilyException;
+import ams.ais.util.helper.AisMsg;
+import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
 /**
@@ -19,17 +29,23 @@ import javax.faces.convert.FacesConverter;
  * @author Bowen
  */
 
+
 @FacesConverter("ticketFamilyConverter")
 public class TicketFamilyConverter implements Converter {
-   @EJB
+    
+    @EJB
     private TicketFamilySessionLocal ticketFamilySession;
     
-    @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
-            return ticketFamilySession.getTicketFamilyById(Long.parseLong(value));
-        } 
-        else {
+            try {
+                return ticketFamilySession.getTicketFamilyById(Long.parseLong(value));
+            } catch (NumberFormatException e) {
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
+            } catch (NoSuchTicketFamilyException ex) {
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", AisMsg.EXIST_SUCH_TICKET_FAMILY_ERROR));
+            }
+        } else {
             return null;
         }
     }
@@ -42,4 +58,5 @@ public class TicketFamilyConverter implements Converter {
             return null;
         }
     } 
+
 }

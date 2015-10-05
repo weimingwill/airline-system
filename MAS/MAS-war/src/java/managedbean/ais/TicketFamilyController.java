@@ -5,17 +5,23 @@
  */
 package managedbean.ais;
 
+import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.Rule;
 import ams.ais.entity.TicketFamily;
 import ams.ais.entity.TicketFamilyRule;
 import ams.ais.helper.TicketFamilyRuleHelper;
+import ams.aps.util.exception.EmptyTableException;
+import java.util.ArrayList;
+import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.ExistSuchTicketFamilyException;
+import ams.ais.util.exception.NoSuchBookingClassException;
+import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
-import ams.aps.util.exception.EmptyTableException;
+import ams.ais.util.helper.BookingClassHelper;
+import ams.aps.session.AircraftSessionLocal;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,6 +51,11 @@ public class TicketFamilyController implements Serializable {
 
     @EJB
     private TicketFamilySessionLocal ticketFamilySession;
+    @EJB
+    private AircraftSessionLocal aircraftSession;
+    @EJB
+    private CabinClassSessionLocal cabinClassSession;
+
     private String oldtype;
     private String oldCabinClassname;
     private String type;
@@ -57,26 +68,15 @@ public class TicketFamilyController implements Serializable {
     private List<TicketFamilyRule> selectedticketFamilyRules;
     private List<TicketFamilyRuleHelper> displayRuleList = new ArrayList();
     private List<TicketFamily> ticketFamilys = new ArrayList();
-
-    public List<TicketFamily> getTicketFamilys() {
-        return ticketFamilys;
-    }
-
-    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
-        this.ticketFamilys = ticketFamilys;
-    }
+    private List<String> bookingClassNames;
+    private List<BookingClassHelper> bookingClassHelpers;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         getAvailableRules();
     }
 
-    public List<TicketFamilyRuleHelper> getDisplayRuleList() {
-        return displayRuleList;
-    }
-
-    public void setDisplayRuleList(List<TicketFamilyRuleHelper> displayRuleList) {
-        this.displayRuleList = displayRuleList;
+    public TicketFamilyController() {
     }
 
     public void onEditBtnCick() {
@@ -111,81 +111,49 @@ public class TicketFamilyController implements Serializable {
 
     }
 
-    public List<TicketFamilyRule> getSelectedticketFamilyRules() {
-        return selectedticketFamilyRules;
+//    public void deleteTicketFamily() {
+//        try {
+//            ticketFamilySession.deleteTicketFamily(type, cabinclassname);
+//            msgController.addMessage("Delete ticket family successfully");
+//        } catch (NoSuchTicketFamilyException ex) {
+//            msgController.addErrorMessage(ex.getMessage());
+//        }
+//    }
+
+    public String updateTicketFamily() {
+        try {
+            ticketFamilySession.updateTicketFamily(oldtype, oldCabinClassname, type, name, cabinclassname);
+            msgController.addMessage("Edit ticket family successfully!");
+        } catch (ExistSuchTicketFamilyException | NoSuchTicketFamilyException | NoSuchCabinClassException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllTicketFamily();
     }
 
-    public void setSelectedticketFamilyRules(List<TicketFamilyRule> selectedticketFamilyRules) {
-        this.selectedticketFamilyRules = selectedticketFamilyRules;
+    public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) {
+        List<BookingClass> bookingClasses;
+        try {
+            bookingClasses = ticketFamilySession.getTicketFamilyBookingClasses(cabinClassName, ticketFamilyName);
+        } catch (NoSuchBookingClassException e) {
+            return null;
+        }
+        return bookingClasses;
     }
 
-    public List<TicketFamilyRuleHelper> getTicketFamilyRuleHelpers() {
-        return ticketFamilyRuleHelpers;
+    public void getTicketFamilyBookingClassHelpers(String cabinClassName, String ticketFamilyName) {
+        System.out.println("Get BookingClass Helper");
+        bookingClassHelpers = ticketFamilySession.getTicketFamilyBookingClassHelpers(cabinClassName, ticketFamilyName);
     }
 
-    public void setTicketFamilyRuleHelpers(List<TicketFamilyRuleHelper> ticketFamilyRuleHelpers) {
-        this.ticketFamilyRuleHelpers = ticketFamilyRuleHelpers;
+    public List<String> getTicketFamilyBookingClassNames(String cabinClassName, String ticketFamilyName) {
+        return ticketFamilySession.getTicketFamilyBookingClassNames(cabinClassName, ticketFamilyName);
     }
 
-    public List<Rule> getRuleList() {
-        return ruleList;
+    public void OnTicketFamilyChange(String cabinClassName, String ticketFamilyName) {
+        bookingClassNames = ticketFamilySession.getTicketFamilyBookingClassNames(cabinClassName, ticketFamilyName);
     }
 
-    public void setRuleList(List<Rule> ruleList) {
-        this.ruleList = ruleList;
-    }
-
-    public double getRuleValue() {
-        return ruleValue;
-    }
-
-    public void setRuleValue(double ruleValue) {
-        this.ruleValue = ruleValue;
-    }
-
-    public String getOldCabinClassname() {
-        return oldCabinClassname;
-    }
-
-    public void setOldCabinClassname(String oldCabinClassname) {
-        this.oldCabinClassname = oldCabinClassname;
-    }
-
-    public String getCabinclassname() {
-        return cabinclassname;
-    }
-
-    public void setCabinclassname(String cabinclassname) {
-        this.cabinclassname = cabinclassname;
-    }
-
-    public String getOldtype() {
-        return oldtype;
-    }
-
-    public void setOldtype(String oldtype) {
-        this.oldtype = oldtype;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public TicketFamilyController() {
-    }
-
+    
     public void getAvailableRules() {
 //       List<TicketFamilyRuleHelper> displayRuleList = new ArrayList();
         try {
@@ -196,7 +164,7 @@ public class TicketFamilyController implements Serializable {
         } catch (EmptyTableException ex) {
             Logger.getLogger(TicketFamilyController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("Number of Rules in database = "+displayRuleList.size());
+        System.out.println("Number of Rules in database = " + displayRuleList.size());
 
     }
 
@@ -217,9 +185,9 @@ public class TicketFamilyController implements Serializable {
 //            System.out.println("Rule value = " + thisHelper.getRuleValue());
 //        }
         try {
-            ticketFamilySession.createTicketFamily(type, name,cabinclassname,displayRuleList);
+            ticketFamilySession.createTicketFamily(type, name, cabinclassname, displayRuleList);
             msgController.addMessage("Create ticket family successfully!");
-        } catch (ExistSuchTicketFamilyException ex) {
+        } catch (ExistSuchTicketFamilyException | NoSuchCabinClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToCreateTicketFamily();
@@ -244,28 +212,51 @@ public class TicketFamilyController implements Serializable {
 
     }
 
-    public String updateTicketFamily() {
+    // For update Ticket Family (edit ticket Family name and type
+    public String updateTicketFamilyByType() {
         try {
-            ticketFamilySession.updateTicketFamily(oldtype, oldCabinClassname, type, name, cabinclassname);
+            ticketFamilySession.updateTicketFamilyByType(selectedTicketFamily.getTicketFamilyId(), selectedTicketFamily.getCabinClass().getName(), selectedTicketFamily.getType(), selectedTicketFamily.getName());
             msgController.addMessage("Edit ticket family successfully!");
         } catch (ExistSuchTicketFamilyException | NoSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToViewAllTicketFamily();
+    }
+    
+    //Getter and setter
 
+    public String getOldtype() {
+        return oldtype;
     }
-    
-    // For update Ticket Family (edit ticket Family name and type
-    public String updateTicketFamilyByType(){
-        try {
-            ticketFamilySession.updateTicketFamilyByType(selectedTicketFamily.getTicketFamilyId(), selectedTicketFamily.getCabinClass().getName(), selectedTicketFamily.getType(), selectedTicketFamily.getName());
-            msgController.addMessage("Edit ticket family successfully!");
-        } catch (ExistSuchTicketFamilyException|NoSuchTicketFamilyException ex) {
-            msgController.addErrorMessage(ex.getMessage());
-        }
-        return navigationController.redirectToViewAllTicketFamily();
+
+    public void setOldtype(String oldtype) {
+        this.oldtype = oldtype;
     }
-    
+
+    public String getOldCabinClassname() {
+        return oldCabinClassname;
+    }
+
+    public void setOldCabinClassname(String oldCabinClassname) {
+        this.oldCabinClassname = oldCabinClassname;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * @return the selectedTicketFamily
      */
@@ -279,4 +270,78 @@ public class TicketFamilyController implements Serializable {
     public void setSelectedTicketFamily(TicketFamily selectedTicketFamily) {
         this.selectedTicketFamily = selectedTicketFamily;
     }
+
+    public String getCabinclassname() {
+        return cabinclassname;
+    }
+
+    public void setCabinclassname(String cabinclassname) {
+        this.cabinclassname = cabinclassname;
+    }
+
+    public List<String> getBookingClassNames() {
+        return bookingClassNames;
+    }
+
+    public void setBookingClassNames(List<String> bookingClassNames) {
+        this.bookingClassNames = bookingClassNames;
+    }
+
+    public List<BookingClassHelper> getBookingClassHelpers() {
+        return bookingClassHelpers;
+    }
+
+    public void setBookingClassHelpers(List<BookingClassHelper> bookingClassHelpers) {
+        this.bookingClassHelpers = bookingClassHelpers;
+    }
+
+    public double getRuleValue() {
+        return ruleValue;
+    }
+
+    public void setRuleValue(double ruleValue) {
+        this.ruleValue = ruleValue;
+    }
+
+    public List<Rule> getRuleList() {
+        return ruleList;
+    }
+
+    public void setRuleList(List<Rule> ruleList) {
+        this.ruleList = ruleList;
+    }
+
+    public List<TicketFamilyRuleHelper> getTicketFamilyRuleHelpers() {
+        return ticketFamilyRuleHelpers;
+    }
+
+    public void setTicketFamilyRuleHelpers(List<TicketFamilyRuleHelper> ticketFamilyRuleHelpers) {
+        this.ticketFamilyRuleHelpers = ticketFamilyRuleHelpers;
+    }
+
+    public List<TicketFamilyRule> getSelectedticketFamilyRules() {
+        return selectedticketFamilyRules;
+    }
+
+    public void setSelectedticketFamilyRules(List<TicketFamilyRule> selectedticketFamilyRules) {
+        this.selectedticketFamilyRules = selectedticketFamilyRules;
+    }
+
+    public List<TicketFamilyRuleHelper> getDisplayRuleList() {
+        return displayRuleList;
+    }
+
+    public void setDisplayRuleList(List<TicketFamilyRuleHelper> displayRuleList) {
+        this.displayRuleList = displayRuleList;
+    }
+
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
+    }
+
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
+    }
+    
+    
 }

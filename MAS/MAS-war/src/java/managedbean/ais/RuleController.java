@@ -9,6 +9,7 @@ import ams.ais.entity.Rule;
 import ams.ais.session.RuleSessionLocal;
 import ams.ais.util.exception.ExistSuchRuleException;
 import ams.ais.util.exception.NoSuchRuleException;
+import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -23,7 +24,7 @@ import managedbean.application.NavigationController;
  */
 @Named(value = "ruleController")
 @RequestScoped
-public class RuleController {
+public class RuleController implements Serializable{
     @Inject
     private NavigationController navigationController;
     @Inject

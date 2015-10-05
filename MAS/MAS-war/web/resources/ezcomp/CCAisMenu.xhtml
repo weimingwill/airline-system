@@ -14,27 +14,33 @@
         <h:form>
             <p:menu toggleable="true" style="width:200px;">
                 <p:submenu label="Product Design">
+                    <p:menuitem value="View Flight Schedule" action="#{navigationController.redirectToViewFlightSchedule()}" />
+                    <p:menuitem value="Product Design" action="#{navigationController.redirectToProductDesign()}" />
+
                     <p:submenu label="Cabin Class">
                         <p:menuitem value="Create Cabin Class" action="#{navigationController.redirectToCreateCabinClass()}"/>
                         <p:menuitem value="View all Cabin Class" action="#{navigationController.redirectToViewAllCabinClass()}"/>
                         <p:menuitem value="Delete Cabin Class" action="#{navigationController.redirectToDeleteCabinClass()}"/>
                     </p:submenu>
-                    
+
                     <p:submenu label="Rule">
                         <p:menuitem value="Create New Rule" action="#{navigationController.redirectToCreateRule()}"/>
                         <p:menuitem value="View all Rules" action="#{navigationController.redirectToViewAllRules()}"/>
                         <p:menuitem value="Delete Rule" action="#{navigationController.redirectToDeleteRule()}"/>
                     </p:submenu>
-                    
+
                     <p:submenu label="Ticket Family">
                         <p:menuitem value="Create New Ticket Family" action="#{navigationController.redirectToCreateTicketFamily()}"/>
                         <p:menuitem value="View all Ticket Families" action="#{navigationController.redirectToViewAllTicketFamily()}"/>
                         <p:menuitem value="Delete Ticket Family" action="#{navigationController.redirectToDeleteTicketFamily()}"/>
                     </p:submenu>
                 </p:submenu>
-                <p:submenu label="Pricing">
+                <p:submenu label="Booking Class Management">
                     <p:menuitem value="Create booking class" action="#{navigationController.redirectToCreateBookingClass()}" />
                     <p:menuitem value="Delete booking class" action="#{navigationController.redirectToDeleteBookingClass()}" />
+                </p:submenu>
+                <p:submenu label="Yield Management">
+                    <p:menuitem value="Yield Management" action="#{navigationController.toYieldManagement()}"/>
                 </p:submenu>
             </p:menu>
         </h:form>

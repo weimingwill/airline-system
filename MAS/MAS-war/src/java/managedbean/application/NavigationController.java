@@ -226,6 +226,41 @@ public class NavigationController implements Serializable {
     public String redirectToPricing() {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }
+    
+    //Flight Schedule Booking Class
+    public String redirectToAssignFlightScheduleBookingClass(){
+        return "/views/secured/ais/booking_class/assignFlightScheduleBookingClasses.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewFlightSchedule(){
+        return "/views/secured/ais/booking_class/viewFlightSchedule.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToSeatAllocation(){
+        return "/views/secured/ais/booking_class/seatAllocation.xhtml" + REDIRECT;
+    }
+   
+    public String redirectToProductDesign(){
+        return "/views/secured/ais/product_design/productDesign.xhtml" + REDIRECT;
+    }    
+    
+    //Yield Management 
+    public String redirectToYieldManagement(){
+        return "/views/secured/ais/yield_management/yieldManagement.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToReallocationBookingClassSeats(){
+        return "/views/secured/ais/yield_management/reallocateBookingClassSeats.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToUpdateYieldManagementModel(){
+        return "/views/secured/ais/yield_management/updateYieldManagementModel.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewSeatsReallocationHistroy(){
+        return "/views/secured/ais/yield_management/viewSeatsReallocationHistory.xhtml" + REDIRECT;
+    }
+    
 
     //APS
     public String redirectToAPS() {
@@ -267,6 +302,6 @@ public class NavigationController implements Serializable {
     public String toAddRoute(){
         return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
     }
-    
-    
+
+   
 }

@@ -6,13 +6,14 @@
 package managedbean.ais;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
 import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchTicketFamilyException;
+import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -26,7 +27,7 @@ import managedbean.application.NavigationController;
  */
 @Named(value = "cabinClassController")
 @RequestScoped
-public class CabinClassController {
+public class CabinClassController implements Serializable{
 
     @Inject
     private NavigationController navigationController;
@@ -96,6 +97,29 @@ public class CabinClassController {
         return navigationController.redirectToViewAllCabinClass();
         
     }
+    
+    public List<TicketFamily> getCabinClassTicketFamilys(String type){
+        List<TicketFamily> ticketFamilys;
+        try {
+            ticketFamilys = cabinClassSession.getCabinClassTicketFamilys(type);
+        } catch (NoSuchTicketFamilyException e) {
+            return null;
+        }
+        return ticketFamilys;          
+    }
+    
+    public List<String> getCabinClassTicketFamilyNames(String type){
+        return cabinClassSession.getCabinClassTicketFamilyNames(type);
+    }
+    
+    public CabinClass getCabinClassByName(String name){
+        try {
+            return cabinClassSession.getCabinClassByName(name);
+        } catch (NoSuchCabinClassException ex) {
+            return null;
+        }
+    }
+    
     //Getter and Setter
     public String getType() {
         return type;
