@@ -34,24 +34,26 @@ import javax.ejb.Local;
 @Local
 public interface TicketFamilySessionLocal {
 
-    public List<TicketFamily> getAllTicketFamily();
-
-    public List<CabinClass> getAllCabinClass();
-
-    public void createTicketFamily(String type, String name, String cabinclassname, List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers) 
+    public void createTicketFamily(String type, String name, String cabinclassname, List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers)
             throws ExistSuchTicketFamilyException, NoSuchCabinClassException;
-
-    public TicketFamily getTicketFamilyById(Long id) throws NoSuchTicketFamilyException;
-
-    public TicketFamily getTicketFamilyByName(String ticketFamilyName) throws NoSuchTicketFamilyException;
-
-    public TicketFamily getTicketFamilyByTypeAndCabinClass(String ticketFamilyType, String cabinClassName);
 
     public void verifyTicketFamilyExistence(String type, String name, String cabinclass) throws ExistSuchTicketFamilyException;
 
     public void deleteTicketFamily(String type, String cabinClassName) throws NoSuchTicketFamilyException;
 
-    public void updateTicketFamily(String oldtype, String oldcabinclass, String type, String name, String cabinclassname) throws NoSuchTicketFamilyException, NoSuchCabinClassException, ExistSuchTicketFamilyException;
+    public void updateTicketFamily(String oldtype, String oldcabinclass, String type, String name, String cabinclassname)
+            throws NoSuchTicketFamilyException, NoSuchCabinClassException, ExistSuchTicketFamilyException;
+
+    public void updateTicketFamilyRuleVlaue(TicketFamilyRule ticketFamilyRule);
+
+    public void deleteTicketFamilyByType(String type) throws NoSuchTicketFamilyException;
+
+    public void updateTicketFamilyByType(long ticketFamilyId, String oldCabinClassName, String type, String name)
+            throws ExistSuchTicketFamilyException, NoSuchTicketFamilyException;
+
+    public List<TicketFamily> getAllTicketFamily();
+
+    public List<CabinClass> getAllCabinClass();
 
     public List<TicketFamily> getAllOtherTicketFamily(String name);
 
@@ -63,11 +65,11 @@ public interface TicketFamilySessionLocal {
 
     public TicketFamilyRule getTicketFamilyRuleByTicketFamilyType(String ticketFamilyType);
 
-    public void updateTicketFamilyRuleVlaue(TicketFamilyRule ticketFamilyRule);
+    public TicketFamily getTicketFamilyById(Long id) throws NoSuchTicketFamilyException;
 
-    public void deleteTicketFamilyByType(String type) throws NoSuchTicketFamilyException;
+    public TicketFamily getTicketFamilyByName(String ticketFamilyName) throws NoSuchTicketFamilyException;
 
-    public void updateTicketFamilyByType(long ticketFamilyId, String oldCabinClassName, String type, String name) throws ExistSuchTicketFamilyException, NoSuchTicketFamilyException;
+    public TicketFamily getTicketFamilyByTypeAndCabinClass(String ticketFamilyType, String cabinClassName);
 
     public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) throws NoSuchBookingClassException;
 

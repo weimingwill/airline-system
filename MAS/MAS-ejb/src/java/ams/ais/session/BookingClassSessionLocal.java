@@ -23,24 +23,24 @@ import javax.ejb.Local;
 @Local
 public interface BookingClassSessionLocal {
 
+    public List<BookingClass> getAllBookingClasses();
+
+    public BookingClass getBookingClassById(Long id) throws NoSuchBookingClassException;
+
+    public BookingClassHelper getBookingClassHelperById(Long Id) throws NoSuchBookingClassException;
+
+    public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId);
+
     public void createBookingClass(String name) throws ExistSuchBookingClassNameException;
 
     public void verifyBookingClassName(String name) throws ExistSuchBookingClassNameException;
-
-    public List<BookingClass> getAllBookingClasses();
 
     public void deleteBookingClass(String name) throws NoSuchBookingClassException;
 
     public BookingClass search(String name) throws NoSuchBookingClassException;
 
-    public BookingClass getBookingClassById(Long id) throws NoSuchBookingClassException;
-
-    public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId);
-
     public void allocateSeats(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightHelpers)
             throws NoSuchAircraftException, NoSuchAircraftCabinClassException, NoSuchFlightScheduleBookingClassException;
-
-    public BookingClassHelper getBookingClassHelperById(Long Id) throws NoSuchBookingClassException;
 
     public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers)
             throws NoSuchFlightScheduleBookingClassException;

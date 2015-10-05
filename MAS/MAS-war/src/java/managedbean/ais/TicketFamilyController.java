@@ -51,10 +51,6 @@ public class TicketFamilyController implements Serializable {
 
     @EJB
     private TicketFamilySessionLocal ticketFamilySession;
-    @EJB
-    private AircraftSessionLocal aircraftSession;
-    @EJB
-    private CabinClassSessionLocal cabinClassSession;
 
     private String oldtype;
     private String oldCabinClassname;

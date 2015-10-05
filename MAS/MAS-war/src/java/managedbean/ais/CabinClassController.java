@@ -50,16 +50,6 @@ public class CabinClassController implements Serializable{
     private String name;
     private CabinClass selectedCabinClass;
 
-    public CabinClass getSelectedCabinClass() {
-        return selectedCabinClass;
-    }
-
-    public void setSelectedCabinClass(CabinClass selectedCabinClass) {
-        this.selectedCabinClass = selectedCabinClass;
-    }
-    /**
-     * Creates a new instance of CabinClassController
-     */
     public CabinClassController() {
     }
 
@@ -136,9 +126,13 @@ public class CabinClassController implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-    
-    
-    
-    
+
+    public CabinClass getSelectedCabinClass() {
+        return selectedCabinClass;
+    }
+
+    public void setSelectedCabinClass(CabinClass selectedCabinClass) {
+        this.selectedCabinClass = selectedCabinClass;
+    }
     
 }
