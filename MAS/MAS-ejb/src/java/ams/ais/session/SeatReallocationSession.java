@@ -12,7 +12,7 @@ import ams.ais.entity.SeatAllocationHistory;
 import ams.ais.util.exception.ExistSuchCheckPointException;
 import ams.ais.util.exception.NoSuchPhaseDemandException;
 import ams.ais.util.helper.AisMsg;
-import java.sql.Date;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;

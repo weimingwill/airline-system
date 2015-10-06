@@ -6,6 +6,7 @@
 package mas.common.message;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
@@ -56,6 +57,7 @@ public class InternalMsgMDB implements MessageListener {
             if(message instanceof MapMessage){
                 
                 mapMessage = (MapMessage) message;
+                String subject = mapMessage.getString("subject");
                 String messageContent = mapMessage.getString("message");
                 String sender = mapMessage.getString("sender");
                 List<String> receivers = new ArrayList<>();
@@ -64,7 +66,14 @@ public class InternalMsgMDB implements MessageListener {
                     String receiver = mapMessage.getString("receiver" + i);
                     receivers.add(receiver);
                     systemMsg = new SystemMsg();
-                    systemMsg.create(messageContent, sender);//create a new systemMsg record
+                    systemMsg.setSubject(subject);
+                    systemMsg.setMessage(messageContent);
+                    systemMsg.setMessageFrom(sender);
+                    systemMsg.setMessageTime(new Date());
+                    systemMsg.setDeleted(false);
+                    systemMsg.setFlaged(false);
+                    systemMsg.setReaded(false);
+                    
                     systemUser = systemUserSession.getSystemUserByName(receiver);
                     systemUser.getSystemMsgs().add(systemMsg);
                     systemMsg.getSystemUsers().add(systemUser);  
