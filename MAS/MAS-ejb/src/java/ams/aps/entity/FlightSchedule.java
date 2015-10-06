@@ -9,7 +9,7 @@ import ams.ais.entity.FlightScheduleBookingClass;
 import java.io.Serializable;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -19,6 +19,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -26,26 +28,29 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class FlightSchedule implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long flightScheduleId;
     private String departTerminal;
     private String departGate;
+    @Temporal(value = TemporalType.DATE)
     private Date departDate;
     private Time departTime;
     private String arrivalTerminal;
     private String arrivalGate;
+    @Temporal(value = TemporalType.DATE)
     private Date arrivalDate;
     private Time arrivalTime;
-    private boolean deleted;
-   
+    private Boolean deleted;
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Aircraft aircraft;
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Leg leg;
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight flight;
 
     public Long getFlightScheduleId() {
@@ -55,8 +60,6 @@ public class FlightSchedule implements Serializable {
     public void setFlightScheduleId(Long flightScheduleId) {
         this.flightScheduleId = flightScheduleId;
     }
-    
-
 
     @Override
     public int hashCode() {
@@ -225,11 +228,11 @@ public class FlightSchedule implements Serializable {
         this.flight = flight;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -240,5 +243,5 @@ public class FlightSchedule implements Serializable {
     public void setFlightScheduleBookingClasses(List<FlightScheduleBookingClass> flightScheduleBookingClasses) {
         this.flightScheduleBookingClasses = flightScheduleBookingClasses;
     }
-    
+
 }
