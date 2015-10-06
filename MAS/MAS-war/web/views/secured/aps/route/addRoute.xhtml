@@ -32,7 +32,7 @@
                     <f:selectItems value="#{routeController.destList}" var="destination" itemLabel="#{destination.airportName}" itemValue="#{destination}"/>
                 </p:selectOneMenu>
 
-                <p:commandButton value="Add route" update="messages" action="#{navigationController.redirectToAddRoute()}" actionListener="#{routeController.addRouteSimple}" icon="ui-icon-check" />
+                <p:commandButton value="Add route" update="messages" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{routeController.addRouteSimple}" icon="ui-icon-check" />
 
             </h:panelGrid>
 
