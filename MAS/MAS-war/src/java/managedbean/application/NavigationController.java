@@ -261,6 +261,11 @@ public class NavigationController implements Serializable {
         return "/views/secured/ais/yield_management/viewSeatsReallocationHistory.xhtml" + REDIRECT;
     }
     
+    public String redirectToAddCheckPoint(){
+        return "/views/secured/ais/yield_management/addCheckPoint.xhtml" + REDIRECT;
+    }
+    
+    
 
     //APS
     public String redirectToAPS() {

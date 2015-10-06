@@ -128,9 +128,14 @@ public class BookingClassSession implements BookingClassSessionLocal {
             }
             for (FlightScheduleBookingClass flightScheduleBookingClass : flightScheduleBookingClasses) {
                 BookingClass bookingClass = getBookingClassById(flightScheduleBookingClass.getBookingClass().getBookingClassId());
-                BookingClassHelper bookingClassHelper
-                        = new BookingClassHelper(bookingClass, flightScheduleBookingClass.getSeatQty(), flightScheduleBookingClass.getPrice(),
-                                flightScheduleBookingClass.getPriceCoefficient(), flightScheduleBookingClass.getDemand());
+                BookingClassHelper bookingClassHelper = new BookingClassHelper();
+                bookingClassHelper.setBookingClass(bookingClass);
+                bookingClassHelper.setSeatQty(flightScheduleBookingClass.getSeatQty());
+                bookingClassHelper.setPrice(flightScheduleBookingClass.getPrice());
+                bookingClassHelper.setPriceCoefficient(flightScheduleBookingClass.getPriceCoefficient());
+                bookingClassHelper.setDemandMean(flightScheduleBookingClass.getDemandMean());
+                bookingClassHelper.setDemandDev(flightScheduleBookingClass.getDemandDev());
+                     
                 bookingClassHelpers.add(bookingClassHelper);
             }
         } catch (NoSuchFlightScheduleBookingClassException | NoSuchBookingClassException e) {

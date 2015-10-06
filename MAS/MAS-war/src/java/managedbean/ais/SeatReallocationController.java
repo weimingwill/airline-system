@@ -9,20 +9,31 @@ import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.FlightScheduleBookingClass;
+import ams.ais.entity.PhaseDemand;
+import ams.ais.entity.SeatAllocationHistory;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.FlightScheduleSessionLocal;
 import ams.ais.session.SeatReallocationSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.util.exception.ExistSuchCheckPointException;
+import ams.ais.util.exception.NeedBookingClassException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchPhaseDemandException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
+import ams.ais.util.helper.BookingClassHelper;
+import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
+import ams.ais.util.helper.FlightScheduleBookingClassHelper;
+import ams.ais.util.helper.SeatClassHelper;
+import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.FlightSchedule;
+import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.helper.ApsMessage;
 import com.sun.faces.context.SessionMap;
 import javax.inject.Named;
@@ -40,6 +51,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -87,6 +99,16 @@ public class SeatReallocationController implements Serializable {
     private List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers;
     private float newDemandMean;
     private float newDemandDev;
+    private String cabinClassType;
+    private String bookingClassName;
+    private List<FlightScheduleBookingClassHelper> flightScheduleBookingClassHelpers;
+    private List<SeatClassHelper> seatClassHelpers;
+    private FlightSchedule selectedFlightSchedule;
+    private List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers;
+    private List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers;
+    private List<BookingClassHelper> bookingClassHelpers;
+    private PhaseDemand phaseDemand;
+    private int daysBeforeDeparture;
 
     /**
      * Creates a new instance of SeatReallocationController
@@ -109,10 +131,10 @@ public class SeatReallocationController implements Serializable {
     private void initialHelper() {
         flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
     }
-    
+
     public String toYieldManagement() {
         flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
-        if(flightSchCabinClsTicFamBookingClsHelpers!=null){
+        if (flightSchCabinClsTicFamBookingClsHelpers != null) {
             return navigationController.redirectToYieldManagement();
         }
         msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
@@ -121,95 +143,117 @@ public class SeatReallocationController implements Serializable {
 
     public String toReallocateBookingClassSeats() {
         flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
-        if(flightSchCabinClsTicFamBookingClsHelpers!=null){
+        if (flightSchCabinClsTicFamBookingClsHelpers != null) {
             return navigationController.redirectToReallocationBookingClassSeats();
         }
         msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
         return "";
     }
-    
-    public void reallocateBookingClassSeats(){
-        
-        
+
+    public String toViewSeatReallocationHistory() {
+        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        if (flightSchCabinClsTicFamBookingClsHelpers != null) {
+            return navigationController.redirectToViewSeatsReallocationHistroy();
+        }
+        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
+        return "";
     }
 
-    public CabinClass getCabinClassbyName(String cabinClassName) {
-        CabinClass cabinClass = new CabinClass();
+    public String toUpdateYieldManagementModel() {
+        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        if (flightSchCabinClsTicFamBookingClsHelpers != null) {
+            return navigationController.redirectToUpdateYieldManagementModel();
+        }
+        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
+        return "";
+    }
+
+    public String toAddCheckPoint() {
+        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        if (flightSchCabinClsTicFamBookingClsHelpers != null) {
+            return navigationController.redirectToAddCheckPoint();
+        }
+        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
+        return "";
+    }
+
+    public String reallocateBookingClassSeats() {
         try {
-            cabinClass = cabinClassSession.getCabinClassByName(cabinClassName);
+            seatReallocationSession.reallocateSeatsforBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers, newDemandMean, newDemandDev);
+            msgController.addMessage("Reallocate booking class seats succesffully!");
+            return navigationController.redirectToViewFlightSchedule();
+        } catch (NoSuchFlightSchedulException | NoSuchFlightScheduleBookingClassException | NeedBookingClassException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+            return "";
+        }
+    }
+
+    public List<SeatAllocationHistory> getAllSeatAllocationHistroy() throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
+        return seatReallocationSession.getBookingClassSeatAllocationHistory(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+
+    }
+
+    public List<PhaseDemand> getAllPhaseDemands() throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
+        return seatReallocationSession.getPhaseDemands(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+
+    }
+
+    public void addPhaseDemand() throws ExistSuchCheckPointException {
+        seatReallocationSession.addPhaseDemand(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers, daysBeforeDeparture, newDemandMean, newDemandDev);
+
+    }
+
+    public PhaseDemand getPhaseDemandbyId(long id) {
+        return seatReallocationSession.getPhaseDemandbyId(id);
+    }
+
+    public void deletePhaseDemand() throws NoSuchPhaseDemandException {
+        seatReallocationSession.deletePhaseDemand(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers, daysBeforeDeparture);
+        msgController.addMessage("Delete cabin class successfully");
+    }
+
+    public List<FlightSchedule> getAllFlightSchedule() {
+        List<FlightSchedule> flightSchedules = new ArrayList<>();
+        try {
+            flightSchedules = flightScheduleSession.getAllFilghtSchedules();
+        } catch (NoSuchFlightSchedulException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return flightSchedules;
+    }
+
+    public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) {
+        List<BookingClass> bookingClasses;
+        try {
+            bookingClasses = ticketFamilySession.getTicketFamilyBookingClasses(cabinClassName, ticketFamilyName);
+        } catch (NoSuchBookingClassException e) {
+            bookingClasses = new ArrayList<>();
+        }
+        return bookingClasses;
+    }
+
+    public List<CabinClass> getFlightScheduleCabinClasses() {
+        List<CabinClass> cabinClasses;
+        try {
+            cabinClasses = flightScheduleSession.getFlightScheduleCabinCalsses(flightScheduleId);
         } catch (NoSuchCabinClassException e) {
+            return null;
         }
-        return cabinClass;
+        return cabinClasses;
     }
 
-    public TicketFamily getTicketFamilybyName(String ticketFamilyName) {
-        TicketFamily ticketFamily = new TicketFamily();
-        try {
-            ticketFamily = ticketFamilySession.getTicketFamilyByName(ticketFamilyName);
-        } catch (NoSuchTicketFamilyException e) {
-        }
-        return ticketFamily;
-    }
-
-    public FlightScheduleBookingClass getFlightScheduleBookingClassbyIDs(Long flightScheduleID, Long bookingClassIS) {
-        return seatReallocationSession.getFlightScheduleBookingClassbyFlightScheduleIDandBookingClassID(flightScheduleID, bookingClassIS);
-    }
-
-    public BookingClass getBookingClassbyName(String bookingClassName) throws NoSuchBookingClassException {
-        return bookingClassSession.search(bookingClassName);
-    }
-
-    public void reallocateBookingClassSeats(FlightScheduleBookingClass fsbc, float newDemandMean, float newDemandDev) {
-        System.out.println("SeatReallocationController:reallocateBookingClassSeats() ");
-        if (seatReallocationSession.reallocateBookingClassSeats(fsbc, newDemandMean, newDemandDev)) {
-            msgController.addMessage("Add a hub successfully!");
-//            cleanGlobalVariable();
-        } else {
-            msgController.addErrorMessage("Failed to add hub!");
-//            cleanGlobalVariable();
+    public void onViewBookingClassClick() {
+        if (selectedFlightSchedule != null) {
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.update(":form:viewBookingClass");
+            context.execute("PF('flightScheduleBookingClassDialog').show()");
         }
     }
 
-    public void onCabinClassChange() {
-        setTicketFamilys(cabinClass.getTicketFamilys());
-        ticketFamily = null;
-        flightScheduleBookingClass = null;
+    public boolean haveBookingClass() {
+        return flightScheduleSession.haveBookingClass(flightScheduleId);
     }
 
-    public void onTicketFamilyChange() {
-        try {
-            setFlightScheduleBookingClasses(flightScheduleSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(
-                    flightSchedule.getFlightScheduleId(), ticketFamily.getTicketFamilyId()));
-        } catch (NoSuchFlightScheduleBookingClassException ex) {
-            Logger.getLogger(SeatReallocationController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-//    public void onCabinClassChange() {
-//        setTicketFamilies((List<TicketFamily>) ticketFamilySession.getTicketFamilyByCabinClass());
-//        city = null;
-//        airport = null;
-//        airportsNotHub = new ArrayList<Airport>();
-//    }
-//
-//    public void onCityChange() {
-//        setAirportsNotHub((List<Airport>) routePlanningSession.getNonHubAirportListByCity(city.getId()));
-//    }
-//    private void cleanGlobalVariable() {
-//        country = null;
-//        cities = null;
-//        city = null;
-//        airports = null;
-//        airport = null;
-//        hub = null;
-//        airportsNotHub = null;
-//        route = null;
-//        routeList = null;
-//        setStopover(null);
-//        setDestination(null);
-//        hubs = (List<Airport>) routePlanningSession.getHubs();
-//    }
     public MsgController getMsgController() {
         return msgController;
     }
@@ -352,6 +396,134 @@ public class SeatReallocationController implements Serializable {
 
     public void setBookingClasses(List<BookingClass> bookingClasses) {
         this.bookingClasses = bookingClasses;
+    }
+
+    public NavigationController getNavigationController() {
+        return navigationController;
+    }
+
+    public void setNavigationController(NavigationController navigationController) {
+        this.navigationController = navigationController;
+    }
+
+    public FlightScheduleSessionLocal getFlightScheduleSession() {
+        return flightScheduleSession;
+    }
+
+    public void setFlightScheduleSession(FlightScheduleSessionLocal flightScheduleSession) {
+        this.flightScheduleSession = flightScheduleSession;
+    }
+
+    public Long getFlightScheduleId() {
+        return flightScheduleId;
+    }
+
+    public void setFlightScheduleId(Long flightScheduleId) {
+        this.flightScheduleId = flightScheduleId;
+    }
+
+    public List<FlightSchCabinClsTicFamBookingClsHelper> getFlightSchCabinClsTicFamBookingClsHelpers() {
+        return flightSchCabinClsTicFamBookingClsHelpers;
+    }
+
+    public void setFlightSchCabinClsTicFamBookingClsHelpers(List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers) {
+        this.flightSchCabinClsTicFamBookingClsHelpers = flightSchCabinClsTicFamBookingClsHelpers;
+    }
+
+    public float getNewDemandMean() {
+        return newDemandMean;
+    }
+
+    public void setNewDemandMean(float newDemandMean) {
+        this.newDemandMean = newDemandMean;
+    }
+
+    public float getNewDemandDev() {
+        return newDemandDev;
+    }
+
+    public void setNewDemandDev(float newDemandDev) {
+        this.newDemandDev = newDemandDev;
+    }
+
+    public String getCabinClassType() {
+        return cabinClassType;
+    }
+
+    public void setCabinClassType(String cabinClassType) {
+        this.cabinClassType = cabinClassType;
+    }
+
+    public String getBookingClassName() {
+        return bookingClassName;
+    }
+
+    public void setBookingClassName(String bookingClassName) {
+        this.bookingClassName = bookingClassName;
+    }
+
+    public List<FlightScheduleBookingClassHelper> getFlightScheduleBookingClassHelpers() {
+        return flightScheduleBookingClassHelpers;
+    }
+
+    public void setFlightScheduleBookingClassHelpers(List<FlightScheduleBookingClassHelper> flightScheduleBookingClassHelpers) {
+        this.flightScheduleBookingClassHelpers = flightScheduleBookingClassHelpers;
+    }
+
+    public List<SeatClassHelper> getSeatClassHelpers() {
+        return seatClassHelpers;
+    }
+
+    public void setSeatClassHelpers(List<SeatClassHelper> seatClassHelpers) {
+        this.seatClassHelpers = seatClassHelpers;
+    }
+
+    public FlightSchedule getSelectedFlightSchedule() {
+        return selectedFlightSchedule;
+    }
+
+    public void setSelectedFlightSchedule(FlightSchedule selectedFlightSchedule) {
+        this.selectedFlightSchedule = selectedFlightSchedule;
+    }
+
+    public List<TicketFamilyBookingClassHelper> getTicketFamilyBookingClassHelpers() {
+        return ticketFamilyBookingClassHelpers;
+    }
+
+    public void setTicketFamilyBookingClassHelpers(List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers) {
+        this.ticketFamilyBookingClassHelpers = ticketFamilyBookingClassHelpers;
+    }
+
+    public List<CabinClassTicketFamilyHelper> getCabinClassTicketFamilyHelpers() {
+        return cabinClassTicketFamilyHelpers;
+    }
+
+    public void setCabinClassTicketFamilyHelpers(List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers) {
+        this.cabinClassTicketFamilyHelpers = cabinClassTicketFamilyHelpers;
+    }
+
+    public List<BookingClassHelper> getBookingClassHelpers() {
+        return bookingClassHelpers;
+    }
+
+    public void setBookingClassHelpers(List<BookingClassHelper> bookingClassHelpers) {
+        this.bookingClassHelpers = bookingClassHelpers;
+    }
+
+    public PhaseDemand getPhaseDemand() {
+        return phaseDemand;
+    }
+
+    public void setPhaseDemand(PhaseDemand phaseDemand) {
+        this.phaseDemand = phaseDemand;
+    }
+
+    public int getDaysBeforeDeparture() {
+        return daysBeforeDeparture;
+    }
+
+    public void setDaysBeforeDeparture(int daysBeforeDeparture) {
+        this.daysBeforeDeparture = daysBeforeDeparture;
     }
 
 }

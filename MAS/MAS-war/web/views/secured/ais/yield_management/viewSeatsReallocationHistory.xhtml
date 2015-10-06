@@ -1,14 +1,32 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./../../../../template/AisTemplate.xhtml">
+                template="./../../../../template/AisTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
-        title
+        View seat reallocation history
     </ui:define>
 
     <ui:define name="content">
-        content
+        <p:dataTable value="#{seatReallocationController.allSeatAllocationHistroy}" var="seatAllocationHistory">
+            <p:column headerText="Reallocate date">
+                <p:outputLabel value="#{seatAllocationHistory.allocateTime}"/>
+                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" />
+            </p:column>
+            
+            <p:column headerText="Original seat number ">
+                <p:outputLabel value="#{seatAllocationHistory.seatNoBefore}"/>
+            </p:column>
+
+            <p:column headerText="Adjusted seat number">
+                <p:outputLabel value="#{seatAllocationHistory.seatNoAfter}" />
+            </p:column>
+
+        </p:dataTable>
+
+        <p:commandButton value="Back to Yield Management" action="#{navigationController.redirectToEditCabinClass()}"  />
     </ui:define>
 
 </ui:composition>

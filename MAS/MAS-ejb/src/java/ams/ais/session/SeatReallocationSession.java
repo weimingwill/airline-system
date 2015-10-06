@@ -5,22 +5,37 @@
  */
 package ams.ais.session;
 
+import ams.ais.entity.BookingClass;
+import ams.ais.entity.CabinClass;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.NormalDistribution;
 import ams.ais.entity.PhaseDemand;
 import ams.ais.entity.SeatAllocationHistory;
+import ams.ais.helper.FlightScheduleBookingClassId;
 import ams.ais.util.exception.ExistSuchCheckPointException;
+import ams.ais.util.exception.NeedBookingClassException;
+import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchPhaseDemandException;
 import ams.ais.util.helper.AisMsg;
+import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
+import ams.aps.entity.City;
+import ams.aps.entity.FlightSchedule;
+import ams.aps.util.exception.NoSuchFlightSchedulException;
+import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import mas.util.helper.SafeHelper;
@@ -32,52 +47,85 @@ import mas.util.helper.SafeHelper;
 @Stateless
 public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
+    @EJB
+    FlightScheduleSessionLocal flightScheduleSession;
+
     @PersistenceContext
     private EntityManager entityManager;
     private FlightScheduleBookingClass fsbc;
 
     @Override
-    public void addPhaseDemand(FlightScheduleBookingClass f, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException {
+    public void addPhaseDemand(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException {
 
-        validatePhaseDemand(daysBeforeDeparture, f);
-
-        PhaseDemand p = new PhaseDemand();
-        p.setDaysBeforeDeparture(daysBeforeDeparture);
-        p.setDemandMean(demandMean);
-        p.setDemandDev(demandDev);
-        List<PhaseDemand> phaseDemands = f.getPhaseDemands();
-        phaseDemands.add(p);
-        f.setPhaseDemands(phaseDemands);
-    }
-
-    @Override
-    public void deletePhaseDemand(int daysBeforeDeparture) throws NoSuchPhaseDemandException {
-        PhaseDemand phaseDemand = searchPhaseDemand(daysBeforeDeparture);
-
-        if (phaseDemand == null) {
-            throw new NoSuchPhaseDemandException(AisMsg.NO_SUCH_PHASE_DEMAND_ERROR);
-        } else {
-            phaseDemand.setIsDeleted(true);
-            entityManager.merge(phaseDemand);
+        List<BookingClass> bookingClasses = null;
+        try {
+            bookingClasses = flightScheduleSession.getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
+        } catch (NeedBookingClassException ex) {
+            Logger.getLogger(SeatReallocationSession.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
+        long bookingClassId = bookingClasses.get(0).getBookingClassId();
+        FlightScheduleBookingClassId fsbci = new FlightScheduleBookingClassId();
+        fsbci.setBookingClassId(bookingClassId);
+        fsbci.setFlightScheduleId(flightScheduleId);
+        FlightScheduleBookingClass fsbc4 = new FlightScheduleBookingClass();
+        fsbc4 = entityManager.find(FlightScheduleBookingClass.class, fsbci);
+        List<PhaseDemand> pds = fsbc4.getPhaseDemands();
+        for (PhaseDemand pdTemp : pds) {
+            if (pdTemp.getDaysBeforeDeparture() == daysBeforeDeparture) {
+                throw new ExistSuchCheckPointException(AisMsg.EXIST_SUCH_CHECK_POINT_ERROR);
+            } else {
+                PhaseDemand p = new PhaseDemand();
+                p.setDaysBeforeDeparture(daysBeforeDeparture);
+                p.setDemandMean(demandMean);
+                p.setDemandDev(demandDev);
+                pds.add(p);
+                fsbc4.setPhaseDemands(pds);
+                entityManager.persist(fsbc4);
 
-    @Override
-    public PhaseDemand searchPhaseDemand(int daysBeforeDeparture) throws NoSuchPhaseDemandException {
-        List<PhaseDemand> phaseDemands = getAllPhaseDemands();
-        if (phaseDemands == null) {
-            throw new NoSuchPhaseDemandException(AisMsg.NO_SUCH_PHASE_DEMAND_ERROR);
-        } else {
-            for (PhaseDemand phaseDemand : phaseDemands) {
-                if (daysBeforeDeparture == phaseDemand.getDaysBeforeDeparture()) {
-                    return phaseDemand;
-                }
             }
-            throw new NoSuchPhaseDemandException(AisMsg.NO_SUCH_PHASE_DEMAND_ERROR);
         }
     }
 
+    @Override
+    public void deletePhaseDemand(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, int daysBeforeDeparture) throws NoSuchPhaseDemandException {
+        List<BookingClass> bookingClasses = null;
+        try {
+            bookingClasses = flightScheduleSession.getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
+        } catch (NeedBookingClassException ex) {
+            Logger.getLogger(SeatReallocationSession.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        long bookingClassId = bookingClasses.get(0).getBookingClassId();
+        FlightScheduleBookingClassId fsbci = new FlightScheduleBookingClassId();
+        fsbci.setBookingClassId(bookingClassId);
+        fsbci.setFlightScheduleId(flightScheduleId);
+        FlightScheduleBookingClass fsbc3 = new FlightScheduleBookingClass();
+        fsbc3 = entityManager.find(FlightScheduleBookingClass.class, fsbci);
+        List<PhaseDemand> pds = fsbc3.getPhaseDemands();
+        for (PhaseDemand pdtemp : pds) {
+            if (pdtemp.getDaysBeforeDeparture() == daysBeforeDeparture) {
+                pdtemp.setIsDeleted(true);
+                pds.remove(pdtemp);
+                entityManager.merge(pdtemp);
+
+            }
+        }
+
+    }
+
+//    @Override
+//    public PhaseDemand getPhaseDemandByDays(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, int daysBeforeDeparture) throws NoSuchPhaseDemandException {
+//        Query query = entityManager.createQuery("SELECT p FROM PhaseDemand p WHERE p.daysBeforeDeparture = :inDaysBeforeDeparture and p.isDeleted = FALSE");
+//        query.setParameter("inDaysBeforeDeparture", daysBeforeDeparture);
+//        PhaseDemand phaseDemand = null;
+//        try {
+//            phaseDemand = (PhaseDemand) query.getSingleResult();
+//        } catch (NoResultException ex) {
+//            throw new NoSuchPhaseDemandException(AisMsg.NO_SUCH_PHASE_DEMAND_ERROR);
+//        }
+//        return phaseDemand;
+//    }
     @Override
     public void validatePhaseDemand(int daysBeforeDeparture, FlightScheduleBookingClass f) throws ExistSuchCheckPointException {
         List<PhaseDemand> phaseDemands = f.getPhaseDemands();
@@ -95,14 +143,13 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         return query.getResultList();
 
     }
-    
+
     @Override
-    public FlightScheduleBookingClass getFlightScheduleBookingClassbyFlightScheduleIDandBookingClassID(Long flightScheduleID, Long bookingClassID){
+    public FlightScheduleBookingClass getFlightScheduleBookingClassbyFlightScheduleIDandBookingClassID(Long flightScheduleID, Long bookingClassID) {
         Query query = entityManager.createQuery("SELECT c FROM FlightScheduleBookingClass c where c.bookingClassId = bookingClassId AND c.flightScheduleId = flightScheduleID");
         return (FlightScheduleBookingClass) query.getResultList();
-        
+
     }
-        
 
     @Override
     public List<NormalDistribution> getAllNormalDistributions() {
@@ -115,12 +162,6 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         Query query = entityManager.createQuery("SELECT c FROM SeatAllocationHistory c");
         return query.getResultList();
 
-    }
-
-    @Override
-    public List<PhaseDemand> getAllPhaseDemands() {
-        Query query = entityManager.createQuery("SELECT c FROM PhaseDemand c");
-        return query.getResultList();
     }
 
     @Override
@@ -179,7 +220,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                 }
 
             }
-        
+
         }
 
         //generate a seat reallocation record for each booking class
@@ -237,6 +278,57 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
     }
 
+    @Override
+    public void reallocateSeatsforBookingClass(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, float demandMean, float demandDev) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
+
+        List<BookingClass> bookingClasses = flightScheduleSession.getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
+        long bookingClassId = bookingClasses.get(0).getBookingClassId();
+        FlightScheduleBookingClassId fsbci = new FlightScheduleBookingClassId();
+        fsbci.setBookingClassId(bookingClassId);
+        fsbci.setFlightScheduleId(flightScheduleId);
+        FlightScheduleBookingClass fsbc2 = new FlightScheduleBookingClass();
+        fsbc2 = entityManager.find(FlightScheduleBookingClass.class, fsbci);
+        reallocateBookingClassSeats(fsbc2, demandMean, demandDev);
+
+    }
+
+    @Override
+    public List<SeatAllocationHistory> getBookingClassSeatAllocationHistory(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
+        List<BookingClass> bookingClasses = flightScheduleSession.getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
+        long bookingClassId = bookingClasses.get(0).getBookingClassId();
+        FlightScheduleBookingClassId fsbci = new FlightScheduleBookingClassId();
+        fsbci.setBookingClassId(bookingClassId);
+        fsbci.setFlightScheduleId(flightScheduleId);
+        FlightScheduleBookingClass fsbc0 = new FlightScheduleBookingClass();
+        fsbc0 = entityManager.find(FlightScheduleBookingClass.class, fsbci);
+        return fsbc0.getSeatAllocationHistory();
+    }
+
+    @Override
+    public List<PhaseDemand> getPhaseDemands(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
+        List<BookingClass> bookingClasses = flightScheduleSession.getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
+        long bookingClassId = bookingClasses.get(0).getBookingClassId();
+        FlightScheduleBookingClassId fsbci = new FlightScheduleBookingClassId();
+        fsbci.setBookingClassId(bookingClassId);
+        fsbci.setFlightScheduleId(flightScheduleId);
+        FlightScheduleBookingClass fsbc1 = new FlightScheduleBookingClass();
+        fsbc1 = entityManager.find(FlightScheduleBookingClass.class, fsbci);
+        return fsbc1.getPhaseDemands();
+    }
+
+    @Override
+    public PhaseDemand getPhaseDemandbyId(Long id) {
+        Query query = entityManager.createQuery("SELECT p from PhaseDemand p where p.id =:inID");
+        query.setParameter("inID", id);
+        PhaseDemand pd = null;
+        try {
+            pd = (PhaseDemand) query.getSingleResult();
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        return pd;
+    }
+
     public class YieldMgtRunnable implements Runnable {
 
         private FlightScheduleBookingClass f;
@@ -245,6 +337,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
             this.f = flightScheduleBookingClass;
         }
 
+        @Override
         public void run() {
             List<PhaseDemand> phaseDemands = f.getPhaseDemands();
 

@@ -1,14 +1,41 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./../../../../template/AisTemplate.xhtml">
+                template="./../../../../template/AisTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <ui:define name="title">
-        title
+        Update Yield Management Model 
     </ui:define>
 
     <ui:define name="content">
-        content
+        <h:form>
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5" columnClasses="label, value">
+
+
+
+                <p:outputLabel for="phaseDemands" value="Reallocation check point:" />
+                <p:selectOneListbox id="phaseDemand" value="#{seatReallocationController.phaseDemand}" converter="phaseDemandConverter" var="pd" filter="true" filterMatchMode="contains">
+                    <f:selectItems value="#{seatReallocationController.getAllPhaseDemands()}" var="phaseDemand" itemLabel="#{phaseDemand.daysBeforeDeparture}" itemValue="#{phaseDemand}" />
+
+                    <p:column>
+                        <h:outputText value="#{pd.demandMean}" />
+                    </p:column>
+
+                    <p:column>
+                        <h:outputText value="#{pd.demandDev}" />
+                    </p:column>
+                </p:selectOneListbox>
+
+            </h:panelGrid>
+
+            <p:commandButton action="#{seatReallocationController.deletePhaseDemand()}" value="Delete" update="messages"/>    
+            <p:commandButton value="Add a new check point" action="#{seatReallocationController.toAddCheckPoint()}" update="messages"/>
+
+        </h:form>
+
     </ui:define>
 
 </ui:composition>
