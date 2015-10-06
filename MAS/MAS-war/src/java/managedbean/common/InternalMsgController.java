@@ -64,10 +64,11 @@ public class InternalMsgController implements Serializable {
         this.username = (String) sessionMap.get("username");
     }    
     
-    public String saveMessage(String message, String[] receivers) {
+    public String saveMessage(String subject, String message, String[] receivers) {
         String messageContent = String.valueOf(message);
+        String messageSubject = String.valueOf(subject);
         try {
-            sendMessage(messageContent, receivers);
+            sendMessage(messageSubject, messageContent, receivers);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -75,7 +76,7 @@ public class InternalMsgController implements Serializable {
     }
 
     //send message
-    public void sendMessage(String message, String[] receivers) {
+    public void sendMessage(String subject, String message, String[] receivers) {
         try {
             Context c = new InitialContext();
             ConnectionFactory cf = (ConnectionFactory) c.lookup("jms/topicInternalComConnectionFactory");
@@ -91,6 +92,7 @@ public class InternalMsgController implements Serializable {
                 destination = (Destination) c.lookup("jms/topicInternalCom");
                 messageProducer = session.createProducer(destination);
                 mapMessage = session.createMapMessage();
+                mapMessage.setString("subject", subject);
                 mapMessage.setString("message", message);
                 mapMessage.setString("sender", username);
                 mapMessage.setInt("receiverNumber", receivers.length);
@@ -98,9 +100,7 @@ public class InternalMsgController implements Serializable {
                     mapMessage.setString("receiver" + i, receivers[i]);
                 }
                 messageProducer.send(mapMessage);
-                FacesContext context = FacesContext.getCurrentInstance();
-                context.getExternalContext().getFlash().setKeepMessages(true);
-                context.addMessage(null, new FacesMessage("Successful", "Your message: " + message + " have been sent"));
+                msgController.addMessage("Your message: " + message + " have been sent");
             } catch (JMSException jmsEx) {
                 jmsEx.printStackTrace();
             } finally {

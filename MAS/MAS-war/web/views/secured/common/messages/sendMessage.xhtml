@@ -10,8 +10,10 @@
         <p:panel header="Send Message">
         <h:form id="sendMessage">
             <h:panelGrid columns="2" cellpadding="5">  
-                <p:outputLabel value="Message" />
-                <p:inputText id="message" binding="#{message}"></p:inputText>
+                <p:outputLabel value="Message subject" />
+                <p:inputText id="subject" binding="#{subject}" /> 
+                <p:outputLabel value="Message content" />
+                <p:inputTextarea id="message" binding="#{message}" />
                 <p:outputLabel value="Select recivers" />
 
                 <p:selectCheckboxMenu id="menu" binding="#{receivers}" label="Receivers"
