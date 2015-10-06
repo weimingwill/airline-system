@@ -12,64 +12,71 @@
     </ui:define>
 
     <ui:define name="content">
-        <p:panel header="Creat User">
         <h:form id="createUserForm">
-            <h:panelGrid columns="2" columnClasses="label, value">
-                <h:outputText value="Username"/>
-                <p:inputText required="true" requiredMessage="Please enter username" id="username" binding="#{newUsername}"/>
-                <h:outputText value="Password"/>
-                <p:password required="true" requiredMessage="Please enter password" id="password" binding="#{newPassword}"/>
-                <h:outputText value="Name"/>
-                <p:inputText required="true" requiredMessage="Please enter name" id="name" binding="#{newName}"/>           
-                <h:outputText value="Email"/>
-                <p:inputText required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" id="email" binding="#{newEmail}">
-                    <p:ajax update="messages" event="blur" />
-                    <f:validateRegex
-                        pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                </p:inputText>
-                <h:outputText value="Phone"/>
-                <p:inputText binding="#{newPhone}"/>
-                <h:outputText value="Address"/>
-                <p:inputText binding="#{newAddress}"/>
-                <h:outputText value="Department"/>
-                <p:inputText binding="#{newDepartment}"/>
+            <p:panel header="Creat User">
+                <p:panelGrid columns="2">
+                    <p:panel header="Basic information">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="username" value="Username"/>
+                            <p:inputText class="userProfileInput" required="true" requiredMessage="Please enter username" id="username" binding="#{newUsername}"/>
+                            
+                            <p:outputLabel for="name" value="Name"/>
+                            <p:inputText class="userProfileInput" required="true" requiredMessage="Please enter name" id="name" binding="#{newName}"/>           
+                            
+                            <p:outputLabel for="email" value="Email"/>
+                            <p:inputText class="userProfileInput" required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" id="email" binding="#{newEmail}">
+                                <p:ajax update="messages" event="blur" />
+                                <f:validateRegex
+                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                            </p:inputText>
+                            
+                            <h:outputText value="Phone"/>
+                            <p:inputMask id="phone" mask="99999999" class="userProfileInput"  binding="#{newPhone}" >
+                                <p:tooltip id="phone_tooltip" for="phone" showEvent="focus" hideEvent="blur" 
+                                           value="Phone number must be 8-digit number"/>
+                            </p:inputMask>                           
+                            
+                            <h:outputText value="Address"/>
+                            <p:inputText class="userProfileInput" binding="#{newAddress}"/>
+                            
+                            <p:outputLabel for="department" value="Department"/>
+                            <p:inputText class="userProfileInput" id="department" required="true" requiredMessage="Please enter department" binding="#{newDepartment}"/>
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:panel header="Select Roles">
+                        <p:selectManyMenu id="advanced" value="#{userController.roleList}" converter="roleConverter"
+                                          var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:600px;">
+                            <f:selectItems value="#{roleController.roles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
+                            <p:ajax update="permissionTable"/>
+                            <p:column>
+                                <h:outputText value="#{role.roleName}"  />
+                            </p:column>
+                        </p:selectManyMenu>
+                    </p:panel>
 
-                <h:outputText value="Select Roles"/>
-                <ui:remove>
-                    <p:selectCheckboxMenu id="menu" binding="#{roleNames}" label="Roles"
-                                          filter="true" filterMatchMode="startsWith" panelStyle="width:300px"> 
-                        <f:selectItems value="#{roleController.roleNameList}" />
-                        <p:ajax update ="display"/>
-                    </p:selectCheckboxMenu>
-
-                    <p:outputPanel id="display" style="width:250px;">
-                        <p:dataList value="#{roleNames.value}" var="roleName" emptyMessage="No permission selected">
-                            #{roleName}
-                        </p:dataList>
-                    </p:outputPanel>
-                </ui:remove>
-
-                <p:selectManyMenu id="advanced" value="#{userController.roleList}" converter="roleConverter"
-                                  var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:300px;">
-                    <f:selectItems value="#{roleController.roles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
-                    <!--<p:ajax update="display"/>-->
-                    <p:column>
-                        <h:outputText value="#{role.roleName}"  />
+                </p:panelGrid>
+                <p:dataTable id="permissionTable" value="#{userController.roleList}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
+                    <f:facet name="header">
+                        Role Permissions
+                    </f:facet>
+                    <p:column headerText="Roles">
+                        <h:outputText value="#{role.roleName}" />
                     </p:column>
-                </p:selectManyMenu>
 
-                <ui:remove>
-                    <p:commandButton action="#{userController.createUser(newUsername.value, newPassword.value, roleList.value)}" value="Create" update="messages"/>      
-                    <p:outputLabel id="display" value="#{roleList.value}" />
-                </ui:remove>  
+                    <p:column headerText="Permisssions">
+                        <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                            <p:column>
+                                <p:outputLabel value="#{permission.permissionName}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:dataTable>                
 
                 <p:commandButton action="#{userController.createUser(newUsername.value, newName.value, 
-                                           newPassword.value, newEmail.value, newPhone.value, newAddress.value, newDepartment.value)}" 
-                                           value="Create" update="messages"/>    
+                                           newEmail.value, newPhone.value, newAddress.value, newDepartment.value)}" value="Create" update="messages"/>    
 
-            </h:panelGrid>
+            </p:panel>
         </h:form>
-        </p:panel>
     </ui:define>
 
 </ui:composition>

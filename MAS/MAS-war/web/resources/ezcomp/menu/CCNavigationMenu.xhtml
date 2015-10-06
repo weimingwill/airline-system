@@ -26,7 +26,7 @@
                 <f:facet name="options">
                     <p:outputLabel value="User: #{loginController.username} " rendered="#{loginController.loggedIn}"/>
                     <p:inputText style="margin-right:10px" placeholder="Search"/>
-                    <p:commandButton action="#{navigationController.toLogin()}" value="Login" rendered="#{not loginController.loggedIn}" icon="ui-icon-extlink"></p:commandButton>
+                    <p:commandButton action="#{navigationController.redirectToLogin()}" value="Login" rendered="#{not loginController.loggedIn}" icon="ui-icon-extlink"></p:commandButton>
                     <p:commandButton action="#{loginController.doLogout()}" value="Logout" rendered="#{loginController.loggedIn}" icon="ui-icon-extlink"></p:commandButton>
                 </f:facet>
             </p:menubar>

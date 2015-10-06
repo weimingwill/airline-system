@@ -17,6 +17,8 @@ import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.NoSuchMessageException;
 import mas.common.util.exception.NoSuchUsernameException;
 import mas.common.util.exception.ExistSuchUserException;
+import mas.common.util.exception.NeedResetDigestException;
+import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserRolePermission;
@@ -49,7 +51,8 @@ public interface SystemUserSessionLocal {
 
     public void changePassword(String username, String password) throws NoSuchUsernameException;
 
-    public void resetPassword(String email, String password) throws NoSuchEmailException;
+    public void resetPassword(String email, String resetDiget, String password) 
+            throws NoSuchEmailException, NoSuchResetDigestException, NeedResetDigestException;
 
     public void setResetDigest(String email, String resetDigest) throws NoSuchEmailException;
 
@@ -82,14 +85,13 @@ public interface SystemUserSessionLocal {
 
     public void verifyUserEmailExistence(String email) throws ExistSuchUserEmailException;
 
+    public void verifyResetPassword(String email, String resetDigest) throws NoSuchEmailException, NeedResetDigestException, NoSuchResetDigestException;
+    
     public void assignUserToRole(List<SystemUser> users, List<SystemRole> roles);
 
     public void assignUserToRole(SystemUser user, List<SystemRole> roles);
-
-//    public List<UserRolePermission> getAllUsersRolesPermissions();
-
-//    public List<RolePermission> getUserRolesPermissions(String username);
-
+            
+            //Access Control
     public List<SystemRole> getUserRoles(String username);
 
     public List<Permission> getUserPermissions(String username);
@@ -102,7 +104,4 @@ public interface SystemUserSessionLocal {
     
     public String deleteUser(String username) throws NoSuchUsernameException;
 
-//    public boolean hasSystemPermission(String username, String systemAbbr);
-//
-//    public boolean hasSystemModulePermission(String username, String systemAbbr, String systemModule);
 }

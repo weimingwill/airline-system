@@ -54,23 +54,27 @@ public class LoginController implements Serializable {
 
     public String doLogin() throws NoSuchUsernameException, InvalidPasswordException, InterruptedException {
         CountdownHelper countdownHelper = new CountdownHelper(systemUserSession);
-        boolean isHuman = captcha.validate(captchaCode);
+//        boolean isHuman = captcha.validate(captchaCode);
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         try {
             if (systemUserSession.getSystemUserByName(username).isLocked()) {
                 msgController.addErrorMessage("Your account has been locked, please reset password or wait 30mins to try again or contact systme admin");
-                return navigationController.toLogin();
+                return navigationController.redirectToLogin();
+            }
+            if (!systemUserSession.getSystemUserByName(username).isActivated()) {
+                msgController.addErrorMessage(UserMsg.NEED_ACTIVATION_ERROR);
+                return navigationController.redirectToLogin();
             }
         } catch (NoSuchUsernameException ex) {
             msgController.addErrorMessage(ex.getMessage());
-            return navigationController.toLogin();
+            return navigationController.redirectToLogin();
         }
 
-        if (!isHuman) {
-            msgController.addErrorMessage("Captcha code entered is incorrect");
-            return navigationController.toLogin();
-        }
+//        if (!isHuman) {
+//            msgController.addErrorMessage("Captcha code entered is incorrect");
+//            return navigationController.redirectToLogin();
+//        }
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
         try {
             systemUserSession.verifySystemUserPassword(username, cryptographicHelper.doMD5Hashing(password));
@@ -78,15 +82,17 @@ public class LoginController implements Serializable {
             msgController.addErrorMessage(ex.getMessage());
             countTrial++;
             if (countTrial > 2) {
-                systemUserSession.lockUser(username);
-                System.out.println("locked user " + username);
+                if (!isAdmin()) {
+                    systemUserSession.lockUser(username);
+                    System.out.println("locked user " + username);
+                }
 
                 countdownHelper.unlockUserCountDown(1800 * 1000, username); //Unlock user after 30mins
                 countTrial = 0;
             }
 
             System.out.println("Count Trial: " + countTrial);
-            return navigationController.toLogin();
+            return navigationController.redirectToLogin();
         }
         loggedIn = true;
         countTrial = 0;
@@ -103,6 +109,10 @@ public class LoginController implements Serializable {
         username = null;
         msgController.addMessage(UserMsg.LOGIN_OUT_MSG);
         return navigationController.redirectToWorkspace();
+    }
+
+    public boolean isAdmin() {
+        return systemUserSession.isAdmin(username);
     }
 
     //Getter and Setter

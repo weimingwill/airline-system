@@ -41,7 +41,7 @@ public class EmailController implements Serializable{
     @PostConstruct
     private void init(){
         emailServerName = "mailauth.comp.nus.edu.sg";
-        sender = "zweiming<zweiming@comp.nus.edu.sg>";
+        sender = "Merlion Airline Admin<zweiming@comp.nus.edu.sg>";
         mailer = "JavaMailer";
     }
     

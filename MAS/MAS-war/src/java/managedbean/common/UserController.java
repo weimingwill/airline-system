@@ -31,6 +31,8 @@ import mas.common.entity.Permission;
 import mas.common.entity.SystemRole;
 import mas.common.session.RoleSessionLocal;
 import mas.common.util.exception.ExistSuchUserEmailException;
+import mas.common.util.exception.NeedResetDigestException;
+import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserRolePermission;
@@ -84,7 +86,7 @@ public class UserController implements Serializable {
         initializeUser();
     }
 
-    public String resetPasswordSendEmail() throws InterruptedException {
+    public String resetPasswordSendEmail(String email) throws InterruptedException {
         CountdownHelper countdownHelper = new CountdownHelper(systemUserSession);
         try {
             systemUserSession.verifySystemUserEmail(email);
@@ -96,7 +98,7 @@ public class UserController implements Serializable {
             emailController.sendEmail(subject, mailContent, receiver);
             systemUserSession.setResetDigest(email, resetDigest);
 
-            countdownHelper.expireResetPasswoordCountDown(1800 * 1000, email);//Auto expire password after 30mins
+            countdownHelper.expireResetPasswoordCountDown(60 * 1000, email);//Auto expire password after 30mins
 
             msgController.addMessage("Please check your email to reset password");
             return navigationController.redirectToHome() + "?faces-redirect=true";
@@ -107,6 +109,10 @@ public class UserController implements Serializable {
     }
 
     public String resetPassword() {
+//        if (!newPassword.equals(newConfirmPassword)) {
+//            msgController.addErrorMessage("The two passwords entered are different.");
+//            return "";
+//        }
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         externalContext.getFlash().setKeepMessages(true);
@@ -114,33 +120,41 @@ public class UserController implements Serializable {
         String userEmail = params.get("email");
         String resetDigest = params.get("resetDigest");
         try {
-            systemUserSession.verifySystemUserEmail(userEmail);
-            SystemUser user = systemUserSession.getSystemUserByEmail(userEmail);
-            if (resetDigest == null) {
-                msgController.addErrorMessage("You are not authorised to reset password. Send reset email again");
-            } else if (!user.getResetDigest().equals(resetDigest)) {
-                msgController.addErrorMessage("Password reset expired. Send reset email again");
-            }
-            systemUserSession.resetPassword(userEmail, cryptographicHelper.doMD5Hashing(newPassword));
-            systemUserSession.expireResetPassword(email);//expire reset digest if it has been used;
-            newPassword = null;
+            systemUserSession.resetPassword(userEmail, resetDigest, cryptographicHelper.doMD5Hashing(newPassword));
             msgController.addMessage("Password reset successfully, you can login with new password now");
-        } catch (NoSuchEmailException e) {
-            msgController.addErrorMessage("You are not authorised to reset password. Send reset email again");
+            return navigationController.redirectToLogin();
+        } catch (NoSuchEmailException | NeedResetDigestException | NoSuchResetDigestException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+            return navigationController.redirectToPasswordResetSendEmail();
         }
-        return navigationController.redirectToPasswordResetSendEmail();
+    }
+
+    public String changePassword(String oldPassword) {
+        try {
+            CryptographicHelper cryptographicHelper = new CryptographicHelper();
+            if (!cryptographicHelper.doMD5Hashing(oldPassword).equals(password)) {
+                msgController.addErrorMessage("Old password entered is incorrect.");
+                return "";
+            }
+            newPassword = cryptographicHelper.doMD5Hashing(newPassword);
+            systemUserSession.changePassword(username, newPassword);
+            msgController.addMessage("Change password successfully!");
+            return navigationController.redirectToWorkspace();
+        } catch (NoSuchUsernameException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.toChangePassword();
     }
 
     public String createNewToken() {
         return CreateToken.createNewToken();
     }
 
-    public String createUser(String username, String password, String name, String email, 
+    public String createUser(String username, String name, String email,
             String phone, String address, String department) {
         try {
-            CryptographicHelper cryptographicHelper = new CryptographicHelper();
-            password = cryptographicHelper.doMD5Hashing(password);
-            systemUserSession.createUser(username, password, name, email, phone, address, department, roleList);
+            String newPassword = createNewToken();
+            systemUserSession.createUser(username, newPassword, name, email, phone, address, department, roleList);
             String resetDigest = createNewToken();
             String subject = "Reset Password";
             String mailContent = "Please reset password first using the following link: \n" + navigationController.toUnsecuredUsersFolder() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + resetDigest + "&email=" + email;
@@ -220,24 +234,11 @@ public class UserController implements Serializable {
         return navigationController.redirectToViewUserProfile();
     }
 
-    public String changePassword(String newPassword, String newConfirmPassword) {
-        try {
-            if (newPassword.equals(newConfirmPassword)) {
-                CryptographicHelper cryptographicHelper = new CryptographicHelper();
-                newPassword = cryptographicHelper.doMD5Hashing(newPassword);
-                systemUserSession.changePassword(username, newPassword);
-                msgController.addMessage("Change password successfully!");
-                return navigationController.redirectToWorkspace();
-            } else {
-                msgController.addErrorMessage("The password entered are different.");
-            }
-        } catch (NoSuchUsernameException ex) {
-            msgController.addErrorMessage(ex.getMessage());
-        }
-        return navigationController.toChangePassword();
+    public List<Permission> getUserPermissions() {
+        return systemUserSession.getUserPermissions(username);
     }
 
-    public List<Permission> getUserPermissions() {
+    public List<Permission> getUserPermissions(String username) {
         return systemUserSession.getUserPermissions(username);
     }
 
@@ -251,19 +252,21 @@ public class UserController implements Serializable {
             SystemUser user = getUserByUsername();
             email = user.getEmail();
             name = user.getName();
+            password = user.getPassword();
             address = user.getAddress();
             department = user.getDepartment();
             phone = user.getPhone();
         } catch (NoSuchUsernameException ex) {
             email = null;
             name = null;
+            password = "";
             address = null;
             department = null;
             phone = null;
         }
     }
-    
-    public String deleteUser(String username){
+
+    public String deleteUser(String username) {
         try {
             systemUserSession.deleteUser(username);
             msgController.addMessage("Delete user:" + username + " successfully!");
@@ -273,7 +276,7 @@ public class UserController implements Serializable {
         return navigationController.redirectToViewAllUsers();
     }
 
-    public String lockUser(String username){
+    public String lockUser(String username) {
         try {
             systemUserSession.lockUser(username);
             msgController.addMessage("Lock user:" + username + "successfully!");
@@ -283,7 +286,7 @@ public class UserController implements Serializable {
         return navigationController.redirectToViewAllUsers();
     }
 
-    public String unlockUser(String username){
+    public String unlockUser(String username) {
         try {
             systemUserSession.unlockUser(username);
             msgController.addMessage("unlock user:" + username + "successfully!");
@@ -292,14 +295,6 @@ public class UserController implements Serializable {
         }
         return navigationController.redirectToViewAllUsers();
     }
-//    public boolean hasSystemPermission(String systemAbbr){
-//        return systemUserSession.hasSystemPermission(username, systemAbbr);
-//    }
-//    
-//    public boolean hasSystemModulePermission(String systemAbbr, String systemModule){
-//        return systemUserSession.hasSystemModulePermission(username, systemAbbr, systemModule);
-//    }
-//    
 
 //
 //Getter and Setter

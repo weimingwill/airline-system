@@ -61,7 +61,7 @@ public class RoleSession implements RoleSessionLocal {
         query.setParameter("inRoleName", roleName);
         List<Permission> permissions = null;
         try {
-            permissions = (List<Permission>)query.getResultList();
+            permissions = (List<Permission>) query.getResultList();
         } catch (NoResultException ex) {
             throw new NoSuchRoleException(UserMsg.NO_SUCH_ROLE_ERROR);
         }
@@ -123,4 +123,5 @@ public class RoleSession implements RoleSessionLocal {
             return roleName;
         }
     }
+
 }

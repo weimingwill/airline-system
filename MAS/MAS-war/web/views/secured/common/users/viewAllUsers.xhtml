@@ -3,53 +3,54 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/WorkspaceTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
         View all users
     </ui:define>
 
     <ui:define name="content">
-        <p:panel header="View Users">
-            <p:dataTable value="#{userController.allUsers}" var="user">
-                <p:column headerText="Username">
-                    <p:outputLabel value="#{user.username}"/>
-                </p:column>
+        <h:form>
+            <p:panel header="View Users">
+                <p:dataTable value="#{userController.allUsers}" var="user">
+                    <p:column headerText="Username">
+                        <p:outputLabel value="#{user.username}"/>
+                    </p:column>
 
-                <p:column headerText="Email">
-                    <p:outputLabel value="#{user.email}" />
-                </p:column>
+                    <p:column headerText="Email">
+                        <p:outputLabel value="#{user.email}" />
+                    </p:column>
 
-                <p:column headerText="Role">
-                    <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
-                        <p:column>
-                            <p:outputLabel value="#{role.roleName}" />
-                        </p:column>
-                    </p:dataTable>
-                </p:column>
+                    <p:column headerText="Role">
+                        <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
+                            <p:column>
+                                <p:outputLabel value="#{role.roleName}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
 
 
-                <p:column headerText="Permissions">
-                    <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
-                        <p:column>
-                            <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
-                                <p:column>
-                                    <p:outputLabel value="#{permission.permissionName}"/>
-                                </p:column>
-                            </p:dataTable>
-                        </p:column>
-                    </p:dataTable>
-                </p:column>
+                    <p:column headerText="Permissions">
+                        <p:dataTable value="#{userController.getUserPermissions(user.username)}" var="permission">
+                            <p:column>
+                                <p:outputLabel value="#{permission.permissionName}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
 
-                <p:column headerText="Action">
-                    <h:form>
-                        <p:commandButton action="#{userController.deleteUser(user.username)}" value="Delete" update="messages"/>
-                        <p:commandButton action="#{userController.lockUser(user.username)}" value="Lock user" update="messages" rendered="#{!user.locked}" />
-                        <p:commandButton action="#{userController.unlockUser(user.username)}" value="Unlock user" update="messages" rendered="#{user.locked}" />
-                    </h:form>
-                </p:column>
-            </p:dataTable>
-        </p:panel>
+                    <p:column style="width:32px;text-align: center">
+                        <p:commandButton action="#{userController.deleteUser(user.username)}" icon="ui-icon-close" update="messages"/>
+                    </p:column>
+                    <p:column style="width:32px;text-align: center"  rendered="#{!user.isLocked()}">
+                        <p:commandButton action="#{userController.lockUser(user.username)}" icon="ui-icon-locked" update="messages"  />
+                    </p:column>
+                    <p:column style="width:32px;text-align: center"  rendered="#{user.isLocked()}">
+                        <p:commandButton action="#{userController.unlockUser(user.username)}" icon="ui-icon-unlocked" update="messages" />
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
     </ui:define>
 
 </ui:composition>

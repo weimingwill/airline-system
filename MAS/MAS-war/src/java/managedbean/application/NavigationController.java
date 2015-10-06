@@ -28,6 +28,10 @@ public class NavigationController implements Serializable {
         return "/views/secured/common/users/login.xhtml";
     }
 
+    public String redirectToLogin() {
+        return "/views/secured/common/users/login.xhtml" + REDIRECT;
+    }
+
     public String redirectToHome() {
         return "/index.xhtml";
     }

@@ -100,7 +100,7 @@ public class RoleController implements Serializable {
     public void onRoleSelected() throws NoSuchRoleException {
         permissionList = roleSession.getRolePermissions(selectedRole.getRoleName());
     }
-
+    
     public String grantRolePermissions() {
         roleSession.grantRolePermissions(selectedRole, permissionList);
         msgController.addMessage("Grant role: " + selectedRole.getRoleName() + " with permissions");

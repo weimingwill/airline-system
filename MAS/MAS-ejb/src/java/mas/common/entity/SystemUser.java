@@ -29,9 +29,9 @@ public class SystemUser implements Serializable {
     private String password;
     private String email;
     private String resetDigest;
-    private boolean locked;
-    private boolean activated;
-    private boolean deleted;
+    private Boolean locked;
+    private Boolean activated;
+    private Boolean deleted;
     private String name;
     private String address;
     private String department;
@@ -51,6 +51,9 @@ public class SystemUser implements Serializable {
         this.setPhone(phone);
         this.setAddress(address);
         this.setDepartment(department);
+        this.setActivated(false);
+        this.setDeleted(false);
+        this.setLocked(false);
     }
 
     public Long getSystemUserId() {
@@ -147,27 +150,27 @@ public class SystemUser implements Serializable {
         this.resetDigest = resetDigest;
     }
 
-    public boolean isLocked() {
+    public Boolean isLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 
-    public boolean isActivated() {
+    public Boolean isActivated() {
         return activated;
     }
 
-    public void setActivated(boolean activated) {
+    public void setActivated(Boolean activated) {
         this.activated = activated;
     }
 
-    public boolean isDeleted() {
+    public Boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 

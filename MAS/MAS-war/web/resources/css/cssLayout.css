@@ -169,3 +169,7 @@ tr.hide{
     width: 200px;
     height: 200px;
 }
+
+.userProfileInput {
+    width: 180px;   
+}

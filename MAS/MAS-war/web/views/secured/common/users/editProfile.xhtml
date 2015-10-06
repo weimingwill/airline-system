@@ -14,24 +14,32 @@
         <h:form>
             <p:panel header="User Profile">
                 <p:panelGrid columns="2">
-                    <p:outputLabel value="Username:"/>
-
-                    <p:outputLabel value="#{username}" rendered="#{not username}"/>
-                    <p:outputLabel value="Name:"/>
-                    <p:inputText value="#{userController.name}" />                
-                    <p:outputLabel value="Email:"/>
-                    <p:inputText required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" 
-                                 id="email" value="#{userController.email}">
+                    <p:outputLabel for="username" value="Username"/>
+                    <p:inputText value="#{username}" id="username" class="userProfileInput" readonly="true" />
+                    
+                    <p:outputLabel for="name" value="Name"/>
+                    <p:inputText value="#{userController.name}" required="true" requiredMessage="Please enter name" id="name" class="userProfileInput" />                
+                    
+                    <p:outputLabel for="email" value="Email"/>
+                    <p:inputText value="#{userController.email}" required="true" requiredMessage="Please enter email" 
+                                 validatorMessage="Invalid email format" id="email" class="userProfileInput">
                         <p:ajax update="messages" event="blur" />
                         <f:validateRegex
                             pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
                     </p:inputText>
-                    <p:outputLabel value="Phone:"/>
-                    <p:inputText value="#{userController.phone}" />
-                    <p:outputLabel value="Address:"/>
-                    <p:inputText value="#{userController.address}" />
-                    <p:outputLabel value="Department:"/>
-                    <p:inputText value="#{userController.department}" />
+                    
+                    <p:outputLabel value="Phone" />
+                    <p:inputMask id="phone" mask="99999999" class="userProfileInput" value="#{userController.phone}" >
+                        <p:tooltip id="phone_tooltip" for="phone" showEvent="focus" hideEvent="blur" 
+                                   value="Phone number must be 8-digit number"/>
+                    </p:inputMask>
+                    
+                    <p:outputLabel value="Address" />
+                    <p:inputText class="userProfileInput" value="#{userController.address}" />
+                    
+                    <p:outputLabel for="department" value="Department" />
+                    <p:inputText value="#{userController.department}" readonly="true" id="department" class="userProfileInput" required="true" requiredMessage="Please enter department" />
+
                 </p:panelGrid>
                 <p:commandButton value="save" action="#{userController.updateUserProfile()}" update="messages"/>
 

@@ -26,11 +26,10 @@ import mas.common.util.exception.InvalidPasswordException;
 import mas.common.util.exception.NoSuchMessageException;
 import mas.common.util.exception.NoSuchUsernameException;
 import mas.common.util.exception.ExistSuchUserException;
+import mas.common.util.exception.NeedResetDigestException;
+import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
-import mas.common.util.exception.NoUserExistException;
 import mas.common.util.helper.CreateToken;
-import mas.common.util.helper.RolePermission;
-import mas.common.util.helper.UserRolePermission;
 
 @Stateless
 public class SystemUserSession implements SystemUserSessionLocal {
@@ -42,8 +41,6 @@ public class SystemUserSession implements SystemUserSessionLocal {
     // "Insert Code > Add Business Method")
     @PersistenceContext
     private EntityManager entityManager;
-
-    private SystemMsg systemMsg;
 
     //Get user
     @Override
@@ -209,7 +206,6 @@ public class SystemUserSession implements SystemUserSessionLocal {
                 }
             }
         }
-        System.out.println("name: " + name);
         user.setName(name);
         user.setEmail(email);
         user.setPhone(phone);
@@ -264,6 +260,17 @@ public class SystemUserSession implements SystemUserSessionLocal {
                     throw new ExistSuchUserException(UserMsg.EXIST_USER_ERROR);
                 }
             }
+        }
+    }
+
+    @Override
+    public void verifyResetPassword(String email, String resetDigest)
+            throws NoSuchEmailException, NeedResetDigestException, NoSuchResetDigestException {
+        SystemUser user = getSystemUserByEmail(email);
+        if (resetDigest == null) {
+            throw new NeedResetDigestException(UserMsg.NEED_RESET_DIGEST_ERROR);
+        } else if (!user.getResetDigest().equals(resetDigest)) {
+            throw new NoSuchResetDigestException(UserMsg.NO_SUCH_RESET_DIGEST_ERROR);
         }
     }
 
@@ -344,16 +351,15 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void resetPassword(String email, String password) {
-        try {
-            SystemUser user = getSystemUserByEmail(email);
-            verifySystemUserEmail(email);
-            user.setPassword(password);
-            entityManager.merge(user);
-        } catch (NoSuchEmailException ex) {
-            Logger.getLogger(SystemUserSession.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        }
+    public void resetPassword(String email, String resetDiget, String password) 
+            throws NoSuchEmailException, NeedResetDigestException, NoSuchResetDigestException {
+        verifyResetPassword(email, resetDiget);
+        SystemUser user = getSystemUserByEmail(email);
+        verifySystemUserEmail(email);
+        user.setPassword(password);
+        user.setActivated(true);
+        entityManager.merge(user);
+        expireResetPassword(email);
     }
 
     @Override
@@ -385,37 +391,6 @@ public class SystemUserSession implements SystemUserSessionLocal {
         entityManager.merge(user);
     }
 
-//    @Override
-//    public List<UserRolePermission> getAllUsersRolesPermissions() {
-//        List<UserRolePermission> userRolePermissionList = new ArrayList<>();
-//        for (SystemUser user : getAllUsers()) {
-//            for (SystemRole role : user.getSystemRoles()) {
-//                for (Permission permission : role.getPermissions()) {
-//                    UserRolePermission userRolePermission
-//                            = new UserRolePermission(user.getUsername(), role.getRoleName(), permission.getPermissionName());
-//                    userRolePermissionList.add(userRolePermission);
-//                }
-//            }
-//        }
-//        return userRolePermissionList;
-//    }
-//    @Override
-//    public List<RolePermission> getUserRolesPermissions(String username) {
-//        try {
-//            SystemUser user = getSystemUserByName(username);
-//            List<RolePermission> rolePermissionList = new ArrayList<>();
-//            for (SystemRole role : user.getSystemRoles()) {
-//                for (Permission permission : role.getPermissions()) {
-//                    RolePermission rolePermission
-//                            = new RolePermission(role.getRoleName(), permission.getPermissionName());
-//                    rolePermissionList.add(rolePermission);
-//                }
-//            }
-//            return rolePermissionList;
-//        } catch (NoSuchUsernameException ex) {
-//            return null;
-//        }
-//    }
     @Override
     public boolean hasRole(String username, String roleName) {
         try {
@@ -441,32 +416,6 @@ public class SystemUserSession implements SystemUserSessionLocal {
         }
     }
 
-//
-//    @Override
-//    public boolean hasSystemPermission(String username, String systemAbbr) {
-//        List<Permission> permissions = getUserPermissions(username);
-//        if (permissions != null) {
-//            for (Permission permission : permissions) {
-//                if (systemAbbr.equals(permission.getSystemAbbr())) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean hasSystemModulePermission(String username, String systemAbbr, String systemModule) {
-//        List<Permission> permissions = getUserPermissions(username);
-//        if (permissions != null) {
-//            for (Permission permission : permissions) {
-//                if (systemAbbr.equals(permission.getSystemAbbr()) && systemModule.equals(permission.getSystemModule())) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
     @Override
     public String deleteUser(String username) throws NoSuchUsernameException {
         SystemUser user = getSystemUserByName(username);
