@@ -39,10 +39,9 @@
         <web-resource-collection>
             <web-resource-name>Default Secure Pages</web-resource-name>
             <description>Default Secure Pages</description>
-            <url-pattern>/views/secured/users/login.xhtml</url-pattern>
+            <url-pattern>/views/secured/common/users/login.xhtml</url-pattern>
         </web-resource-collection>
         <user-data-constraint>
-            <description/>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
