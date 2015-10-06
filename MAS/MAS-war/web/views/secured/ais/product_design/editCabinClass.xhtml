@@ -3,7 +3,8 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/AisTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
         Edit Cabin Class
@@ -12,13 +13,26 @@
     <ui:define name="content">
         <h:form>
             <h:panelGrid columns="2">
-                <p:outputLabel value="Origin Cabin Class Name: "/>
-                <p:inputText required="true" requiredMessage="Please Input Origin Cabin Class Name"  id="oldname" value="#{cabinClassController.oldname}" ></p:inputText>            
+
+                <p:outputLabel for="cabinclass" value="Edit Cabin Class:" />
+                <p:selectOneMenu id="cabinclass" var="cc" value="#{cabinClassController.selectedCabinClass}" converter="cabinClassConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
+                    <f:selectItem itemLabel="Select" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{cabinClassController.allCabinClass}" var="cabinClass" itemLabel="#{cabinClass.type}--#{cabinClass.name}"/>
+                    <p:column>
+                        <h:outputText value="#{cc.type}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{cc.name}"/>
+                    </p:column>
+                </p:selectOneMenu>
+
                 <p:outputLabel value="Cabin Class Type: "/>
                 <p:inputText required="true" requiredMessage="Please Edit Cabin Class Type"  id="type" value="#{cabinClassController.type}" ></p:inputText>
                 <h:outputLabel value="Cabin Class Name:"/>
                 <p:inputText required="true" requiredMessage="Please Edit Cabin Class Name" id="name" value="#{cabinClassController.name}" >
 
+                
+                    
                 </p:inputText>
                 <p:commandButton value="edit" action="#{cabinClassController.updateCabinClass()}" update="messages"/>
 

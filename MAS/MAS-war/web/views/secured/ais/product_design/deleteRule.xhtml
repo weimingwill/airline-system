@@ -3,7 +3,8 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/AisTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
         Delete Rule
@@ -12,12 +13,20 @@
     <ui:define name="content">
         <h:form id="deleteCabinClassForm">
             <h:panelGrid columns="2" columnClasses="label, value">
-
+                
+                 <p:outputLabel for="rule" value="Delete Rule Name:" />
+                <p:selectOneMenu id="rule" var="selectedrule" value="#{ruleController.selectedRule}" converter="ruleConverter" style="width:200px" filter="true" filterMatchMode="startsWith">
+                    <f:selectItem itemLabel="Select" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{ruleController.allRule}" var="rule" itemLabel="#{rule.name}"/>
+                    <p:column>
+                        <h:outputText value="#{selectedrule.name}"/>
+                    </p:column>
+                </p:selectOneMenu>
                                 
-                <h:outputText value="Delete through rule Name"/>
-                <p:inputText required="true" requiredMessage="Please enter rule name you want to delete" id="name" value="#{ruleController.name}">
+<!--                <h:outputText value="Delete through rule Name"/>
+                <p:inputText required="true" requiredMessage="Please enter rule name you want to delete" id="name" value="{ruleController.name}">
                
-                </p:inputText>
+                </p:inputText>-->
                 
                 <p:commandButton action="#{ruleController.deleteRule()}" value="Delete" update="messages"/>    
 

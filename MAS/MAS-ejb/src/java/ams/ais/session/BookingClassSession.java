@@ -131,11 +131,10 @@ public class BookingClassSession implements BookingClassSessionLocal {
                 BookingClassHelper bookingClassHelper = new BookingClassHelper();
                 bookingClassHelper.setBookingClass(bookingClass);
                 bookingClassHelper.setSeatQty(flightScheduleBookingClass.getSeatQty());
-                bookingClassHelper.setPrice(flightScheduleBookingClass.getPrice());
                 bookingClassHelper.setPriceCoefficient(flightScheduleBookingClass.getPriceCoefficient());
-                bookingClassHelper.setDemandMean(flightScheduleBookingClass.getDemandMean());
+                bookingClassHelper.setPrice(flightScheduleBookingClass.getPrice());
                 bookingClassHelper.setDemandDev(flightScheduleBookingClass.getDemandDev());
-                     
+                bookingClassHelper.setDemandMean(flightScheduleBookingClass.getDemandMean());
                 bookingClassHelpers.add(bookingClassHelper);
             }
         } catch (NoSuchFlightScheduleBookingClassException | NoSuchBookingClassException e) {
@@ -181,6 +180,20 @@ public class BookingClassSession implements BookingClassSessionLocal {
             //Set CabinClassTicketFamily to AircraftCabinClass
             aircraftCabinClass.setCabinClassTicketFamilys(cabinClassTicketFamilys);
             entityManager.merge(aircraftCabinClass);
+        }
+    }
+
+    @Override
+    public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightHelpers) throws NoSuchFlightScheduleBookingClassException {
+        for (FlightSchCabinClsTicFamBookingClsHelper flightHelper : SafeHelper.emptyIfNull(flightHelpers)) {
+            for (TicketFamilyBookingClassHelper tfbcHelper : SafeHelper.emptyIfNull(flightHelper.getTicketFamilyBookingClassHelpers())) {
+                for (BookingClassHelper bookingClassHelper : SafeHelper.emptyIfNull(tfbcHelper.getBookingClassHelpers())) {
+                    FlightScheduleBookingClass flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClassHelper.getBookingClass().getBookingClassId());
+                    flightScheduleBookingClass.setPrice(bookingClassHelper.getPrice());
+                    flightScheduleBookingClass.setPriceCoefficient(bookingClassHelper.getPriceCoefficient());
+                    entityManager.merge(flightScheduleBookingClass);
+                }
+            }
         }
     }
 

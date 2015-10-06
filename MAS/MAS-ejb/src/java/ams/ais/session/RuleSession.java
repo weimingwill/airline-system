@@ -70,7 +70,7 @@ public class RuleSession implements RuleSessionLocal {
     @Override
     public Rule getRuleByName(String name) {
         
-        Query query = entityManager.createQuery("SELECT u FROM Rule u WHERE u.name = :inRuleName");
+        Query query = entityManager.createQuery("SELECT u FROM Rule u WHERE u.name = :inRuleName AND u.deleted = FALSE");
         query.setParameter("inRuleName", name);
         Rule r = null;
         try {

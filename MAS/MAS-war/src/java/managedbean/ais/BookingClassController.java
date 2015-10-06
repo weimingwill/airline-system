@@ -10,6 +10,8 @@ import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
 import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.util.helper.BookingClassHelper;
+import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
@@ -32,7 +34,7 @@ import managedbean.application.NavigationController;
  */
 @Named(value = "bookingClassController")
 @RequestScoped
-public class BookingClassController implements Serializable{
+public class BookingClassController implements Serializable {
 
     @Inject
     private MsgController msgController;
@@ -47,11 +49,11 @@ public class BookingClassController implements Serializable{
     private String bookingClassName;
     private Long flightScheduleId;
     private List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers;
+    private float basicPrice;
 
     /**
      * Creates a new instance of BookingClassController
      */
-
     @PostConstruct
     public void Init() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
@@ -60,6 +62,7 @@ public class BookingClassController implements Serializable{
         System.out.println("Initialize Booking Class Controler: ");
         System.out.println("FlightScheduleId: " + flightScheduleId);
         initialHelper();
+//        initialBasicPrice();
         System.out.println("Helper: " + flightSchCabinClsTicFamBookingClsHelpers);
     }
 
@@ -97,8 +100,41 @@ public class BookingClassController implements Serializable{
         return navigationController.redirectToViewFlightSchedule();
     }
 
+    public String priceBookingClasses() {
+        try {
+            bookingClassSession.priceBookingClasses(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+            msgController.addMessage("Price booking class succesfully!");
+        } catch (NoSuchFlightScheduleBookingClassException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+            return "";
+        }
+        return navigationController.redirectToViewFlightSchedule();
+    }
+
+    public float initialBasicPrice() {
+        if (!flightSchCabinClsTicFamBookingClsHelpers.isEmpty()) {
+            for (FlightSchCabinClsTicFamBookingClsHelper helper : flightSchCabinClsTicFamBookingClsHelpers) {
+                for (TicketFamilyBookingClassHelper tfbcHelper : helper.getTicketFamilyBookingClassHelpers()) {
+                    for (BookingClassHelper bcHelper : tfbcHelper.getBookingClassHelpers()) {
+                        if (bcHelper.getPrice() == 0 && bcHelper.getPriceCoefficient() == 0) {
+                            basicPrice = 0;
+                        } else {
+                            basicPrice = bcHelper.getPrice() / bcHelper.getPriceCoefficient();
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return basicPrice;
+    }
+
     private void initialHelper() {
         flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+    }
+
+    public float getCalculatedPrice(float priceCoefficient) {
+        return priceCoefficient * basicPrice;
     }
 
     //Getter and Setter
@@ -124,6 +160,14 @@ public class BookingClassController implements Serializable{
 
     public void setFlightScheduleId(Long flightScheduleId) {
         this.flightScheduleId = flightScheduleId;
+    }
+
+    public float getBasicPrice() {
+        return basicPrice;
+    }
+
+    public void setBasicPrice(float basicPrice) {
+        this.basicPrice = basicPrice;
     }
 
 }

@@ -48,9 +48,8 @@ public class CabinClassController implements Serializable{
     }
     private String type;
     private String name;
-    /**
-     * Creates a new instance of CabinClassController
-     */
+    private CabinClass selectedCabinClass;
+
     public CabinClassController() {
     }
 
@@ -70,7 +69,7 @@ public class CabinClassController implements Serializable{
     
     public void deleteCabinClass() {
         try{
-        cabinClassSession.deleteCabinClass(name);
+        cabinClassSession.deleteCabinClass(selectedCabinClass.getName());
         msgController.addMessage("Delete cabin class successfully");
         } catch (NoSuchCabinClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -80,7 +79,7 @@ public class CabinClassController implements Serializable{
     
     public String updateCabinClass() {
         try {
-            cabinClassSession.updateCabinClass(oldname,type, name);
+            cabinClassSession.updateCabinClass(selectedCabinClass.getName(),type, name);
             msgController.addMessage("Edit cabin class successfully!");
         }catch( ExistSuchCabinClassNameException | NoSuchCabinClassException | ExistSuchCabinClassTypeException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -127,9 +126,13 @@ public class CabinClassController implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-    
-    
-    
-    
+
+    public CabinClass getSelectedCabinClass() {
+        return selectedCabinClass;
+    }
+
+    public void setSelectedCabinClass(CabinClass selectedCabinClass) {
+        this.selectedCabinClass = selectedCabinClass;
+    }
     
 }

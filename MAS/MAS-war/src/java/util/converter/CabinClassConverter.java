@@ -5,6 +5,10 @@
  */
 package util.converter;
 
+import ams.ais.entity.CabinClass;
+import ams.ais.session.CabinClassSessionLocal;
+import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.helper.AisMsg;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -12,43 +16,40 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import mas.common.entity.SystemUser;
-import mas.common.session.SystemUserSessionLocal;
-import mas.common.util.exception.NoSuchUsernameException;
-import mas.common.util.helper.UserMsg;
 
 /**
  *
- * @author winga_000
+ * @author Bowen
  */
-@FacesConverter("userConverter")
-public class UserConverter implements Converter {
-    
+
+
+@FacesConverter("cabinClassConverter")
+public class CabinClassConverter implements Converter {
+
     @EJB
-    private SystemUserSessionLocal systemUserSession;
-    
-   
+    private CabinClassSessionLocal cabinClassSession;
+
+    @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                return systemUserSession.getSystemUserByName(value);
+                return cabinClassSession.getCabinClassByName(value);
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
-            } catch (NoSuchUsernameException ex) {
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", UserMsg.NO_SUCH_USERNAME_ERROR));
+            } catch (NoSuchCabinClassException ex) {
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", AisMsg.NO_SUCH_CABIN_CLASS_ERROR));
             }
         } else {
             return null;
         }
     }
 
-   
+    @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if (object != null) {
-            return String.valueOf(((SystemUser) object).getUsername());
+        if (object != null && !(object instanceof String)) {
+            return String.valueOf(((CabinClass) object).getName());
         } else {
             return null;
         }
     }
-
 }

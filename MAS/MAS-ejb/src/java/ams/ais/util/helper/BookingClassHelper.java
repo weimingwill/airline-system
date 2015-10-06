@@ -21,7 +21,6 @@ public class BookingClassHelper {
 
     public BookingClassHelper() {
     }
-
     
     public BookingClass getBookingClass() {
         return bookingClass;
@@ -70,10 +69,5 @@ public class BookingClassHelper {
     public void setDemandDev(float demandDev) {
         this.demandDev = demandDev;
     }
-    
-    
-
-
-    
     
 }
