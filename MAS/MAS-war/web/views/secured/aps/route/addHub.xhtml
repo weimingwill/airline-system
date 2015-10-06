@@ -34,7 +34,7 @@
                     <f:selectItem itemLabel="Select Airport" itemValue="" noSelectionOption="true" />
                     <f:selectItems value="#{routeController.airportsNotHub}" var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}"/>
                 </p:selectOneMenu>
-                <p:commandButton value="Add as hub" update="messages" action="#{navigationController.redirectToAddHub()}" actionListener="#{routeController.addNewHub}" icon="ui-icon-check"/>
+                <p:commandButton value="Add as hub" update="messages" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{routeController.addNewHub}" icon="ui-icon-check"/>
 
             </h:panelGrid>
 

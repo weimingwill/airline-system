@@ -17,7 +17,7 @@
                     <f:selectItem itemLabel="Select" itemValue="" />
                     <f:selectItems value="#{routeController.hubs}" var="hub" itemLabel="#{hub.airportName}" itemValue="#{hub}" />
                 </p:selectOneMenu>
-                <p:commandButton value="Cancel hub" update="messages" action="#{navigationController.redirectToCancelHub()}" actionListener="#{routeController.cancelHub}" icon="ui-icon-check"/>
+                <p:commandButton value="Cancel hub" update="messages" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{routeController.cancelHub}" icon="ui-icon-check"/>
 
             </h:panelGrid>
 

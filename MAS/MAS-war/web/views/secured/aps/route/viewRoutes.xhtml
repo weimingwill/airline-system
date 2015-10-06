@@ -34,7 +34,7 @@
                 </p:column>
 
                 <f:facet name="footer">
-                    <p:commandButton value="Delete route and return route" update="messages" action="#{navigationController.redirectToViewRoutes()}" actionListener="#{routeController.deleteRoute}" style="left:27px" icon="ui-icon-check" />
+                    <p:commandButton value="Delete route and return route" update="messages" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{routeController.deleteRoute}" style="left:27px" icon="ui-icon-check" />
                 </f:facet>
 
             </p:dataTable>
