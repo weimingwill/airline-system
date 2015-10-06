@@ -53,9 +53,7 @@ public class RoutePlanningController implements Serializable {
     @PostConstruct
     public void init() {
 
-        stopOvers = routePlanningSession.getAllAirports();
-        stopOvers.remove(origin);
-        stopOvers.remove(destination);
+        refreshAirportList();
 
         odPass();
         autoGenerateRoute();
@@ -65,12 +63,26 @@ public class RoutePlanningController implements Serializable {
     public RoutePlanningController() {
     }
 
+    public void cleanOD() {
+        setOrigin(null);
+        setDestination(null);
+    }
+
     public void odPass() {
+        boolean refresh = false;
+        if (origin != null) {
+            refresh = true;
+        }
         Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         Airport temp = (Airport) map.get("origin");
         if (temp != null) {
             setOrigin(temp);
             setDestination((Airport) map.get("destination"));
+            if (refresh) {
+                routeList.clear();
+                refreshAirportList();
+                autoGenerateRoute();
+            }
         }
 
         System.out.println("RoutePlanningController: odPass: " + origin.getAirportName() + " " + destination.getAirportName());
@@ -155,6 +167,12 @@ public class RoutePlanningController implements Serializable {
                 msgController.addErrorMessage("Route existed! with type " + r.getType());
             }
         }
+    }
+    
+    public void refreshAirportList(){
+        stopOvers = routePlanningSession.getAllAirports();
+        stopOvers.remove(origin);
+        stopOvers.remove(destination);
     }
 
     public Airport getOrigin() {
