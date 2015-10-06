@@ -7,7 +7,7 @@ package managedbean.aps;
 
 import ams.aps.entity.AircraftType;
 import ams.aps.entity.Route;
-import ams.aps.session.RouteSchedulingSessionLocal;
+import ams.aps.session.FlightSchedulingSessionLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -29,7 +29,7 @@ public class AircraftController implements Serializable {
     private MsgController msgController;
 
     @EJB
-    private RouteSchedulingSessionLocal routeSchedulingSession;
+    private FlightSchedulingSessionLocal routeSchedulingSession;
     
     
     private List<AircraftType> typeList;

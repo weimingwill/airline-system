@@ -5,11 +5,9 @@
  */
 package managedbean.aps;
 
-import ams.aps.entity.Aircraft;
-import ams.aps.entity.AircraftType;
 import ams.aps.entity.Flight;
 import ams.aps.entity.Route;
-import ams.aps.session.RouteSchedulingSessionLocal;
+import ams.aps.session.FlightSchedulingSessionLocal;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -31,7 +29,7 @@ public class FlightController {
     private MsgController msgController;
 
     @EJB
-    private RouteSchedulingSessionLocal routeSchedulingSession;
+    private FlightSchedulingSessionLocal flightSchedulingSession;
 
     private Flight flight;
     private Route route;
@@ -51,10 +49,10 @@ public class FlightController {
     }
 
     public void addFlight(ActionEvent event) {
-        if (!routeSchedulingSession.checkFlightNotExisted(flightNo)) {
+        if (!flightSchedulingSession.checkFlightNotExisted(flightNo)) {
             msgController.addErrorMessage("Flight no. existed already!");
         } else {
-            if (routeSchedulingSession.createFlight(getFlightNo(), getRoute().getRouteId())) {
+            if (flightSchedulingSession.createFlight(getFlightNo(), getRoute().getRouteId())) {
                 msgController.addMessage("New flight assigned!");
             } else {
                 msgController.addErrorMessage("Fail to assign flight to route!");
@@ -63,14 +61,14 @@ public class FlightController {
     }
 
     public void getRoutes() {
-        setAvailibleRoutes(routeSchedulingSession.getAvailableRoutes());
+        setAvailibleRoutes(flightSchedulingSession.getAvailableRoutes());
     }
 
     public void resetFlightNo(String oldFlightNo, String newFlightNo) {
-        if (!routeSchedulingSession.checkFlightNoExistence(flightNo)) {
+        if (!flightSchedulingSession.checkFlightNoExistence(flightNo)) {
             msgController.addErrorMessage("Flight no. not existed!");
         }else{
-            if (routeSchedulingSession.changeFlightNo(oldFlightNo, newFlightNo)) {
+            if (flightSchedulingSession.changeFlightNo(oldFlightNo, newFlightNo)) {
                 msgController.addMessage("Flight no. changed!");
             } else {
                 msgController.addErrorMessage("Fail to change flight no.!");

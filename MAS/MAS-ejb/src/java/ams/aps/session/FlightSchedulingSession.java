@@ -10,11 +10,8 @@ import ams.aps.entity.AircraftType;
 import ams.aps.entity.Airport;
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
-import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
 import ams.aps.entity.RouteLeg;
-import java.sql.Date;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -29,7 +26,7 @@ import javax.persistence.Query;
  * @author ChuningLiu
  */
 @Stateless
-public class RouteSchedulingSession implements RouteSchedulingSessionLocal {
+public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
 
     @PersistenceContext
     EntityManager em;
