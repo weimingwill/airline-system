@@ -107,7 +107,7 @@ public class RuleSession implements RuleSessionLocal {
 
     @Override
     public List<Rule> getAllOtherRule(String name) {
-        Query query = entityManager.createQuery("SELECT m FROM Rule m where m.name <> :name");
+        Query query = entityManager.createQuery("SELECT m FROM Rule m where m.name <> :name AND m.deleted = FALSE");
         query.setParameter("name", name);
         return query.getResultList();
     }
