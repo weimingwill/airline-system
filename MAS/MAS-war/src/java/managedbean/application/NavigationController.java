@@ -245,6 +245,10 @@ public class NavigationController implements Serializable {
         return "/views/secured/ais/product_design/productDesign.xhtml" + REDIRECT;
     }
 
+    public String redirectToPriceBookingClasses() {
+        return "/views/secured/ais/booking_class/priceBookingClasses.xhtml" + REDIRECT;
+    }
+
     //Yield Management 
     public String redirectToYieldManagement() {
         return "/views/secured/ais/yield_management/yieldManagement.xhtml" + REDIRECT;
@@ -262,7 +266,20 @@ public class NavigationController implements Serializable {
         return "/views/secured/ais/yield_management/viewSeatsReallocationHistory.xhtml" + REDIRECT;
     }
 
-    //Airline Planning
+    //Airline Planning System
+    //Fleet Planning Module
+    public String redirectToAPS() {
+        return "/views/secured/aps/apsMain.xhtml" + REDIRECT;
+    }
+
+    public String toViewAircraftModel() {
+        return "/views/secured/aps/fleet/viewAircraftModel.xhtml" + REDIRECT;
+    }
+
+    public String toAddNewAircraft() {
+        return "/views/secured/aps/fleet/addNewAircraft.xhtml" + REDIRECT;
+    }
+
     public String toViewFleet() {
         return "/views/secured/aps/fleet/viewFleet.xhtml" + REDIRECT;
     }
@@ -275,65 +292,37 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/fleet/viewRetiredFleet.xhtml" + REDIRECT;
     }
 
+    // Route Planning Module
     public String toAddHub() {
-        return "/views/secured/aps/route/addHub.xhtml?faces-redirect=true";
-    }
-
-    public String redirectToPriceBookingClasses() {
-        return "/views/secured/ais/booking_class/priceBookingClasses.xhtml" + REDIRECT;
-    }
-
-    //APS
-    public String redirectToAPS() {
-        return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
-    }
-
-    public String toViewAircraftModel() {
-        return "/views/secured/aps/fleet/viewAircraftModel.xhtml";
-    }
-
-    public String toAddNewAircraft() {
-        return "/views/secured/aps/fleet/addNewAircraft.xhtml";
-    }
-
-    public String redirectToAddHub() {
         return "/views/secured/aps/route/addHub.xhtml" + REDIRECT;
     }
 
-    public String redirectToCancelHub() {
+    public String toCancelHub() {
         return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
-
-    }
-
-    public String redirectToAddRoute() {
-        return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
-
-    }
-
-    public String redirectToViewRoutes() {
-        return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
-
-    }
-
-    public String redirectToViewObsoleteRoutes() {
-        return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
-
     }
 
     public String toAddRoute() {
-        return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
+        return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
     }
 
     public String toCheckRoute() {
-        return "/views/secured/aps/route/checkRouteExistence.xhtml?faces-redirect=true";
+        return "/views/secured/aps/route/checkRouteExistence.xhtml" + REDIRECT;
     }
 
     public String toGenerateRoute() {
-        return "/views/secured/aps/route/generateRoute.xhtml?faces-redirect=true";
+        return "/views/secured/aps/route/generateRoute.xhtml" + REDIRECT;
     }
 
     public String toCustomizeRoute() {
-        return "/views/secured/aps/route/customizeRoute.xhtml?faces-redirect=true";
+        return "/views/secured/aps/route/customizeRoute.xhtml" + REDIRECT;
+    }
+
+    public String toViewRoutes() {
+        return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
+    }
+
+    public String toViewObsoleteRoutes() {
+        return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
     }
 
     public String redirectToCurrentPage() {

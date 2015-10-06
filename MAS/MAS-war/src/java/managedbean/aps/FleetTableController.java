@@ -77,7 +77,7 @@ public class FleetTableController implements Serializable {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String uri = request.getRequestURI();
         uri = uri.substring(uri.lastIndexOf("/") + 1, uri.indexOf('.', uri.lastIndexOf("/")));
-
+        System.out.println("FleetTableController: init() uri = " + uri);
         switch (uri) {
             case "retireAircraft":
                 status[0] = AircraftStatus.IDLE;
