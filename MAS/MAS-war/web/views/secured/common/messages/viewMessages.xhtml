@@ -4,58 +4,66 @@
                 template="./../../../../template/WorkspaceTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="title">
         View Message
     </ui:define>
 
     <ui:define name="content">
-        <p:panel header="View Messgae">
-            <p:tabView orientation="left" >
-                <p:tab title="Godfather Part I" >
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText
-                            value="The story begins as Don Vito Corleone..." />
-                    </h:panelGrid>
-                </p:tab>
-                <p:tab title="Godfather Part II">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="Francis Ford Coppola's legendary..." />
-                    </h:panelGrid>
-                </p:tab>
-                <p:tab title="Godfather Part III">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="After a break of more than 15 years..." />
-                    </h:panelGrid>
-                </p:tab>
-            </p:tabView>
-            <p:dataTable value="#{internalMsgController.userMessages}" rowStyleClass="#{message.deleted ? 'hide' : 'show' }" var="message">
-                <p:column headerText="From">
-                    <p:outputLabel value="#{message.messageFrom}"/>
-                </p:column>
-                <p:column headerText="Message">
-                    <h:form>
-                        <p:outputLabel value="#{message.message} " class="#{message.flaged ? 'flagMessage' : 'unflagMessage'}" />
-                        <p:commandButton action="#{navigationController.redirectToViewMessages()}" value="flag"
-                                         actionListener="#{internalMsgController.flagMessage(message.message)}" rendered="#{not message.flaged}" icon="ui-icon-star"/>
-                        <p:commandButton action="#{navigationController.redirectToViewMessages()}" value="unflag"
-                                         actionListener="#{internalMsgController.unFlagMessage(message.message)}" rendered="#{message.flaged}" icon="ui-icon-star"/>
-                    </h:form>
-                </p:column>            
-                <p:column headerText="Action">
-                    <h:form>
-                        <p:commandButton value="delete" action="#{navigationController.redirectToViewMessages()}" actionListener="#{internalMsgController.deleteMessage(message.message)}" update="messages" icon="ui-icon-close">
-                            <p:confirm header="Confirmation" message="Are you sure to delete this message?" icon="ui-icon-alert" />
-                        </p:commandButton>
-                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                        </p:confirmDialog>
-                    </h:form>
-                </p:column>
-            </p:dataTable>
-        </p:panel>
+        <h:form>
+            <p:panel header="View Messgae">
+                <p:tabView orientation="left" value="#{internalMsgController.systemMsgHelpers}" var="msg">
+                    <p:tab title="#{msg.sender}" >
+                        <ui:repeat value="#{msg.msgs}"  var="message">
+                            <p:panel header="#{message.subject}" widgetVar="messagePanel#{message.systemMsgId}" toggleable="true"  style="margin-bottom: 20px;">
+
+                                <p:outputLabel value="#{message.message}" />
+                                <p:ajax event="close"  update="messages" />
+                                <p:ajax event="toggle" update="messages" />
+
+                                <f:facet name="actions">
+                                    <p:outputLabel value="#{message.messageTime}" />
+                                    <h:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" onclick="PF('messagePanel#{message.systemMsgId}').close()" >
+                                        <h:outputText styleClass="ui-icon ui-icon-close" />
+                                    </h:commandLink>
+                                    <h:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" onclick="PF('messagePanel#{message.systemMsgId}').toggle()" >
+                                        <h:outputText styleClass="ui-icon ui-icon-star" />
+                                    </h:commandLink>
+
+                                </f:facet>
+                            </p:panel>
+                        </ui:repeat>
+                    </p:tab>
+                </p:tabView>
+                <p:dataTable value="#{internalMsgController.userMessages}" rowStyleClass="#{message.deleted ? 'hide' : 'show' }" var="message">
+                    <p:column headerText="From">
+                        <p:outputLabel value="#{message.messageFrom}"/>
+                    </p:column>
+                    <p:column headerText="Message">
+                        <h:form>
+                            <p:outputLabel value="#{message.message} " class="#{message.flaged ? 'flagMessage' : 'unflagMessage'}" />
+                            <p:commandButton action="#{navigationController.redirectToViewMessages()}" value="flag"
+                                             actionListener="#{internalMsgController.flagMessage(message.message)}" rendered="#{not message.flaged}" icon="ui-icon-star"/>
+                            <p:commandButton action="#{navigationController.redirectToViewMessages()}" value="unflag"
+                                             actionListener="#{internalMsgController.unFlagMessage(message.message)}" rendered="#{message.flaged}" icon="ui-icon-star"/>
+                        </h:form>
+                    </p:column>            
+                    <p:column headerText="Action">
+                        <h:form>
+                            <p:commandButton value="delete" action="#{navigationController.redirectToViewMessages()}" actionListener="#{internalMsgController.deleteMessage(message.message)}" update="messages" icon="ui-icon-close">
+                                <p:confirm header="Confirmation" message="Are you sure to delete this message?" icon="ui-icon-alert" />
+                            </p:commandButton>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+                        </h:form>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
     </ui:define>
 
 </ui:composition>

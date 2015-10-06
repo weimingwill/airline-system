@@ -30,6 +30,7 @@ import mas.common.util.exception.NeedResetDigestException;
 import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.helper.CreateToken;
+import mas.common.util.helper.SystemMsgHelper;
 
 @Stateless
 public class SystemUserSession implements SystemUserSessionLocal {
@@ -178,6 +179,49 @@ public class SystemUserSession implements SystemUserSessionLocal {
             }
         }
         return message;
+    }
+
+    @Override
+    public List<SystemMsgHelper> getSystemMsgHelpers(String username) {
+        List<SystemMsgHelper> systemMsgHelpers = new ArrayList<>();
+        List<SystemMsg> msgs = getUserMessages(username);
+        if (msgs != null) {
+            for (String sender : getSystemMsgSenders(username)) {
+                SystemMsgHelper systemMsgHelper = new SystemMsgHelper();
+                systemMsgHelper.setSender(sender);
+                systemMsgHelper.setMsgs(getSenderMsgs(username, sender));
+                systemMsgHelpers.add(systemMsgHelper);
+            }
+        }
+        return systemMsgHelpers;
+    }
+
+    @Override
+    public List<String> getSystemMsgSenders(String username) {
+        List<SystemMsg> msgs = getUserMessages(username);
+        List<String> senders = new ArrayList<>();
+        if (msgs != null) {
+            for (SystemMsg msg : msgs) {
+                if (!senders.contains(msg.getMessageFrom())) {
+                    senders.add(msg.getMessageFrom());
+                }
+            }
+        }
+        return senders;
+    }
+
+    @Override
+    public List<SystemMsg> getSenderMsgs(String username, String sender) {
+        List<SystemMsg> msgs = getUserMessages(username);
+        List<SystemMsg> senderMsgs = new ArrayList<>();
+        if (msgs != null) {
+            for (SystemMsg msg : msgs) {
+                if (msg.getMessageFrom().equals(sender)) {
+                    senderMsgs.add(msg);
+                }
+            }
+        }
+        return senderMsgs;
     }
 
     @Override
@@ -351,7 +395,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void resetPassword(String email, String resetDiget, String password) 
+    public void resetPassword(String email, String resetDiget, String password)
             throws NoSuchEmailException, NeedResetDigestException, NoSuchResetDigestException {
         verifyResetPassword(email, resetDiget);
         SystemUser user = getSystemUserByEmail(email);

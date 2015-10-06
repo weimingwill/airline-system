@@ -20,8 +20,7 @@ import mas.common.util.exception.ExistSuchUserException;
 import mas.common.util.exception.NeedResetDigestException;
 import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
-import mas.common.util.helper.RolePermission;
-import mas.common.util.helper.UserRolePermission;
+import mas.common.util.helper.SystemMsgHelper;
 
 /**
  *
@@ -76,6 +75,12 @@ public interface SystemUserSessionLocal {
 
     public String deleteMessage(String username, String message) throws NoSuchMessageException;
 
+    public List<SystemMsgHelper> getSystemMsgHelpers(String username);
+    
+    public List<String> getSystemMsgSenders(String username);
+    
+    public List<SystemMsg> getSenderMsgs(String username, String sender);
+    
     //Verification
     public void verifySystemUserPassword(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException;
 

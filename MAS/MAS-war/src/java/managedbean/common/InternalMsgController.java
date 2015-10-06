@@ -32,6 +32,7 @@ import managedbean.application.NavigationController;
 import mas.common.entity.SystemMsg;
 import mas.common.session.SystemUserSessionLocal;
 import mas.common.util.exception.NoSuchMessageException;
+import mas.common.util.helper.SystemMsgHelper;
 
 /**
  *
@@ -54,7 +55,7 @@ public class InternalMsgController implements Serializable {
     private MsgController msgController;
 
     //Initialization
-    public InternalMsgController() {   
+    public InternalMsgController() {
     }
 
     @PostConstruct
@@ -62,8 +63,8 @@ public class InternalMsgController implements Serializable {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         this.username = (String) sessionMap.get("username");
-    }    
-    
+    }
+
     public String saveMessage(String subject, String message, String[] receivers) {
         String messageContent = String.valueOf(message);
         String messageSubject = String.valueOf(subject);
@@ -118,10 +119,14 @@ public class InternalMsgController implements Serializable {
         }
     }
 
+    public List<SystemMsgHelper> getSystemMsgHelpers() {
+        return systemUserSession.getSystemMsgHelpers(username);
+    }
+
     public List<SystemMsg> getUserMessages() {
         return systemUserSession.getUserMessages(username);
     }
-    
+
     public List<SystemMsg> getUnreadMessages() {
         return systemUserSession.getUserMessages(username);
     }
@@ -140,8 +145,8 @@ public class InternalMsgController implements Serializable {
         } catch (NoSuchMessageException e) {
         }
     }
-    
-    public void flagMessage(String message){
+
+    public void flagMessage(String message) {
         try {
             systemUserSession.flagMessage(username, message);
             msgController.addMessage("Flag message " + message + " successfully!");
@@ -149,8 +154,8 @@ public class InternalMsgController implements Serializable {
             msgController.addErrorMessage(ex.getMessage());
         }
     }
-    
-    public void unFlagMessage(String message){
+
+    public void unFlagMessage(String message) {
         try {
             systemUserSession.unFlagMessage(username, message);
             msgController.addMessage("Unflag message " + message + " successfully!");
@@ -158,8 +163,8 @@ public class InternalMsgController implements Serializable {
             msgController.addErrorMessage(ex.getMessage());
         }
     }
-    
-    public void deleteMessage(String message){
+
+    public void deleteMessage(String message) {
         try {
             systemUserSession.deleteMessage(username, message);
             msgController.addMessage("Delete message " + message + " successfully!");
@@ -168,14 +173,14 @@ public class InternalMsgController implements Serializable {
         }
     }
 
-    public String getMessageTableRowClasses(){
+    public String getMessageTableRowClasses() {
         StringBuilder sb = new StringBuilder();
         for (SystemMsg msg : getUserMessages()) {
             sb.append((msg.isDeleted()) ? "hide," : "show,");
         }
         return sb.toString();
     }
-    
+
     //Getter and Setter
     public String getMessage() {
         return message;

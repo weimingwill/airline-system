@@ -29,7 +29,7 @@
                 </p:dataList>
             </p:outputPanel>
                 
-                <p:commandButton action="#{internalMsgController.saveMessage(message.value, receivers.value)}" value="send message" update="messages"  />
+                <p:commandButton action="#{internalMsgController.saveMessage(subject.value, message.value, receivers.value)}" value="send message" update="messages"  />
 
             </h:panelGrid>  
 
