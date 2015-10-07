@@ -69,11 +69,11 @@ public interface SystemUserSessionLocal {
 
     public void readUnreadMessages(String username) throws NoSuchMessageException;
 
-    public void flagMessage(String username, String message) throws NoSuchMessageException;
+    public void flagMessage(String username, Long messageId) throws NoSuchMessageException;
 
-    public void unFlagMessage(String username, String message) throws NoSuchMessageException;
+    public void unFlagMessage(String username, Long messageId) throws NoSuchMessageException;
 
-    public String deleteMessage(String username, String message) throws NoSuchMessageException;
+    public Long deleteMessage(String username, Long messageId) throws NoSuchMessageException;
 
     public List<SystemMsgHelper> getSystemMsgHelpers(String username);
     

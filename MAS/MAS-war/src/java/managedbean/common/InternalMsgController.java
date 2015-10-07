@@ -13,6 +13,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIOutput;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -74,6 +76,10 @@ public class InternalMsgController implements Serializable {
             ex.printStackTrace();
         }
         return navigationController.redirectToSendMessages();
+    }
+
+    public void print() {
+        System.out.println("print");
     }
 
     //send message
@@ -146,31 +152,32 @@ public class InternalMsgController implements Serializable {
         }
     }
 
-    public void flagMessage(String message) {
+    public void flagMessage(Long messageId) {
         try {
-            systemUserSession.flagMessage(username, message);
-            msgController.addMessage("Flag message " + message + " successfully!");
+            systemUserSession.flagMessage(username, messageId);
+            msgController.addMessage("Flag message successfully!");
         } catch (NoSuchMessageException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
     }
 
-    public void unFlagMessage(String message) {
+    public void unFlagMessage(Long messageId) {
         try {
-            systemUserSession.unFlagMessage(username, message);
+            systemUserSession.unFlagMessage(username, messageId);
             msgController.addMessage("Unflag message " + message + " successfully!");
         } catch (NoSuchMessageException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
     }
-
-    public void deleteMessage(String message) {
+    
+    public String deleteMessage(Long messageId) {
         try {
-            systemUserSession.deleteMessage(username, message);
-            msgController.addMessage("Delete message " + message + " successfully!");
+            systemUserSession.deleteMessage(username, messageId);
+            msgController.addMessage("Delete message successfully!");
         } catch (NoSuchMessageException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
+        return navigationController.redirectToViewMessages();
     }
 
     public String getMessageTableRowClasses() {

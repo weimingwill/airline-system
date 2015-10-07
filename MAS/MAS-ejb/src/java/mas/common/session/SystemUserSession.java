@@ -98,9 +98,15 @@ public class SystemUserSession implements SystemUserSessionLocal {
     //User Messages
     @Override
     public List<SystemMsg> getUserMessages(String username) {
+        List<SystemMsg> msgs = new ArrayList<>();
         try {
             SystemUser user = getSystemUserByName(username);
-            return user.getSystemMsgs();
+            for (SystemMsg msg : user.getSystemMsgs()) {
+                if (!msg.isDeleted()) {
+                    msgs.add(msg);
+                }
+            }
+            return msgs;
         } catch (NoSuchUsernameException e) {
             return null;
         }
@@ -136,13 +142,13 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void flagMessage(String username, String message) throws NoSuchMessageException {
+    public void flagMessage(String username, Long messageId) throws NoSuchMessageException {
         List<SystemMsg> msgs = getUserMessages(username);
         if (msgs == null) {
             throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
         } else {
             for (SystemMsg msg : msgs) {
-                if (msg.getMessage().equals(message)) {
+                if (msg.getSystemMsgId() == messageId) {
                     msg.setFlaged(true);
                     entityManager.merge(msg);
                 }
@@ -151,13 +157,13 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public void unFlagMessage(String username, String message) throws NoSuchMessageException {
+    public void unFlagMessage(String username, Long messageId) throws NoSuchMessageException {
         List<SystemMsg> msgs = getUserMessages(username);
         if (msgs == null) {
             throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
         } else {
             for (SystemMsg msg : msgs) {
-                if (msg.getMessage().equals(message)) {
+                if (msg.getSystemMsgId() == messageId) {
                     msg.setFlaged(false);
                     entityManager.merge(msg);
                 }
@@ -166,19 +172,19 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public String deleteMessage(String username, String message) throws NoSuchMessageException {
+    public Long deleteMessage(String username, Long messageId) throws NoSuchMessageException {
         List<SystemMsg> msgs = getUserMessages(username);
         if (msgs == null) {
             throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
         } else {
             for (SystemMsg msg : msgs) {
-                if (msg.getMessage().equals(message)) {
+                if (msg.getSystemMsgId() == messageId) {
                     msg.setDeleted(true);
                     entityManager.merge(msg);
                 }
             }
         }
-        return message;
+        return messageId;
     }
 
     @Override
