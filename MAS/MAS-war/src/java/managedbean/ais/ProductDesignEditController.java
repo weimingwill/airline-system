@@ -41,6 +41,8 @@ public class ProductDesignEditController implements Serializable{
     
     @EJB
     private CabinClassSessionLocal cabinClassSession;
+    
+    @EJB
     private RuleSessionLocal ruleSession;
     
     private CabinClass selectedCabinClass;
@@ -66,7 +68,11 @@ public class ProductDesignEditController implements Serializable{
     
     public String updateRule() {
         try {
-            System.out.printf("selectedrule is: "+ selectedRule.getName());
+
+            System.out.printf("selected rule id is: "+selectedRule);
+            System.out.printf("selected rule name is "+ selectedRule.getName());
+            System.out.println("rule session =" + ruleSession);
+            
             ruleSession.updateRule(selectedRule.getRuleId(),selectedRule.getName());
             msgController.addMessage("Edit rule successfully!");
         }catch( ExistSuchRuleException | NoSuchRuleException  ex) {

@@ -83,6 +83,8 @@ public class RuleSession implements RuleSessionLocal {
 
     @Override
     public void updateRule(Long ruleId, String name) throws NoSuchRuleException, ExistSuchRuleException {
+        System.out.print("rule id is" + ruleId);
+        System.out.print("Rule name is" +name);
         Rule rule = getRuleById(ruleId);
         if (rule == null) {
             throw new NoSuchRuleException(AisMsg.NO_SUCH_RULE_ERROR);
