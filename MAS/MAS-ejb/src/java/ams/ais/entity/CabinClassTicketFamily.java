@@ -44,6 +44,9 @@ public class CabinClassTicketFamily implements Serializable {
     @Column(name = "SEATQTY")
     private Integer seatQty;
     
+    @Column(name = "PRICE")
+    private Float price;
+    
     @Column(name = "DELETED")
     private Boolean deleted;
 
@@ -86,4 +89,13 @@ public class CabinClassTicketFamily implements Serializable {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+    public Float getPrice() {
+        return price;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
+    }
+    
 }

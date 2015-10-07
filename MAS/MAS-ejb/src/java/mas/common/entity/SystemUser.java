@@ -29,9 +29,11 @@ public class SystemUser implements Serializable {
     private String password;
     private String email;
     private String resetDigest;
-    private boolean locked;
-    private boolean activated;
-    private boolean deleted;
+    private Boolean locked;
+    private Boolean activated;
+    private Boolean deleted;
+    private String status;
+    
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemRole> systemRoles = new ArrayList<>();
     @ManyToMany(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
@@ -137,29 +139,35 @@ public class SystemUser implements Serializable {
         this.resetDigest = resetDigest;
     }
 
-    public boolean isLocked() {
+    public Boolean getLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 
-    public boolean isActivated() {
+    public Boolean getActivated() {
         return activated;
     }
 
-    public void setActivated(boolean activated) {
+    public void setActivated(Boolean activated) {
         this.activated = activated;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
-    
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }    
 }
