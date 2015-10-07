@@ -22,7 +22,8 @@ import ams.aps.entity.City;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
-import java.sql.Date;
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -114,18 +115,6 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
     }
 
-//    @Override
-//    public PhaseDemand getPhaseDemandByDays(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, int daysBeforeDeparture) throws NoSuchPhaseDemandException {
-//        Query query = entityManager.createQuery("SELECT p FROM PhaseDemand p WHERE p.daysBeforeDeparture = :inDaysBeforeDeparture and p.isDeleted = FALSE");
-//        query.setParameter("inDaysBeforeDeparture", daysBeforeDeparture);
-//        PhaseDemand phaseDemand = null;
-//        try {
-//            phaseDemand = (PhaseDemand) query.getSingleResult();
-//        } catch (NoResultException ex) {
-//            throw new NoSuchPhaseDemandException(AisMsg.NO_SUCH_PHASE_DEMAND_ERROR);
-//        }
-//        return phaseDemand;
-//    }
     @Override
     public void validatePhaseDemand(int daysBeforeDeparture, FlightScheduleBookingClass f) throws ExistSuchCheckPointException {
         List<PhaseDemand> phaseDemands = f.getPhaseDemands();
@@ -164,61 +153,60 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
     }
 
-    @Override
-    public boolean reallocateBookingClassSeats(FlightScheduleBookingClass f, float newDemandMean, float newDemandDev) {
+    public boolean reallocateBookingClassSeats(List<FlightScheduleBookingClass> restFlightScheduleBookingClasses, FlightScheduleBookingClass f, float newDemandMean, float newDemandDev) {
         fsbc = f;
         float price = fsbc.getPrice();
-        List<FlightScheduleBookingClass> flightScheduleBookingClasses = getAllFlightScheduleBookingClasses();
+        System.out.println(price);
 
         int sum = 0;
-        for (FlightScheduleBookingClass flightScheduleBookingClassTemp : SafeHelper.emptyIfNull(flightScheduleBookingClasses)) {
+        for (FlightScheduleBookingClass flightScheduleBookingClassTemp : restFlightScheduleBookingClasses) {
             int count = 0;
-            if (flightScheduleBookingClassTemp.getFlightScheduleBookingClassId().getFlightScheduleId() == fsbc.getFlightScheduleBookingClassId().getFlightScheduleId()) {
-                if (flightScheduleBookingClassTemp.getFlightScheduleBookingClassId().getBookingClassId() != fsbc.getFlightScheduleBookingClassId().getBookingClassId()) {
-                    if (flightScheduleBookingClassTemp.getPrice() < fsbc.getPrice()) {
-                        float lowerClassPrice = flightScheduleBookingClassTemp.getPrice();
-                        float p = lowerClassPrice / price;
+            if (flightScheduleBookingClassTemp.getFlightScheduleBookingClassId().getBookingClassId() != fsbc.getFlightScheduleBookingClassId().getBookingClassId()) {
+                if (flightScheduleBookingClassTemp.getPrice() < fsbc.getPrice()) {
+                    
+                    float p = flightScheduleBookingClassTemp.getPrice()/fsbc.getPrice();
 
-                        int lowerClassSeatNo = flightScheduleBookingClassTemp.getSeatQty();
-                        for (int i = 0; i <= lowerClassSeatNo; i++) {
-                            float zScore = (i - newDemandMean) / newDemandDev;
-                            if (zScore <= 0) {
-                                float absZScore = zScore * -1;
-                                List<NormalDistribution> normalDistributions = getAllNormalDistributions();
-                                for (NormalDistribution normalDistribution : SafeHelper.emptyIfNull(normalDistributions)) {
-                                    if (normalDistribution.getzScore() == absZScore) {
-                                        float pI = 1 - normalDistribution.getP();
-                                        if (pI >= p) {
-                                            if (i > count) {
-                                                count = i;
-                                            }
+                    int lowerClassSeatNo = flightScheduleBookingClassTemp.getSeatQty();
+                    System.out.println(lowerClassSeatNo);
+                    
+                    for (int i = 0; i <= lowerClassSeatNo; i++) {
+                        float zScore = (i - newDemandMean) / newDemandDev;
+                        if (zScore <= 0) {
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            float absZScore = Float.parseFloat(df.format(zScore * -1));
+                            List<NormalDistribution> normalDistributions = getAllNormalDistributions();
+                            for (NormalDistribution normalDistribution : SafeHelper.emptyIfNull(normalDistributions)) {
+                                if (normalDistribution.getzScore() == absZScore) {
+                                    float pI = 1 - normalDistribution.getP();
+                                    if (pI >= p) {
+                                        if (i > count) {
+                                            count = i;
                                         }
                                     }
                                 }
+                            }
 
-                            } else {
-                                List<NormalDistribution> normalDistributions = getAllNormalDistributions();
-                                for (NormalDistribution normalDistribution : SafeHelper.emptyIfNull(normalDistributions)) {
-                                    if (normalDistribution.getzScore() == zScore) {
-                                        float pI = normalDistribution.getP();
-                                        if (pI >= p) {
-                                            if (i > count) {
-                                                count = i;
-                                            }
+                        } else {
+                            List<NormalDistribution> normalDistributions = getAllNormalDistributions();
+                            for (NormalDistribution normalDistribution : SafeHelper.emptyIfNull(normalDistributions)) {
+                                if (normalDistribution.getzScore() == zScore) {
+                                    float pI = normalDistribution.getP();
+                                    if (pI >= p) {
+                                        if (i > count) {
+                                            count = i;
                                         }
                                     }
                                 }
-
                             }
 
                         }
 
-                        sum = sum + count;
-
-                        flightScheduleBookingClassTemp.setSeatQty(flightScheduleBookingClassTemp.getSeatQty() - count);
                     }
-                }
 
+                    sum = sum + count;
+
+                    flightScheduleBookingClassTemp.setSeatQty(flightScheduleBookingClassTemp.getSeatQty() - count);
+                }
             }
 
         }
@@ -240,18 +228,6 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         fsbc.setSeatAllocationHistory(seatAllocationHistorys);
         fsbc.setSeatQty(sum + fsbc.getSeatQty());
 
-        //determine the seat reallocation variance 
-        //seatAllocationHistory.modified  
-        //0: not modified
-        //1: increase
-        //2: decrease
-//        if (seatAllocationHistory.getNumber() > seatAllocationHistory.getFlightScheduleBookingClass().getSeatQty()) {
-//            seatAllocationHistory.setModified(2);
-//        } else if (seatAllocationHistory.getNumber() < seatAllocationHistory.getFlightScheduleBookingClass().getSeatQty()) {
-//            seatAllocationHistory.setModified(1);
-//        } else {
-//            seatAllocationHistory.setModified(0);
-//        }
         return true;
     }
 
@@ -281,6 +257,9 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
     @Override
     public void reallocateSeatsforBookingClass(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, float demandMean, float demandDev) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
 
+        System.out.println(helpers.size());
+
+        //find the flight schedule booking class to reallocate 
         List<BookingClass> bookingClasses = flightScheduleSession.getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
         long bookingClassId = bookingClasses.get(0).getBookingClassId();
         FlightScheduleBookingClassId fsbci = new FlightScheduleBookingClassId();
@@ -288,7 +267,18 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         fsbci.setFlightScheduleId(flightScheduleId);
         FlightScheduleBookingClass fsbc2 = new FlightScheduleBookingClass();
         fsbc2 = entityManager.find(FlightScheduleBookingClass.class, fsbci);
-        reallocateBookingClassSeats(fsbc2, demandMean, demandDev);
+
+        //find the other flight schedule booking class for the same flight schedule 
+        List<FlightScheduleBookingClass> flightScheduleBookingClasses = getAllFlightScheduleBookingClasses();
+        List<FlightScheduleBookingClass> restFlightScheduleBookingClasses = new ArrayList<>();
+        for (FlightScheduleBookingClass fsbc : flightScheduleBookingClasses) {
+            if (fsbc.getFlightScheduleBookingClassId().getFlightScheduleId() == flightScheduleId) {
+                restFlightScheduleBookingClasses.add(fsbc);
+            }
+
+        }
+
+        reallocateBookingClassSeats(restFlightScheduleBookingClasses, fsbc2, demandMean, demandDev);
 
     }
 

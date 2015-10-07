@@ -18,7 +18,7 @@
                 <p:selectOneMenu id="cabinClass" value="#{seatReallocationController.cabinClass}" converter="cabinClassConverter"  style="width:200px" filter="true" filterMatchMode="startsWith">
                     <p:ajax listener="#{seatReallocationController.onCabinClassChange()}" update="ticketFamily" />
                     <f:selectItem itemLabel="Select Cabin Class" itemValue="" noSelectionOption="true"/>
-                    <f:selectItems value="#{seatReallocationController.cabinClasses}" var="cabinClass" itemLabel="#{country.countryName}" itemValue="#{country}" />
+                    <f:selectItems value="#{seatReallocationController.cabinClasses}" var="cabinClass" itemLabel="#{cabinClass.name}" itemValue="#{cabinClass}" />
                 </p:selectOneMenu>
 
                 <p:outputLabel for="ticketFamily" value="Ticket Family:" />

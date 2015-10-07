@@ -35,8 +35,6 @@ public interface SeatReallocationSessionLocal {
 
     public List<NormalDistribution> getAllNormalDistributions();
 
-    public boolean reallocateBookingClassSeats(FlightScheduleBookingClass f, float demandMean, float demandDev);
-
     public void addPhaseDemand(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException;
 
     public void deletePhaseDemand(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers,int daysBeforeDeparture) throws NoSuchPhaseDemandException;

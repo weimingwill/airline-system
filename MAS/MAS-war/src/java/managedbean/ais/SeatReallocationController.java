@@ -136,15 +136,14 @@ public class SeatReallocationController implements Serializable {
         flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
     }
 
-    public String toYieldManagement() {
-        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
-        if (flightSchCabinClsTicFamBookingClsHelpers != null) {
-            return navigationController.redirectToYieldManagement();
-        }
-        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
-        return "";
-    }
-
+//    public String toYieldManagement() {
+//        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+//        if (flightSchCabinClsTicFamBookingClsHelpers != null) {
+//            return navigationController.redirectToYieldManagement();
+//        }
+//        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
+//        return "";
+//    }
     public String toReallocateBookingClassSeats() {
         flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
         if (flightSchCabinClsTicFamBookingClsHelpers != null) {
@@ -192,35 +191,36 @@ public class SeatReallocationController implements Serializable {
                 }
 
                 ticketFamilys = tfs;
+                ticketFamilyBookingClassHelpers = tfbchs;
 
             }
         }
 
     }
-    
+
     public void onTicketFamilyChange() throws NoSuchFlightScheduleBookingClassException {
-        for (TicketFamilyBookingClassHelper tfbch:ticketFamilyBookingClassHelpers) {
+        for (TicketFamilyBookingClassHelper tfbch : ticketFamilyBookingClassHelpers) {
             if (tfbch.getTicketFamily().equals(ticketFamily)) {
                 List<BookingClassHelper> bchs = new ArrayList<>();
                 bchs = tfbch.getBookingClassHelpers();
                 List<BookingClass> bcs = new ArrayList<>();
-                for(BookingClassHelper bch:bchs){
-                    bcs.add(bch.getBookingClass());            
+                for (BookingClassHelper bch : bchs) {
+                    bcs.add(bch.getBookingClass());
                 }
                 bookingClasses = bcs;
                 List<FlightScheduleBookingClass> fsbcs = new ArrayList<>();
-                for(BookingClass bc:bookingClasses){
-                    fsbcs.add(flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId,bc.getBookingClassId()));
+                for (BookingClass bc : bookingClasses) {
+                    fsbcs.add(flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bc.getBookingClassId()));
                 }
-                flightScheduleBookingClasses = fsbcs;        
+                flightScheduleBookingClasses = fsbcs;
             }
         }
 
     }
-    
+
     public void onBookingClassChange() throws NoSuchFlightScheduleBookingClassException {
         flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
-    
+
     }
 
     public String reallocateBookingClassSeats() {
