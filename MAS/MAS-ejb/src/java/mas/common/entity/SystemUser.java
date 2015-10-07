@@ -36,6 +36,7 @@ public class SystemUser implements Serializable {
     private String address;
     private String department;
     private String phone;
+    private String status;
     
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemRole> systemRoles = new ArrayList<>();
@@ -150,7 +151,7 @@ public class SystemUser implements Serializable {
         this.resetDigest = resetDigest;
     }
 
-    public Boolean isLocked() {
+    public Boolean getLocked() {
         return locked;
     }
 
@@ -158,7 +159,7 @@ public class SystemUser implements Serializable {
         this.locked = locked;
     }
 
-    public Boolean isActivated() {
+    public Boolean getActivated() {
         return activated;
     }
 
@@ -166,7 +167,7 @@ public class SystemUser implements Serializable {
         this.activated = activated;
     }
 
-    public Boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
@@ -206,6 +207,11 @@ public class SystemUser implements Serializable {
         this.phone = phone;
     }
 
-    
-    
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }    
 }

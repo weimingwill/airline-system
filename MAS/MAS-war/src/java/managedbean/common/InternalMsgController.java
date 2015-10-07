@@ -183,7 +183,7 @@ public class InternalMsgController implements Serializable {
     public String getMessageTableRowClasses() {
         StringBuilder sb = new StringBuilder();
         for (SystemMsg msg : getUserMessages()) {
-            sb.append((msg.isDeleted()) ? "hide," : "show,");
+            sb.append((msg.getDeleted()) ? "hide," : "show,");
         }
         return sb.toString();
     }

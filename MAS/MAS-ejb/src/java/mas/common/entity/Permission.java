@@ -27,7 +27,7 @@ public class Permission implements Serializable {
     private Long permissionId;
     private String system;
     private String systemModule;
-    private boolean deleted;
+    private Boolean deleted;
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "permissions")
     private List<SystemRole> systemRoles = new ArrayList<>();   
 
@@ -92,12 +92,12 @@ public class Permission implements Serializable {
         this.systemRoles = systemRoles;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
-
+    
 }

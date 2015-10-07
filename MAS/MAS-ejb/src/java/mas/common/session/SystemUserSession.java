@@ -102,7 +102,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
         try {
             SystemUser user = getSystemUserByName(username);
             for (SystemMsg msg : user.getSystemMsgs()) {
-                if (!msg.isDeleted()) {
+                if (!msg.getDeleted()) {
                     msgs.add(msg);
                 }
             }
@@ -118,7 +118,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
             SystemUser user = getSystemUserByName(username);
             List<SystemMsg> unreadMsg = new ArrayList<>();
             for (SystemMsg msg : user.getSystemMsgs()) {
-                if (!msg.isReaded()) {
+                if (!msg.getReaded()) {
                     unreadMsg.add(msg);
                 }
             }
