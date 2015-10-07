@@ -22,7 +22,6 @@ import ams.ais.util.exception.NeedBookingClassException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchPhaseDemandException;
-import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
@@ -32,18 +31,17 @@ import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
+import ams.aps.entity.Airport;
+import ams.aps.entity.City;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.helper.ApsMessage;
-import com.sun.faces.context.SessionMap;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
@@ -126,6 +124,12 @@ public class SeatReallocationController implements Serializable {
         System.out.println("FlightScheduleId: " + flightScheduleId);
         initialHelper();
         System.out.println("Helper: " + flightSchCabinClsTicFamBookingClsHelpers);
+        List<CabinClass> ccs = new ArrayList<>();
+        for (FlightSchCabinClsTicFamBookingClsHelper fscctfbch : flightSchCabinClsTicFamBookingClsHelpers) {
+            ccs.add(fscctfbch.getCabinClass());
+        }
+        cabinClasses = ccs;
+
     }
 
     private void initialHelper() {
@@ -175,6 +179,48 @@ public class SeatReallocationController implements Serializable {
         }
         msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
         return "";
+    }
+
+    public void onCabinClassChange() {
+        for (FlightSchCabinClsTicFamBookingClsHelper fscctfbch : flightSchCabinClsTicFamBookingClsHelpers) {
+            if (fscctfbch.getCabinClass().equals(cabinClass)) {
+                List<TicketFamilyBookingClassHelper> tfbchs = new ArrayList<>();
+                tfbchs = fscctfbch.getTicketFamilyBookingClassHelpers();
+                List<TicketFamily> tfs = new ArrayList<>();
+                for (TicketFamilyBookingClassHelper tfbch : tfbchs) {
+                    tfs.add(tfbch.getTicketFamily());
+                }
+
+                ticketFamilys = tfs;
+
+            }
+        }
+
+    }
+    
+    public void onTicketFamilyChange() throws NoSuchFlightScheduleBookingClassException {
+        for (TicketFamilyBookingClassHelper tfbch:ticketFamilyBookingClassHelpers) {
+            if (tfbch.getTicketFamily().equals(ticketFamily)) {
+                List<BookingClassHelper> bchs = new ArrayList<>();
+                bchs = tfbch.getBookingClassHelpers();
+                List<BookingClass> bcs = new ArrayList<>();
+                for(BookingClassHelper bch:bchs){
+                    bcs.add(bch.getBookingClass());            
+                }
+                bookingClasses = bcs;
+                List<FlightScheduleBookingClass> fsbcs = new ArrayList<>();
+                for(BookingClass bc:bookingClasses){
+                    fsbcs.add(flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId,bc.getBookingClassId()));
+                }
+                flightScheduleBookingClasses = fsbcs;        
+            }
+        }
+
+    }
+    
+    public void onBookingClassChange() throws NoSuchFlightScheduleBookingClassException {
+        flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
+    
     }
 
     public String reallocateBookingClassSeats() {

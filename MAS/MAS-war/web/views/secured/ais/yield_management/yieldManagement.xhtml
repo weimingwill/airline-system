@@ -13,40 +13,37 @@
 
     <ui:define name="content">
         <h:form>
-            <p:panel id="yieldManagement" header="Yield Management" style="margin-bottom:20px">
-                <p:panelGrid>
-                    <f:facet name="header">
-                        <p:row>
-                            <p:column colspan="1">Cabin Class</p:column>
-                            <p:column colspan="1">Ticket Family</p:column>
-                            <p:column colspan="1">Booking Class</p:column>
-                        </p:row>
-                    </f:facet>
-                    <c:forEach var="helper" items="#{seatReallocationController.flightSchCabinClsTicFamBookingClsHelpers}">
-                        <p:row>
-                            <p:column colspan="1">#{helper.cabinClass.name}</p:column>
-                            <p:column colspan="2">
-                                <p:panelGrid columns="2" >
-                                    <c:forEach var="tf" items="#{helper.ticketFamilyBookingClassHelpers}">
-                                        <p:outputLabel value="#{tf.ticketFamily.name}" style="width: 80px;"/>
-                                        <p:selectOneMenu value="#{tf.bookingClasses}" converter="bookingClassConverter"
-                                                         var="bookingClass" style="width:100px;">
-                                            <f:selectItems value="#{seatReallocationController.getTicketFamilyBookingClasses(helper.cabinClass.name, tf.ticketFamily.name)}" var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}" />
-                                            <p:column>
-                                                <h:outputText value="#{bookingClass.name}"  />
-                                            </p:column>
-                                        </p:selectOneMenu>
-                                    </c:forEach>
-                                </p:panelGrid>
-                            </p:column>
-                        </p:row>
-                    </c:forEach>
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="cabinClass" value="Cabin Class:" />
+                <p:selectOneMenu id="cabinClass" value="#{seatReallocationController.cabinClass}" converter="cabinClassConverter"  style="width:200px" filter="true" filterMatchMode="startsWith">
+                    <p:ajax listener="#{seatReallocationController.onCabinClassChange()}" update="ticketFamily" />
+                    <f:selectItem itemLabel="Select Cabin Class" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{seatReallocationController.cabinClasses}" var="cabinClass" itemLabel="#{country.countryName}" itemValue="#{country}" />
+                </p:selectOneMenu>
 
-                </p:panelGrid>
+                <p:outputLabel for="ticketFamily" value="Ticket Family:" />
+                <p:selectOneMenu id="ticketFamily" value="#{seatReallocationController.ticketFamily}" converter="ticketFamilyConverter" style="width:200px">
+                    <p:ajax listener="#{seatReallocationController.onTicketFamilyChange()}" update="bookingClass" />
+                    <f:selectItem itemValue="" itemLabel="Select Ticket Family" noSelectionOption="true"/>
+                    <f:selectItems value="#{seatReallocationController.ticketFamilys}" var="ticketFamily" itemLabel="#{ticketFamily.name}" itemValue="#{ticketFamily}"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel for="bookingClass" value="Booking Class:" />
+                <p:selectOneMenu id="bookingClass" value="#{seatReallocationController.bookingClass}" converter="bookingClassConverter" style="width:200px">
+                    <p:ajax listener="#{seatReallocationController.onTicketFamilyChange()}"/>
+                    <f:selectItem itemLabel="Select Booking Class" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{seatReallocationController.bookingClasses}" var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}"/>
+                </p:selectOneMenu>
+
                 <p:commandButton value="Reallocate seats" action="#{seatReallocationController.toReallocateBookingClassSeats()}" update="messages"/>
                 <p:commandButton value="View seat reallocation history" action="#{seatReallocationController.toViewSeatReallocationHistory()}" update="messages"/>
                 <p:commandButton value="Update yield management model" action="#{seatReallocationController.toUpdateYieldManagementModel()}" update="messages"/>
-            </p:panel>            
+
+            </h:panelGrid>
+
+
         </h:form>
+
+
     </ui:define>
 </ui:composition>
