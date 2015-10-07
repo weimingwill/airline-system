@@ -11,17 +11,21 @@ import ams.aps.entity.Country;
 import ams.aps.entity.Route;
 import ams.aps.entity.RouteLeg;
 import ams.aps.session.RoutePlanningSessionLocal;
+import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.RouteDisplayHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import managedbean.application.MsgController;
 
 /**
@@ -66,6 +70,21 @@ public class RouteController implements Serializable {
      * Creates a new instance of RouteController
      */
     public RouteController() {
+    }
+
+    @PostConstruct
+    public void init() {
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String uri = request.getRequestURI();
+        uri = uri.substring(uri.lastIndexOf("/") + 1, uri.indexOf('.', uri.lastIndexOf("/")));
+        switch (uri) {
+            case "viewRoutes":
+                viewRoutes();
+                break;
+            case "viewObsoleteRoute":
+                viewObsoleteRoutes();
+                break;
+        }
     }
 
     public Country getCountryByCode(String isoCode) {
