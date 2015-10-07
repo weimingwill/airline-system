@@ -105,10 +105,14 @@ public class RouteController implements Serializable {
 
     public void addNewHub(ActionEvent event) {
         System.out.println("RouteController: addHub()");
-        if (routePlanningSession.addHub(airport.getIcaoCode())) {
-            msgController.addMessage("Add a hub successfully!");
+        if (airport == null) {
+            msgController.addErrorMessage("Airport must be selected!");
         } else {
-            msgController.addErrorMessage("Failed to add hub!");
+            if (routePlanningSession.addHub(airport.getIcaoCode())) {
+                msgController.addMessage("Add a hub successfully!");
+            } else {
+                msgController.addErrorMessage("Failed to add hub!");
+            }
         }
     }
 
@@ -127,6 +131,9 @@ public class RouteController implements Serializable {
 
     public void onCountryChange() {
         setCities((List<City>) routePlanningSession.getCityListByCountry(country.getIsoCode()));
+        if (cities.isEmpty()) {
+            msgController.addErrorMessage("No cities found in this country!");
+        }
         city = null;
         airport = null;
         airportsNotHub = new ArrayList();
@@ -134,6 +141,9 @@ public class RouteController implements Serializable {
 
     public void onCityChange() {
         setAirportsNotHub((List<Airport>) routePlanningSession.getNonHubAirportListByCity(city.getId()));
+        if (airportsNotHub.isEmpty()) {
+            msgController.addErrorMessage("No airports not hub found in this city!");
+        }
     }
 
     public void onOriginChange() {

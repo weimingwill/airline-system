@@ -69,4 +69,13 @@ public interface RoutePlanningSessionLocal {
     
     public RouteCompareHelper compareRoutePreparation(String type, List<Airport> stopList);
     
+    public boolean addCountry(String isoCode, String countryName);
+    
+    public boolean addCity(String countryISO, String cityName, Float utc);
+    
+    public boolean addAirport(String countryISO, String cityName, Airport airport);
+    
+    public boolean checkIATA(String iata);
+    
+    public boolean checkICAO(String icao);
 }
