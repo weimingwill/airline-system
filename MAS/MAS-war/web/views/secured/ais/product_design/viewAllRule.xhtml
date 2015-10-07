@@ -11,20 +11,20 @@
     </ui:define>
 
     <ui:define name="content">
-        <p:dataTable value="#{ruleController.allRule}" var="ruleclass">
+        <p:dataTable value="#{ruleController.allRule}" var="rule">
             <p:column headerText="Rule Name">
-                <p:outputLabel value="#{ruleclass.name}"/>
+                <p:outputLabel value="#{rule.name}"/>
             </p:column>
 
             <p:column headerText="Edit" style="width:32px;text-align: center">
-                <h:form> <p:commandButton update="rullDialog" oncomplete="PF('rullDialog').show()" icon="ui-icon-pencil">
-                        <f:setPropertyActionListener value="#{ruleclass}" target="#{productDesignEditController.selectedRule}" />
+                <h:form> <p:commandButton update="ruleDialog" oncomplete="PF('ruleDialog').show()" icon="ui-icon-pencil">
+                        <f:setPropertyActionListener value="#{rule}" target="#{productDesignEditController.selectedRule}" />
                     </p:commandButton></h:form>
             </p:column>
-
+        
         </p:dataTable>
 
-        <p:dialog id="ruleDialog" header="Are you sure you want to delete this rule:  #{productDesignEditController.selectedRule.name}" widgetVar="ruleDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+        <p:dialog id="ruleDialog" header="Edit rule:  #{productDesignEditController.selectedRule.name}" widgetVar="ruleDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form>
                 <p:panel id="ruleDetail">
                     <p:panelGrid>
@@ -34,8 +34,8 @@
                                 <p:outputLabel value="Rule Name: " />
                             </p:column>
                             <p:column>
-                                <h:outputText value="#{productDesignEditController.selectedCabinClass.name}" >
-                                </h:outputText>
+                                <p:inputText value="#{productDesignEditController.selectedRule.name}" >
+                                </p:inputText>
                             </p:column>
                         </p:row>
 
@@ -46,7 +46,7 @@
             </h:form>
         </p:dialog>
 
-        <h:form><p:commandButton value="Edit" action="#{navigationController.redirectToEditRule()}"  /></h:form>
+
     </ui:define>
 
 </ui:composition>
