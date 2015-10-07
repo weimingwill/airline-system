@@ -246,7 +246,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
 
     @Override
     public List<Route> getAvailableRoutes() {
-        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = 0)");
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = FALSE");
         try{
             return query.getResultList();
         }catch(Exception ex){

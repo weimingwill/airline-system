@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="rows" required="true"/>
+        <cc:attribute name="tableStyle"/>
+        <cc:attribute name="header"/>
+        <cc:attribute name="footer"/>
+        <cc:attribute name="selection" default="true"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dataTable var="route" value="#{routeController.routeDisplayList}" selection="#{routeController.routesToBeDeleted}" rowKey="#{route.id}" style="margin-bottom:40px; width:auto;" rows="#{cc.attrs.rows}"
+                     paginator="true" tableStyle="#{cc.attrs.tableStyle}"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="5,10,15">
+            <f:facet name="header" rendered="#{cc.attrs.header}">
+                <h:outputText value="Planned Routes" />
+            </f:facet>
+            <p:column selectionMode="multiple" style="width:16px;text-align:center" rendered="#{cc.attrs.selection}"/>
+            <p:column headerText="Id" sortBy="#{route.id}">
+                <h:outputText value="#{route.id}" />
+            </p:column>
+
+            <p:column headerText="Origin" sortBy="#{route.origin}">
+                <h:outputText value="#{route.origin}" />
+            </p:column>
+
+            <p:column headerText="Stopovers" sortBy="#{route.legs}">
+                <h:outputText value="#{route.legs}" />
+            </p:column>
+
+            <p:column headerText="Destination" sortBy="#{route.destination}">
+                <h:outputText value="#{route.destination}" />
+            </p:column>
+            
+            <p:column headerText="Return Route Id" sortBy="#{route.returnRouteId}">
+                <h:outputText value="#{route.returnRouteId}" />
+            </p:column>
+            
+            <f:facet name="footer">
+                <p:commandButton value="Delete route and return route" update="messages" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{routeController.deleteRoute}" style="left:27px" icon="ui-icon-check" rendered="#{cc.attrs.footer}"/>
+            </f:facet>
+
+        </p:dataTable>
+    </cc:implementation>
+</html>

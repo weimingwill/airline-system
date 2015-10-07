@@ -8,12 +8,16 @@ package managedbean.aps;
 import ams.aps.entity.Flight;
 import ams.aps.entity.Route;
 import ams.aps.session.FlightSchedulingSessionLocal;
+import ams.aps.util.helper.RouteDisplayHelper;
+import ams.aps.util.helper.RouteHelper;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 
@@ -22,17 +26,20 @@ import managedbean.application.MsgController;
  * @author ChuningLiu
  */
 @Named(value = "flightController")
-@RequestScoped
-public class FlightController {
-
+@ViewScoped
+public class FlightController implements Serializable{
     @Inject
-    private MsgController msgController;
+    RouteController routeController;
+    
+    @Inject
+    MsgController msgController;
 
     @EJB
     private FlightSchedulingSessionLocal flightSchedulingSession;
 
     private Flight flight;
     private Route route;
+    private List<RouteDisplayHelper> routeDisplayHelperList = new ArrayList();
     private String flightNo;
     private String newFlightNo;
     private List<Route> availibleRoutes;
@@ -42,7 +49,7 @@ public class FlightController {
      */
     @PostConstruct
     public void init() {
-
+        getRoutes();
     }
 
     public FlightController() {
@@ -62,6 +69,20 @@ public class FlightController {
 
     public void getRoutes() {
         setAvailibleRoutes(flightSchedulingSession.getAvailableRoutes());
+        RouteHelper routeHelper;
+        RouteDisplayHelper routeDisplayHelper;
+        
+        for(Route thisRoute: availibleRoutes){
+            routeHelper = new RouteHelper();
+            routeDisplayHelper = new RouteDisplayHelper();
+            routeController.getRouteDetail(thisRoute, routeHelper);
+            
+            routeDisplayHelper.setId(routeHelper.getId());
+            routeDisplayHelper.setOrigin(routeHelper.getOrigin().getIcaoCode());
+            routeDisplayHelper.setLegs(routeController.getStopoverString(routeHelper.getStopovers(), "icao"));
+            routeDisplayHelper.setDestination(routeHelper.getDestination().getIcaoCode());
+            routeDisplayHelperList.add(routeDisplayHelper);
+        }
     }
 
     public void resetFlightNo(String oldFlightNo, String newFlightNo) {
@@ -145,4 +166,19 @@ public class FlightController {
     public void setNewFlightNo(String newFlightNo) {
         this.newFlightNo = newFlightNo;
     }
+
+    /**
+     * @return the routeDisplayHelperList
+     */
+    public List<RouteDisplayHelper> getRouteDisplayHelperList() {
+        return routeDisplayHelperList;
+    }
+
+    /**
+     * @param routeDisplayHelperList the routeDisplayHelperList to set
+     */
+    public void setRouteDisplayHelperList(List<RouteDisplayHelper> routeDisplayHelperList) {
+        this.routeDisplayHelperList = routeDisplayHelperList;
+    }
+
 }

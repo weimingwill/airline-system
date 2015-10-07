@@ -14,6 +14,7 @@ public class RouteDisplayHelper {
     private String origin;
     private String destination;
     private String legs;
+    private Long returnRouteId;
 
     public RouteDisplayHelper() {
     }
@@ -79,6 +80,20 @@ public class RouteDisplayHelper {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * @return the returnRouteId
+     */
+    public Long getReturnRouteId() {
+        return returnRouteId;
+    }
+
+    /**
+     * @param returnRouteId the returnRouteId to set
+     */
+    public void setReturnRouteId(Long returnRouteId) {
+        this.returnRouteId = returnRouteId;
     }
 
 }
