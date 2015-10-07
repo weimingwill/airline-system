@@ -161,7 +161,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     public boolean cancelHub(String icaoCode) {
         try {
             Airport hub = em.find(Airport.class, getAirportByICAOCode(icaoCode).getId());
-            System.out.println("SessionBean: cancelHub():"+hub.getAirportName());
+            System.out.println("SessionBean: cancelHub():" + hub.getAirportName());
             hub.setIsHub(FALSE);
             em.merge(hub);
             return true;
@@ -172,14 +172,14 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public boolean checkHub(String icaoCode) {
-            Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted =0 AND :inOriICAO IN (SELECT rl.leg.departAirport.icaoCode FROM RouteLeg rl WHERE rl.routeId = r.routeId AND rl.legSeq=0)");
-            query.setParameter("inOriICAO", icaoCode);
-            
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted =0 AND :inOriICAO IN (SELECT rl.leg.departAirport.icaoCode FROM RouteLeg rl WHERE rl.routeId = r.routeId AND rl.legSeq=0)");
+        query.setParameter("inOriICAO", icaoCode);
+
         try {
             List<Route> routes = query.getResultList();
             if (routes.isEmpty()) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         } catch (Exception e) {
@@ -507,4 +507,103 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         }
         return airport;
     }
+
+    @Override
+    public boolean addCountry(String isoCode, String countryName) {
+        try {
+            Country country = new Country();
+            country.setIsoCode(isoCode);
+            country.setCountryName(countryName);
+
+            em.persist(country);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean addCity(String countryISO, String cityName, Float utc) {
+        try {
+            Query q = em.createQuery("SELECT c FROM Country c WHERE c.isoCode =:iso");
+            q.setParameter("iso", countryISO);
+            Country country = (Country) q.getSingleResult();
+            
+            City city = new City();
+            city.setCityName(cityName);
+            city.setUTC(utc);
+            city.setCountry(country);
+            em.persist(city);
+            
+            List<City> cityList = (List<City>) country.getCities();
+            cityList.add(city);
+            country.setCities(cityList);
+            em.merge(country);
+            return true;
+            
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean addAirport(String countryISO, String cityName, Airport airport) {
+        try {
+            Query q = em.createQuery("SELECT c FROM Country c WHERE c.isoCode =:iso");
+            q.setParameter("iso", countryISO);
+            Country country = (Country) q.getSingleResult();
+            
+            Query q2 = em.createQuery("SELECT c FROM City c WHERE c.cityName =:cname AND C.country.isoCode =:iso");
+            q2.setParameter("cname", cityName);
+            q2.setParameter("iso", countryISO);
+            City city = (City) q2.getSingleResult();
+            
+            Airport airport1 = new Airport();
+            airport1.setAirportName(airport.getAirportName());
+            airport1.setCity(city);
+            airport1.setCountry(country);
+            airport1.setIataCode(airport.getIataCode());
+            airport1.setIcaoCode(airport.getIcaoCode());
+            airport1.setAltitude(airport.getAltitude());
+            airport1.setLatitude(airport.getLatitude());
+            airport1.setLongitude(airport.getLongitude());
+            em.persist(airport1);
+            
+            List<Airport>  airports = (List<Airport>) city.getAirports();
+            airports.add(airport1);
+            city.setAirports(airports);
+            em.merge(city);
+            
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkIATA(String iata) {
+        Query q = em.createQuery("SELECT a FROM Airport a WHERE a.iataCode =: iataCode");
+        q.setParameter("iataCode", iata);
+        try{
+            Airport a = (Airport) q.getSingleResult();
+            return false;
+        }catch(NoResultException e){
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkICAO(String icao) {
+        Query q = em.createQuery("SELECT a FROM Airport a WHERE a.icaoCode =: icaoCode");
+        q.setParameter("icaoCode", icao);
+        try{
+            Airport a = (Airport) q.getSingleResult();
+            return false;
+        }catch(NoResultException e){
+            return true;
+        }catch(Exception e){
+            return false;
+        }    }
 }

@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/ApsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Add an airport
+        </f:facet>
+        <h:form id="myForm">
+
+            <p:growl id="growl" sticky="true" showDetail="true"/>
+
+            <p:wizard flowListener="#{airportController.onFlowProcess}">
+                <p:tab id="countryTab" title="Country">
+                    <p:panel header="Select Country">
+                        <p:messages />
+                        <h:panelGrid columns="2">
+                            <p:outputLabel for="country" value="Country:" />
+                            <p:selectOneMenu id="country" value="#{airportController.country}" converter="countryConverter"  style="width:200px" filter="true" filterMatchMode="contains">
+                                <p:ajax listener="#{airportController.onCountryChange}" update="city,airport" />
+                                <f:selectItems id="countryList" value="#{airportController.countries}" var="country" itemLabel="#{country.countryName}" itemValue="#{country}" />
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Can't find the wanted country?" />
+                            <p:commandButton update="myForm:myDialog" value="Add a new country" style="left:20px" oncomplete="PF('confirmDlg').show()"/>
+                            <p:dialog id="myDialog" header="Add a new country" widgetVar="confirmDlg" showEffect="fade" hideEffect="fade">
+
+                                <p:panelGrid columns="2">
+                                    <h:outputText value="ISO Code: *" />
+                                    <p:inputMask id="countryISO" value="#{airportController.country.isoCode}" mask="aaaa" required="true">
+                                        <p:tooltip id="countryISO_tooltip" for="countryISO" showEvent="focus" hideEvent="blur" 
+                                                   value="Please enter 4 capital letters"/>
+                                    </p:inputMask>
+
+                                    <h:outputText value="Country Name: *" />
+                                    <p:inputText value="#{airportController.country.countryName}" required="true" label="countryName"/>
+                                </p:panelGrid>
+
+                                <h:outputText id="confirmMsg" value="Confirm adding the new country?"/>
+                                <p:separator/>
+                                <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages, country" onclick="PF('confirmDlg').hide()" actionListener="#{airportController.addCountry}"/>
+                                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('confirmDlg').hide()"/>
+                            </p:dialog>
+                        </h:panelGrid>
+                    </p:panel>
+                </p:tab>
+
+                <p:tab id="cityTab" title="City">
+                    <p:panel header="Select City">
+                        <p:messages />
+                        <h:panelGrid columns="2">
+                            <p:outputLabel for="city" value="City:" />
+                            <p:selectOneMenu id="city" value="#{airportController.city}" converter="cityConverter" style="width:200px">
+                                <p:ajax listener="#{airportController.onCityChange}" update="airport" />
+                                <f:selectItems id="cityList" value="#{airportController.cities}" var="city" itemLabel="#{city.cityName}" itemValue="#{city}"/>
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Can't find the wanted city?" />
+                            <p:commandButton update="myForm:cityDialog" value="Add a new city" style="left:20px" oncomplete="PF('confirmDlg').show()"/>
+                            <p:dialog id="cityDialog" header="Add a new city" widgetVar="confirmDlg" showEffect="fade" hideEffect="fade">
+
+                                <p:panelGrid columns="2">
+                                    <h:outputText value="City Name: *" />
+                                    <p:inputText value="#{airportController.city.cityName}" required="true" label="cityName"/>
+
+                                    <h:outputText value="UTC: *" />
+                                    <p:spinner id="step" value="#{airportController.city.UTC}" stepFactor="0.5" required="true" label="cityUTC" min="-12" max="12"/>
+                                    
+                                </p:panelGrid>
+
+                                <h:outputText id="confirmMsg" value="Confirm adding the new city?"/>
+                                <p:separator/>
+                                <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages, city" onclick="PF('confirmDlg').hide()" actionListener="#{airportController.addCity}"/>
+                                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('confirmDlg').hide()"/>
+                            </p:dialog>
+                        </h:panelGrid>
+                    </p:panel>
+                </p:tab>
+
+                <p:tab id="airport" title="Airport">
+                    <p:panel header="Contact Information">
+                        <p:messages />
+                        <h:panelGrid columns="2" columnClasses="label, value">
+                            <h:outputText value="ICAO Code: *" />
+                            <p:inputMask id="airicao" value="#{airportController.airport.icaoCode}" mask="aaaa" required="true" label="icao">
+                            <p:tooltip id="air_icao" for="airicao" showEvent="focus" hideEvent="blur" 
+                                           value="Please enter 4 capital letters"/>
+
+                                <h:outputText value="IATA Code: *" 
+                                <p:inputMask id="airiata" value="#{airportController.airport.iataCode}" mask="aaa" required="true" label="iata">
+                                <p:tooltip id="air_iata" for="airiata" showEvent="focus" hideEvent="blur" 
+                                           value="Please enter 3 capital letters"/>
+
+                                <h:outputText value="Airport Name: *" />
+                                <p:inputText value="#{airportController.airport.airportName}" required="true" label="airportName"/>
+
+                                <h:outputText value="Latitude (Radius): *" />
+                                <p:spinner id="lat" value="#{airportController.airport.latitude}" min="-180" max="180" stepFactor="0.5" required="true" label="latitude"/>
+                                
+                                <h:outputText value="Altitude (Feet): *" />
+                                <p:inputText value="#{airportController.airport.altitude}" required="true" label="altitude"/>
+
+                                <h:outputText value="Longitude (Radius): *" />
+                                <p:spinner id="lat" value="#{airportController.airport.longitude}" min="-90" max="90" stepFactor="0.5" required="true" label="longitude"/>
+
+                        </h:panelGrid>
+                    </p:panel>
+                </p:tab>
+
+                <p:tab id="confirm" title="Confirmation">
+                    <p:panel header="Confirmation">
+                        <h:panelGrid id="confirmation" columns="2" columnClasses="grid,grid,grid">
+                            <h:panelGrid columns="2" columnClasses="label, value">
+                                <h:outputText value="Country: " />
+                                <h:outputText value="#{airportController.country.countryName}" styleClass="outputLabel"/>
+
+                                <h:outputText value="City: " />
+                                <h:outputText value="#{airportController.city.cityName}" styleClass="outputLabel"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2" columnClasses="label, value">
+                                <h:outputText value="Airport: " />
+                                <h:outputText value="#{airportController.airport.airportName}" styleClass="outputLabel"/>
+
+                                <h:outputText value="ICAO Code: " />
+                                <h:outputText value="#{airportController.airport.icaoCode}" styleClass="outputLabel"/>
+
+                                <h:outputText value="IATA Code: " />
+                                <h:outputText value="#{airportController.airport.iataCode}" styleClass="outputLabel"/>
+
+                                <h:outputText value="latitude: " />
+                                <h:outputText value="#{airportController.airport.latitude}" styleClass="outputLabel"/>
+
+                                <h:outputText value="altitude: " />
+                                <h:outputText value="#{airportController.airport.altitude}" styleClass="outputLabel"/>
+
+                                <h:outputText value="longitude: " />
+                                <h:outputText value="#{airportController.airport.longitude}" styleClass="outputLabel"/>
+
+                                <h:outputText />
+                                <h:outputText />
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <p:commandButton value="Submit" actionListener="#{airportController.addAirport}" update="growl" process="@this"/>
+                    </p:panel>
+                </p:tab>
+            </p:wizard>
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>
