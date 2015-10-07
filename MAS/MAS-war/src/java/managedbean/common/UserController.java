@@ -34,6 +34,7 @@ import mas.common.util.exception.ExistSuchUserEmailException;
 import mas.common.util.exception.NeedResetDigestException;
 import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
+import mas.common.util.exception.UserInUseException;
 import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserRolePermission;
 
@@ -224,7 +225,6 @@ public class UserController implements Serializable {
 
     public String updateUserProfile() {
         try {
-            System.out.println("Begin update user.");
             systemUserSession.updateUserProfile(username, name, email, phone, address, department);
             msgController.addMessage("Update user profile successfully!");
         } catch (NoSuchUsernameException | ExistSuchUserEmailException ex) {
@@ -270,7 +270,7 @@ public class UserController implements Serializable {
         try {
             systemUserSession.deleteUser(username);
             msgController.addMessage("Delete user:" + username + " successfully!");
-        } catch (NoSuchUsernameException ex) {
+        } catch (NoSuchUsernameException | UserInUseException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToViewAllUsers();
@@ -279,7 +279,7 @@ public class UserController implements Serializable {
     public String lockUser(String username) {
         try {
             systemUserSession.lockUser(username);
-            msgController.addMessage("Lock user:" + username + "successfully!");
+            msgController.addMessage("Lock user:" + username + " successfully!");
         } catch (NoSuchUsernameException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
@@ -289,7 +289,7 @@ public class UserController implements Serializable {
     public String unlockUser(String username) {
         try {
             systemUserSession.unlockUser(username);
-            msgController.addMessage("unlock user:" + username + "successfully!");
+            msgController.addMessage("unlock user:" + username + " successfully!");
         } catch (NoSuchUsernameException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }

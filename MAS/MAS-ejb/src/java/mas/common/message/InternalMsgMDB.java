@@ -22,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import mas.common.entity.SystemMsg;
 import mas.common.entity.SystemUser;
 import mas.common.session.SystemUserSessionLocal;
+import mas.common.util.exception.NoSuchUsernameException;
 
 /**
  *
@@ -60,6 +61,12 @@ public class InternalMsgMDB implements MessageListener {
                 String subject = mapMessage.getString("subject");
                 String messageContent = mapMessage.getString("message");
                 String sender = mapMessage.getString("sender");
+                String senderName;
+                try {
+                    senderName = systemUserSession.getSystemUserByName(sender).getName();
+                } catch (NoSuchUsernameException e) {
+                    senderName = sender;
+                }
                 List<String> receivers = new ArrayList<>();
                 int receiverNumber = mapMessage.getInt("receiverNumber");
                 for(int i = 0; i < receiverNumber; i++){
@@ -68,7 +75,7 @@ public class InternalMsgMDB implements MessageListener {
                     systemMsg = new SystemMsg();
                     systemMsg.setSubject(subject);
                     systemMsg.setMessage(messageContent);
-                    systemMsg.setMessageFrom(sender);
+                    systemMsg.setMessageFrom(senderName);
                     systemMsg.setMessageTime(new Date());
                     systemMsg.setDeleted(false);
                     systemMsg.setFlaged(false);

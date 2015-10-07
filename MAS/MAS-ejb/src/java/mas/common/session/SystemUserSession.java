@@ -29,8 +29,10 @@ import mas.common.util.exception.ExistSuchUserException;
 import mas.common.util.exception.NeedResetDigestException;
 import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
+import mas.common.util.exception.UserInUseException;
 import mas.common.util.helper.CreateToken;
 import mas.common.util.helper.SystemMsgHelper;
+import mas.common.util.helper.UserStatus;
 
 @Stateless
 public class SystemUserSession implements SystemUserSessionLocal {
@@ -102,7 +104,14 @@ public class SystemUserSession implements SystemUserSessionLocal {
         try {
             SystemUser user = getSystemUserByName(username);
             for (SystemMsg msg : user.getSystemMsgs()) {
-                if (!msg.getDeleted()) {
+                String senderName = msg.getMessageFrom();
+                SystemUser sender;
+                try {
+                    sender = getSystemUserByName(senderName);
+                } catch (NoSuchUsernameException e) {
+                    sender = null;
+                }
+                if (!msg.getDeleted() && sender != null && !sender.getDeleted() ) {
                     msgs.add(msg);
                 }
             }
@@ -148,7 +157,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
             throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
         } else {
             for (SystemMsg msg : msgs) {
-                if (msg.getSystemMsgId() == messageId) {
+                if (msg.getSystemMsgId().equals(messageId)) {
                     msg.setFlaged(true);
                     entityManager.merge(msg);
                 }
@@ -163,7 +172,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
             throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
         } else {
             for (SystemMsg msg : msgs) {
-                if (msg.getSystemMsgId() == messageId) {
+                if (msg.getSystemMsgId().equals(messageId)) {
                     msg.setFlaged(false);
                     entityManager.merge(msg);
                 }
@@ -178,7 +187,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
             throw new NoSuchMessageException(UserMsg.NO_MESSAGE_ERROR);
         } else {
             for (SystemMsg msg : msgs) {
-                if (msg.getSystemMsgId() == messageId) {
+                if (msg.getSystemMsgId().equals(messageId)) {
                     msg.setDeleted(true);
                     entityManager.merge(msg);
                 }
@@ -467,14 +476,32 @@ public class SystemUserSession implements SystemUserSessionLocal {
     }
 
     @Override
-    public String deleteUser(String username) throws NoSuchUsernameException {
+    public String deleteUser(String username) throws NoSuchUsernameException, UserInUseException {
         SystemUser user = getSystemUserByName(username);
         if (user == null) {
             throw new NoSuchUsernameException(UserMsg.NO_SUCH_USERNAME_ERROR);
+        } else if (!user.getStatus().equals(UserStatus.IDLE)) {
+            throw new UserInUseException(UserMsg.USER_IN_USER_ERROR);
         } else {
             user.setDeleted(true);
         }
         return username;
     }
 
+    @Override
+    public void doLogin(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException {
+        verifySystemUserPassword(username, inputPassword);
+        SystemUser user = getSystemUserByName(username);
+        user.setStatus(UserStatus.LOGGEDIN);
+        entityManager.merge(user);
+    }
+
+    @Override
+    public void doLogout(String username) throws NoSuchUsernameException {
+        SystemUser user = getSystemUserByName(username);
+        user.setStatus(UserStatus.IDLE);
+        entityManager.merge(user);
+    }
+
+    
 }

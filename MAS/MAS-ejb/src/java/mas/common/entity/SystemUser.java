@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import mas.common.util.helper.UserStatus;
 
 /**
  *
@@ -55,6 +56,7 @@ public class SystemUser implements Serializable {
         this.setActivated(false);
         this.setDeleted(false);
         this.setLocked(false);
+        this.setStatus(UserStatus.IDLE);
     }
 
     public Long getSystemUserId() {

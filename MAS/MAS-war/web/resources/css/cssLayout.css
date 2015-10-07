@@ -325,3 +325,12 @@ tr.hide{
     word-spacing : normal;
     z-index : auto;
 }
+
+.messageDate {
+    font-style: italic;
+    font-weight: normal;
+    padding-left: 79%;
+}
+
+.actionButton {
+}

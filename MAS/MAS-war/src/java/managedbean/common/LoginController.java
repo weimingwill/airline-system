@@ -77,7 +77,7 @@ public class LoginController implements Serializable {
 //        }
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
         try {
-            systemUserSession.verifySystemUserPassword(username, cryptographicHelper.doMD5Hashing(password));
+            systemUserSession.doLogin(username, cryptographicHelper.doMD5Hashing(password));
         } catch (NoSuchUsernameException | InvalidPasswordException ex) {
             msgController.addErrorMessage(ex.getMessage());
             countTrial++;
@@ -106,6 +106,12 @@ public class LoginController implements Serializable {
 
     public String doLogout() {
         loggedIn = false;
+        try {
+            systemUserSession.doLogout(username);
+        } catch (NoSuchUsernameException ex) {
+            msgController.addErrorMessage("Logout failed: " + ex.getMessage());
+            return navigationController.redirectToWorkspace();
+        }
         username = null;
         msgController.addMessage(UserMsg.LOGIN_OUT_MSG);
         return navigationController.redirectToWorkspace();

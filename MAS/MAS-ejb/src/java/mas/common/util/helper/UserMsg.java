@@ -27,5 +27,6 @@ public class UserMsg {
     public static final String NEED_ACTIVATION_ERROR = "Your account has not been activated, please reset password to activate your account";
     public static final String NEED_RESET_DIGEST_ERROR = "You are not authorised to reset password. Send reset email again.";
     public static final String NO_SUCH_RESET_DIGEST_ERROR = "Password reset expired. Send reset email again.";
+    public static final String USER_IN_USER_ERROR = "User is now active, cannot delete user!";
     
 }

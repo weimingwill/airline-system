@@ -20,6 +20,7 @@ import mas.common.util.exception.ExistSuchUserException;
 import mas.common.util.exception.NeedResetDigestException;
 import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
+import mas.common.util.exception.UserInUseException;
 import mas.common.util.helper.SystemMsgHelper;
 
 /**
@@ -107,6 +108,9 @@ public interface SystemUserSessionLocal {
 
     public boolean isAdmin(String username);
     
-    public String deleteUser(String username) throws NoSuchUsernameException;
+    public String deleteUser(String username) throws NoSuchUsernameException, UserInUseException;
 
+    public void doLogin(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException;
+    
+    public void doLogout(String username) throws NoSuchUsernameException;
 }
