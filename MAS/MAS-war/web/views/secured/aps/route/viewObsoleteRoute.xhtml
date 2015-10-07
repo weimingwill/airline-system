@@ -7,7 +7,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-        <p:dataTable var="routeObsoleted" value="#{routeController.viewObsoleteRoutes()}" style="margin-bottom:40px" rows="10"
+        <p:dataTable var="routeObsoleted" value="#{routeController.obsRouteDisplayList}" style="margin-bottom:40px" rows="10"
                      paginator="true"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="5,10,15">

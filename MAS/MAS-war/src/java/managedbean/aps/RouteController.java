@@ -12,16 +12,19 @@ import ams.aps.entity.Route;
 import ams.aps.entity.RouteLeg;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.helper.RouteDisplayHelper;
+import ams.aps.util.helper.RouteHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.TreeMap;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import managedbean.application.MsgController;
 
 /**
@@ -66,6 +69,22 @@ public class RouteController implements Serializable {
      * Creates a new instance of RouteController
      */
     public RouteController() {
+    }
+
+    @PostConstruct
+    public void init() {
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String uri = request.getRequestURI();
+        uri = uri.substring(uri.lastIndexOf("/") + 1, uri.indexOf('.', uri.lastIndexOf("/")));
+        switch (uri) {
+            case "viewRoutes":
+            case "createFlight":
+                viewRoutes();
+                break;
+            case "viewObsoleteRoute":
+                viewObsoleteRoutes();
+                break;
+        }
     }
 
     public Country getCountryByCode(String isoCode) {
@@ -198,46 +217,82 @@ public class RouteController implements Serializable {
     public void createRouteDisplayHelpers(List<Route> routeList, List<RouteDisplayHelper> displayHelperList) {
         for (Route thisRoute : routeList) {
             RouteDisplayHelper routeDisplayHelper = new RouteDisplayHelper();
+            RouteHelper routeHelper = new RouteHelper();
             String legString = "";
-            Dictionary legAirports = new Hashtable();
-            int numOfLegs = thisRoute.getRouteLegs().size();
+            getRouteDetail(thisRoute, routeHelper);
 
-            routeDisplayHelper.setId(thisRoute.getRouteId());
-
-            System.out.println("Route Controller: viewRoutes(): thisRoute = " + thisRoute.getRouteId());
-            for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
-                int legSeq = thisRouteLeg.getLegSeq();
-
-                System.out.println("Route Controller: viewRoutes(): FROM - TO (" + legSeq + "): " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                if (numOfLegs == 1) {
-                    routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                    routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                } else {
-                    if (legSeq == 0) {
-                        routeDisplayHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                    } else if (legSeq == (numOfLegs - 1)) {
-                        legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                        routeDisplayHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-                    } else {
-                        System.out.println(thisRouteLeg.getLegSeq() - 1);
-                        legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport().getAirportName());
-                    }
-                }
-            }
-            if (legAirports.isEmpty()) {
-                legString = "N.A.";
-            } else {
-                for (int i = 1; i <= legAirports.size(); i++) {
-                    if (i < legAirports.size()) {
-                        legString += legAirports.get(i) + "-";
-                    } else {
-                        legString += legAirports.get(i);
-                    }
-                }
-            }
+            TreeMap<Integer, Airport> legAirports = routeHelper.getStopovers();
+            legString = getStopoverString(legAirports, "name");
+            routeDisplayHelper.setId(routeHelper.getId());
+            routeDisplayHelper.setOrigin(routeHelper.getOrigin().getAirportName());
+            routeDisplayHelper.setDestination(routeHelper.getDestination().getAirportName());
             routeDisplayHelper.setLegs(legString);
+            routeDisplayHelper.setReturnRouteId(routeHelper.getReturnRouteId());
             displayHelperList.add(routeDisplayHelper);
         }
+    }
+
+    public String getStopoverString(TreeMap<Integer, Airport> legAirports, String type) {
+        String legString = "";
+        if (legAirports.isEmpty()) {
+            legString = "N.A.";
+        } else {
+            for (int i = 1; i <= legAirports.size(); i++) {
+                if (i < legAirports.size()) {
+                    switch (type) {
+                        case "name":
+                            legString += legAirports.get(i).getAirportName() + "-";
+                            break;
+                        case "icao":
+                            legString += legAirports.get(i).getIcaoCode() + "-";
+                            break;
+                        case "iata":
+                            legString += legAirports.get(i).getIataCode() + "-";
+                    }
+                } else {
+                    switch (type) {
+                        case "name":
+                            legString += legAirports.get(i).getAirportName();
+                            break;
+                        case "icao":
+                            legString += legAirports.get(i).getIcaoCode();
+                            break;
+                        case "iata":
+                            legString += legAirports.get(i).getIataCode();
+                    }
+                }
+            }
+        }
+        return legString;
+    }
+
+    public void getRouteDetail(Route thisRoute, RouteHelper routeHelper) {
+        TreeMap<Integer, Airport> legAirports = new TreeMap();
+        int numOfLegs = thisRoute.getRouteLegs().size();
+
+        routeHelper.setId(thisRoute.getRouteId());
+        routeHelper.setReturnRouteId(thisRoute.getReturnRoute().getRouteId());
+
+        System.out.println("Route Controller: viewRoutes(): thisRoute = " + routeHelper.getId());
+        for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
+            int legSeq = thisRouteLeg.getLegSeq();
+
+            System.out.println("Route Controller: viewRoutes(): FROM - TO (" + legSeq + "): " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
+            if (numOfLegs == 1) {
+                routeHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport());
+                routeHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport());
+            } else {
+                if (legSeq == 0) {
+                    routeHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport());
+                } else if (legSeq == (numOfLegs - 1)) {
+                    legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport());
+                    routeHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport());
+                } else {
+                    legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport());
+                }
+            }
+        }
+        routeHelper.setStopovers(legAirports);
     }
 
     /**
