@@ -7,6 +7,7 @@ package mas.common.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -15,6 +16,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -22,18 +25,23 @@ import javax.persistence.ManyToMany;
  */
 @Entity
 public class SystemMsg implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long systemMsgId;
     private String message;
     private String messageFrom;
-    private boolean readed;
-    private boolean flaged;
-    private boolean deleted;
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "systemMsgs")
-    private List<SystemUser> systemUsers = new ArrayList<>();    
+    private Boolean readed;
+    private Boolean flaged;
+    private Boolean deleted;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date messageTime;
+    private String subject;
 
-    public void create(String message, String messageFrom){
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "systemMsgs")
+    private List<SystemUser> systemUsers = new ArrayList<>();
+
+    public void create(String message, String messageFrom) {
         this.setMessage(message);
         this.setMessageFrom(messageFrom);
         this.setReaded(false);
@@ -41,14 +49,6 @@ public class SystemMsg implements Serializable {
         this.setDeleted(false);
     }
 
-    public boolean isReaded() {
-        return readed;
-    }
-
-    public void setReaded(boolean readed) {
-        this.readed = readed;
-    }
-    
     public Long getSystemMsgId() {
         return systemMsgId;
     }
@@ -73,15 +73,53 @@ public class SystemMsg implements Serializable {
         this.systemUsers = systemUsers;
     }
 
-    public boolean isFlaged() {
+    public String getMessageFrom() {
+        return messageFrom;
+    }
+
+    public void setMessageFrom(String messageFrom) {
+        this.messageFrom = messageFrom;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public Date getMessageTime() {
+        return messageTime;
+    }
+
+    public void setMessageTime(Date messageTime) {
+        this.messageTime = messageTime;
+    }
+
+    public Boolean getReaded() {
+        return readed;
+    }
+
+    public void setReaded(Boolean readed) {
+        this.readed = readed;
+    }
+
+    public Boolean getFlaged() {
         return flaged;
     }
 
-    public void setFlaged(boolean flaged) {
+    public void setFlaged(Boolean flaged) {
         this.flaged = flaged;
     }
 
-    
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
     
     @Override
     public int hashCode() {
@@ -108,22 +146,4 @@ public class SystemMsg implements Serializable {
         return "mas.common.entity.InternalMessage[ systemMsgId=" + systemMsgId + " ]";
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public String getMessageFrom() {
-        return messageFrom;
-    }
-
-    public void setMessageFrom(String messageFrom) {
-        this.messageFrom = messageFrom;
-    }
-    
-    
-    
 }
