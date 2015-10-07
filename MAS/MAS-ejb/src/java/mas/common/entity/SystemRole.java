@@ -26,7 +26,7 @@ public class SystemRole implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long systemRoleId;
     private String roleName;
-    private boolean deleted;
+    private Boolean deleted;
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "systemRoles")
     private List<SystemUser> systemUsers = new ArrayList<>();   
     @ManyToMany(cascade={CascadeType.ALL}, fetch = FetchType.EAGER)
@@ -107,13 +107,12 @@ public class SystemRole implements Serializable {
         this.permissions = permissions;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
-
 
 }

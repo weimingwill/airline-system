@@ -42,7 +42,8 @@ public class TicketFamilyRule implements Serializable {
     @Column(name = "RULEVALUE")
     private Float ruleValue;
 
-    
+    @Column(name = "DESCRIPTION")
+    private String description;
     
     public Long getTicketFamilyId() {
         return ticketFamilyId;
@@ -82,5 +83,13 @@ public class TicketFamilyRule implements Serializable {
 
     public void setRuleValue(Float ruleValue) {
         this.ruleValue = ruleValue;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

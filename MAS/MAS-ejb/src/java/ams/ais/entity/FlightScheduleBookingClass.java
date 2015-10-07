@@ -52,6 +52,9 @@ public class FlightScheduleBookingClass implements Serializable {
     @Column(name = "PRICE")
     private Float price;
     
+    @Column(name = "BASICPRICE")
+    private Float basicPrice;
+    
     @Column(name = "PRICECOEFFICIENT")
     private Float priceCoefficient;
 
@@ -151,6 +154,12 @@ public class FlightScheduleBookingClass implements Serializable {
     public void setDemandDev(Float demandDev) {
         this.demandDev = demandDev;
     }
-    
-    
+
+    public Float getBasicPrice() {
+        return basicPrice;
+    }
+
+    public void setBasicPrice(Float basicPrice) {
+        this.basicPrice = basicPrice;
+    }
 }

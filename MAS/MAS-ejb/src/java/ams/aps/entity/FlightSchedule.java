@@ -43,6 +43,7 @@ public class FlightSchedule implements Serializable {
     private Date arrivalDate;
     private Time arrivalTime;
     private Boolean deleted;
+    private Boolean completed;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
@@ -244,4 +245,11 @@ public class FlightSchedule implements Serializable {
         this.flightScheduleBookingClasses = flightScheduleBookingClasses;
     }
 
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }    
 }

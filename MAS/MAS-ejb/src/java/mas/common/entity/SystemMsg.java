@@ -34,7 +34,7 @@ public class SystemMsg implements Serializable {
     private Boolean readed;
     private Boolean flaged;
     private Boolean deleted;
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date messageTime;
     private String subject;
 
@@ -47,14 +47,6 @@ public class SystemMsg implements Serializable {
         this.setReaded(false);
         this.setFlaged(false);
         this.setDeleted(false);
-    }
-
-    public Boolean isReaded() {
-        return readed;
-    }
-
-    public void setReaded(Boolean readed) {
-        this.readed = readed;
     }
 
     public Long getSystemMsgId() {
@@ -81,22 +73,6 @@ public class SystemMsg implements Serializable {
         this.systemUsers = systemUsers;
     }
 
-    public boolean isFlaged() {
-        return flaged;
-    }
-
-    public void setFlaged(Boolean flaged) {
-        this.flaged = flaged;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public String getMessageFrom() {
         return messageFrom;
     }
@@ -121,6 +97,30 @@ public class SystemMsg implements Serializable {
         this.messageTime = messageTime;
     }
 
+    public Boolean getReaded() {
+        return readed;
+    }
+
+    public void setReaded(Boolean readed) {
+        this.readed = readed;
+    }
+
+    public Boolean getFlaged() {
+        return flaged;
+    }
+
+    public void setFlaged(Boolean flaged) {
+        this.flaged = flaged;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
