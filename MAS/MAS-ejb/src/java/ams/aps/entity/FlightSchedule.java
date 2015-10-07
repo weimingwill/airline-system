@@ -9,7 +9,7 @@ import ams.ais.entity.FlightScheduleBookingClass;
 import java.io.Serializable;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -19,6 +19,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -32,13 +34,16 @@ public class FlightSchedule implements Serializable {
     private Long flightScheduleId;
     private String departTerminal;
     private String departGate;
+    @Temporal(value = TemporalType.DATE)
     private Date departDate;
     private Time departTime;
     private String arrivalTerminal;
     private String arrivalGate;
+    @Temporal(value = TemporalType.DATE)
     private Date arrivalDate;
     private Time arrivalTime;
-    private boolean deleted;
+    private Boolean deleted;
+    private Boolean completed;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
@@ -219,11 +224,11 @@ public class FlightSchedule implements Serializable {
         this.flight = flight;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -235,4 +240,11 @@ public class FlightSchedule implements Serializable {
         this.flightScheduleBookingClasses = flightScheduleBookingClasses;
     }
 
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }    
 }

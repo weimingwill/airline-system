@@ -6,6 +6,7 @@
 package ams.aps.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -25,10 +27,14 @@ public class Flight implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String flightNo;
+    private Integer weeklyFrequency;
+    private Boolean completed;
     
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Route route;
 
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<AircraftType> aircraftTypes;
 
     public Long getId() {
         return id;
@@ -90,5 +96,30 @@ public class Flight implements Serializable {
     public void setRoute(Route route) {
         this.route = route;
     }
+
+    public Integer getWeeklyFrequency() {
+        return weeklyFrequency;
+    }
+
+    public void setWeeklyFrequency(Integer weeklyFrequency) {
+        this.weeklyFrequency = weeklyFrequency;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+
+    public List<AircraftType> getAircraftTypes() {
+        return aircraftTypes;
+    }
+
+    public void setAircraftTypes(List<AircraftType> aircraftTypes) {
+        this.aircraftTypes = aircraftTypes;
+    }
+    
     
 }

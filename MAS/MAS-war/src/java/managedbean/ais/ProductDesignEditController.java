@@ -6,10 +6,15 @@
 package managedbean.ais;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.Rule;
+import static ams.ais.entity.Rule_.name;
 import ams.ais.session.CabinClassSessionLocal;
+import ams.ais.session.RuleSessionLocal;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
+import ams.ais.util.exception.ExistSuchRuleException;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchRuleException;
 import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -36,8 +41,12 @@ public class ProductDesignEditController implements Serializable{
     
     @EJB
     private CabinClassSessionLocal cabinClassSession;
+    private RuleSessionLocal ruleSession;
     
     private CabinClass selectedCabinClass;
+    private Rule selectedRule;
+
+    
 
     
     public ProductDesignEditController() {
@@ -54,11 +63,30 @@ public class ProductDesignEditController implements Serializable{
         return navigationController.redirectToViewAllCabinClass();
         
     }
+    
+    public String updateRule() {
+        try {
+            ruleSession.updateRule(selectedRule.getRuleId(),selectedRule.getName());
+            msgController.addMessage("Edit rule successfully!");
+        }catch( ExistSuchRuleException | NoSuchRuleException  ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllRules();
+        
+    }
     public CabinClass getSelectedCabinClass() {
         return selectedCabinClass;
     }
 
     public void setSelectedCabinClass(CabinClass selectedCabinClass) {
         this.selectedCabinClass = selectedCabinClass;
+    }
+    
+    public Rule getSelectedRule() {
+        return selectedRule;
+    }
+
+    public void setSelectedRule(Rule selectedRule) {
+        this.selectedRule = selectedRule;
     }
 }

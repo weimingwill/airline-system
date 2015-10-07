@@ -25,8 +25,10 @@ public interface RuleSessionLocal {
    public void verifyRuleExistence(String name) throws ExistSuchRuleException;
    
    public Rule getRuleByName(String name);
-   public void updateRule(String oldname, String name) throws NoSuchRuleException, ExistSuchRuleException;
+   public void updateRule(Long ruleId, String name) throws NoSuchRuleException, ExistSuchRuleException;
    public List<Rule> getAllOtherRule(String name);
+   public Rule getRuleById(Long ruleId);
+   public List<Rule> getAllOtherRuleById(Long ruleId);
    
    
 }
