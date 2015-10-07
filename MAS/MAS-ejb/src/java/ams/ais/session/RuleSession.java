@@ -82,12 +82,12 @@ public class RuleSession implements RuleSessionLocal {
     }
 
     @Override
-    public void updateRule(String oldname, String name) throws NoSuchRuleException, ExistSuchRuleException {
-        Rule rule = getRuleByName(oldname);
+    public void updateRule(Long ruleId, String name) throws NoSuchRuleException, ExistSuchRuleException {
+        Rule rule = getRuleById(ruleId);
         if (rule == null) {
             throw new NoSuchRuleException(AisMsg.NO_SUCH_RULE_ERROR);
         } else {
-            List<Rule> rules = getAllOtherRule(oldname);
+            List<Rule> rules = getAllOtherRuleById(ruleId);
 
             if (rules != null) {
 
@@ -109,6 +109,26 @@ public class RuleSession implements RuleSessionLocal {
     public List<Rule> getAllOtherRule(String name) {
         Query query = entityManager.createQuery("SELECT m FROM Rule m where m.name <> :name AND m.deleted = FALSE");
         query.setParameter("name", name);
+        return query.getResultList();
+    }
+
+    @Override
+    public Rule getRuleById(Long ruleId) {
+        Query query = entityManager.createQuery("SELECT u FROM Rule u WHERE u.ruleId = :inRuleId AND u.deleted = FALSE");
+        query.setParameter("inRuleId", ruleId);
+        Rule r = null;
+        try {
+            r = (Rule) query.getSingleResult();
+        } catch (NoResultException ex) {
+            r = null;
+        }
+        return r;
+    }
+
+    @Override
+    public List<Rule> getAllOtherRuleById(Long ruleId) {
+       Query query = entityManager.createQuery("SELECT m FROM Rule m where m.ruleId <> :ruleId AND m.deleted = FALSE");
+        query.setParameter("ruleId", ruleId);
         return query.getResultList();
     }
 }

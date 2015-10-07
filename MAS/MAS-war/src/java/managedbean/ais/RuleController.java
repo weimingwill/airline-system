@@ -92,7 +92,7 @@ public class RuleController implements Serializable{
     
     public String updateRule() {
         try {
-            ruleSession.updateRule(selectedRule.getName(),name);
+            ruleSession.updateRule(selectedRule.getRuleId(),name);
             msgController.addMessage("Edit rule successfully!");
         }catch( ExistSuchRuleException | NoSuchRuleException  ex) {
             msgController.addErrorMessage(ex.getMessage());
