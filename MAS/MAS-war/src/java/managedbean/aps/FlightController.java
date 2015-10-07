@@ -40,7 +40,6 @@ public class FlightController implements Serializable{
     private Flight flight;
     private Route route;
     private List<RouteDisplayHelper> routeDisplayHelperList = new ArrayList();
-    private String flightNo;
     private String newFlightNo;
     private List<Route> availibleRoutes;
             
@@ -56,10 +55,11 @@ public class FlightController implements Serializable{
     }
 
     public void addFlight(ActionEvent event) {
-        if (!flightSchedulingSession.checkFlightNotExisted(flightNo)) {
+        String flightNo = flight.getFlightNo();
+        if (flightSchedulingSession.checkFlightExistence(flightNo)) {
             msgController.addErrorMessage("Flight no. existed already!");
         } else {
-            if (flightSchedulingSession.createFlight(getFlightNo(), getRoute().getRouteId())) {
+            if (flightSchedulingSession.createFlight(flight)) {
                 msgController.addMessage("New flight assigned!");
             } else {
                 msgController.addErrorMessage("Fail to assign flight to route!");
@@ -86,7 +86,7 @@ public class FlightController implements Serializable{
     }
 
     public void resetFlightNo(String oldFlightNo, String newFlightNo) {
-        if (!flightSchedulingSession.checkFlightNoExistence(flightNo)) {
+        if (!flightSchedulingSession.checkFlightNoExistence(newFlightNo)) {
             msgController.addErrorMessage("Flight no. not existed!");
         }else{
             if (flightSchedulingSession.changeFlightNo(oldFlightNo, newFlightNo)) {
@@ -123,20 +123,6 @@ public class FlightController implements Serializable{
      */
     public void setRoute(Route route) {
         this.route = route;
-    }
-
-    /**
-     * @return the flightNo
-     */
-    public String getFlightNo() {
-        return flightNo;
-    }
-
-    /**
-     * @param flightNo the flightNo to set
-     */
-    public void setFlightNo(String flightNo) {
-        this.flightNo = flightNo;
     }
 
     /**

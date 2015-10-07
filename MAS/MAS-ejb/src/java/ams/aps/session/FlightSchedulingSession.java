@@ -35,21 +35,18 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     public final double STOPOVER_TIME = 1/3;
             
     @Override
-    public boolean createFlight(String flightNo, Long routeID) {
+    public boolean createFlight(Flight flight) {
+        Route route = flight.getRoute();
         try {
-            Route route = em.find(Route.class, routeID);
-
-            Flight flight = new Flight();
-            flight.setFlightNo(flightNo);
-            flight.setRoute(route);
-
+            route = em.find(Route.class, route.getRouteId());
             List<Flight> fList = route.getFlights();
+            if(fList == null){
+                fList = new ArrayList();
+            }
             fList.add(flight);
             route.setFlights(fList);
-
             em.persist(flight);
             em.merge(route);
-
             return true;
         } catch (Exception ex) {
             return false;
@@ -57,18 +54,18 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     @Override
-    public boolean checkFlightNotExisted(String flightNo) {
+    public boolean checkFlightExistence(String flightNo) {
         try {
             Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo");
             query.setParameter("fNo", flightNo);
 
             if (query.getResultList().isEmpty()) {
-                return true;
-            } else {
                 return false;
+            } else {
+                return true;
             }
         } catch (Exception e) {
-            return false;
+            return true;
         }
     }
 

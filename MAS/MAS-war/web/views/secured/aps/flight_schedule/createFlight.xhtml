@@ -15,11 +15,11 @@
                 <p:panel header="Create Flight">
                     <p:panelGrid columns="2">
                         <p:outputLabel value="Flight Number"/>
-                        <p:inputMask mask="MA999" value="#{flightController.flight.flightNo}"/>
+                        <p:inputMask mask="MA999" value="#{flightController.flight.flightNo}" required="true"/>
                         <p:outputLabel value="Select Route"/>
 
                         <p:selectOneMenu value="#{flightController.flight.route}" converter="routeConverter" filter="true" filterMatchMode="contains" var="rh" style="width: 100%">
-                            <f:selectItems value="#{flightController.routeDisplayHelperList}" var="route" itemLabel="#{route.origin}-#{route.legs}-#{route.destination}"/>
+                            <f:selectItems value="#{flightController.routeDisplayHelperList}" var="route" itemLabel="#{route.id}:#{route.origin}-#{route.legs}-#{route.destination}"/>
                             <p:column>
                                 <h:outputText value="#{rh.id}" />
                             </p:column>
@@ -36,7 +36,7 @@
 
                     </p:panelGrid>
                     <p:separator/>
-                    <p:commandButton value="Save &amp; Continue"/>
+                    <p:commandButton value="Save &amp; Continue" action="#{navigationController.toFleetAssignment()}"/>
                 </p:panel>
             </p:panelGrid>
         </h:form>

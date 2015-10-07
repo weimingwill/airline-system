@@ -7,6 +7,7 @@ package ams.aps.session;
 
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftType;
+import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.entity.Route;
 import java.util.List;
@@ -19,9 +20,9 @@ import javax.ejb.Local;
 @Local
 public interface FlightSchedulingSessionLocal {
 
-    public boolean createFlight(String flightNo, Long routeID);
+    public boolean createFlight(Flight flight);
 
-    public boolean checkFlightNotExisted(String flightNo);
+    public boolean checkFlightExistence(String flightNo);
 
     public boolean checkFlightNoExistence(String flightNo);
 
