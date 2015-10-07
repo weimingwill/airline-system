@@ -77,13 +77,13 @@
                                                 <p:panelGrid columns="5">
                                                     <p:outputLabel value="#{bc.bookingClass.name}" />
                                                     <p:inputText value="#{bc.priceCoefficient}" style="width:35px" >
-                                                        <!--<p:ajax event="blur" update ="priceBookingClass" />-->
+                                                        <p:ajax event="blur" update ="price#{bc.bookingClass.bookingClassId}" />
                                                     </p:inputText>
                                                     <p:outputLabel value=" X " />
                                                     <p:inputText value="#{bookingClassController.basicPrice}" style="width:35px" >
-                                                        <!--<p:ajax event="blur" update ="priceBookingClass" />-->
+                                                        <p:ajax event="blur" update ="price#{bc.bookingClass.bookingClassId}" />
                                                     </p:inputText>
-                                                    <p:inputText value="#{bc.price}" />
+                                                    <p:inputText id="price#{bc.bookingClass.bookingClassId}"  value="#{bookingClassController.getCalculatedPrice(priceCoefficient.value)}" />
                                                 </p:panelGrid>
                                             </c:forEach>
                                         </p:column>

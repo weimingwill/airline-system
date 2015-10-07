@@ -62,7 +62,7 @@ public class BookingClassController implements Serializable {
         System.out.println("Initialize Booking Class Controler: ");
         System.out.println("FlightScheduleId: " + flightScheduleId);
         initialHelper();
-//        initialBasicPrice();
+        initialBasicPrice();
         System.out.println("Helper: " + flightSchCabinClsTicFamBookingClsHelpers);
     }
 
@@ -116,12 +116,14 @@ public class BookingClassController implements Serializable {
             for (FlightSchCabinClsTicFamBookingClsHelper helper : flightSchCabinClsTicFamBookingClsHelpers) {
                 for (TicketFamilyBookingClassHelper tfbcHelper : helper.getTicketFamilyBookingClassHelpers()) {
                     for (BookingClassHelper bcHelper : tfbcHelper.getBookingClassHelpers()) {
-                        if (bcHelper.getPrice() == 0 && bcHelper.getPriceCoefficient() == 0) {
-                            basicPrice = 0;
-                        } else {
-                            basicPrice = bcHelper.getPrice() / bcHelper.getPriceCoefficient();
-                        }
+                        basicPrice = bcHelper.getBasicPrice();
                         break;
+//                        if (bcHelper.getPrice() == 0 && bcHelper.getPriceCoefficient() == 0) {
+//                            basicPrice = 0;
+//                        } else {
+//                            basicPrice = bcHelper.getPrice() / bcHelper.getPriceCoefficient();
+//                        }
+//                        break;
                     }
                 }
             }
@@ -134,6 +136,7 @@ public class BookingClassController implements Serializable {
     }
 
     public float getCalculatedPrice(float priceCoefficient) {
+        System.out.println("Price: " + priceCoefficient * basicPrice);
         return priceCoefficient * basicPrice;
     }
 

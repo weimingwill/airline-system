@@ -276,6 +276,7 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
                 flightScheduleBookingClass.setBookingClass(bookingClass);
                 flightScheduleBookingClass.setSeatQty(0);
                 flightScheduleBookingClass.setDeleted(false);
+                flightScheduleBookingClass.setBasicPrice((float)0);
                 flightScheduleBookingClass.setPrice((float) 0);
                 flightScheduleBookingClass.setPriceCoefficient((float) 0);
                 flightScheduleBookingClass.setDemandDev((float) 0);

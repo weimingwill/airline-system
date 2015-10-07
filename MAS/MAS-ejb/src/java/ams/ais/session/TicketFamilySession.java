@@ -457,6 +457,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
             TicketFamilyBookingClassHelper helper = new TicketFamilyBookingClassHelper();
             helper.setSeatQty(cabinClassTicketFamily.getSeatQty());
             helper.setTicketFamily(cabinClassTicketFamily.getTicketFamily());
+            helper.setPrice(cabinClassTicketFamily.getPrice());
             helper.setBookingClassHelpers(bookingClassSession.getBookingClassHelpers(flightScheduleId, ticketFamilyId));
             try {
                 helper.setBookingClasses(flightScheduleSession.getFlightScheduleBookingClassesOfTicketFamily(flightScheduleId, ticketFamilyId));
@@ -511,6 +512,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                     cabinClassTicketFamily.setCabinClassTicketFamilyId(cabinClassTicketFamilyId);
                     cabinClassTicketFamily.setTicketFamily(originTicketFamily);
                     cabinClassTicketFamily.setSeatQty(0);
+                    cabinClassTicketFamily.setPrice((float)0);
                     cabinClassTicketFamily.setDeleted(false);
                     entityManager.persist(cabinClassTicketFamily);
                     entityManager.flush();

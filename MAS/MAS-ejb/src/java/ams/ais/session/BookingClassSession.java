@@ -133,6 +133,7 @@ public class BookingClassSession implements BookingClassSessionLocal {
                 bookingClassHelper.setSeatQty(flightScheduleBookingClass.getSeatQty());
                 bookingClassHelper.setPriceCoefficient(flightScheduleBookingClass.getPriceCoefficient());
                 bookingClassHelper.setPrice(flightScheduleBookingClass.getPrice());
+                bookingClassHelper.setBasicPrice(flightScheduleBookingClass.getBasicPrice());
                 bookingClassHelper.setDemandDev(flightScheduleBookingClass.getDemandDev());
                 bookingClassHelper.setDemandMean(flightScheduleBookingClass.getDemandMean());
                 bookingClassHelpers.add(bookingClassHelper);
@@ -190,6 +191,7 @@ public class BookingClassSession implements BookingClassSessionLocal {
                 for (BookingClassHelper bookingClassHelper : SafeHelper.emptyIfNull(tfbcHelper.getBookingClassHelpers())) {
                     FlightScheduleBookingClass flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClassHelper.getBookingClass().getBookingClassId());
                     flightScheduleBookingClass.setPrice(bookingClassHelper.getPrice());
+                    flightScheduleBookingClass.setBasicPrice(bookingClassHelper.getBasicPrice());
                     flightScheduleBookingClass.setPriceCoefficient(bookingClassHelper.getPriceCoefficient());
                     entityManager.merge(flightScheduleBookingClass);
                 }
