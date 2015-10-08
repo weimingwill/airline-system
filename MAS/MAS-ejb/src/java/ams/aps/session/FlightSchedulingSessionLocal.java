@@ -10,6 +10,8 @@ import ams.aps.entity.AircraftType;
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.entity.Route;
+import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.exception.FlightDoesNotExistException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -19,25 +21,14 @@ import javax.ejb.Local;
  */
 @Local
 public interface FlightSchedulingSessionLocal {
-
     public boolean createFlight(Flight flight);
-
-    public boolean checkFlightExistence(String flightNo);
-
-    public boolean checkFlightNoExistence(String flightNo);
-
+    public Flight checkFlightExistence(String flightNo) throws FlightDoesNotExistException;
+    public List<Flight> getFlight(Boolean complete) throws EmptyTableException;
     public boolean changeFlightNo(String flightNo, String newFlightNo);
-
     public List<AircraftType> getCapableAircraftTypesForRoute(Route route);
-
     public List<Aircraft> getAvailableAircraftsByType(AircraftType type);
-
     public double getMaxFlightFrequency(AircraftType type, Route r);
-
     public void assignFlightScheduleToAircraft(FlightSchedule flightSchedule);
-
     public void modifyFlightSchedule(FlightSchedule newFlightSchedule);
-
     public List<Route> getAvailableRoutes();
-
 }

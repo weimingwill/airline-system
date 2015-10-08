@@ -8,7 +8,7 @@
 
     <ui:define name="content">
         <h:form id="myForm">
-            <p:dataTable var="route" value="#{routePlanningController.routeList}" selection="#{routePlanningController.selectedRoutes}" rowKey="#{route.stops}" style="margin-bottom:40px" rows="5"
+            <p:dataTable var="route" value="#{routePlanningController.routeList}" selection="#{routePlanningController.selectedRoutes}" rowKey="#{route.type}" style="margin-bottom:40px" rows="5"
                          paginator="true"
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
                 <f:facet name="header">

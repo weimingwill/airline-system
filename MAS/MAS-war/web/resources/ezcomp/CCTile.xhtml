@@ -8,7 +8,9 @@
     <cc:interface>
         <cc:attribute name="header"/>
         <cc:attribute name="subheader"/>
+        <cc:attribute name='displayNum' default="false"/>
         <cc:attribute name="numericValue"/>
+        <cc:attribute name='displayBtn' default='false'/>
         <cc:attribute name="icon"/>
         <cc:attribute name="footer"/>
     </cc:interface>
@@ -31,12 +33,13 @@
                     <p:outputLabel styleClass="#{cc.attrs.icon} tileIcon"/>
                 </p:column>
                 <p:column colspan="1" style="text-align: right;">
-                    <p:outputLabel value="#{cc.attrs.numericValue}" styleClass="tileValue"/>
+                    <p:outputLabel value="#{cc.attrs.numericValue}" styleClass="tileValue" rendered="#{cc.attrs.displayNum}"/>
                 </p:column>
             </p:row>
             <p:row>
                 <p:column colspan="2" styleClass="tileFooterContainer">
                     <p:outputLabel value="#{cc.attrs.footer}" styleClass="tileFooter"/>
+                    <p:commandButton value="Continue" rendered="#{cc.attrs.displayBtn}" action="#{flightController.findFlightByFlightNo(cc.attrs.header)}"/>
                 </p:column>
             </p:row>
         </p:panelGrid>
