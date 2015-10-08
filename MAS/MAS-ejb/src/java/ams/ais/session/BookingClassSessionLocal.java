@@ -6,6 +6,7 @@
 package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
+import ams.ais.util.exception.DuplicatePriceException;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.BookingClassHelper;
@@ -14,6 +15,7 @@ import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Local;
 
 /**
@@ -42,6 +44,8 @@ public interface BookingClassSessionLocal {
     public void allocateSeats(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightHelpers)
             throws NoSuchAircraftException, NoSuchAircraftCabinClassException, NoSuchFlightScheduleBookingClassException;
 
-    public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers)
-            throws NoSuchFlightScheduleBookingClassException;
+    public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers,  Map<Long, Float> priceMap)
+            throws NoSuchFlightScheduleBookingClassException, DuplicatePriceException;
+    
+    public void verifyUniqueBookingClassPrices(Map<Long, Float>priceMap) throws DuplicatePriceException;
 }

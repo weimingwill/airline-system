@@ -31,5 +31,5 @@ public class AisMsg {
     public static final String WRONG_SUM_OF_BOOKING_CLASS_ERROR = "Seat quantity sum of booking class should equalst to their ticket family seat quantity";
     public static final String EXIST_SUCH_CHECK_POINT_ERROR = "Check point already exists";
     public static final String NO_SUCH_PHASE_DEMAND_ERROR = "Phase demand doesn't exist";
-
+    public static final String DUPLICATE_PRICE_ERROR = "All prices entered should not be the same";
 }
