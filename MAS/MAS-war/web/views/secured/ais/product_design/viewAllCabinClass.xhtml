@@ -26,6 +26,11 @@
                     </p:commandButton></h:form>
             </p:column>
             
+            <p:column headerText="Delete" style="width:32px;text-align: center">
+                <h:form> <p:commandButton update="cabinClassDeleteDialog" oncomplete="PF('cabinClassDeleteDialog').show()" icon="ui-icon-trash">
+                        <f:setPropertyActionListener value="#{cabinclass}" target="#{productDesignDeleteController.selectedCabinClass}" />
+                    </p:commandButton></h:form>
+            </p:column>
         </p:dataTable>
         
         <p:dialog id="cabinClassDialog" header="Edit:  #{productDesignEditController.selectedCabinClass.type}- #{productDesignEditController.selectedCabinClass.name}" widgetVar="cabinClassDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
@@ -54,7 +59,37 @@
                         <!--</ui:repeat>-->
                         </p:panelGrid>
                 </p:panel>
-                <p:commandButton value="Submit" action="#{navigationController.redirectToViewAllCabinClass()}" actionListener="#{productDesignEditController.updateCabinClass()}" oncomplete="PF('ruleDialog').hide()"/>
+                <p:commandButton value="Submit" action="#{navigationController.redirectToViewAllCabinClass()}" actionListener="#{productDesignEditController.updateCabinClass()}" oncomplete="PF('cabinClassDialog').hide()"/>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="cabinClassDeleteDialog" header="Are you sure you want to delete Cabin Class:  #{productDesignDeleteController.selectedCabinClass.type}- #{productDesignDeleteController.selectedCabinClass.name}" widgetVar="cabinClassDeleteDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form>
+                <p:panel id="cabinclassDeleteDetail">
+                    <p:panelGrid>
+                        <!--<ui:repeat var="cc" value="{cabinClassController.selectedCabinClass}" >-->
+                             <p:row> 
+                                <p:column>
+                                    <p:outputLabel value="Cabin Class Type: " />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{productDesignDeleteController.selectedCabinClass.type}" >
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Cabin Class Name: " />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{productDesignDeleteController.selectedCabinClass.name}" />
+                                </p:column>
+                            </p:row>
+                        <!--</ui:repeat>-->
+                        </p:panelGrid>
+                </p:panel>
+                <p:commandButton value="Delete" action="#{navigationController.redirectToViewAllCabinClass()}" actionListener="#{productDesignDeleteController.deleteCabinClass()}" oncomplete="PF('cabinClassDeleteDialog').hide()"/>
             </h:form>
         </p:dialog>
         

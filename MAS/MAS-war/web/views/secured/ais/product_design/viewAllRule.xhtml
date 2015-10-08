@@ -21,7 +21,13 @@
                         <f:setPropertyActionListener value="#{rule}" target="#{productDesignEditController.selectedRule}" />
                     </p:commandButton></h:form>
             </p:column>
-        
+            
+            <p:column headerText="Delete" style="width:32px;text-align: center">
+                <h:form> <p:commandButton update="ruleDeleteDialog" oncomplete="PF('ruleDeleteDialog').show()" icon="ui-icon-trash">
+                        <f:setPropertyActionListener value="#{rule}" target="#{productDesignDeleteController.selectedRule}" />
+                    </p:commandButton></h:form>
+            </p:column>
+            
         </p:dataTable>
 
         <p:dialog id="ruleDialog" header="Edit rule:  #{productDesignEditController.selectedRule.name}" widgetVar="ruleDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
@@ -45,7 +51,28 @@
                 <p:commandButton value="Submit" action="#{navigationController.redirectToViewAllRules()}" actionListener="#{productDesignEditController.updateRule()}" oncomplete="PF('ruleDialog').hide()"/>
             </h:form>
         </p:dialog>
+        
+        <p:dialog id="ruleDeleteDialog" header="Are you sure you want to delete the rule:  #{productDesignDeleteController.selectedRule.name}" widgetVar="ruleDeleteDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form>
+                <p:panel id="ruleDeleteDetail">
+                    <p:panelGrid>
+                       
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Rule Name: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{productDesignDeleteController.selectedRule.name}" >
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
 
+                        
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton value="Delete" action="#{navigationController.redirectToViewAllRules()}" actionListener="#{productDesignDeleteController.deleteRule()}" oncomplete="PF('ruleDialog').hide()"/>
+            </h:form>
+        </p:dialog>
 
     </ui:define>
 

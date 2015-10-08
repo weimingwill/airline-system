@@ -200,6 +200,8 @@ public class TicketFamilyController implements Serializable {
 
     public void deleteTicketFamily() {
         try {
+            System.out.print("we are in delete ticket Family!");
+            System.out.print("the deleted select ticket family name is: "+selectedTicketFamily);
             ticketFamilySession.deleteTicketFamilyByType(selectedTicketFamily.getType());
             msgController.addMessage("Delete ticket family successfully");
         } catch (NoSuchTicketFamilyException ex) {
