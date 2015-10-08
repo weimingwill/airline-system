@@ -35,6 +35,15 @@ public class RuleController implements Serializable{
     private String oldname;
     private String name;
     private Rule selectedRule;
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Rule getSelectedRule() {
         return selectedRule;
@@ -67,7 +76,7 @@ public class RuleController implements Serializable{
     
     public String createRule (){
         try {
-            ruleSession.createRule(name);
+            ruleSession.createRule(name,description);
             msgController.addMessage("Create New Rule successfully!");
         } catch (ExistSuchRuleException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -92,7 +101,7 @@ public class RuleController implements Serializable{
     
     public String updateRule() {
         try {
-            ruleSession.updateRule(selectedRule.getRuleId(),name);
+            ruleSession.updateRule(selectedRule.getRuleId(),selectedRule.getName(),selectedRule.getDescription());
             msgController.addMessage("Edit rule successfully!");
         }catch( ExistSuchRuleException | NoSuchRuleException  ex) {
             msgController.addErrorMessage(ex.getMessage());

@@ -36,10 +36,10 @@ public class RuleSession implements RuleSessionLocal {
     }
 
     @Override
-    public void createRule(String name) throws ExistSuchRuleException {
+    public void createRule(String name, String description) throws ExistSuchRuleException {
         verifyRuleExistence(name);
         Rule rule = new Rule();
-        rule.create(name);
+        rule.create(name,description);
         entityManager.persist(rule);
     }
 
@@ -82,7 +82,7 @@ public class RuleSession implements RuleSessionLocal {
     }
 
     @Override
-    public void updateRule(Long ruleId, String name) throws NoSuchRuleException, ExistSuchRuleException {
+    public void updateRule(Long ruleId, String name,String description) throws NoSuchRuleException, ExistSuchRuleException {
         System.out.print("rule id is" + ruleId);
         System.out.print("Rule name is" +name);
         Rule rule = getRuleById(ruleId);
@@ -102,7 +102,7 @@ public class RuleSession implements RuleSessionLocal {
             }
         }
         rule.setName(name);
-
+        rule.setDescription(description);
         entityManager.merge(rule);
         entityManager.flush();
     }

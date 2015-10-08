@@ -73,7 +73,7 @@ public class ProductDesignEditController implements Serializable{
             System.out.printf("selected rule name is "+ selectedRule.getName());
             System.out.println("rule session =" + ruleSession);
             
-            ruleSession.updateRule(selectedRule.getRuleId(),selectedRule.getName());
+            ruleSession.updateRule(selectedRule.getRuleId(),selectedRule.getName(),selectedRule.getDescription());
             msgController.addMessage("Edit rule successfully!");
         }catch( ExistSuchRuleException | NoSuchRuleException  ex) {
             msgController.addErrorMessage(ex.getMessage());

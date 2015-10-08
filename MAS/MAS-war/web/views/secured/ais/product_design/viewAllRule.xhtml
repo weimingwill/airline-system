@@ -15,14 +15,18 @@
             <p:column headerText="Rule Name">
                 <p:outputLabel value="#{rule.name}"/>
             </p:column>
-
+            
+            <p:column headerText="Rule Description">
+                <p:outputLabel value="#{rule.description}"/>
+            </p:column>
+            
             <p:column headerText="Edit" style="width:32px;text-align: center">
                 <h:form> <p:commandButton update="ruleDialog" oncomplete="PF('ruleDialog').show()" icon="ui-icon-pencil">
                         <f:setPropertyActionListener value="#{rule}" target="#{productDesignEditController.selectedRule}" />
                     </p:commandButton></h:form>
             </p:column>
             
-            <p:column headerText="Delete" style="width:32px;text-align: center">
+            <p:column headerText="Delete" style="width:50px;text-align: center">
                 <h:form> <p:commandButton update="ruleDeleteDialog" oncomplete="PF('ruleDeleteDialog').show()" icon="ui-icon-trash">
                         <f:setPropertyActionListener value="#{rule}" target="#{productDesignDeleteController.selectedRule}" />
                     </p:commandButton></h:form>
@@ -39,13 +43,23 @@
                             <p:column>
                                 <p:outputLabel value="Rule Name: " />
                             </p:column>
+                            
                             <p:column>
                                 <p:inputText value="#{productDesignEditController.selectedRule.name}" >
                                 </p:inputText>
                             </p:column>
                         </p:row>
 
-                        
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Rule Description: " />
+                            </p:column>
+                            
+                            <p:column>
+                                <p:inputText value="#{productDesignEditController.selectedRule.description}" >
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
                     </p:panelGrid>
                 </p:panel>
                 <p:commandButton value="Submit" action="#{navigationController.redirectToViewAllRules()}" actionListener="#{productDesignEditController.updateRule()}" oncomplete="PF('ruleDialog').hide()"/>
@@ -66,7 +80,15 @@
                                 </h:outputText>
                             </p:column>
                         </p:row>
-
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Rule Description: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{productDesignDeleteController.selectedRule.description}" >
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
                         
                     </p:panelGrid>
                 </p:panel>
