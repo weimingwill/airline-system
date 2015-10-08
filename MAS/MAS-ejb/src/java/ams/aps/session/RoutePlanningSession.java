@@ -98,7 +98,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public List<Country> getCountryList() {
-        Query query = em.createQuery("SELECT c FROM Country c");
+        Query query = em.createQuery("SELECT c FROM Country c ORDER BY c.countryName");
 
         List<Country> countries = new ArrayList<Country>();
         List<ArrayList> CountryList = new ArrayList<ArrayList>();
@@ -533,6 +533,8 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             city.setCityName(cityName);
             city.setUTC(utc);
             city.setCountry(country);
+            List<Airport> airports = new ArrayList();
+            city.setAirports(airports);
             em.persist(city);
             
             List<City> cityList = (List<City>) country.getCities();
@@ -562,6 +564,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             airport1.setAirportName(airport.getAirportName());
             airport1.setCity(city);
             airport1.setCountry(country);
+            airport1.setIsHub(FALSE);
             airport1.setIataCode(airport.getIataCode());
             airport1.setIcaoCode(airport.getIcaoCode());
             airport1.setAltitude(airport.getAltitude());
@@ -582,7 +585,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public boolean checkIATA(String iata) {
-        Query q = em.createQuery("SELECT a FROM Airport a WHERE a.iataCode =: iataCode");
+        Query q = em.createQuery("SELECT a FROM Airport a WHERE a.iataCode =:iataCode");
         q.setParameter("iataCode", iata);
         try{
             Airport a = (Airport) q.getSingleResult();
@@ -596,7 +599,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public boolean checkICAO(String icao) {
-        Query q = em.createQuery("SELECT a FROM Airport a WHERE a.icaoCode =: icaoCode");
+        Query q = em.createQuery("SELECT a FROM Airport a WHERE a.icaoCode =:icaoCode");
         q.setParameter("icaoCode", icao);
         try{
             Airport a = (Airport) q.getSingleResult();
@@ -605,5 +608,41 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             return true;
         }catch(Exception e){
             return false;
-        }    }
+        }
+    }
+
+    @Override
+    public boolean checkISO(String iso, String countryName) {
+        Query q = em.createQuery("SELECT c FROM Country c WHERE c.isoCode =:isoCode");
+        q.setParameter("isoCode", iso);
+        Query q1 = em.createQuery("SELECT c FROM Country c WHERE c.countryName =:name");
+        q1.setParameter("name", countryName);
+        
+        try{
+            Country a = (Country) q.getSingleResult();
+            Country b = (Country) q1.getSingleResult();
+            if (a != null || b != null) {
+                return false;
+            }else{
+                return true;
+            }
+        }catch(NoResultException e){
+            return true;
+        }catch(Exception e){
+            return false;
+        } 
+    }
+
+    @Override
+    public boolean checkCityName(String cityName, String iso) {
+        
+        List<City> cities = getCityListByCountry(iso);
+        
+        for(City c: cities){
+            if(c.getCityName().equals(cityName)){
+                return false;
+            }
+        }
+        return true;
+    }
 }

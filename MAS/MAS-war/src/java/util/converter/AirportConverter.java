@@ -41,7 +41,8 @@ public class AirportConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        if (value != null && !(value instanceof String)) {
+        System.out.println("value = " + value);
+        if (value != null && !(value instanceof String) && ((Airport)value).getId()!=null) {
             return ((Airport)value).getIcaoCode();
         } else {
             return null;

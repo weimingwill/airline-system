@@ -78,4 +78,8 @@ public interface RoutePlanningSessionLocal {
     public boolean checkIATA(String iata);
     
     public boolean checkICAO(String icao);
+    
+    public boolean checkCityName(String cityName, String iso);
+    
+    public boolean checkISO(String iso, String countryName);
 }
