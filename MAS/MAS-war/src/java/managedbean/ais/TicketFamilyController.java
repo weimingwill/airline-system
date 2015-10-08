@@ -155,7 +155,7 @@ public class TicketFamilyController implements Serializable {
         try {
             setRuleList(ticketFamilySession.getAllRules());
             for (Rule rule : ruleList) {
-                displayRuleList.add(new TicketFamilyRuleHelper(rule.getRuleId(), rule.getName(), 0));
+                displayRuleList.add(new TicketFamilyRuleHelper(rule.getRuleId(), rule.getName(),rule.getDescription(), 0));
             }
         } catch (EmptyTableException ex) {
             Logger.getLogger(TicketFamilyController.class.getName()).log(Level.SEVERE, null, ex);

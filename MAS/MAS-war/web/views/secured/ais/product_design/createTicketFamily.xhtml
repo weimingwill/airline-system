@@ -43,9 +43,10 @@
 
 
                 <p:outputLabel value="Update value for each rule:" />
-                <h:panelGrid columns="2" columnClasses="label, value">
+                <h:panelGrid columns="3">
                     <c:forEach var="ticketFamilyRule" items="#{ticketFamilyController.displayRuleList}">
-                        <p:outputLabel value="Input value for #{ticketFamilyRule.name}:"/>
+                        <p:outputLabel value="Rule Name: #{ticketFamilyRule.name} "/>
+                        <p:outputLabel value="Description: #{ticketFamilyRule.description}.   Please input rule value"/>
                         <p:inputText required="true" requiredMessage="Please input rule value" value="#{ticketFamilyRule.ruleValue}"/>
                     </c:forEach>
                 </h:panelGrid>
@@ -53,6 +54,7 @@
                 <p:commandButton action="#{ticketFamilyController.createTicketFamily()}" value="Create" update="messages"/> 
             </h:form>
         </p:panel>
+            
     </ui:define>
 
 </ui:composition>

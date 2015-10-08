@@ -55,7 +55,20 @@
                 </f:facet>
             </p:dataTable>
         </h:form>
-
+        
+        <h:form>
+            <p:dataTable value="#{ruleController.allRule}" var="rule">
+            <p:column headerText="Rule Name">
+                <p:outputLabel value="#{rule.name}"/>
+            </p:column>
+            
+            <p:column headerText="Rule Description">
+                <p:outputLabel value="#{rule.description}"/>
+            </p:column>
+         
+            </p:dataTable>
+        </h:form>
+        
         <p:dialog id="ruleDialog" header="Edit #{ticketFamilyController.selectedTicketFamily.cabinClass.name}: #{ticketFamilyController.selectedTicketFamily.name}" widgetVar="ruleDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form>
                 <p:panel id="ruleDetail">

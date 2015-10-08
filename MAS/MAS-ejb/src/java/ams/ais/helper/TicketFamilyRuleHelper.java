@@ -14,11 +14,15 @@ public class TicketFamilyRuleHelper {
     private Long ruleId;
     private Long ticketFamilyId;
     private String name;
+    private String description;
+
+    
     private double ruleValue;
 
-    public TicketFamilyRuleHelper(Long ruleId, String name, double ruleValue) {
+    public TicketFamilyRuleHelper(Long ruleId, String name, String description,double ruleValue) {
         this.name = name;
         this.ruleId = ruleId;
+        this.description=description;
         this.ruleValue = ruleValue;
     }
 
@@ -60,5 +64,12 @@ public class TicketFamilyRuleHelper {
     public void setRuleValue(double ruleValue) {
         this.ruleValue = ruleValue;
     }
+    
+    public String getDescription() {
+        return description;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
