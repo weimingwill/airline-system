@@ -28,6 +28,7 @@ public class Rule implements Serializable {
     private Long ruleId;
     private String name;
     private Boolean deleted;
+    private String description;
     
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "rule")
     private List<TicketFamilyRule> ticketFamilyRules = new ArrayList<>();
@@ -67,6 +68,14 @@ public class Rule implements Serializable {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
     
 
