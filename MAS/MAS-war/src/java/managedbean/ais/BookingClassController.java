@@ -11,10 +11,14 @@ import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
 import ams.ais.session.FlightScheduleSessionLocal;
 import ams.ais.util.exception.DuplicatePriceException;
+import ams.ais.util.exception.NeedBookingClassException;
+import ams.ais.util.exception.WrongSumOfBookingClassSeatQtyException;
+import ams.ais.util.exception.WrongSumOfTicketFamilySeatQtyException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
+import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -26,13 +30,11 @@ import javax.faces.component.UIComponent;
 import javax.inject.Named;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
-import org.primefaces.context.RequestContext;
 
 @Named(value = "bookingClassController")
 @ViewScoped
@@ -94,11 +96,23 @@ public class BookingClassController implements Serializable {
         return navigationController.redirectToDeleteBookingClass();
     }
 
+    public String assignFlightScheduleBookingClass() {
+        try {
+            flightScheduleSession.assignFlightScheduleBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+            msgController.addMessage("assign flight schedule booking class succesffully!");
+            return navigationController.redirectToViewFlightSchedule();
+        } catch (NoSuchFlightSchedulException | NoSuchFlightScheduleBookingClassException | NeedBookingClassException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+            return "";
+        }
+    }    
+    
     public String allocateSeats() {
         try {
             bookingClassSession.allocateSeats(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
             msgController.addMessage("Allocate seats succesfully!");
-        } catch (NoSuchAircraftCabinClassException | NoSuchAircraftException | NoSuchFlightScheduleBookingClassException ex) {
+        } catch (NoSuchAircraftCabinClassException | NoSuchAircraftException | NoSuchFlightScheduleBookingClassException
+                | WrongSumOfBookingClassSeatQtyException | WrongSumOfTicketFamilySeatQtyException ex) {
             msgController.addErrorMessage(ex.getMessage());
             return "";
         }
@@ -143,13 +157,6 @@ public class BookingClassController implements Serializable {
                             priceCoefficientMap.put(bcHelper.getBookingClass().getBookingClassId(), bcHelper.getPriceCoefficient());
                             basicPrice = bcHelper.getBasicPrice();
                         }
-
-//                        if (bcHelper.getPrice() == 0 && bcHelper.getPriceCoefficient() == 0) {
-//                            basicPrice = 0;
-//                        } else {
-//                            basicPrice = bcHelper.getPrice() / bcHelper.getPriceCoefficient();
-//                        }
-//                        break;
                     }
                 }
             }

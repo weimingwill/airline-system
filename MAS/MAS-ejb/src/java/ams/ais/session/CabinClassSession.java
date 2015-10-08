@@ -15,7 +15,6 @@ import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
-import ams.aps.session.AircraftSessionLocal;
 import ams.aps.util.helper.AircraftStatus;
 import java.util.ArrayList;
 import java.util.List;

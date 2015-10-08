@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.aps.session;
+package ams.ais.session;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
@@ -25,4 +27,5 @@ public interface AircraftSessionLocal {
     public Aircraft getAircraftById(Long id) throws NoSuchAircraftException;
     public List<Aircraft> getScheduledAircrafts() throws NoSuchAircraftException;
     public List<CabinClass> getAircraftCabinClasses(Long aircraftId) throws NoSuchCabinClassException;
+    public List<TicketFamily> getAircraftTicketFamilys(Long aircraftId) throws NoSuchTicketFamilyException;
 }

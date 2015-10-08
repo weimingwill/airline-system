@@ -22,7 +22,7 @@
                             <p:column colspan="1">Booking Class</p:column>
                         </p:row>
                     </f:facet>
-                    <c:forEach var="helper" items="#{flightScheduleController.flightSchCabinClsTicFamBookingClsHelpers}">
+                    <c:forEach var="helper" items="#{bookingClassController.flightSchCabinClsTicFamBookingClsHelpers}">
                         <p:row>
                             <p:column colspan="1">#{helper.cabinClass.name}</p:column>
                             <p:column colspan="2">
@@ -31,7 +31,8 @@
                                             <p:outputLabel value="#{tf.ticketFamily.name}" style="width: 80px;"/>
                                             <p:selectManyMenu value="#{tf.bookingClasses}" converter="bookingClassConverter"
                                                               var="bookingClass" showCheckbox="true" style="width:100px;">
-                                                <f:selectItems value="#{flightScheduleController.getTicketFamilyBookingClasses(helper.cabinClass.name, tf.ticketFamily.name)}" var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}" />
+                                                <f:selectItems value="#{flightScheduleController.getTicketFamilyBookingClasses(helper.cabinClass.name, tf.ticketFamily.name)}" 
+                                                               var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}" />
                                                 <p:column>
                                                     <h:outputText value="#{bookingClass.name}"  />
                                                 </p:column>
@@ -43,7 +44,7 @@
                     </c:forEach>
 
                 </p:panelGrid>
-                <p:commandButton value="Save" action="#{flightScheduleController.assignFlightScheduleBookingClass()}" update="messages"/>
+                <p:commandButton value="Save" action="#{bookingClassController.assignFlightScheduleBookingClass()}" update="messages"/>
 
             </p:panel>            
         </h:form>

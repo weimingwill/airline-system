@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.aps.session;
+package ams.ais.session;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
@@ -14,17 +16,14 @@ import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.ApsMessage;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import mas.util.helper.SafeHelper;
 
 /**
  *
@@ -35,6 +34,9 @@ public class AircraftSession implements AircraftSessionLocal {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @EJB
+    private CabinClassSessionLocal cabinClassSession;
 
     @Override
     public AircraftCabinClass getAircraftCabinClassById(Long aircraftId, Long cabinCalssId) throws NoSuchAircraftCabinClassException {
@@ -96,7 +98,7 @@ public class AircraftSession implements AircraftSessionLocal {
         query.setParameter("inCrashed", AircraftStatus.CRASHED);
         List<CabinClass> cabinClasses = new ArrayList<>();
         try {
-            cabinClasses = (List<CabinClass>)query.getResultList();
+            cabinClasses = (List<CabinClass>) query.getResultList();
         } catch (NoResultException e) {
             throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
         }
@@ -113,4 +115,21 @@ public class AircraftSession implements AircraftSessionLocal {
 //            throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
 //        }
     }
+
+    @Override
+    public List<TicketFamily> getAircraftTicketFamilys(Long aircraftId) throws NoSuchTicketFamilyException {
+        List<TicketFamily> ticketFamilys = new ArrayList<>();
+        try {
+            for (CabinClass cabinClass : getAircraftCabinClasses(aircraftId)) {
+                if (cabinClass != null) {
+                    for (TicketFamily ticketFamily : cabinClassSession.getCabinClassTicketFamilys(cabinClass.getType())) {
+                        ticketFamilys.add(ticketFamily);
+                    }
+                }
+            }
+        } catch (NoSuchCabinClassException e) {
+        }
+        return ticketFamilys;
+    }
+
 }

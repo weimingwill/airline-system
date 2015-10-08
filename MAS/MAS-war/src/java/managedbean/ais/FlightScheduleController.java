@@ -18,18 +18,16 @@ import ams.ais.util.helper.SeatClassHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.entity.FlightSchedule;
 import ams.ais.session.FlightScheduleSessionLocal;
-import ams.ais.util.exception.NeedBookingClassException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
-import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.util.helper.ApsMessage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
@@ -41,7 +39,7 @@ import org.primefaces.context.RequestContext;
  * @author winga_000
  */
 @Named(value = "flightScheduleController")
-@SessionScoped
+@ViewScoped
 public class FlightScheduleController implements Serializable {
 
     @Inject
@@ -67,26 +65,6 @@ public class FlightScheduleController implements Serializable {
     public FlightScheduleController() {
     }
 
-    public List<FlightSchedule> getAllFlightSchedule() {
-        List<FlightSchedule> flightSchedules = new ArrayList<>();
-        try {
-            flightSchedules = flightScheduleSession.getAllFilghtSchedules();
-        } catch (NoSuchFlightSchedulException ex) {
-            msgController.addErrorMessage(ex.getMessage());
-        }
-        return flightSchedules;
-    }
-
-    public String toAddFlightScheduleBookingClass() {
-        if (selectedFlightSchedule != null) {
-            flightScheduleId = selectedFlightSchedule.getFlightScheduleId();
-            flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
-            return navigationController.redirectToAssignFlightScheduleBookingClass();
-        }
-        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
-        return "";
-    }
-
     public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) {
         List<BookingClass> bookingClasses;
         try {
@@ -97,15 +75,26 @@ public class FlightScheduleController implements Serializable {
         return bookingClasses;
     }
 
-    public String assignFlightScheduleBookingClass() {
+    public List<FlightSchedule> getAllFlightSchedule() {
+        List<FlightSchedule> flightSchedules = new ArrayList<>();
         try {
-            flightScheduleSession.assignFlightScheduleBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
-            msgController.addMessage("assign flight schedule booking class succesffully!");
-            return navigationController.redirectToViewFlightSchedule();
-        } catch (NoSuchFlightSchedulException | NoSuchFlightScheduleBookingClassException | NeedBookingClassException ex) {
+            flightSchedules = flightScheduleSession.getAllFilghtSchedules();
+        } catch (NoSuchFlightSchedulException ex) {
             msgController.addErrorMessage(ex.getMessage());
-            return "";
         }
+        return flightSchedules;
+    }
+
+    public String toAssignFlightScheduleBookingClass() {
+        if (selectedFlightSchedule != null) {
+            flightScheduleId = selectedFlightSchedule.getFlightScheduleId();
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            Map<String, Object> sessionMap = externalContext.getSessionMap();
+            sessionMap.put("flightScheduleId", flightScheduleId);
+            return navigationController.redirectToAssignFlightScheduleBookingClass();
+        }
+        msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
+        return "";
     }
 
     public String toSeatAllocation() {
@@ -143,10 +132,14 @@ public class FlightScheduleController implements Serializable {
     }
 
     public void onViewBookingClassClick() {
+        System.out.println("FlightScheduleId : " + selectedFlightSchedule);
         if (selectedFlightSchedule != null) {
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.update(":form:viewBookingClass");
-            context.execute("PF('flightScheduleBookingClassDialog').show()");
+            flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(selectedFlightSchedule.getFlightScheduleId());
+//            RequestContext context = RequestContext.getCurrentInstance();
+//            context.update(":viewBookingClassForm:viewBookingClass");
+//            context.execute("PF('flightScheduleBookingClassDialog').show()");
+        } else {
+            msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
         }
     }
 
