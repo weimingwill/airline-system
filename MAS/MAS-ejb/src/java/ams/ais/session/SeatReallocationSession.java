@@ -6,7 +6,6 @@
 package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
-import ams.ais.entity.CabinClass;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.NormalDistribution;
 import ams.ais.entity.PhaseDemand;
@@ -14,12 +13,9 @@ import ams.ais.entity.SeatAllocationHistory;
 import ams.ais.helper.FlightScheduleBookingClassId;
 import ams.ais.util.exception.ExistSuchCheckPointException;
 import ams.ais.util.exception.NeedBookingClassException;
-import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchPhaseDemandException;
 import ams.ais.util.helper.AisMsg;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
-import ams.aps.entity.City;
-import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.text.DecimalFormat;
@@ -53,7 +49,6 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
     @PersistenceContext
     private EntityManager entityManager;
-    private FlightScheduleBookingClass fsbc;
 
     @Override
     public void addPhaseDemand(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException {
@@ -154,21 +149,20 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
     }
 
     public boolean reallocateBookingClassSeats(List<FlightScheduleBookingClass> restFlightScheduleBookingClasses, FlightScheduleBookingClass f, float newDemandMean, float newDemandDev) {
-        fsbc = f;
-        float price = fsbc.getPrice();
+        float price = f.getPrice();
         System.out.println(price);
 
         int sum = 0;
         for (FlightScheduleBookingClass flightScheduleBookingClassTemp : restFlightScheduleBookingClasses) {
             int count = 0;
-            if (flightScheduleBookingClassTemp.getFlightScheduleBookingClassId().getBookingClassId() != fsbc.getFlightScheduleBookingClassId().getBookingClassId()) {
-                if (flightScheduleBookingClassTemp.getPrice() < fsbc.getPrice()) {
-                    
-                    float p = flightScheduleBookingClassTemp.getPrice()/fsbc.getPrice();
+            if (flightScheduleBookingClassTemp.getFlightScheduleBookingClassId().getBookingClassId() != f.getFlightScheduleBookingClassId().getBookingClassId()) {
+                if (flightScheduleBookingClassTemp.getPrice() < f.getPrice()) {
+
+                    float p = flightScheduleBookingClassTemp.getPrice() / f.getPrice();
 
                     int lowerClassSeatNo = flightScheduleBookingClassTemp.getSeatQty();
                     System.out.println(lowerClassSeatNo);
-                    
+
                     for (int i = 0; i <= lowerClassSeatNo; i++) {
                         float zScore = (i - newDemandMean) / newDemandDev;
                         if (zScore <= 0) {
@@ -211,22 +205,35 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
         }
 
-        //generate a seat reallocation record for each booking class
+        //generate a seat reallocation record
         SeatAllocationHistory seatAllocationHistory = new SeatAllocationHistory();
+        System.out.println("seat reallocation histroy is created");
         long yourmilliseconds = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
         Date date = new Date(yourmilliseconds);
         System.out.println(sdf.format(date));
         seatAllocationHistory.setAllocateTime(date);
-        seatAllocationHistory.setSeatNoBefore(fsbc.getSeatQty());
-        seatAllocationHistory.setSeatNoAfter(sum + fsbc.getSeatQty());
-//        seatAllocationHistory.setFlightScheduleBookingClass(fsbc);
+        seatAllocationHistory.setSeatNoBefore(f.getSeatQty());
+        f.setSeatQty(sum + f.getSeatQty());
+        seatAllocationHistory.setSeatNoAfter(f.getSeatQty());
+        System.out.println("seat reallocation histroy content is set");
+
+        List<FlightScheduleBookingClass> temp = getAllFlightScheduleBookingClasses();
+        for (FlightScheduleBookingClass ff : temp) {
+            if (ff.getFlightScheduleBookingClassId().equals(f.getFlightScheduleBookingClassId())) {
+                ff = f;
+            }
+            entityManager.persist(ff);
+        }
+
+        System.out.println("the ");
 
         //update the seat allocation history of a booking class
-        List<SeatAllocationHistory> seatAllocationHistorys = fsbc.getSeatAllocationHistory();
+        List<SeatAllocationHistory> seatAllocationHistorys = f.getSeatAllocationHistory();
         seatAllocationHistorys.add(seatAllocationHistory);
-        fsbc.setSeatAllocationHistory(seatAllocationHistorys);
-        fsbc.setSeatQty(sum + fsbc.getSeatQty());
+        f.setSeatAllocationHistory(seatAllocationHistorys);
+
+        System.out.println("#seat reallocation history:" + f.getSeatAllocationHistory().size());
 
         return true;
     }
@@ -283,15 +290,9 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
     }
 
     @Override
-    public List<SeatAllocationHistory> getBookingClassSeatAllocationHistory(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
-        List<BookingClass> bookingClasses = flightScheduleSession.getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
-        long bookingClassId = bookingClasses.get(0).getBookingClassId();
-        FlightScheduleBookingClassId fsbci = new FlightScheduleBookingClassId();
-        fsbci.setBookingClassId(bookingClassId);
-        fsbci.setFlightScheduleId(flightScheduleId);
-        FlightScheduleBookingClass fsbc0 = new FlightScheduleBookingClass();
-        fsbc0 = entityManager.find(FlightScheduleBookingClass.class, fsbci);
-        return fsbc0.getSeatAllocationHistory();
+    public List<SeatAllocationHistory> getBookingClassSeatAllocationHistory(FlightScheduleBookingClass flightScheduleBookingClass) {
+        System.out.println("The flight schedule booking class passed in to view reallocation history:" + flightScheduleBookingClass.getBookingClass().getName());
+        return flightScheduleBookingClass.getSeatAllocationHistory();
     }
 
     @Override
@@ -358,8 +359,18 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                 if (date.equals(checkPoint.getTime())) {
                     float demandMean = phaseDemands.get(pdcount).getDemandMean();
                     float demandDev = phaseDemands.get(pdcount).getDemandDev();
+                    List<FlightScheduleBookingClass> fsbcs = getAllFlightScheduleBookingClasses();
+                    List<FlightScheduleBookingClass> restFlightScheduleBookingClasses = new ArrayList<>();
+                    for (FlightScheduleBookingClass fsbc : fsbcs) {
+                        if (fsbc.getFlightScheduleBookingClassId().getFlightScheduleId() == f.getFlightScheduleBookingClassId().getFlightScheduleId()) {
+                            restFlightScheduleBookingClasses.add(fsbc);
+                        }
 
-                    reallocateBookingClassSeats(f, demandMean, demandDev);
+                    }
+
+                    restFlightScheduleBookingClasses.remove(f);
+
+                    reallocateBookingClassSeats(restFlightScheduleBookingClasses, f, demandMean, demandDev);
 
                     if (pdcount < checkPoints) {
                         pdcount++;

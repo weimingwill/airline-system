@@ -30,7 +30,6 @@
 
                 <p:outputLabel for="bookingClass" value="Booking Class:" />
                 <p:selectOneMenu id="bookingClass" value="#{seatReallocationController.bookingClass}" converter="bookingClassConverter" style="width:200px">
-                    <p:ajax listener="#{seatReallocationController.onTicketFamilyChange()}"/>
                     <f:selectItem itemLabel="Select Booking Class" itemValue="" noSelectionOption="true" />
                     <f:selectItems value="#{seatReallocationController.bookingClasses}" var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}"/>
                 </p:selectOneMenu>

@@ -10,10 +10,11 @@
     </ui:define>
 
     <ui:define name="content">
-        <p:dataTable value="#{seatReallocationController.allSeatAllocationHistroy}" var="seatAllocationHistory">
+        <p:dataTable value="#{seatReallocationController.allSeatReAllocationHistorys}" var="seatAllocationHistory">
             <p:column headerText="Reallocate date">
-                <p:outputLabel value="#{seatAllocationHistory.allocateTime}"/>
+                <p:outputLabel value="#{seatAllocationHistory.allocateTime}">
                 <f:convertDateTime pattern="dd.MM.yyyy HH:mm" />
+                </p:outputLabel>
             </p:column>
             
             <p:column headerText="Original seat number ">
@@ -26,7 +27,7 @@
 
         </p:dataTable>
 
-        <p:commandButton value="Back to Yield Management" action="#{navigationController.redirectToEditCabinClass()}"  />
+        <p:commandButton value="Back to Yield Management" action="#{navigationController.redirectToYieldManagement()}"  />
     </ui:define>
 
 </ui:composition>

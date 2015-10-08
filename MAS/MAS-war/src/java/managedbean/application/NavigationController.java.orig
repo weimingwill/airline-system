@@ -264,15 +264,10 @@ public class NavigationController implements Serializable {
     public String redirectToViewSeatsReallocationHistroy() {
         return "/views/secured/ais/yield_management/viewSeatsReallocationHistory.xhtml" + REDIRECT;
     }
-<<<<<<< HEAD
     
     public String redirectToAddCheckPoint(){
         return "/views/secured/ais/yield_management/addCheckPoint.xhtml" + REDIRECT;
     }
-    
-    
-=======
->>>>>>> 6a9fb2b84b8864f1f1e5adbd8933b0ad064d1618
 
     //APS
     public String redirectToAPS() {
