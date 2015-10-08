@@ -12,12 +12,15 @@ import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.entity.Route;
 import ams.aps.entity.RouteLeg;
+import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.exception.FlightDoesNotExistException;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -31,22 +34,23 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     @PersistenceContext
     EntityManager em;
 
-    public final double BUFFER_TIME = 1/6;
-    public final double STOPOVER_TIME = 1/3;
-            
+    public final double BUFFER_TIME = 1 / 6;
+    public final double STOPOVER_TIME = 1 / 3;
+
     @Override
     public boolean createFlight(Flight flight) {
         Route route = flight.getRoute();
+        System.out.println("FlightSchedulingSession: createFlight(): route =" +route);
         try {
-            route = em.find(Route.class, route.getRouteId());
             List<Flight> fList = route.getFlights();
-            if(fList == null){
+            if (fList == null) {
                 fList = new ArrayList();
             }
             fList.add(flight);
             route.setFlights(fList);
-            em.persist(flight);
             em.merge(route);
+            flight.setCompleted(Boolean.FALSE);
+            em.merge(flight);
             return true;
         } catch (Exception ex) {
             return false;
@@ -54,18 +58,15 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     @Override
-    public boolean checkFlightExistence(String flightNo) {
+    public Flight checkFlightExistence(String flightNo) throws FlightDoesNotExistException{
         try {
             Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo");
             query.setParameter("fNo", flightNo);
 
-            if (query.getResultList().isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            Flight flight = (Flight) query.getSingleResult();
+            return flight;
         } catch (Exception e) {
-            return true;
+            throw new FlightDoesNotExistException();
         }
     }
 
@@ -144,35 +145,35 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     // frequency per week
     @Override
     public double getMaxFlightFrequency(AircraftType type, Route r) {
-        
+
         double distance = 0;
         double totalFlyingTime = 0;
-        
+
         List<Airport> stopList = getAllStopsOfRoute(r);
-        for (int i = 0; i < stopList.size()-1; i++) {
-            distance += distance(stopList.get(i), stopList.get(i+1));
+        for (int i = 0; i < stopList.size() - 1; i++) {
+            distance += distance(stopList.get(i), stopList.get(i + 1));
         }
         totalFlyingTime += 2 * distance / (type.getMaxMachNo() * 1225.04);
-        
+
         double turnover = getTurnoverTime(type) + BUFFER_TIME;
         totalFlyingTime += turnover;
-        
-        if(checkRouteIsInternational(stopList)){
+
+        if (checkRouteIsInternational(stopList)) {
             totalFlyingTime += 0.25;
         }
-        
-        return 7 * 24 /(totalFlyingTime + turnover + STOPOVER_TIME * (stopList.size() - 2));
+
+        return 7 * 24 / (totalFlyingTime + turnover + STOPOVER_TIME * (stopList.size() - 2));
     }
-    
-    private double getTurnoverTime(AircraftType type){
+
+    private double getTurnoverTime(AircraftType type) {
         double acLength = type.getOverallLengthInM();
         if (acLength <= 35) {
             return 0.5;
-        }else if (acLength>35 && acLength<=50) {
-            return 5/6;
-        }else if (acLength>50 && acLength<=60) {
-            return 7/6;
-        }else{
+        } else if (acLength > 35 && acLength <= 50) {
+            return 5 / 6;
+        } else if (acLength > 50 && acLength <= 60) {
+            return 7 / 6;
+        } else {
             return 1.5;
         }
     }
@@ -203,7 +204,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                 }
             }
         }
-        
+
         if (legAirports.isEmpty()) {
 
             allStops.add(ori);
@@ -216,13 +217,13 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             }
             allStops.add(dest);
         }
-        
+
         return allStops;
     }
 
-    private boolean checkRouteIsInternational(List<Airport> stops){
-        for(int i = 0; i<stops.size()-1;i++){
-            if(!stops.get(i).getCountry().getCountryName().equals(stops.get(i+1).getCountry().getCountryName())){
+    private boolean checkRouteIsInternational(List<Airport> stops) {
+        for (int i = 0; i < stops.size() - 1; i++) {
+            if (!stops.get(i).getCountry().getCountryName().equals(stops.get(i + 1).getCountry().getCountryName())) {
                 return true;
             }
         }
@@ -244,26 +245,24 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     @Override
     public List<Route> getAvailableRoutes() {
         Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = FALSE");
-        try{
+        try {
             return query.getResultList();
-        }catch(Exception ex){
+        } catch (Exception ex) {
             return null;
         }
     }
 
     @Override
-    public boolean checkFlightNoExistence(String flightNo) {
-        Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo");
-        query.setParameter("fNo", flightNo);
+    public List<Flight> getFlight(Boolean complete) throws EmptyTableException {
         try {
-            if (query.getSingleResult() != null) {
-                return true;
-            }else{
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.completed = :inComplete");
+            query.setParameter("inComplete", complete);
+            List<Flight> outputFlights;
+            outputFlights = (List<Flight>) query.getResultList();
+            return outputFlights;
+        } catch (NoResultException ex) {
+            throw new EmptyTableException("No Flight Record Found!");
         }
     }
-    
+
 }

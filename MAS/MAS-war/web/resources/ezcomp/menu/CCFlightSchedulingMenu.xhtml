@@ -13,10 +13,10 @@
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <h:form>
-            <p:steps activeIndex="#{cc.attrs.activeIndex}" styleClass="custom" readonly="false">
-                <p:menuitem value="Fleet Assignment" url="#{navigationController.toFleetAssignment()}"/>
-                <p:menuitem value="Frequency Planning" url="#{navigationController.toFreqPlanning()}"/>
-                <p:menuitem value="Confirm" url="#{navigationController.toConfirmFlight()}"/>
+            <p:steps activeIndex="#{cc.attrs.activeIndex}" styleClass="createFlight" readonly="false">
+                <p:menuitem value="Fleet Assignment" action="#{navigationController.toFleetAssignment()}"/>
+                <p:menuitem value="Frequency Planning" action="#{navigationController.toFreqPlanning()}"/>
+                <p:menuitem value="Confirm" action="#{navigationController.toConfirmFlight()}"/>
             </p:steps>
         </h:form>
     </cc:implementation>

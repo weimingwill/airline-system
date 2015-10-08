@@ -6,8 +6,7 @@
 
 package util.converter;
 
-import ams.aps.util.helper.RouteDisplayHelper;
-import ams.aps.util.helper.RouteHelper;
+import ams.aps.entity.Route;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -42,7 +41,7 @@ public class RouteConverter implements Converter{
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         if (value != null && !(value instanceof String)) {
-            return ((RouteDisplayHelper)value).getId().toString();
+            return ((Route)value).getRouteId().toString();
         } else {
             return null;
         }

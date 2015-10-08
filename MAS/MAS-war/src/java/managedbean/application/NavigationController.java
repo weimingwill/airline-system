@@ -337,7 +337,7 @@ public class NavigationController implements Serializable {
     }
     
     public String toFleetAssignment(){
-        return "/views/secured/aps/flight_schedule/fleetAssignmnet.xhtml";
+        return "/views/secured/aps/flight_schedule/fleetAssignment.xhtml";
     }
     
     public String toFreqPlanning(){
