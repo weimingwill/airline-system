@@ -435,7 +435,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         minFlyingTime = totDist / (maxV * 1225.044);
         maxFlyingTime = totDist / (minV * 1225.044);
 
-        if (type.equals("O-D")) {
+        if (type.equals("Direct")) {
             stopString = "N.A.";
         }
         RouteCompareHelper rch = new RouteCompareHelper(type, stopList.get(0).getAirportName(), stopString, stopList.get(stopList.size() - 1).getAirportName(), totDist, minFlyingTime, maxFlyingTime);
