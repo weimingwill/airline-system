@@ -325,6 +325,12 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
     }
     
+    
+    public String toAddAirport(){
+        return "/views/secured/aps/route/addAirport.xhtml" + REDIRECT;
+    }
+    
+    
     // Flight Scheduling
     public String toCreateFlight(){
         return "/views/secured/aps/flight_schedule/createFlight.xhtml" + REDIRECT;
@@ -345,7 +351,6 @@ public class NavigationController implements Serializable {
     public String toScheduleFlight(){
         return "/views/secured/aps/flight_schedule/scheduleFlight.xhtml" + REDIRECT;
     }
-    
     
 
     public String redirectToCurrentPage() {

@@ -94,7 +94,7 @@ public class RoutePlanningController implements Serializable {
         stops.add(destination);
 
         System.out.println("RoutePlanningController: planODRoute(): ");
-        setOd(routePlanningSession.compareRoutePreparation("O-D", stops));
+        setOd(routePlanningSession.compareRoutePreparation("Direct", stops));
         System.out.println("RoutePlanningController: planODRoute(): planning successful");
         routeList.add(od);
     }
@@ -107,7 +107,7 @@ public class RoutePlanningController implements Serializable {
             setHs(od);
             System.out.println("RoutePlanningController: planHSRoute(): planning as OD");
         } else {
-            setHs(routePlanningSession.compareRoutePreparation("H&S", stops));
+            setHs(routePlanningSession.compareRoutePreparation("Pass by hub", stops));
             System.out.println("RoutePlanningController: planHSRoute(): planning successful");
         }
 
@@ -120,7 +120,7 @@ public class RoutePlanningController implements Serializable {
         stops.add(origin);
         stops.add(stopover);
         stops.add(destination);
-        setCust(routePlanningSession.compareRoutePreparation("Customized", stops));
+        setCust(routePlanningSession.compareRoutePreparation("With stopover", stops));
 
         if (routeList.size() == 3) {
             routeList.remove(2);
