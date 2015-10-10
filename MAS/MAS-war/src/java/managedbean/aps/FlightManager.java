@@ -13,7 +13,6 @@ import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteDisplayHelper;
 import ams.aps.util.helper.RouteHelper;
 import javax.inject.Named;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,8 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import managedbean.application.MsgController;
+import managedbean.application.NavigationController;
 
 /**
  *
@@ -37,6 +38,12 @@ public class FlightManager implements Serializable {
 
     @Inject
     RouteController routeController;
+
+    @Inject
+    MsgController msgController;
+
+    @Inject
+    NavigationController navigationController;
 
     private Flight flight;
     private RouteDisplayHelper route = new RouteDisplayHelper();
@@ -87,9 +94,31 @@ public class FlightManager implements Serializable {
         getMaxLegDistInRoute(routeHelper.getLegs());
         setModelsForFlight(flightSchedulingSession.getCapableAircraftTypesForRoute(getMaxDist()));
     }
-    
-    public void setRouteDuration(){
+
+    public void setRouteDuration() {
         System.out.println("FlightManager: setRouteDuration(): selectedModel = " + selectedModels);
+    }
+
+    public String checkSelectedAircraftModels() {
+        boolean sameType = true;
+        if(selectedModels.isEmpty()){
+            msgController.error("Please select aircraft model for flight " + flight.getFlightNo());
+            return "";
+        } else{
+            for (int i = 0; i < selectedModels.size() - 1; i++) {
+            if (!selectedModels.get(i).getTypeFamily().equals(selectedModels.get(i + 1).getTypeFamily())) {
+                sameType = false;
+                break;
+            }
+        }
+        if (!sameType) {
+            msgController.warn("Selected aicraft model must be of the same type family");
+            return "";
+        } else {
+            return navigationController.toFreqPlanning();
+        }
+        }
+        
     }
 
     private void getMaxLegDistInRoute(List<LegHelper> legs) {

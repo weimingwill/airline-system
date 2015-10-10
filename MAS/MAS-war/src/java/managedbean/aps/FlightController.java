@@ -48,7 +48,7 @@ public class FlightController implements Serializable {
 
     @EJB
     private FlightSchedulingSessionLocal flightSchedulingSession;
-    
+
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
 
@@ -85,7 +85,7 @@ public class FlightController implements Serializable {
         System.out.println("FlightController: addFlight()");
         try {
             flightSchedulingSession.checkFlightExistence(flightNo);
-            msgController.addErrorMessage("Flight Number: "+ flightNo +" existed already!");
+            msgController.addErrorMessage("Flight Number: " + flightNo + " existed already!");
             return navigationController.redirectToCurrentPage();
         } catch (FlightDoesNotExistException ex) {
             flight = new Flight();
@@ -102,19 +102,20 @@ public class FlightController implements Serializable {
 
     }
 
-    public String deleteFlight(String flightNo) {
+    public String deleteFlight(String thisFlightNo) {
+        System.out.println("FlightController: deleteFlight(): flightNo = " + thisFlightNo);
         try {
-            flightSchedulingSession.deleteFlight(flightNo);
-            msgController.addMessage("Delete Flight " + flightNo);
+            flightSchedulingSession.deleteFlight(thisFlightNo);
+            msgController.addMessage("Delete Flight " + thisFlightNo);
         } catch (DeleteFailedException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToCurrentPage();
     }
 
-    public String findFlightByFlightNo(String flightNo) {
+    public String findFlightByFlightNo(String thisFlightNo) {
         try {
-            flight = flightSchedulingSession.checkFlightExistence(flightNo);
+            flight = flightSchedulingSession.checkFlightExistence(thisFlightNo);
         } catch (FlightDoesNotExistException ex) {
             return navigationController.redirectToCurrentPage();
         }

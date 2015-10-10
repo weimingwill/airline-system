@@ -662,7 +662,6 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         for (RouteLeg routeLeg : routeLegs) {
             leghelper = new LegHelper();
             thisLeg = routeLeg.getLeg();
-            System.out.println("RoutePlanningSession: calcRouteLegDist(): leg: " + thisLeg.getLegId() + " " + thisLeg.getDepartAirport().getAirportName() + " " + thisLeg.getArrivalAirport().getAirportName());
             legDist = Float.parseFloat("" + distance(thisLeg.getDepartAirport(), thisLeg.getArrivalAirport()) / 1000);
             leghelper.setArrival(thisLeg.getArrivalAirport());
             leghelper.setDeparture(thisLeg.getDepartAirport());
@@ -673,7 +672,6 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         for (int i = 0; i < legMap.size(); i++) {
             legHelperList.add(legMap.get(i));
         }
-        System.out.println("LegHelper = " + legHelperList);
         return legHelperList;
     }
 }
