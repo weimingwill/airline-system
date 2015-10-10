@@ -61,4 +61,7 @@ public interface BookingClassSessionLocal {
 
     public void verifyTicketFamilySeatsSum(Long flightScheduleId, FlightSchCabinClsTicFamBookingClsHelper flightHelper)
             throws WrongSumOfTicketFamilySeatQtyException;
+    
+    public void setBookingClassDefaultPrice(Long flightScheduleId, Long ticketFamilyId, float ticketFamilyPrice)
+            throws NoSuchFlightScheduleBookingClassException;
 }

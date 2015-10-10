@@ -7,6 +7,7 @@ package managedbean.ais;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
+import ams.ais.session.AircraftSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
@@ -18,12 +19,17 @@ import ams.ais.util.helper.SeatClassHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.entity.FlightSchedule;
 import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
+import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
+import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.util.helper.ApsMessage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -51,6 +57,8 @@ public class FlightScheduleController implements Serializable {
     private FlightScheduleSessionLocal flightScheduleSession;
     @EJB
     private TicketFamilySessionLocal ticketFamilySession;
+    @EJB
+    private AircraftSessionLocal aircraftSession;
     private Long flightScheduleId;
     private String cabinClassType;
     private String bookingClassName;
@@ -88,6 +96,9 @@ public class FlightScheduleController implements Serializable {
     public String toAssignFlightScheduleBookingClass() {
         if (selectedFlightSchedule != null) {
             flightScheduleId = selectedFlightSchedule.getFlightScheduleId();
+            if (!verifyTicketFamilyExistence(flightScheduleId)) {
+                return "";
+            }
             ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
             Map<String, Object> sessionMap = externalContext.getSessionMap();
             sessionMap.put("flightScheduleId", flightScheduleId);
@@ -100,6 +111,12 @@ public class FlightScheduleController implements Serializable {
     public String toSeatAllocation() {
         if (selectedFlightSchedule != null) {
             flightScheduleId = selectedFlightSchedule.getFlightScheduleId();
+            if (!verifyTicketFamilyExistence(flightScheduleId)) {
+                return "";
+            }
+            if (!verifyFlightScheduleBookingClassExistence(flightScheduleId)) {
+                return "";
+            }
             ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
             Map<String, Object> sessionMap = externalContext.getSessionMap();
             sessionMap.put("flightScheduleId", flightScheduleId);
@@ -112,6 +129,20 @@ public class FlightScheduleController implements Serializable {
     public String toPriceBookingClasses() {
         if (selectedFlightSchedule != null) {
             flightScheduleId = selectedFlightSchedule.getFlightScheduleId();
+            if (!verifyTicketFamilyExistence(flightScheduleId)) {
+                return "";
+            }
+            if (!verifyFlightScheduleBookingClassExistence(flightScheduleId)) {
+                return "";
+            }
+//            if (!selectedFlightSchedule.getPriced()) {
+//                try {
+//                    ticketFamilySession.suggestTicketFamilyPrice(flightScheduleId);
+//                } catch (NoSuchAircraftException | NoSuchCabinClassException | NoSuchCabinClassTicketFamilyException 
+//                        | NoSuchFlightScheduleBookingClassException ex) {
+//                    msgController.addErrorMessage("Failed to suggest price: " + ex.getMessage());
+//                }
+//            }
             ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
             Map<String, Object> sessionMap = externalContext.getSessionMap();
             sessionMap.put("flightScheduleId", flightScheduleId);
@@ -119,6 +150,26 @@ public class FlightScheduleController implements Serializable {
         }
         msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
         return "";
+    }
+
+    public boolean verifyTicketFamilyExistence(Long flightScheduleId) {
+        try {
+            aircraftSession.verifyTicketFamilyExistence(flightScheduleSession.getFlightScheduleAircraft(flightScheduleId).getAircraftId());
+        } catch (NoSuchAircraftException | NoSuchCabinClassTicketFamilyException e) {
+            msgController.addErrorMessage(e.getMessage() + ". Please complete product design first");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean verifyFlightScheduleBookingClassExistence(Long flightScheduleId) {
+        try {
+            flightScheduleSession.verifyFlightScheduleBookingClassExistence(flightScheduleId);
+        } catch (NoSuchFlightScheduleBookingClassException e) {
+            msgController.addErrorMessage(e.getMessage() + ". Please add booking classes first.");
+            return false;
+        }
+        return true;
     }
 
     public List<CabinClass> getFlightScheduleCabinClasses() {

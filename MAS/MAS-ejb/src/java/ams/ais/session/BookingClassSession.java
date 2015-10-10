@@ -188,11 +188,10 @@ public class BookingClassSession implements BookingClassSessionLocal {
     }
 
     @Override
-    public void allocateBookingClassSeats(Long flightScheduleId, TicketFamilyBookingClassHelper tfbcHelper) 
+    public void allocateBookingClassSeats(Long flightScheduleId, TicketFamilyBookingClassHelper tfbcHelper)
             throws WrongSumOfBookingClassSeatQtyException, NoSuchFlightScheduleBookingClassException {
-        FlightScheduleBookingClass flightScheduleBookingClass;
         for (BookingClassHelper bookingClassHelper : SafeHelper.emptyIfNull(tfbcHelper.getBookingClassHelpers())) {
-            flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClassHelper.getBookingClass().getBookingClassId());
+            FlightScheduleBookingClass flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClassHelper.getBookingClass().getBookingClassId());
             flightScheduleBookingClass.setSeatQty(bookingClassHelper.getSeatQty());
             entityManager.merge(flightScheduleBookingClass);
         }
@@ -224,7 +223,6 @@ public class BookingClassSession implements BookingClassSessionLocal {
         }
     }
 
-
     @Override
     public void verifyTicketFamilySeatsSum(Long flightScheduleId, FlightSchCabinClsTicFamBookingClsHelper flightHelper) throws WrongSumOfTicketFamilySeatQtyException {
         int cabinClassSeatQty = flightHelper.getSeatQty();
@@ -247,5 +245,23 @@ public class BookingClassSession implements BookingClassSessionLocal {
         if (ticketFamilySeatQty != totalBookingClassSeatQty) {
             throw new WrongSumOfBookingClassSeatQtyException(AisMsg.WRONG_SUM_OF_BOOKING_CLASS_ERROR);
         }
-    }    
+    }
+
+    @Override
+    public void setBookingClassDefaultPrice(Long flightScheduleId, Long ticketFamilyId, float ticketFamilyPrice) 
+            throws NoSuchFlightScheduleBookingClassException {
+        try {
+            for (FlightScheduleBookingClass fsbc : flightScheduleSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(flightScheduleId, ticketFamilyId)) {
+                FlightScheduleBookingClass flightScheduleBookingClass = getOriginalFlightScheduleBookingClass(fsbc);
+                flightScheduleBookingClass.setPrice(ticketFamilyPrice);
+                entityManager.merge(flightScheduleBookingClass);
+            }
+        } catch (NoSuchFlightScheduleBookingClassException ex) {
+            throw new NoSuchFlightScheduleBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
+        }
+    }
+    
+    public FlightScheduleBookingClass getOriginalFlightScheduleBookingClass(FlightScheduleBookingClass fsbc) {
+        return entityManager.find(FlightScheduleBookingClass.class, fsbc.getFlightScheduleBookingClassId());
+    }
 }

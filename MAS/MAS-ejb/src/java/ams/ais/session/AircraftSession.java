@@ -6,14 +6,19 @@
 package ams.ais.session;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
+import ams.aps.entity.AircraftType;
+import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
+import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.ApsMessage;
 import java.util.ArrayList;
@@ -37,6 +42,8 @@ public class AircraftSession implements AircraftSessionLocal {
 
     @EJB
     private CabinClassSessionLocal cabinClassSession;
+    @EJB
+    private FlightScheduleSessionLocal flightScheduleSession;
 
     @Override
     public AircraftCabinClass getAircraftCabinClassById(Long aircraftId, Long cabinCalssId) throws NoSuchAircraftCabinClassException {
@@ -132,4 +139,56 @@ public class AircraftSession implements AircraftSessionLocal {
         return ticketFamilys;
     }
 
+    //Aircraft purchase/rental cost per round trip
+    @Override
+    public float calcAircraftCostPerRoundTrip(Long flightScheduleId) {
+        try {
+            FlightSchedule flgihtSchedule = flightScheduleSession.getFlightScheduleById(flightScheduleId);
+            float weeklyFreq = flgihtSchedule.getFlight().getWeeklyFrequency();
+            Aircraft aircraft = flightScheduleSession.getFlightScheduleAircraft(flightScheduleId);
+            float cost = aircraft.getCost();
+            float lifetime = aircraft.getLifetime();
+            if (cost != 0 && lifetime != 0 && weeklyFreq != 0) {
+                return cost / ((lifetime * (365 / 7)) * weeklyFreq);
+            }
+        } catch (NoSuchFlightSchedulException | NoSuchAircraftException e) {
+        }
+        return 0;
+    }
+
+    //Aircraft fuel cost per km
+    @Override
+    public float calcAircraftFuelCostPerKm(Long flightScheduleId) {
+        try {
+            Aircraft aircraft = flightScheduleSession.getFlightScheduleAircraft(flightScheduleId);
+            AircraftType aircraftType = aircraft.getAircraftType();
+            return aircraft.getAvgUnitOilUsage() * aircraftType.getFuelCostPerKm();
+        } catch (NoSuchAircraftException e) {
+        }
+        return 0;
+    }
+
+    @Override
+    public List<CabinClassTicketFamily> getAircraftCabinClassTicketFamilys(Long aircraftId) throws NoSuchCabinClassTicketFamilyException {
+        Query query = entityManager.createQuery("SELECT ct FROM CabinClassTicketFamily ct "
+                + "WHERE ct.aircraftCabinClass.aircraftId = :inAircraftId "
+                + "AND ct.aircraftCabinClass.cabinClass.deleted = FALSE "
+                + "AND ct.ticketFamily.deleted = FALSE "
+                + "AND ct.deleted = FALSE");
+        query.setParameter("inAircraftId", aircraftId);
+        List<CabinClassTicketFamily> cabinClassTicketFamilys = null;
+        try {
+            cabinClassTicketFamilys = (List<CabinClassTicketFamily>) query.getResultList();
+        } catch (NoResultException e) {
+            throw new NoSuchCabinClassTicketFamilyException(AisMsg.NO_SUCH_CABINCLASS_TICKETFAMILY_ERROR);
+        }
+        return cabinClassTicketFamilys;
+    }
+
+    @Override
+    public void verifyTicketFamilyExistence(Long aircraftId) throws NoSuchCabinClassTicketFamilyException {
+        if (getAircraftCabinClassTicketFamilys(aircraftId).isEmpty()) {
+            throw new NoSuchCabinClassTicketFamilyException(AisMsg.NO_SUCH_CABINCLASS_TICKETFAMILY_ERROR);
+        }
+    }
 }

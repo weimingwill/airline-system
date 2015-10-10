@@ -32,6 +32,8 @@ import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.helper.AircraftCabinClassId;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
+import ams.aps.util.exception.NoSuchAircraftException;
+import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -296,7 +298,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
 
     }
 
-    public TicketFamilyRule getTicketFamilyRuleByTwoId(long ticketFamilyId, long ruleId){
+    public TicketFamilyRule getTicketFamilyRuleByTwoId(long ticketFamilyId, long ruleId) {
         Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId AND u.ruleId = :inruleId AND u.rule.deleted = FALSE AND u.ticketFamily.deleted = FALSE");
         query.setParameter("inticketFamilyId", ticketFamilyId);
         query.setParameter("inruleId", ruleId);
@@ -519,8 +521,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                 TicketFamily originTicketFamily = entityManager.find(TicketFamily.class, ticketFamily.getTicketFamilyId());
                 //Create CabinClassTicketFamilyId
                 CabinClassTicketFamilyId cabinClassTicketFamilyId = new CabinClassTicketFamilyId(aircraftCabinClassId, originTicketFamily.getTicketFamilyId());
-                CabinClassTicketFamily cabinClassTicketFamily;
-                cabinClassTicketFamily = entityManager.find(CabinClassTicketFamily.class, cabinClassTicketFamilyId);
+                CabinClassTicketFamily cabinClassTicketFamily = entityManager.find(CabinClassTicketFamily.class, cabinClassTicketFamilyId);
                 if (cabinClassTicketFamily != null) {
                     cabinClassTicketFamily.setDeleted(false);
                     entityManager.merge(cabinClassTicketFamily);
@@ -564,4 +565,43 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         }
     }
 
+    @Override
+    public void suggestTicketFamilyPrice(Long flightScheduleId)
+            throws NoSuchAircraftException, NoSuchCabinClassException, NoSuchCabinClassTicketFamilyException, NoSuchFlightScheduleBookingClassException {
+        Aircraft aircraft = flightScheduleSession.getFlightScheduleAircraft(flightScheduleId);
+        List<CabinClass> cabinClasses = aircraftSession.getAircraftCabinClasses(flightScheduleId);
+        for (CabinClass cabinClass : cabinClasses) {
+            List<CabinClassTicketFamily> cabinClassTicketFamilys
+                    = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraft.getAircraftId(), cabinClass.getCabinClassId());
+            for (CabinClassTicketFamily cctf : cabinClassTicketFamilys) {
+                Long ticketFamilyId = cctf.getTicketFamily().getTicketFamilyId();
+                CabinClassTicketFamily cabinClassTicketFamily = 
+                        getOriginalCabinClassTicketFamily(aircraft.getAircraftId(), cabinClass.getCabinClassId(), ticketFamilyId);
+                double basicPrice = calTicketFamilyPrice(flightScheduleId, ticketFamilyId);
+                cabinClassTicketFamily.setPrice((float)basicPrice);
+                bookingClassSession.setBookingClassDefaultPrice(flightScheduleId, ticketFamilyId, (float)basicPrice);
+                entityManager.merge(cabinClassTicketFamily);
+            }
+        }
+    }
+
+    @Override
+    public double calTicketFamilyCostBasedOnRule(Long ticketFamilyId) {
+        return 0;
+    }
+
+    @Override
+    public double calTicketFamilyPrice(Long flightScheduleId, Long ticketFamilyId) {
+        double basicCost = flightScheduleSession.calcFlightScheduleBasicCostPerRoundTrip(flightScheduleId);
+        double ticketFamilyRuleCost = calTicketFamilyCostBasedOnRule(ticketFamilyId);
+        return basicCost + ticketFamilyRuleCost;
+    }
+
+    @Override
+    public CabinClassTicketFamily getOriginalCabinClassTicketFamily(Long aircraftId, Long cabinClassId, Long ticketFamilyId) {
+        AircraftCabinClassId aircraftCabinClassId = new AircraftCabinClassId(aircraftId, cabinClassId);
+        CabinClassTicketFamilyId cabinClassTicketFamilyId = new CabinClassTicketFamilyId(aircraftCabinClassId, ticketFamilyId);
+        CabinClassTicketFamily cabinClassTicketFamily = entityManager.find(CabinClassTicketFamily.class, cabinClassTicketFamilyId);
+        return cabinClassTicketFamily;
+    }
 }

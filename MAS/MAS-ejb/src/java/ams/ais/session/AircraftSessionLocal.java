@@ -6,8 +6,10 @@
 package ams.ais.session;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.NoSuchCabinClassException;
+import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
@@ -28,4 +30,12 @@ public interface AircraftSessionLocal {
     public List<Aircraft> getScheduledAircrafts() throws NoSuchAircraftException;
     public List<CabinClass> getAircraftCabinClasses(Long aircraftId) throws NoSuchCabinClassException;
     public List<TicketFamily> getAircraftTicketFamilys(Long aircraftId) throws NoSuchTicketFamilyException;
+    //Aircraft purchase/rental cost per round trip
+    public float calcAircraftCostPerRoundTrip(Long flightScheduleId);
+    //Aircraft fuel cost per km
+    public float calcAircraftFuelCostPerKm(Long flightScheduleId);
+    
+    public List<CabinClassTicketFamily> getAircraftCabinClassTicketFamilys(Long aircraftId) throws NoSuchCabinClassTicketFamilyException;
+    
+    public void verifyTicketFamilyExistence(Long aircraftId) throws NoSuchCabinClassTicketFamilyException;
 }

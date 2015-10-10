@@ -10,6 +10,8 @@ import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftType;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.helper.AircraftCabinClassHelper;
+import ams.aps.util.helper.AircraftModelFilterHelper;
+import ams.aps.util.helper.RetireAircraftFilterHelper;
 import javax.ejb.Local;
 import java.util.List;
 
@@ -21,10 +23,19 @@ import java.util.List;
 public interface FleetPlanningSessionLocal {
     public List<AircraftType> getAircraftModels() throws EmptyTableException;
     public List<Aircraft> getFleet(String status);
-    public void updateAircraftInfo(Aircraft updatedAircraft);
+    public boolean updateAircraftInfo(Aircraft updatedAircraft);
     public boolean addNewAircraft(Aircraft newAircraft, List<AircraftCabinClassHelper> newAircraftCabinClassHelper);
-    public void markAircraftAsRetired(String tailNo);
+    public boolean addNewAircraftModel(AircraftType newAircraftModel);
+    public boolean updateAircraftModel(AircraftType updatedAircraftModel);
     public AircraftType getAircraftTypeById(Long id);
     public List<CabinClass> getAllCabinClasses() throws EmptyTableException;
     public CabinClass getCabinClassById(Long id);
+    public List<List<AircraftCabinClassHelper>> getCabinClassByAircraftType(String typeCode);
+    public boolean retireSelectedAircrafts(List<Aircraft> aircrafts);
+    public List<Aircraft> filterAircraftsForRetire(RetireAircraftFilterHelper filters);
+    public void initRetireAicraftFilter(RetireAircraftFilterHelper retireAircraftFilterHelper);
+    public List<AircraftType> filterAircraftModels(AircraftModelFilterHelper filters);
+    public void initAircraftModelFilter(AircraftModelFilterHelper aircraftModelFilterHelper);
+    public List<String> getAllManufacturer();
+    public List<String> getAllTypeFamily();
 }

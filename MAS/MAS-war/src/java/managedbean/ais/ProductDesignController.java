@@ -91,9 +91,12 @@ public class ProductDesignController implements Serializable {
     }
 
     public List<TicketFamily> getAircraftTicketFamilys() {
+        System.out.println("Selected Aircraft: " + selectedAircraft);
         List<TicketFamily> ticketFamilys = new ArrayList<>();
         try {
-            ticketFamilys = aircraftSession.getAircraftTicketFamilys(selectedAircraft.getAircraftId());
+            if (selectedAircraft != null) {
+                ticketFamilys = aircraftSession.getAircraftTicketFamilys(selectedAircraft.getAircraftId());
+            }
         } catch (NoSuchTicketFamilyException ex) {
         }
         return ticketFamilys;

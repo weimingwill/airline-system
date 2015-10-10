@@ -26,6 +26,8 @@ import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.entity.Aircraft;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
+import ams.aps.util.exception.NoSuchAircraftException;
+import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -92,4 +94,13 @@ public interface TicketFamilySessionLocal {
             throws NeedTicketFamilyException, NoSuchAircraftCabinClassException, NoSuchCabinClassTicketFamilyException;
 
     public void disLinkCabinClassTicketFamily(List<CabinClassTicketFamily> cabinClassTicketFamilys);
+    
+    public void suggestTicketFamilyPrice(Long flightScheduleId) 
+            throws NoSuchAircraftException, NoSuchCabinClassException, NoSuchCabinClassTicketFamilyException, NoSuchFlightScheduleBookingClassException;
+    
+    public double calTicketFamilyCostBasedOnRule(Long ticketFamilyId);
+    
+    public double calTicketFamilyPrice(Long flightScheduleId, Long ticketFamilyId);
+    
+    public CabinClassTicketFamily getOriginalCabinClassTicketFamily(Long aircraftId, Long cabinClassId, Long ticketFamilyId);
 }
