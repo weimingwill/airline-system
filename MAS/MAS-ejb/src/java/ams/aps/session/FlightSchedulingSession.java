@@ -15,8 +15,6 @@ import ams.aps.entity.RouteLeg;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.exception.FlightDoesNotExistException;
-import ams.aps.util.helper.LegHelper;
-import ams.aps.util.helper.RouteHelper;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -94,8 +92,9 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
 
     @Override
     public List<AircraftType> getCapableAircraftTypesForRoute(Float maxDist) {
-        Query query = em.createQuery("SELECT atype FROM AircraftType atype WHERE atype.rangeInKm >= :totDis ORDER BY atype.rangeInKm ASC");
+        Query query = em.createQuery("SELECT DISTINCT(atype) FROM AircraftType atype, IN (atype.aircrafts) craft WHERE atype.rangeInKm >= :totDis ORDER BY atype.rangeInKm ASC");
         query.setParameter("totDis", maxDist);
+        query.setMaxResults(3);
         try {
             List<AircraftType> capableAircraftTypes = query.getResultList();
             return capableAircraftTypes;
