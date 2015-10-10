@@ -11,7 +11,7 @@
 
     <ui:define name="content">
 
-        <me:CCFlightSchedulingMenu activeIndex="0"/>
+        <me:CCCreateFlightMenu activeIndex="0"/>
         <h:form>
             <c:set value="#{flightManager.routeHelper}" var="route"/>
             <c:set value="#{flightManager.returnRouteHelper}" var="returnRoute"/>
@@ -32,9 +32,10 @@
                         </p:row>
                     </p:panelGrid>
                 </p:panel>
-                <p:dataTable value="#{flightManager.modelsForFlight}" var="model" selection="#{flightManager.selectedModels}" rowKey="#{model.id}" tableStyleClass="table-small" sortMode="multiple">
+
+                <p:dataTable value="#{flightManager.modelsForFlight}" var="model" selection="#{flightManager.selectedModels}" rows="3" rowKey="#{model.id}" tableStyleClass="table-small" sortMode="multiple">
                     <f:facet name="header">
-                        <p:outputLabel value="Top 3 aircraft models which are capable of flying this route"/>
+                        <p:outputLabel value="Top 3 Aircraft models which are capable of flying this route"/>
                     </f:facet>
 
                     <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
@@ -66,9 +67,13 @@
                     </p:column>
 
                     <f:facet name="footer">
-                        <p:outputLabel value="Please select aircraft models for flight #{flightManager.flight.flightNo} and continue"/>
+                        <p:outputLabel id="footer" value=" Please select aircraft models for flight #{flightManager.flight.flightNo} and continue" style="font-weight: bold" class="fa fa-info-circle">
+                            <p:tooltip for="footer" value="Note: Selected aircraft models must be of the same type family" trackMouse="true"/>
+                        </p:outputLabel>
                     </f:facet>
                 </p:dataTable>
+
+
 
             </p:panelGrid>
 

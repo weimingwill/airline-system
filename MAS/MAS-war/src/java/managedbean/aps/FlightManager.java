@@ -87,6 +87,10 @@ public class FlightManager implements Serializable {
         getMaxLegDistInRoute(routeHelper.getLegs());
         setModelsForFlight(flightSchedulingSession.getCapableAircraftTypesForRoute(getMaxDist()));
     }
+    
+    public void setRouteDuration(){
+        System.out.println("FlightManager: setRouteDuration(): selectedModel = " + selectedModels);
+    }
 
     private void getMaxLegDistInRoute(List<LegHelper> legs) {
         setMaxDist((float) legs.get(0).getDistance());
