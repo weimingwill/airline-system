@@ -44,6 +44,10 @@ public class FlightSchedule implements Serializable {
     private Time arrivalTime;
     private Boolean deleted;
     private Boolean completed;
+    private Boolean seatAllocated;
+    private Boolean priced;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date createdTime;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
@@ -251,5 +255,29 @@ public class FlightSchedule implements Serializable {
 
     public void setCompleted(Boolean completed) {
         this.completed = completed;
-    }    
+    }
+
+    public Boolean getSeatAllocated() {
+        return seatAllocated;
+    }
+
+    public void setSeatAllocated(Boolean seatAllocated) {
+        this.seatAllocated = seatAllocated;
+    }
+
+    public Boolean getPriced() {
+        return priced;
+    }
+
+    public void setPriced(Boolean priced) {
+        this.priced = priced;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
 }
