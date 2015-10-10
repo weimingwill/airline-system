@@ -11,6 +11,7 @@ import ams.aps.entity.Country;
 import ams.aps.entity.Route;
 import ams.aps.entity.RouteLeg;
 import ams.aps.session.RoutePlanningSessionLocal;
+import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteDisplayHelper;
 import ams.aps.util.helper.RouteHelper;
 import java.io.Serializable;
@@ -293,6 +294,14 @@ public class RouteController implements Serializable {
             }
         }
         routeHelper.setStopovers(legAirports);
+        // Calculate route distance
+        List<LegHelper> legHelpers = routePlanningSession.calcRouteLegDist(thisRoute);
+        float totalDist = 0;
+        for(LegHelper thisLegHelper: legHelpers){
+            totalDist += thisLegHelper.getDistance();
+        }
+        routeHelper.setTotalDistance(totalDist);
+        routeHelper.setLegs(legHelpers);
     }
 
     /**

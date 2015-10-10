@@ -15,7 +15,6 @@ import ams.aps.util.helper.AircraftModelFilterHelper;
 import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.Message;
 import ams.aps.util.helper.RetireAircraftFilterHelper;
-import java.awt.Point;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -108,6 +107,16 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
 
         entityManager.persist(newAircraft);
         entityManager.flush();
+        
+        // add aircrafts for model
+        List<Aircraft> aircraftsForModel = (List<Aircraft>) model.getAircrafts();
+        if(aircraftsForModel == null){
+            aircraftsForModel = new ArrayList();
+        }
+        aircraftsForModel.add(newAircraft);
+        model.setAircrafts(aircraftsForModel);
+        entityManager.merge(model);
+        
         // Add cabin class configuration for aircraft
         return addAircraftCabinClass(newAircraft, newAircraftCabinClassHelpers);
     }
@@ -173,6 +182,12 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
             for (Aircraft thisAircraft : aircrafts) {
                 thisAircraft.setStatus(AircraftStatus.RETIRED);
                 entityManager.merge(thisAircraft);
+                AircraftType model = entityManager.find(AircraftType.class, thisAircraft.getAircraftType().getId());
+                List<Aircraft> aircraftsForModel = (List<Aircraft>) model.getAircrafts();
+                if(aircraftsForModel != null){
+                    aircraftsForModel.remove(thisAircraft);
+                }
+                model.setAircrafts(aircraftsForModel);
             }
         } catch (IllegalArgumentException e) {
             return false;

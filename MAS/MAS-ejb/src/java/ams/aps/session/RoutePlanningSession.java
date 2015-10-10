@@ -11,11 +11,14 @@ import ams.aps.entity.Country;
 import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
 import ams.aps.entity.RouteLeg;
+import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteCompareHelper;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -351,7 +354,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public List<Route> getAllRoutes() {
-        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = 0");
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = FALSE");
 
         try {
             return (List<Route>) query.getResultList();
@@ -362,7 +365,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public List<Route> getAllObsoleteRoutes() {
-        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = 1");
+        Query query = em.createQuery("SELECT r FROM Route r WHERE r.deleted = TRUE");
 
         try {
             return (List<Route>) query.getResultList();
@@ -453,7 +456,8 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
      * el2 End altitude in meters
      * @returns Distance in Meters
      */
-    private double distance(Airport a1, Airport a2) {
+    @Override
+    public double distance(Airport a1, Airport a2) {
 
         float lat1 = a1.getLatitude();
         float lon1 = a1.getLongitude();
@@ -528,19 +532,19 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             Query q = em.createQuery("SELECT c FROM Country c WHERE c.isoCode =:iso");
             q.setParameter("iso", countryISO);
             Country country = (Country) q.getSingleResult();
-            
+
             City city = new City();
             city.setCityName(cityName);
             city.setUTC(utc);
             city.setCountry(country);
             em.persist(city);
-            
+
             List<City> cityList = (List<City>) country.getCities();
             cityList.add(city);
             country.setCities(cityList);
             em.merge(country);
             return true;
-            
+
         } catch (Exception e) {
             return false;
         }
@@ -552,12 +556,12 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             Query q = em.createQuery("SELECT c FROM Country c WHERE c.isoCode =:iso");
             q.setParameter("iso", countryISO);
             Country country = (Country) q.getSingleResult();
-            
+
             Query q2 = em.createQuery("SELECT c FROM City c WHERE c.cityName =:cname AND C.country.isoCode =:iso");
             q2.setParameter("cname", cityName);
             q2.setParameter("iso", countryISO);
             City city = (City) q2.getSingleResult();
-            
+
             Airport airport1 = new Airport();
             airport1.setAirportName(airport.getAirportName());
             airport1.setCity(city);
@@ -568,12 +572,12 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             airport1.setLatitude(airport.getLatitude());
             airport1.setLongitude(airport.getLongitude());
             em.persist(airport1);
-            
-            List<Airport>  airports = (List<Airport>) city.getAirports();
+
+            List<Airport> airports = (List<Airport>) city.getAirports();
             airports.add(airport1);
             city.setAirports(airports);
             em.merge(city);
-            
+
             return true;
         } catch (Exception e) {
             return false;
@@ -584,12 +588,12 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     public boolean checkIATA(String iata) {
         Query q = em.createQuery("SELECT a FROM Airport a WHERE a.iataCode =: iataCode");
         q.setParameter("iataCode", iata);
-        try{
+        try {
             Airport a = (Airport) q.getSingleResult();
             return false;
-        }catch(NoResultException e){
+        } catch (NoResultException e) {
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
@@ -598,12 +602,40 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     public boolean checkICAO(String icao) {
         Query q = em.createQuery("SELECT a FROM Airport a WHERE a.icaoCode =: icaoCode");
         q.setParameter("icaoCode", icao);
-        try{
+        try {
             Airport a = (Airport) q.getSingleResult();
             return false;
-        }catch(NoResultException e){
+        } catch (NoResultException e) {
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             return false;
-        }    }
+        }
+    }
+
+    @Override
+    public List<LegHelper> calcRouteLegDist(Route route) {
+        List<RouteLeg> routeLegs = route.getRouteLegs();
+        Leg thisLeg;
+        float legDist;
+        LegHelper leghelper = new LegHelper();
+        List<LegHelper> legHelperList = new ArrayList();
+        Map<Integer, LegHelper> legMap = new HashMap();
+
+        for (RouteLeg routeLeg : routeLegs) {
+            leghelper = new LegHelper();
+            thisLeg = routeLeg.getLeg();
+            System.out.println("RoutePlanningSession: calcRouteLegDist(): leg: " + thisLeg.getLegId() + " " + thisLeg.getDepartAirport().getAirportName() + " " + thisLeg.getArrivalAirport().getAirportName());
+            legDist = Float.parseFloat("" + distance(thisLeg.getDepartAirport(), thisLeg.getArrivalAirport())/1000);
+            leghelper.setArrival(thisLeg.getArrivalAirport());
+            leghelper.setDeparture(thisLeg.getDepartAirport());
+            leghelper.setDistance(legDist);
+            leghelper.setLegId(thisLeg.getLegId());
+            legMap.put(routeLeg.getLegSeq(), leghelper);
+        }
+        for(int i =0 ;i<legMap.size();i++){
+            legHelperList.add(legMap.get(i));
+        }
+        System.out.println("LegHelper = " + legHelperList);
+        return legHelperList;
+    }
 }

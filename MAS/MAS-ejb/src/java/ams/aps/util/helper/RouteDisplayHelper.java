@@ -15,6 +15,8 @@ public class RouteDisplayHelper {
     private String destination;
     private String legs;
     private Long returnRouteId;
+    private Float distance;
+    private Float duration;
 
     public RouteDisplayHelper() {
     }
@@ -94,6 +96,34 @@ public class RouteDisplayHelper {
      */
     public void setReturnRouteId(Long returnRouteId) {
         this.returnRouteId = returnRouteId;
+    }
+
+    /**
+     * @return the distance
+     */
+    public Float getDistance() {
+        return distance;
+    }
+
+    /**
+     * @param distance the distance to set
+     */
+    public void setDistance(Float distance) {
+        this.distance = distance;
+    }
+
+    /**
+     * @return the duration
+     */
+    public Float getDuration() {
+        return duration;
+    }
+
+    /**
+     * @param duration the duration to set
+     */
+    public void setDuration(Float duration) {
+        this.duration = duration;
     }
 
 }

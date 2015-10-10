@@ -154,3 +154,13 @@ tr.hide{
     color: #2e6e9e;
     font-weight: bold;
 }
+
+.label{
+    font-weight: bold;
+    color: #045491;
+}
+
+.table-small{
+    width:auto !important; 
+    font-size:small;
+}

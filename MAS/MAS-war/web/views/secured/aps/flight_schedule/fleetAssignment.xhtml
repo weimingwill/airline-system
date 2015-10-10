@@ -4,16 +4,87 @@
                 template="./../../../../template/ApsTemplate.xhtml"
                 xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <ui:define name="content">
 
         <me:CCFlightSchedulingMenu activeIndex="0"/>
+        <h:form>
+            <c:set value="#{flightManager.routeHelper}" var="route"/>
+            <c:set value="#{flightManager.returnRouteHelper}" var="returnRoute"/>
+            <p:panelGrid columns="2">
+                <p:panel header="Route Information for Flight: #{flightManager.flight.flightNo}">
+                    <p:panelGrid>
+                        <pa:CCRouteDisplayPanel route="#{route}"/>
+                        <pa:CCRouteDisplayPanel route="#{returnRoute}"/>
+                        <p:row>
+                            <p:column colspan="3" styleClass="label">
+                                <p:outputLabel value="Total Distance"/>
+                            </p:column>
+                            <p:column styleClass="label">
+                                <p:outputLabel value="#{route.totalDistance + returnRoute.totalDistance}">
+                                    <f:convertNumber maxFractionDigits="3" groupingUsed="false"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panel>
+                <p:dataTable value="#{flightManager.modelsForFlight}" var="model" selection="#{flightManager.selectedModels}" rowKey="#{model.id}" tableStyleClass="table-small" sortMode="multiple">
+                    <f:facet name="header">
+                        <p:outputLabel value="Top 3 aircraft models which are capable of flying this route"/>
+                    </f:facet>
 
-        <p:panelGrid>
-            <p:outputLabel value="haha"/>
-            <p:outputLabel value="#{flightManager.flight.flightNo}"/>
-        </p:panelGrid>
+                    <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+
+                    <p:column headerText="ID">
+                        <p:outputLabel value="#{model.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Type">
+                        <p:outputLabel value="#{model.typeCode}"/>
+                    </p:column>
+
+                    <p:column headerText="Type Family">
+                        <p:outputLabel value="#{model.typeFamily}"/>
+                    </p:column>
+
+                    <p:column headerText="Range (km)">
+                        <p:outputLabel value="#{model.rangeInKm}"/>
+                    </p:column>
+
+                    <p:column headerText="Usage (%)" sortBy="#{(flightManager.maxDist/model.rangeInKm)*100}">
+                        <p:outputLabel value="#{(flightManager.maxDist/model.rangeInKm)*100}">
+                            <f:convertNumber maxFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+
+                    <p:column headerText="# of Aircrafts" sortBy="#{model.aircrafts == null ? 0 : model.aircrafts.size()}">
+                        <p:outputLabel value="#{model.aircrafts == null ? 0 : model.aircrafts.size()}"/>
+                    </p:column>
+
+                    <f:facet name="footer">
+                        <p:outputLabel value="Please select aircraft models for flight #{flightManager.flight.flightNo} and continue"/>
+                    </f:facet>
+                </p:dataTable>
+
+            </p:panelGrid>
+
+
+            <p:separator/>
+
+            <p:panelGrid>
+                <p:row style="border: transparent">
+                    <p:column style="width:76%"></p:column>
+                    <p:column style="text-align: right">
+                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{navigationController.toFreqPlanning()}"/>
+                        <p:commandButton value="Save &amp; Exit" icon="fa fa-floppy-o"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
 
     </ui:define>
 

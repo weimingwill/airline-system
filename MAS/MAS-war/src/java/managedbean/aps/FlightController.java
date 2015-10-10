@@ -8,10 +8,11 @@ package managedbean.aps;
 import ams.aps.entity.Flight;
 import ams.aps.entity.Route;
 import ams.aps.session.FlightSchedulingSessionLocal;
+import ams.aps.session.RoutePlanningSessionLocal;
+import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.exception.FlightDoesNotExistException;
 import ams.aps.util.helper.RouteDisplayHelper;
-import ams.aps.util.helper.RouteHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
@@ -48,6 +48,9 @@ public class FlightController implements Serializable {
 
     @EJB
     private FlightSchedulingSessionLocal flightSchedulingSession;
+    
+    @EJB
+    private RoutePlanningSessionLocal routePlanningSession;
 
     private String flightNo;
     private Flight flight;
@@ -82,7 +85,7 @@ public class FlightController implements Serializable {
         System.out.println("FlightController: addFlight()");
         try {
             flightSchedulingSession.checkFlightExistence(flightNo);
-            msgController.addErrorMessage("Flight no. existed already!");
+            msgController.addErrorMessage("Flight Number: "+ flightNo +" existed already!");
             return navigationController.redirectToCurrentPage();
         } catch (FlightDoesNotExistException ex) {
             flight = new Flight();
@@ -97,6 +100,16 @@ public class FlightController implements Serializable {
             }
         }
 
+    }
+
+    public String deleteFlight(String flightNo) {
+        try {
+            flightSchedulingSession.deleteFlight(flightNo);
+            msgController.addMessage("Delete Flight " + flightNo);
+        } catch (DeleteFailedException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToCurrentPage();
     }
 
     public String findFlightByFlightNo(String flightNo) {
@@ -126,7 +139,7 @@ public class FlightController implements Serializable {
 
     public void getRoutes() {
         System.out.println("FlightController: getRoutes()");
-        setAvailibleRoutes(flightSchedulingSession.getAvailableRoutes());
+        setAvailibleRoutes(routePlanningSession.getAllRoutes());
 //        RouteHelper routeHelper;
 //        RouteDisplayHelper routeDisplayHelper;
 //        
