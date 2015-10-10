@@ -30,6 +30,7 @@ public class Flight implements Serializable {
     private Integer weeklyFrequency;
     private Boolean completed;
     private Boolean scheduled;
+    private Boolean deleted;
     
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Route route;
@@ -128,5 +129,13 @@ public class Flight implements Serializable {
 
     public void setScheduled(Boolean scheduled) {
         this.scheduled = scheduled;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }
