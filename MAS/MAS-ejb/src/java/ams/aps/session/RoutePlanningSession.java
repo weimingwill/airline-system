@@ -13,12 +13,14 @@ import ams.aps.entity.Route;
 import ams.aps.entity.RouteLeg;
 import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteCompareHelper;
+import ams.aps.util.helper.RouteHelper;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -673,5 +675,57 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             legHelperList.add(legMap.get(i));
         }
         return legHelperList;
+    }
+    
+      // set value for route helpers based on a specific route
+    @Override
+    public void getRouteDetail(Route thisRoute, RouteHelper routeHelper) {
+        routeHelper.setId(thisRoute.getRouteId());
+        routeHelper.setReturnRouteId(thisRoute.getReturnRoute().getRouteId());
+
+        // set airports for routeHelper
+        getRouteAirports(thisRoute, routeHelper);
+
+        // set distance for the route and each leg of the route
+        getRouteDistance(thisRoute, routeHelper);
+    }
+
+    // set origin, destination and stopover airports for routeHelper
+    @Override
+    public void getRouteAirports(Route thisRoute, RouteHelper routeHelper) {
+        TreeMap<Integer, Airport> legAirports = new TreeMap();
+        int numOfLegs = thisRoute.getRouteLegs().size();
+
+        System.out.println("Route Controller: getRouteDetail(): thisRoute = " + routeHelper.getId());
+        for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
+            int legSeq = thisRouteLeg.getLegSeq();
+
+            System.out.println("Route Controller: getRouteDetail(): FROM - TO (" + legSeq + "): " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
+            if (numOfLegs == 1) {
+                routeHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport());
+                routeHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport());
+            } else {
+                if (legSeq == 0) {
+                    routeHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport());
+                } else if (legSeq == (numOfLegs - 1)) {
+                    legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport());
+                    routeHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport());
+                } else {
+                    legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport());
+                }
+            }
+        }
+        routeHelper.setStopovers(legAirports);
+    }
+
+    @Override
+    public void getRouteDistance(Route thisRoute, RouteHelper routeHelper) {
+        List<LegHelper> legHelpers = calcRouteLegDist(thisRoute);
+        double totalDist = 0;
+        for (LegHelper thisLegHelper : legHelpers) {
+            totalDist += thisLegHelper.getDistance();
+        }
+        routeHelper.setTotalDistance(totalDist);
+        routeHelper.setLegs(legHelpers);
     }
 }

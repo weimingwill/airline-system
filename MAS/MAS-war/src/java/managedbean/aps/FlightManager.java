@@ -9,6 +9,7 @@ import ams.aps.entity.AircraftType;
 import ams.aps.entity.Flight;
 import ams.aps.entity.Route;
 import ams.aps.session.FlightSchedulingSessionLocal;
+import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteDisplayHelper;
 import ams.aps.util.helper.RouteHelper;
@@ -34,10 +35,10 @@ import managedbean.application.NavigationController;
 public class FlightManager implements Serializable {
 
     @EJB
-    private FlightSchedulingSessionLocal flightSchedulingSession;
+    private RoutePlanningSessionLocal routePlanningSession;
 
-    @Inject
-    RouteController routeController;
+    @EJB
+    private FlightSchedulingSessionLocal flightSchedulingSession;
 
     @Inject
     MsgController msgController;
@@ -45,6 +46,8 @@ public class FlightManager implements Serializable {
     @Inject
     NavigationController navigationController;
 
+    @Inject
+    RouteController routeController;
 
     private Flight flight;
     private RouteDisplayHelper route = new RouteDisplayHelper();
@@ -55,6 +58,7 @@ public class FlightManager implements Serializable {
     private List<AircraftType> modelsForFlight = new ArrayList();
     private AircraftType modelWithMinMach = new AircraftType();
     private double maxDist = 0;
+    private double speedFraction = 0.8;
 
     /**
      * Creates a new instance of FlightManager
@@ -83,7 +87,7 @@ public class FlightManager implements Serializable {
     }
 
     private void setValueForRouteHelper(Route thisRoute, RouteHelper thisRouteHelper, RouteDisplayHelper thisRouteDisplayHelper) {
-        routeController.getRouteDetail(thisRoute, thisRouteHelper);
+        routePlanningSession.getRouteDetail(thisRoute, thisRouteHelper);
         thisRouteDisplayHelper.setId(thisRouteHelper.getId());
         thisRouteDisplayHelper.setReturnRouteId(thisRouteHelper.getReturnRouteId());
         thisRouteDisplayHelper.setOrigin(thisRouteHelper.getOrigin().getAirportName());
@@ -100,7 +104,8 @@ public class FlightManager implements Serializable {
     public void setFlightDuration() {
         System.out.println("FlightManager: setRouteDuration(): selectedModel = " + selectedModels);
         getModelWithMinMachNo();
-        flightSchedulingSession.calcFlightDuration(modelWithMinMach, routeHelper);
+        flightSchedulingSession.calcFlightDuration(modelWithMinMach, routeHelper, speedFraction);
+        flightSchedulingSession.calcFlightDuration(modelWithMinMach, returnRouteHelper, speedFraction);
     }
 
     public String checkSelectedAircraftModels() {
@@ -272,6 +277,20 @@ public class FlightManager implements Serializable {
      */
     public void setModelWithMinMach(AircraftType modelWithMinMach) {
         this.modelWithMinMach = modelWithMinMach;
+    }
+
+    /**
+     * @return the speedFraction
+     */
+    public double getSpeedFraction() {
+        return speedFraction;
+    }
+
+    /**
+     * @param speedFraction the speedFraction to set
+     */
+    public void setSpeedFraction(double speedFraction) {
+        this.speedFraction = speedFraction;
     }
 
 }

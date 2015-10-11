@@ -13,7 +13,6 @@ import ams.aps.entity.FlightSchedule;
 import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
-import ams.aps.util.exception.FlightDoesNotExistException;
 import ams.aps.util.exception.ObjectDoesNotExistException;
 import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteHelper;
@@ -39,8 +38,8 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     @PersistenceContext
     EntityManager em;
 
-    public final double BUFFER_TIME = 1 / 6;
-    public final double STOPOVER_TIME = 1 / 3;
+    public final double BUFFER_TIME = 1 / 6; // buffer time for passengers to alight
+    public final double STOPOVER_TIME = 1 / 3; //time for plane to rest at the stop-over airport
 
     @Override
     public boolean createFlight(Flight flight) {
@@ -65,7 +64,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     @Override
-    public Flight checkFlightExistence(String flightNo) throws FlightDoesNotExistException {
+    public Flight checkFlightExistence(String flightNo) throws ObjectDoesNotExistException {
         try {
             Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo");
             query.setParameter("fNo", flightNo);
@@ -73,7 +72,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             Flight flight = (Flight) query.getSingleResult();
             return flight;
         } catch (Exception e) {
-            throw new FlightDoesNotExistException();
+            throw new ObjectDoesNotExistException("Flight " + flightNo + " Does Not Exist");
         }
     }
 
@@ -116,13 +115,13 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     @Override
-    public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper) {
+    public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper, double speedFraction) {
         double speed = machToKmh(selectedModel.getMaxMachNo());
         double totalDuration = 0;
         double legFlyTime;
         double legTurnaroundTime = getTurnaroundTime(selectedModel);
         for (LegHelper leg : routeHelper.getLegs()) {
-            legFlyTime = leg.getDistance() / speed;
+            legFlyTime = leg.getDistance() / (speed * speedFraction);
             leg.setFlyingTime(legFlyTime);
             totalDuration += legFlyTime;
             if (checkRouteIsInternational(leg.getDeparture(), leg.getArrival())) {
@@ -196,7 +195,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             Flight flight = checkFlightExistence(flightNo);
             flight.setDeleted(Boolean.TRUE);
             em.merge(flight);
-        } catch (FlightDoesNotExistException ex) {
+        } catch (ObjectDoesNotExistException ex) {
             throw new DeleteFailedException();
         }
     }

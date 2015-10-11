@@ -12,6 +12,7 @@ import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
 import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteCompareHelper;
+import ams.aps.util.helper.RouteHelper;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -87,5 +88,11 @@ public interface RoutePlanningSessionLocal {
     public boolean checkCityName(String cityName, String iso);
 
     public boolean checkISO(String iso, String countryName);
+
+    public void getRouteAirports(Route thisRoute, RouteHelper routeHelper);
+
+    public void getRouteDetail(Route thisRoute, RouteHelper routeHelper);
+
+    public void getRouteDistance(Route thisRoute, RouteHelper routeHelper);
 
 }

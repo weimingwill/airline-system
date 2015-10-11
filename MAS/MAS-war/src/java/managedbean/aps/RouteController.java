@@ -5,14 +5,11 @@
  */
 package managedbean.aps;
 
-import ams.aps.entity.AircraftType;
 import ams.aps.entity.Airport;
 import ams.aps.entity.City;
 import ams.aps.entity.Country;
 import ams.aps.entity.Route;
-import ams.aps.entity.RouteLeg;
 import ams.aps.session.RoutePlanningSessionLocal;
-import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteDisplayHelper;
 import ams.aps.util.helper.RouteHelper;
 import java.io.Serializable;
@@ -166,7 +163,7 @@ public class RouteController implements Serializable {
             RouteDisplayHelper routeDisplayHelper = new RouteDisplayHelper();
             RouteHelper routeHelper = new RouteHelper();
             String legString = "";
-            getRouteDetail(thisRoute, routeHelper);
+            routePlanningSession.getRouteDetail(thisRoute, routeHelper);
 
             TreeMap<Integer, Airport> legAirports = routeHelper.getStopovers();
             legString = getStopoverString(legAirports, "name");
@@ -203,55 +200,6 @@ public class RouteController implements Serializable {
         return legString;
     }
 
-    // set value for route helpers based on a specific route
-    public void getRouteDetail(Route thisRoute, RouteHelper routeHelper) {
-        routeHelper.setId(thisRoute.getRouteId());
-        routeHelper.setReturnRouteId(thisRoute.getReturnRoute().getRouteId());
-
-        // set airports for routeHelper
-        getRouteAirports(thisRoute, routeHelper);
-
-        // set distance for the route and each leg of the route
-        getRouteDistance(thisRoute, routeHelper);
-    }
-
-    // set origin, destination and stopover airports for routeHelper
-    public void getRouteAirports(Route thisRoute, RouteHelper routeHelper) {
-        TreeMap<Integer, Airport> legAirports = new TreeMap();
-        int numOfLegs = thisRoute.getRouteLegs().size();
-
-        System.out.println("Route Controller: getRouteDetail(): thisRoute = " + routeHelper.getId());
-        for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
-            int legSeq = thisRouteLeg.getLegSeq();
-
-            System.out.println("Route Controller: getRouteDetail(): FROM - TO (" + legSeq + "): " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
-            if (numOfLegs == 1) {
-                routeHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport());
-                routeHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport());
-            } else {
-                if (legSeq == 0) {
-                    routeHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport());
-                } else if (legSeq == (numOfLegs - 1)) {
-                    legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport());
-                    routeHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport());
-                } else {
-                    legAirports.put(legSeq, thisRouteLeg.getLeg().getDepartAirport());
-                }
-            }
-        }
-        routeHelper.setStopovers(legAirports);
-    }
-
-    public void getRouteDistance(Route thisRoute, RouteHelper routeHelper) {
-        List<LegHelper> legHelpers = routePlanningSession.calcRouteLegDist(thisRoute);
-        double totalDist = 0;
-        for (LegHelper thisLegHelper : legHelpers) {
-            totalDist += thisLegHelper.getDistance();
-        }
-        routeHelper.setTotalDistance(totalDist);
-        routeHelper.setLegs(legHelpers);
-    }
-    
     public void onCountryChange() {
         setCities((List<City>) routePlanningSession.getCityListByCountry(country.getIsoCode()));
         if (cities.isEmpty()) {
