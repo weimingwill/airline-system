@@ -16,8 +16,9 @@ public class LegHelper {
     private Long legId;
     private Airport departure;
     private Airport arrival;
-    private Float distance;
-    private Float duration;
+    private Double distance;
+    private Double flyingTime;
+    private Double turnaroundTime;
 
     public LegHelper() {
     }
@@ -69,29 +70,43 @@ public class LegHelper {
     /**
      * @return the distance
      */
-    public Float getDistance() {
+    public Double getDistance() {
         return distance;
     }
 
     /**
      * @param distance the distance to set
      */
-    public void setDistance(Float distance) {
+    public void setDistance(Double distance) {
         this.distance = distance;
     }
 
     /**
-     * @return the duration
+     * @return the flyingTime
      */
-    public Float getDuration() {
-        return duration;
+    public Double getFlyingTime() {
+        return flyingTime;
     }
 
     /**
-     * @param duration the duration to set
+     * @param flyingTime the flyingTime to set
      */
-    public void setDuration(Float duration) {
-        this.duration = duration;
+    public void setFlyingTime(Double flyingTime) {
+        this.flyingTime = flyingTime;
     }
 
-}
+    /**
+     * @return the turnaroundTime
+     */
+    public Double getTurnaroundTime() {
+        return turnaroundTime;
+    }
+
+    /**
+     * @param turnaroundTime the turnaroundTime to set
+     */
+    public void setTurnaroundTime(Double turnaroundTime) {
+        this.turnaroundTime = turnaroundTime;
+    }
+
+   }

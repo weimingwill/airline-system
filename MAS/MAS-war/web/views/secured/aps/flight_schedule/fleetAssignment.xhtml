@@ -13,10 +13,11 @@
 
         <me:CCCreateFlightMenu activeIndex="0"/>
         <h:form>
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
             <c:set value="#{flightManager.routeHelper}" var="route"/>
             <c:set value="#{flightManager.returnRouteHelper}" var="returnRoute"/>
             <p:panelGrid columns="2">
-                <p:panel header="Route Information for Flight: #{flightManager.flight.flightNo}">
+                <p:panel header="Route Information for Flight: #{flightManager.flight.flightNo}" style="min-width: 362px">
                     <p:panelGrid>
                         <pa:CCRouteDisplayPanel route="#{route}"/>
                         <pa:CCRouteDisplayPanel route="#{returnRoute}"/>
@@ -34,15 +35,12 @@
                 </p:panel>
 
                 <p:dataTable value="#{flightManager.modelsForFlight}" var="model" selection="#{flightManager.selectedModels}" rows="3" rowKey="#{model.id}" tableStyleClass="table-small" sortMode="multiple">
+                    
                     <f:facet name="header">
                         <p:outputLabel value="Top 3 Aircraft models which are capable of flying this route"/>
                     </f:facet>
 
                     <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-
-                    <p:column headerText="ID">
-                        <p:outputLabel value="#{model.id}"/>
-                    </p:column>
 
                     <p:column headerText="Type">
                         <p:outputLabel value="#{model.typeCode}"/>
@@ -56,7 +54,7 @@
                         <p:outputLabel value="#{model.rangeInKm}"/>
                     </p:column>
 
-                    <p:column headerText="Usage (%)" sortBy="#{(flightManager.maxDist/model.rangeInKm)*100}">
+                    <p:column headerText="Range Usage (%)" sortBy="#{(flightManager.maxDist/model.rangeInKm)*100}">
                         <p:outputLabel value="#{(flightManager.maxDist/model.rangeInKm)*100}">
                             <f:convertNumber maxFractionDigits="2"/>
                         </p:outputLabel>
@@ -84,7 +82,7 @@
                 <p:row style="border: transparent">
                     <p:column style="width:76%"></p:column>
                     <p:column style="text-align: right">
-                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{navigationController.toFreqPlanning()}"/>
+                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{flightManager.checkSelectedAircraftModels()}"/>
                         <p:commandButton value="Save &amp; Exit" icon="fa fa-floppy-o"/>
                     </p:column>
                 </p:row>
