@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class Flight implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +32,9 @@ public class Flight implements Serializable {
     private Boolean completed;
     private Boolean scheduled;
     private Boolean deleted;
-    
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Double speedFraction;
+
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Route route;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
@@ -137,5 +139,19 @@ public class Flight implements Serializable {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * @return the speedFraction
+     */
+    public Double getSpeedFraction() {
+        return speedFraction;
+    }
+
+    /**
+     * @param speedFraction the speedFraction to set
+     */
+    public void setSpeedFraction(Double speedFraction) {
+        this.speedFraction = speedFraction;
     }
 }
