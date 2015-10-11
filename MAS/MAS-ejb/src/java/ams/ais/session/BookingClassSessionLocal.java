@@ -6,6 +6,8 @@
 package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
+import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.BookingClassHelper;
@@ -31,10 +33,12 @@ public interface BookingClassSessionLocal {
 
     public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId);
 
-    public void createBookingClass(String name) throws ExistSuchBookingClassNameException;
+    public void createBookingClass(String name, TicketFamily ticketFamily) throws ExistSuchBookingClassNameException;
 
     public void verifyBookingClassName(String name) throws ExistSuchBookingClassNameException;
-
+    
+    public List<TicketFamily> getAllTicketFamily();
+    
     public void deleteBookingClass(String name) throws NoSuchBookingClassException;
 
     public BookingClass search(String name) throws NoSuchBookingClassException;

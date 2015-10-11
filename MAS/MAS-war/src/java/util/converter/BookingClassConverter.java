@@ -27,6 +27,7 @@ public class BookingClassConverter implements Converter {
     @EJB
     private BookingClassSessionLocal bookingClassSession;
     
+    @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
@@ -41,12 +42,14 @@ public class BookingClassConverter implements Converter {
         }
     }
 
+    @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if (object != null) {
+        if (object != null && !(object instanceof String)) {
             return String.valueOf(((BookingClass) object).getBookingClassId());
         } else {
             return null;
         }
     }
-
+    
+   
 }

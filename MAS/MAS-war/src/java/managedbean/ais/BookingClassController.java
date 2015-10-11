@@ -5,6 +5,9 @@
  */
 package managedbean.ais;
 
+import ams.ais.entity.BookingClass;
+import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
@@ -50,6 +53,12 @@ public class BookingClassController implements Serializable {
     private Long flightScheduleId;
     private List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers;
     private float basicPrice;
+    private BookingClass selectedBookingClass;
+    private TicketFamily selectedTicketFamily;
+
+    
+
+    
 
     /**
      * Creates a new instance of BookingClassController
@@ -68,10 +77,14 @@ public class BookingClassController implements Serializable {
 
     public BookingClassController() {
     }
+    
+    public List<TicketFamily> getAllTicketFamily() {
+        return bookingClassSession.getAllTicketFamily();
 
+    }
     public String createBookingClass() {
         try {
-            bookingClassSession.createBookingClass(bookingClassName);
+            bookingClassSession.createBookingClass(bookingClassName,selectedTicketFamily);
             msgController.addMessage("Create booking class successfully!");
         } catch (ExistSuchBookingClassNameException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -169,5 +182,20 @@ public class BookingClassController implements Serializable {
     public void setBasicPrice(float basicPrice) {
         this.basicPrice = basicPrice;
     }
+    
+    public BookingClass getSelectedBookingClass() {
+        return selectedBookingClass;
+    }
 
+    public void setSelectedBookingClass(BookingClass selectedBookingClass) {
+        this.selectedBookingClass = selectedBookingClass;
+    }
+    
+    public TicketFamily getSelectedTicketFamily() {
+        return selectedTicketFamily;
+    }
+
+    public void setSelectedTicketFamily(TicketFamily selectedTicketFamily) {
+        this.selectedTicketFamily = selectedTicketFamily;
+    }
 }

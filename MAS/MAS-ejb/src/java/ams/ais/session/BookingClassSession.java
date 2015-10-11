@@ -48,15 +48,22 @@ public class BookingClassSession implements BookingClassSessionLocal {
 
     @PersistenceContext
     private EntityManager entityManager;
-
+    
+    
     @Override
-    public void createBookingClass(String name) throws ExistSuchBookingClassNameException {
+    public void createBookingClass(String name, TicketFamily selectedTicketFamily) throws ExistSuchBookingClassNameException {
         verifyBookingClassName(name);
         BookingClass bookingClass = new BookingClass();
-        bookingClass.create(name);
+        bookingClass.create(name,selectedTicketFamily);
         entityManager.persist(bookingClass);
     }
-
+    
+    @Override
+    public List<TicketFamily> getAllTicketFamily() {
+        Query query = entityManager.createQuery("SELECT c FROM TicketFamily c WHERE c.deleted = false");
+        return query.getResultList();
+    }
+    
     @Override
     public void deleteBookingClass(String name) throws NoSuchBookingClassException {
         BookingClass bookingClassTemp = search(name);
