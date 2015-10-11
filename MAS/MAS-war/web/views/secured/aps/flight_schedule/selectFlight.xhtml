@@ -9,30 +9,56 @@
 
     <ui:define name="content">
         <me:CCScheduleFlightMenu activeIndex="0"/>
-        <h:form>
-            <p:ribbon>
+        <h:form id="form">
+            <p:ribbon id="unscheduledFlightFilter">
                 <p:tab title="Filter and find unscheduled flight to schedule">
-                    <p:ribbonGroup label="Select hub">
-                        <p:selectOneMenu id="hub">
-                            <f:selectItem itemLabel="Select hub" itemValue="" />
+                    <p:ribbonGroup label="Select departure airport">
+                        <p:selectOneMenu id="deptAirport"  value="#{flightScheduleManager.selectedAirport}" converter="airportConverter" panelStyle="width:180px"
+                                         effect="fade" var="deptAirport" style="width:160px" filter="true" filterMatchMode="startsWith">
+                            <f:selectItem itemLabel="Select departure " itemValue="" />
+                            <f:selectItems value="#{flightScheduleManager.deptAirports}" var="deptAirport" itemLabel="#{deptAirport.airportName}" itemValue="#{deptAirport}" />
+                            <p:column>
+                                <h:outputText value="#{deptAirport.airportName}" />
+                            </p:column>
                         </p:selectOneMenu>
                     </p:ribbonGroup>
 
                     <p:ribbonGroup label="Select aircraft family" style="width:175px">
-                        <p:selectOneMenu id="aircraftFamily">
+                        <p:selectOneMenu id="aircraftFamily"  value="#{flightScheduleManager.selectedAircraftTypeFamily}" panelStyle="width:180px"
+                                         effect="fade" style="width:160px" filter="true" filterMatchMode="startsWith">
+                            <p:ajax update="aircraftModels" listener="#{flightScheduleManager.onAircraftTypeFamilyChange()}" />
                             <f:selectItem itemLabel="Select aircraft family" itemValue="" />
-                        </p:selectOneMenu>
+                            <f:selectItems value="#{flightScheduleManager.aircraftTypeFamilys}"/>
+                        </p:selectOneMenu>                        
                     </p:ribbonGroup>
 
                     <p:ribbonGroup label="Select aircraft models" style="width:188px">
-                        <p:selectCheckboxMenu id="aircraftModels" label="Select aircraft models" 
+                        <p:selectCheckboxMenu id="aircraftModels" label="Select aircraft models" value="#{flightScheduleManager.selectedAircraftTypes}"
                                               filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
-                            <f:selectItems value="" />
+                            <f:selectItems value="#{flightScheduleManager.aircraftTypes}"/>
                         </p:selectCheckboxMenu>
+                    </p:ribbonGroup>
+
+                    <p:ribbonGroup label="Actions">
+                        <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
+                            <p:commandButton value="Apply" update=":form:unscheduleFlight" actionListener="#{flightScheduleManager.applyFilters()}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
+                            <p:commandButton value="Reset" update="unscheduledFlightFilter,:form:unscheduleFlight" actionListener="#{flightScheduleManager.resetFilters()}" icon="fa fa-refresh" styleClass="filterBtn"/>
+                        </p:panelGrid>
                     </p:ribbonGroup>
                 </p:tab>
             </p:ribbon>
+            <p:dataGrid var="flight" columns="4" layout="grid"
+                        rows="8" paginator="true" id="unscheduleFlight"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="4, 8" style="text-align: center">
+                <f:facet name="header">
+                    Selected unscheduled flight
+                </f:facet>
+                <p:panelGrid style="width:100%">
+                </p:panelGrid>
+            </p:dataGrid>
         </h:form>
+        
         <p:separator/>
         <h:form>
             <p:panelGrid>

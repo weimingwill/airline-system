@@ -6,10 +6,15 @@
 package managedbean.aps;
 
 import ams.aps.entity.AircraftType;
+import ams.aps.entity.Airport;
+import ams.aps.entity.Route;
 import ams.aps.session.FlightSchedulingSessionLocal;
+import ams.aps.util.exception.NoSuchRouteException;
+import ams.aps.util.helper.RouteHelper;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -29,33 +34,74 @@ public class FlightScheduleManager implements Serializable {
     private MsgController msgController;
     @Inject
     private NavigationController navigationController;
-    
+    @Inject
+    private RouteController routeController;
+
     @EJB
-    private FlightSchedulingSessionLocal flightSchedulingSession; 
+    private FlightSchedulingSessionLocal flightSchedulingSession;
     private List<String> aircraftTypeFamilys;
     private List<AircraftType> aircraftTypes;
     private String selectedAircraftTypeFamily;
+    private Airport selectedAirport;
+    private List<Airport> deptAirports;
+    private List<AircraftType> selectedAircraftTypes;
+    private List<RouteHelper> routeHelpers;
+
     /**
      * Creates a new instance of FlightScheduleManager
      */
     public FlightScheduleManager() {
     }
-    
+
     @PostConstruct
     public void init() {
-        initializeAircraftTypeFamilys();
+//        initializeAircraftTypeFamilys();
+//        initilaizeDepteAirports();
     }
-    
+
     public void initializeAircraftTypeFamilys() {
         aircraftTypeFamilys = flightSchedulingSession.getUnscheduledFlightAircraftTypeFamilys();
     }
-    
+
     public void onAircraftTypeFamilyChange() {
         aircraftTypes = flightSchedulingSession.getUnscheduledAircraftTypesByTypeFamily(selectedAircraftTypeFamily);
     }
     
-    //Getter and Setter
-    public List<String> getAircraftTypeFamilys() {
+    public void initiliazeRouteHelpers() {
+        try {
+            for (Route route : flightSchedulingSession.getUnscheduledFlightRoutes()) {
+                RouteHelper routeHelper = new RouteHelper();
+                routeController.getRouteDetail(route, routeHelper);
+                routeHelpers.add(routeHelper);
+            }
+        } catch (NoSuchRouteException e) {
+            routeHelpers = new ArrayList<>();
+        }
+    }
+
+    public void initilizeDepteAirports() {
+        try {
+            for (Route route : flightSchedulingSession.getUnscheduledFlightRoutes()) {
+                RouteHelper routeHelper = new RouteHelper();
+                routeController.getRouteDetail(route, routeHelper);
+                deptAirports.add(routeHelper.getOrigin());
+            }
+        } catch (NoSuchRouteException e) {
+            deptAirports = new ArrayList<>();
+        }
+    }
+
+    public void resetFilters() {
+        init();
+    }
+    
+    public void applyFilters() {
+        
+    }
+
+
+//Getter and Setter
+public List<String> getAircraftTypeFamilys() {
         return aircraftTypeFamilys;
     }
 
@@ -78,5 +124,28 @@ public class FlightScheduleManager implements Serializable {
     public void setSelectedAircraftTypeFamily(String selectedAircraftTypeFamily) {
         this.selectedAircraftTypeFamily = selectedAircraftTypeFamily;
     }
-    
+
+    public Airport getSelectedAirport() {
+        return selectedAirport;
+    }
+
+    public void setSelectedAirport(Airport selectedAirport) {
+        this.selectedAirport = selectedAirport;
+    }
+
+    public List<Airport> getDeptAirports() {
+        return deptAirports;
+    }
+
+    public void setDeptAirports(List<Airport> deptAirports) {
+        this.deptAirports = deptAirports;
+    }
+
+    public List<AircraftType> getSelectedAircraftTypes() {
+        return selectedAircraftTypes;
+    }
+
+    public void setSelectedAircraftTypes(List<AircraftType> selectedAircraftTypes) {
+        this.selectedAircraftTypes = selectedAircraftTypes;
+    }
 }
