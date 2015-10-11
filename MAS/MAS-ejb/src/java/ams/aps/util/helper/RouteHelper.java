@@ -21,8 +21,8 @@ public class RouteHelper {
     private Airport destination;
     private TreeMap<Integer, Airport> stopovers;
     private Long returnRouteId;
-    private Float totalDistance;
-    private Float totalDuration;
+    private Double totalDistance;
+    private Double totalDuration;
     private List<LegHelper> legs;
 
     public RouteHelper() {
@@ -111,34 +111,6 @@ public class RouteHelper {
     }
 
     /**
-     * @return the totalDistance
-     */
-    public Float getTotalDistance() {
-        return totalDistance;
-    }
-
-    /**
-     * @param totalDistance the totalDistance to set
-     */
-    public void setTotalDistance(Float totalDistance) {
-        this.totalDistance = totalDistance;
-    }
-
-    /**
-     * @return the totalDuration
-     */
-    public Float getTotalDuration() {
-        return totalDuration;
-    }
-
-    /**
-     * @param totalDuration the totalDuration to set
-     */
-    public void setTotalDuration(Float totalDuration) {
-        this.totalDuration = totalDuration;
-    }
-
-    /**
      * @return the legs
      */
     public List<LegHelper> getLegs() {
@@ -150,6 +122,34 @@ public class RouteHelper {
      */
     public void setLegs(List<LegHelper> legs) {
         this.legs = legs;
+    }
+
+    /**
+     * @return the totalDistance
+     */
+    public Double getTotalDistance() {
+        return totalDistance;
+    }
+
+    /**
+     * @param totalDistance the totalDistance to set
+     */
+    public void setTotalDistance(Double totalDistance) {
+        this.totalDistance = totalDistance;
+    }
+
+    /**
+     * @return the totalDuration
+     */
+    public Double getTotalDuration() {
+        return totalDuration;
+    }
+
+    /**
+     * @param totalDuration the totalDuration to set
+     */
+    public void setTotalDuration(Double totalDuration) {
+        this.totalDuration = totalDuration;
     }
 
 }
