@@ -42,11 +42,13 @@ public class BookingClassConverter implements Converter {
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
         if (object != null && !(object instanceof String)) {
-            return String.valueOf(((BookingClass) object).getBookingClassId().toString());
+            return String.valueOf(((BookingClass) object).getBookingClassId());
+//            return String.valueOf(((BookingClass) object).getBookingClassId().toString());
         } else {
             return null;
         }
     }
-
+    
+   
 }
       

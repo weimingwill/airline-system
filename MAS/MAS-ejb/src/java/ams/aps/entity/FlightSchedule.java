@@ -255,7 +255,7 @@ public class FlightSchedule implements Serializable {
 
     public void setCompleted(Boolean completed) {
         this.completed = completed;
-    }
+    }    
 
     public Boolean getSeatAllocated() {
         return seatAllocated;

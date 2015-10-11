@@ -218,7 +218,9 @@ public class NavigationController implements Serializable {
     public String redirectToCreateBookingClass() {
         return "/views/secured/ais/booking_class/createBookingClass.xhtml" + REDIRECT;
     }
-
+    public String redirectToViewAllBookingClass(){
+        return "/views/secured/ais/booking_class/viewBookingClass.xhtml" + REDIRECT;
+    }
     public String redirectToDeleteBookingClass() {
         return "/views/secured/ais/booking_class/deleteBookingClass.xhtml" + REDIRECT;
     }

@@ -37,10 +37,11 @@ public class Rule implements Serializable {
         return ticketFamilyRules;
     }
     
-    public void create (String name){
+    public void create (String name, String description){
 
         this.setName(name);
-        this.setDeleted(false);
+        this.setDescription(description);
+        this.setDeleted(false); 
     }
     public void setTicketFamilyRules(List<TicketFamilyRule> ticketFamilyRules) {
         this.ticketFamilyRules = ticketFamilyRules;

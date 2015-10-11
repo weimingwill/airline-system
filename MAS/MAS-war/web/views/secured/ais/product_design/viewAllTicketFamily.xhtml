@@ -13,8 +13,14 @@
 
     <ui:define name="content">
         <h:form>
-            <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily">
+            <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily" style="margin-bottom:40px" rows="10"
+                     paginator="true"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="10,15,30">
 
+                <f:facet name="header">
+                    Ticket Family
+                </f:facet>
                 <p:column headerText="Cabin Class">
                     <p:outputLabel value="#{ticketfamily.getCabinClass().name}" />
                 </p:column>
@@ -26,7 +32,7 @@
                     <p:outputLabel value="#{ticketfamily.name}" />
                 </p:column>
 
-                <p:column headerText="Rule">
+                <p:column headerText="Rule" style="width:400px;text-align: center">
                     <p:dataTable value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(ticketfamily.ticketFamilyId)}" var="ticketfamilyrule">
                         <p:column>
                             <p:outputLabel value="#{ticketfamilyrule.rule.name}" />
@@ -44,9 +50,34 @@
                         <f:setPropertyActionListener value="#{ticketfamily}" target="#{ticketFamilyController.selectedTicketFamily}" />
                     </p:commandButton>
                 </p:column>
+
+                <p:column headerText="Delete" style="width:50px;text-align: center">
+                    <p:commandButton update="ticketFamilyDeleteDialog"  oncomplete="PF('ticketFamilyDeleteDialog').show()" icon="ui-icon-trash">
+                        <f:setPropertyActionListener value="#{ticketfamily}" target="#{productDesignDeleteController.selectedTicketFamily}" />
+                    </p:commandButton>
+                </p:column>
                 <f:facet name="footer">
-<!--                    <p:commandButton value="Edit" action="{navigationController.redirectToEditTicketFamily()}"  />-->
+                    <!--                    <p:commandButton value="Edit" action="{navigationController.redirectToEditTicketFamily()}"  />-->
                 </f:facet>
+            </p:dataTable>
+        </h:form>
+
+        <h:form>
+            <p:dataTable value="#{ruleController.allRule}" var="rule" style="margin-bottom:40px" rows="10"
+                     paginator="true"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="10,15,30">
+                <f:facet name="header">
+                    Rules
+                </f:facet>
+                <p:column headerText="Rule Name">
+                    <p:outputLabel value="#{rule.name}"/>
+                </p:column>
+
+                <p:column headerText="Rule Description">
+                    <p:outputLabel value="#{rule.description}"/>
+                </p:column>
+
             </p:dataTable>
         </h:form>
 
@@ -63,8 +94,8 @@
                                     <p:inputText value="#{ticketFamily.name}" />
                                 </p:column>
                             </p:row>  
-                            
-                             <p:row> 
+
+                            <p:row> 
                                 <p:column>
                                     <p:outputLabel value="Ticket Family Type: " />
                                 </p:column>
@@ -74,8 +105,8 @@
                                 </p:column>
                             </p:row>
                         </ui:repeat>
-                        
-                        
+
+
                         <ui:repeat var="ticketFamilyRuleHelper" value="#{ticketFamilyController.ticketFamilyRuleHelpers}" varStatus="status">
                             <p:row>
                                 <p:column>
@@ -94,6 +125,44 @@
             </h:form>
         </p:dialog>
 
+
+        <p:dialog id="ticketFamilyDeleteDialog" header="Are you sure you want to delete this Ticket Family:  #{productDesignDeleteController.selectedTicketFamily.type} - #{productDesignDeleteController.selectedTicketFamily.cabinClass.name} - #{productDesignDeleteController.selectedTicketFamily.name}" widgetVar="ticketFamilyDeleteDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form>
+                <p:panel id="ticketFamilyDeleteDetail">
+                    <p:panelGrid>
+
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Ticket Family Type: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{productDesignDeleteController.selectedTicketFamily.type}" >
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Cabin Class Name: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{productDesignDeleteController.selectedTicketFamily.cabinClass.name}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Ticket Family Name: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{productDesignDeleteController.selectedTicketFamily.name}" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton value="Delete" action="#{navigationController.redirectToViewAllTicketFamily()}" actionListener="#{productDesignDeleteController.deleteTicketFamily()}" oncomplete="PF('ticketFamilyDeleteDialog').hide()"/>
+            </h:form>
+        </p:dialog>
     </ui:define>
 
 </ui:composition>

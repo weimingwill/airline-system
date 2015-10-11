@@ -18,7 +18,8 @@
                 <p:inputText required="true" requiredMessage="Please enter rule name" id="name" value="#{ruleController.name}">
                
                 </p:inputText>
-                
+                <h:outputText value="Description"/>
+                <p:inputText required="true" requiredMessage="Please enter the description" id="type" value="#{ruleController.description}"/>
                 <p:commandButton action="#{ruleController.createRule()}" value="Create" update="messages"/>    
 
             </h:panelGrid>

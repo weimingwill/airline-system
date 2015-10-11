@@ -30,7 +30,7 @@ public interface CabinClassSessionLocal {
 
     public void deleteCabinClass(String name) throws NoSuchCabinClassException;
 
-    public void updateCabinClass(String oldname, String type, String name) throws NoSuchCabinClassException, ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
+    public void updateCabinClass(Long cabinclassId, String type, String name) throws NoSuchCabinClassException, ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
 
     public List<CabinClass> getAllCabinClass();
 

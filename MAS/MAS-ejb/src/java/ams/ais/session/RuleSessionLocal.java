@@ -20,13 +20,15 @@ import javax.ejb.Local;
 public interface RuleSessionLocal {
     
    public List<Rule> getAllRule();
-   public void createRule (String name) throws ExistSuchRuleException;
+   public void createRule (String name,String description) throws ExistSuchRuleException;
    public void deleteRule (String name) throws NoSuchRuleException; 
    public void verifyRuleExistence(String name) throws ExistSuchRuleException;
    
    public Rule getRuleByName(String name);
-   public void updateRule(String oldname, String name) throws NoSuchRuleException, ExistSuchRuleException;
+   public void updateRule(Long ruleId, String name,String description) throws NoSuchRuleException, ExistSuchRuleException;
    public List<Rule> getAllOtherRule(String name);
+   public Rule getRuleById(Long ruleId);
+   public List<Rule> getAllOtherRuleById(Long ruleId);
    
    
 }

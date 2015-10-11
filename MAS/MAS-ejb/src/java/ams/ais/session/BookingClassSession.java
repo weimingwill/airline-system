@@ -56,11 +56,18 @@ public class BookingClassSession implements BookingClassSessionLocal {
     private EntityManager entityManager;
 
     @Override
-    public void createBookingClass(String name) throws ExistSuchBookingClassNameException {
-        verifyBookingClassName(name);
+    public void createBookingClass(String name, TicketFamily selectedTicketFamily) throws ExistSuchBookingClassNameException {
+        verifyBookingClassName(name, selectedTicketFamily);
         BookingClass bookingClass = new BookingClass();
-        bookingClass.create(name);
+        TicketFamily ticketFamily = entityManager.find(TicketFamily.class, selectedTicketFamily.getTicketFamilyId());
+        bookingClass.create(name, ticketFamily);
         entityManager.persist(bookingClass);
+    }
+
+    @Override
+    public List<TicketFamily> getAllTicketFamily() {
+        Query query = entityManager.createQuery("SELECT c FROM TicketFamily c WHERE c.deleted = false");
+        return query.getResultList();
     }
 
     @Override
@@ -85,11 +92,11 @@ public class BookingClassSession implements BookingClassSessionLocal {
     }
 
     @Override
-    public void verifyBookingClassName(String name) throws ExistSuchBookingClassNameException {
+    public void verifyBookingClassName(String name, TicketFamily ticketFamily) throws ExistSuchBookingClassNameException {
         List<BookingClass> bookingClasses = getAllBookingClasses();
         if (bookingClasses != null) {
             for (BookingClass bookingClass : bookingClasses) {
-                if (name.equals(bookingClass.getName())) {
+                if (name.toUpperCase().equals(bookingClass.getName())) {
                     throw new ExistSuchBookingClassNameException(AisMsg.EXIST_SUCH_BOOKING_CLASS_ERROR);
                 }
             }
@@ -215,6 +222,36 @@ public class BookingClassSession implements BookingClassSessionLocal {
     }
 
     @Override
+    public void updateBookingClass(Long bookingClassId, String bookingClassName) throws NoSuchBookingClassException, ExistSuchBookingClassNameException {
+        
+        BookingClass bookingClass = getBookingClassById(bookingClassId);
+        if (bookingClass == null) {
+            throw new NoSuchBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
+        } else {
+            List<BookingClass> bookingClasses = getAllOtherBookingClassById(bookingClassId);
+
+            if (bookingClasses != null) {
+
+                for (BookingClass cc : bookingClasses) {
+
+                    if (bookingClassName.toUpperCase().equals(cc.getName())) {
+                        throw new ExistSuchBookingClassNameException(AisMsg.EXIST_SUCH_BOOKING_CLASS_ERROR);
+                    }
+                }
+            }
+        }
+        bookingClass.setName(bookingClassName);
+        entityManager.merge(bookingClass);
+        entityManager.flush();
+    }
+    
+    @Override
+    public List<BookingClass> getAllOtherBookingClassById(Long bookingClassId) {
+       Query query = entityManager.createQuery("SELECT m FROM BookingClass m where m.bookingClassId <> :bookingClassId AND m.deleted = FALSE");
+        query.setParameter("bookingClassId", bookingClassId);
+        return query.getResultList();
+    }
+    
     public void verifyUniqueBookingClassPrices(Map<Long, Float> priceMap) throws DuplicatePriceException {
         Collection<Float> valueList = priceMap.values();
         Set<Float> valueSet = new HashSet<>(valueList);
@@ -265,3 +302,5 @@ public class BookingClassSession implements BookingClassSessionLocal {
         return entityManager.find(FlightScheduleBookingClass.class, fsbc.getFlightScheduleBookingClassId());
     }
 }
+
+
