@@ -35,9 +35,9 @@ public interface SeatReallocationSessionLocal {
 
     public List<NormalDistribution> getAllNormalDistributions();
 
-    public void addPhaseDemand(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException;
+    public void addPhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException;
 
-    public void deletePhaseDemand(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers,int daysBeforeDeparture) throws NoSuchPhaseDemandException;
+    public void deletePhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass,PhaseDemand phaseDemand) throws NoSuchPhaseDemandException;
 
 //    public PhaseDemand searchPhaseDemand(int daysBeforeDeparture) throws NoSuchPhaseDemandException;
 
@@ -45,15 +45,15 @@ public interface SeatReallocationSessionLocal {
 
     public FlightScheduleBookingClass getFlightScheduleBookingClassbyFlightScheduleIDandBookingClassID(Long flightScheduleID, Long bookingClassID);
 
-    public void reallocateSeatsforBookingClass(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, float demandMean, float demandDev)
-            throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException;
+    public void reallocateSeatsforBookingClass(FlightScheduleBookingClass flightScheduleBookingClass, float demandMean, float demandDev)
+            throws NoSuchFlightScheduleBookingClassException;
     
     public List<SeatAllocationHistory> getBookingClassSeatAllocationHistory(FlightScheduleBookingClass flightScheduleBookingClass);
     public List<PhaseDemand> getPhaseDemands(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers)
             throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException;
     
     public PhaseDemand getPhaseDemandbyId(Long id);
-    
+        
 //    public PhaseDemand getPhaseDemandByDays(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, int daysBeforeDeparture) throws NoSuchPhaseDemandException;
 
 }

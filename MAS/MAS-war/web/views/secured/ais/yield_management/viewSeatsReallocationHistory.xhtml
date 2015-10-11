@@ -3,13 +3,15 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/AisTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <ui:define name="title">
         View seat reallocation history
     </ui:define>
 
     <ui:define name="content">
+        <h:form>
         <p:dataTable value="#{seatReallocationController.allSeatReAllocationHistorys}" var="seatAllocationHistory">
             <p:column headerText="Reallocate date">
                 <p:outputLabel value="#{seatAllocationHistory.allocateTime}">
@@ -28,6 +30,7 @@
         </p:dataTable>
 
         <p:commandButton value="Back to Yield Management" action="#{navigationController.redirectToYieldManagement()}"  />
+     </h:form>
     </ui:define>
 
 </ui:composition>

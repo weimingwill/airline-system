@@ -138,6 +138,7 @@ public class FlightScheduleController implements Serializable {
             ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
             Map<String, Object> sessionMap = externalContext.getSessionMap();
             sessionMap.put("flightScheduleId", flightScheduleId);
+            System.out.println("ID of chosen flight schedule is: "+flightScheduleId);
             return navigationController.redirectToYieldManagement();
         }
         msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
