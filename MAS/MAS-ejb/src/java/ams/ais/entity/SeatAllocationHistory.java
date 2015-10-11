@@ -26,7 +26,7 @@ public class SeatAllocationHistory implements Serializable {
     private Long seatAllocationHistoryId;
     private Integer seatNoBefore;
     private Integer seatNoAfter;
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date allocateTime;
 
     public Long getSeatAllocationHistoryId() {
