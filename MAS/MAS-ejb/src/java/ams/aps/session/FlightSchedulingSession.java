@@ -38,8 +38,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     public final double STOPOVER_TIME = 1 / 3.0; //time for plane to rest at the stop-over airport
     public final double DEFAULT_SPEED_FRACTION = 0.8;
 
-    @Override
-    public boolean createFlight(Flight flight) {
+    private boolean createFlight(Flight flight) {
         Route route = flight.getRoute();
         System.out.println("FlightSchedulingSession: createFlight(): route =" + route);
         try {
@@ -57,6 +56,21 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             em.merge(flight);
             return true;
         } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean createReturnedFlight(Flight flight, Flight returnedFlight) {
+        try {
+            createFlight(flight);
+            createFlight(returnedFlight);
+            flight.setReturnedFlight(returnedFlight);
+            returnedFlight.setReturnedFlight(flight);
+            em.merge(flight);
+            em.merge(returnedFlight);
+            return true;
+        } catch (Exception e) {
             return false;
         }
     }
@@ -111,8 +125,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             return null;
         }
     }
-    
-    
+
     @Override
     public AircraftType getModelWithMinMachNo(List<AircraftType> models) {
         float minMach = models.get(0).getMaxMachNo();
@@ -166,7 +179,6 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             cleanUpTime += 1.5;
         }
         turnaroundTime += cleanUpTime;
-        System.out.println("getTurnaroundTime() " + turnaroundTime);
         return turnaroundTime;
     }
 
@@ -192,7 +204,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     @Override
     public List<Flight> getFlight(Boolean complete) throws EmptyTableException {
         try {
-            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.completed = :inComplete");
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.completed = :inComplete AND f.deleted = FALSE");
             query.setParameter("inComplete", complete);
             List<Flight> outputFlights;
             outputFlights = (List<Flight>) query.getResultList();

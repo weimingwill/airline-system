@@ -54,6 +54,7 @@ public class FlightController implements Serializable {
 
     private String flightNo;
     private Flight flight;
+    private Flight returnedFlight;
     private List<Flight> incompleteFlights;
     private Route route;
     private List<RouteDisplayHelper> routeDisplayHelperList = new ArrayList();
@@ -83,23 +84,28 @@ public class FlightController implements Serializable {
 
     public String addFlight() {
         System.out.println("FlightController: addFlight()");
+        String returnedFlightNo = "MA" + Integer.parseInt(flightNo.split("MA")[1]) + 1;
         try {
             flightSchedulingSession.checkFlightExistence(flightNo);
-            msgController.addErrorMessage("Flight Number: " + flightNo + " existed already!");
+            flightSchedulingSession.checkFlightExistence(returnedFlightNo);
+            msgController.addErrorMessage("Flight Number: " + flightNo + "/" + returnedFlightNo + " existed already!");
             return navigationController.redirectToCurrentPage();
         } catch (ObjectDoesNotExistException ex) {
             flight = new Flight();
+            returnedFlight = new Flight();
             flight.setFlightNo(flightNo);
+            returnedFlight.setFlightNo(returnedFlightNo);
             flight.setRoute(route);
-            if (flightSchedulingSession.createFlight(flight)) {
-                msgController.addMessage("New flight created!");
+            returnedFlight.setRoute(route.getReturnRoute());
+
+            if (flightSchedulingSession.createReturnedFlight(flight, returnedFlight)) {
+                msgController.addMessage("New flight " + flightNo + " and returned flight " + returnedFlightNo + " created!");
                 return toCreateFlightStep();
             } else {
-                msgController.addErrorMessage("Fail to assign flight to route!");
+                msgController.addErrorMessage("Fail to create flight " + flightNo + " and returned flight " + returnedFlightNo + "!");
                 return navigationController.redirectToCurrentPage();
             }
         }
-
     }
 
     public String deleteFlight(String thisFlightNo) {
@@ -126,6 +132,7 @@ public class FlightController implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         map.put("flight", flight);
+        map.put("returnedFlight", returnedFlight);
         flightManager.init();
         String returnPage;
         if (flight.getAircraftTypes() == null || flight.getAircraftTypes().isEmpty()) {
@@ -253,6 +260,20 @@ public class FlightController implements Serializable {
      */
     public void setIncompleteFlights(List<Flight> incompleteFlights) {
         this.incompleteFlights = incompleteFlights;
+    }
+
+    /**
+     * @return the returnedFlight
+     */
+    public Flight getReturnedFlight() {
+        return returnedFlight;
+    }
+
+    /**
+     * @param returnedFlight the returnedFlight to set
+     */
+    public void setReturnedFlight(Flight returnedFlight) {
+        this.returnedFlight = returnedFlight;
     }
 
 }

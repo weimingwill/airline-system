@@ -51,6 +51,7 @@ public class FlightManager implements Serializable {
     RouteController routeController;
 
     private Flight flight;
+    private Flight returnedFlight;
     private RouteDisplayHelper route = new RouteDisplayHelper();
     private RouteDisplayHelper returnedRoute = new RouteDisplayHelper();
     private RouteHelper routeHelper = new RouteHelper();
@@ -63,8 +64,6 @@ public class FlightManager implements Serializable {
     private final int HOURS_PER_WEEK = 24 * 7;
     private final int DAYS_PER_WEEK = 7;
     private int weeklyFreq = 1;
-    private final double minFraction = 0;
-    private final double maxFraction = 1;
 
     /**
      * Creates a new instance of FlightManager
@@ -84,6 +83,7 @@ public class FlightManager implements Serializable {
     private void getAddedFlight() {
         Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         setFlight((Flight) map.get("flight"));
+        setReturnedFlight((Flight) map.get("returnedFlight"));
     }
 
     public void getRouteDetails() {
@@ -138,14 +138,7 @@ public class FlightManager implements Serializable {
         }
     }
 
-    public String checkFlightFreq() {
-        System.out.println("speedFraction = " + speedFraction);
-        System.out.println("weeklyFreq = " + weeklyFreq);
-        return "";
-    }
-
     public void onSpeedFractionChange(AjaxBehaviorEvent event) {
-        validateSpeedFraction();
         setFlightDuration();
     }
 
@@ -156,16 +149,9 @@ public class FlightManager implements Serializable {
     }
 
     public double getCruiseSpeed() {
-        validateSpeedFraction();
         return speedFraction * modelWithMinMach.getMaxMachNo() * 1225.044;
     }
 
-    private void validateSpeedFraction() {
-        if (speedFraction <= minFraction || speedFraction > maxFraction) {
-            speedFraction = speedFraction <= minFraction ? minFraction : maxFraction;
-            msgController.warn("Speed fraction must be a value from (0,1]");
-        }
-    }
 
     private void getMaxLegDistInRoute(List<LegHelper> legs) {
         setMaxDist(legs.get(0).getDistance());
@@ -331,6 +317,20 @@ public class FlightManager implements Serializable {
      */
     public void setWeeklyFreq(int weeklyFreq) {
         this.weeklyFreq = weeklyFreq;
+    }
+
+    /**
+     * @return the returnedFlight
+     */
+    public Flight getReturnedFlight() {
+        return returnedFlight;
+    }
+
+    /**
+     * @param returnedFlight the returnedFlight to set
+     */
+    public void setReturnedFlight(Flight returnedFlight) {
+        this.returnedFlight = returnedFlight;
     }
 
 }

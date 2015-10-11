@@ -17,25 +17,22 @@
             <c:set value="#{flightManager.routeHelper}" var="route"/>
             <c:set value="#{flightManager.returnRouteHelper}" var="returnRoute"/>
             <p:panelGrid columns="2">
-                <p:panel header="Route Information for Flight: #{flightManager.flight.flightNo}" style="min-width: 362px">
-                    <p:panelGrid>
-                        <pa:CCRouteDistDisplayPanel route="#{route}"/>
-                        <pa:CCRouteDistDisplayPanel route="#{returnRoute}"/>
-                        <p:row>
-                            <p:column colspan="3" styleClass="label">
-                                <p:outputLabel value="Total Distance (km)"/>
-                            </p:column>
-                            <p:column styleClass="label">
-                                <p:outputLabel value="#{route.totalDistance + returnRoute.totalDistance}">
-                                    <f:convertNumber maxFractionDigits="4"/>
-                                </p:outputLabel>
-                            </p:column>
-                        </p:row>
-                    </p:panelGrid>
-                </p:panel>
-
+                <p:panelGrid>
+                    <pa:CCRouteDistDisplayPanel route="#{route}" flight="#{flightManager.flight}"/>
+                    <pa:CCRouteDistDisplayPanel route="#{returnRoute}" flight="#{flightManager.returnedFlight}"/>
+                    <p:row>
+                        <p:column colspan="3" styleClass="label">
+                            <p:outputLabel value="Total Distance (km)"/>
+                        </p:column>
+                        <p:column styleClass="label">
+                            <p:outputLabel value="#{route.totalDistance + returnRoute.totalDistance}">
+                                <f:convertNumber maxFractionDigits="4"/>
+                            </p:outputLabel>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
                 <p:dataTable value="#{flightManager.modelsForFlight}" var="model" selection="#{flightManager.selectedModels}" rows="3" rowKey="#{model.id}" tableStyleClass="table-small" sortMode="multiple">
-                    
+
                     <f:facet name="header">
                         <p:outputLabel value="Top #{flightManager.modelsForFlight.size()} Aircraft models which are capable of flying this route"/>
                     </f:facet>
