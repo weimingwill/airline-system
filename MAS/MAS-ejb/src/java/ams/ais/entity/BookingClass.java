@@ -20,7 +20,7 @@ import javax.persistence.OneToMany;
 
 /**
  *
- * @author Tongtong
+ * @author 
  */
 @Entity
 public class BookingClass implements Serializable {

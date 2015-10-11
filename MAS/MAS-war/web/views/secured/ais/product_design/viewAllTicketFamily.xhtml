@@ -13,8 +13,14 @@
 
     <ui:define name="content">
         <h:form>
-            <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily">
+            <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily" style="margin-bottom:40px" rows="10"
+                     paginator="true"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="10,15,30">
 
+                <f:facet name="header">
+                    Ticket Family
+                </f:facet>
                 <p:column headerText="Cabin Class">
                     <p:outputLabel value="#{ticketfamily.getCabinClass().name}" />
                 </p:column>
@@ -55,20 +61,26 @@
                 </f:facet>
             </p:dataTable>
         </h:form>
-        
+
         <h:form>
-            <p:dataTable value="#{ruleController.allRule}" var="rule">
-            <p:column headerText="Rule Name">
-                <p:outputLabel value="#{rule.name}"/>
-            </p:column>
-            
-            <p:column headerText="Rule Description">
-                <p:outputLabel value="#{rule.description}"/>
-            </p:column>
-         
+            <p:dataTable value="#{ruleController.allRule}" var="rule" style="margin-bottom:40px" rows="10"
+                     paginator="true"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="10,15,30">
+                <f:facet name="header">
+                    Rules
+                </f:facet>
+                <p:column headerText="Rule Name">
+                    <p:outputLabel value="#{rule.name}"/>
+                </p:column>
+
+                <p:column headerText="Rule Description">
+                    <p:outputLabel value="#{rule.description}"/>
+                </p:column>
+
             </p:dataTable>
         </h:form>
-        
+
         <p:dialog id="ruleDialog" header="Edit #{ticketFamilyController.selectedTicketFamily.cabinClass.name}: #{ticketFamilyController.selectedTicketFamily.name}" widgetVar="ruleDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form>
                 <p:panel id="ruleDetail">

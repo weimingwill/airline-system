@@ -5,12 +5,16 @@
  */
 package managedbean.ais;
 
+import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.Rule;
 import ams.ais.entity.TicketFamily;
+import ams.ais.session.BookingClassSession;
+import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.RuleSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchRuleException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
@@ -46,11 +50,23 @@ public class ProductDesignDeleteController implements Serializable{
     private RuleSessionLocal ruleSession;
     
     @EJB
+    private BookingClassSessionLocal bookingClassSession;
+    
+    @EJB
     private TicketFamilySessionLocal ticketFamilySession;
     
     private CabinClass selectedCabinClass;
     private Rule selectedRule;
     private TicketFamily selectedTicketFamily;
+    private BookingClass selectedBookingClass;
+
+    public BookingClass getSelectedBookingClass() {
+        return selectedBookingClass;
+    }
+
+    public void setSelectedBookingClass(BookingClass selectedBookingClass) {
+        this.selectedBookingClass = selectedBookingClass;
+    }
 
     
     
@@ -77,6 +93,16 @@ public class ProductDesignDeleteController implements Serializable{
         }    
     }
      
+     public String deleteBookingClass() {
+        try {
+            System.out.printf("selected booking class is: "+selectedBookingClass);
+            bookingClassSession.deleteBookingClass(selectedBookingClass.getName());
+            msgController.addMessage("Booking class is deleted successfully!");
+        } catch (NoSuchBookingClassException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToDeleteBookingClass();
+    }
     
     public void deleteTicketFamily() {
         try {

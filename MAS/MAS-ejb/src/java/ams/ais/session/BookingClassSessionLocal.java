@@ -48,4 +48,9 @@ public interface BookingClassSessionLocal {
 
     public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers)
             throws NoSuchFlightScheduleBookingClassException;
-}
+    
+    public void updateBookingClass(Long bookingClassId, String bookingClassName) throws NoSuchBookingClassException, ExistSuchBookingClassNameException;
+    
+    public List<BookingClass> getAllOtherBookingClassById(Long bookingClassId);
+}   
+

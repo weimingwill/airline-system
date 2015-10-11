@@ -5,14 +5,19 @@
  */
 package managedbean.ais;
 
+import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.Rule;
 import static ams.ais.entity.Rule_.name;
+import ams.ais.session.BookingClassSession;
+import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.RuleSessionLocal;
+import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
 import ams.ais.util.exception.ExistSuchRuleException;
+import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchRuleException;
 import java.io.Serializable;
@@ -43,10 +48,16 @@ public class ProductDesignEditController implements Serializable{
     private CabinClassSessionLocal cabinClassSession;
     
     @EJB
+    private BookingClassSessionLocal bookingClassSession;
+    
+    @EJB
     private RuleSessionLocal ruleSession;
     
     private CabinClass selectedCabinClass;
     private Rule selectedRule;
+    private BookingClass selectedBookingClass;
+
+    
 
     
 
@@ -81,6 +92,20 @@ public class ProductDesignEditController implements Serializable{
         return navigationController.redirectToViewAllRules();
         
     }
+    
+    
+    
+    public String updateBookingClass() {
+        try {
+            System.out.printf("BookingClass is"+selectedBookingClass);
+            bookingClassSession.updateBookingClass(selectedBookingClass.getBookingClassId(),selectedBookingClass.getName());
+            msgController.addMessage("Edit Booking Class successfully!");
+        }catch( ExistSuchBookingClassNameException | NoSuchBookingClassException  ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllBookingClass();
+        
+    }
     public CabinClass getSelectedCabinClass() {
         return selectedCabinClass;
     }
@@ -95,5 +120,14 @@ public class ProductDesignEditController implements Serializable{
 
     public void setSelectedRule(Rule selectedRule) {
         this.selectedRule = selectedRule;
+    }
+    
+    
+    public BookingClass getSelectedBookingClass() {
+        return selectedBookingClass;
+    }
+
+    public void setSelectedBookingClass(BookingClass selectedBookingClass) {
+        this.selectedBookingClass = selectedBookingClass;
     }
 }

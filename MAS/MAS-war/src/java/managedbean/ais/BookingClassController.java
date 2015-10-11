@@ -82,6 +82,11 @@ public class BookingClassController implements Serializable {
         return bookingClassSession.getAllTicketFamily();
 
     }
+    
+    public List<BookingClass> getAllBookingClasses(){
+        return bookingClassSession.getAllBookingClasses();
+    }
+            
     public String createBookingClass() {
         try {
             bookingClassSession.createBookingClass(bookingClassName,selectedTicketFamily);
@@ -94,7 +99,8 @@ public class BookingClassController implements Serializable {
 
     public String deleteBookingClass() {
         try {
-            bookingClassSession.deleteBookingClass(bookingClassName);
+            System.out.printf("selected booking class is: "+selectedBookingClass);
+            bookingClassSession.deleteBookingClass(selectedBookingClass.getName());
             msgController.addMessage("Booking class is deleted successfully!");
         } catch (NoSuchBookingClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -102,6 +108,18 @@ public class BookingClassController implements Serializable {
         return navigationController.redirectToDeleteBookingClass();
     }
 
+    
+    public String updateBookingClass() {
+        try {
+            System.out.printf("BookingClass is"+selectedBookingClass);
+            bookingClassSession.updateBookingClass(selectedBookingClass.getBookingClassId(),selectedBookingClass.getName());
+            msgController.addMessage("Edit rule successfully!");
+        }catch( ExistSuchBookingClassNameException | NoSuchBookingClassException  ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        return navigationController.redirectToViewAllRules();
+        
+    }
     public String allocateSeats() {
         try {
             bookingClassSession.allocateSeats(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
