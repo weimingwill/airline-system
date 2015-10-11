@@ -10,18 +10,18 @@ package ams.aps.util.helper;
  * @author ChuningLiu
  */
 public class RouteDisplayHelper {
+
     private Long id;
     private String origin;
     private String destination;
     private String legs;
     private Long returnRouteId;
-    private Float distance;
-    private Float duration;
+    private Double totalDistance;
+    private Double totalDuration;
 
     public RouteDisplayHelper() {
     }
 
-    
     public RouteDisplayHelper(String origin, String destination, String legs) {
         this.origin = origin;
         this.destination = destination;
@@ -99,31 +99,31 @@ public class RouteDisplayHelper {
     }
 
     /**
-     * @return the distance
+     * @return the totalDistance
      */
-    public Float getDistance() {
-        return distance;
+    public Double getTotalDistance() {
+        return totalDistance;
     }
 
     /**
-     * @param distance the distance to set
+     * @param totalDistance the totalDistance to set
      */
-    public void setDistance(Float distance) {
-        this.distance = distance;
+    public void setTotalDistance(Double totalDistance) {
+        this.totalDistance = totalDistance;
     }
 
     /**
-     * @return the duration
+     * @return the totalDuration
      */
-    public Float getDuration() {
-        return duration;
+    public Double getTotalDuration() {
+        return totalDuration;
     }
 
     /**
-     * @param duration the duration to set
+     * @param totalDuration the totalDuration to set
      */
-    public void setDuration(Float duration) {
-        this.duration = duration;
+    public void setTotalDuration(Double totalDuration) {
+        this.totalDuration = totalDuration;
     }
 
 }

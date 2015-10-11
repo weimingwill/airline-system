@@ -45,6 +45,7 @@ public class FlightManager implements Serializable {
     @Inject
     NavigationController navigationController;
 
+
     private Flight flight;
     private RouteDisplayHelper route = new RouteDisplayHelper();
     private RouteDisplayHelper returnedRoute = new RouteDisplayHelper();
@@ -52,7 +53,8 @@ public class FlightManager implements Serializable {
     private RouteHelper returnRouteHelper = new RouteHelper();
     private List<AircraftType> selectedModels = new ArrayList();
     private List<AircraftType> modelsForFlight = new ArrayList();
-    private float maxDist = 0;
+    private AircraftType modelWithMinMach = new AircraftType();
+    private double maxDist = 0;
 
     /**
      * Creates a new instance of FlightManager
@@ -87,7 +89,7 @@ public class FlightManager implements Serializable {
         thisRouteDisplayHelper.setOrigin(thisRouteHelper.getOrigin().getAirportName());
         thisRouteDisplayHelper.setDestination(thisRouteHelper.getDestination().getAirportName());
         thisRouteDisplayHelper.setLegs(routeController.getStopoverString(thisRouteHelper.getStopovers(), "name"));
-        thisRouteDisplayHelper.setDistance(thisRouteHelper.getTotalDistance());
+        thisRouteDisplayHelper.setTotalDistance(thisRouteHelper.getTotalDistance());
     }
 
     public void getAircraftModelsForFlight() {
@@ -95,38 +97,55 @@ public class FlightManager implements Serializable {
         setModelsForFlight(flightSchedulingSession.getCapableAircraftTypesForRoute(getMaxDist()));
     }
 
-    public void setRouteDuration() {
+    public void setFlightDuration() {
         System.out.println("FlightManager: setRouteDuration(): selectedModel = " + selectedModels);
+        getModelWithMinMachNo();
+        flightSchedulingSession.calcFlightDuration(modelWithMinMach, routeHelper);
     }
 
     public String checkSelectedAircraftModels() {
-        boolean sameType = true;
-        if(selectedModels.isEmpty()){
+        boolean sameTypeFamily = true;
+        // no aircraft model selected
+        if (selectedModels.isEmpty()) {
             msgController.error("Please select aircraft model for flight " + flight.getFlightNo());
             return "";
-        } else{
+        } else {
             for (int i = 0; i < selectedModels.size() - 1; i++) {
-            if (!selectedModels.get(i).getTypeFamily().equals(selectedModels.get(i + 1).getTypeFamily())) {
-                sameType = false;
-                break;
+                if (!selectedModels.get(i).getTypeFamily().equals(selectedModels.get(i + 1).getTypeFamily())) {
+                    sameTypeFamily = false;
+                    break;
+                }
+            }
+            // if models selected are not the same type family
+            if (!sameTypeFamily) {
+                msgController.warn("Selected aicraft model must be of the same type family");
+                return "";
+            } else {
+                setFlightDuration();
+                return navigationController.toFreqPlanning();
             }
         }
-        if (!sameType) {
-            msgController.warn("Selected aicraft model must be of the same type family");
-            return "";
-        } else {
-            return navigationController.toFreqPlanning();
-        }
-        }
-        
+
     }
 
     private void getMaxLegDistInRoute(List<LegHelper> legs) {
-        setMaxDist((float) legs.get(0).getDistance());
+        setMaxDist(legs.get(0).getDistance());
         for (int i = 1; i < legs.size(); i++) {
             setMaxDist(Math.max(getMaxDist(), legs.get(i).getDistance()));
         }
         System.out.println("FlightManager: getMaxLegDistInRoute(): maxDist = " + getMaxDist());
+    }
+
+    private void getModelWithMinMachNo() {
+        float minMach = selectedModels.get(0).getMaxMachNo();
+        int minIndex = 0;
+        for (int i = 1; i < selectedModels.size(); i++) {
+            if (selectedModels.get(i).getMaxMachNo() < minMach) {
+                minIndex = i;
+                minMach = selectedModels.get(i).getMaxMachNo();
+            }
+        }
+        setModelWithMinMach(selectedModels.get(minIndex));
     }
 
     /**
@@ -230,15 +249,29 @@ public class FlightManager implements Serializable {
     /**
      * @return the maxDist
      */
-    public float getMaxDist() {
+    public double getMaxDist() {
         return maxDist;
     }
 
     /**
      * @param maxDist the maxDist to set
      */
-    public void setMaxDist(float maxDist) {
+    public void setMaxDist(double maxDist) {
         this.maxDist = maxDist;
+    }
+
+    /**
+     * @return the modelWithMinMach
+     */
+    public AircraftType getModelWithMinMach() {
+        return modelWithMinMach;
+    }
+
+    /**
+     * @param modelWithMinMach the modelWithMinMach to set
+     */
+    public void setModelWithMinMach(AircraftType modelWithMinMach) {
+        this.modelWithMinMach = modelWithMinMach;
     }
 
 }

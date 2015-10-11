@@ -5,6 +5,7 @@
  */
 package managedbean.aps;
 
+import ams.aps.entity.AircraftType;
 import ams.aps.entity.Airport;
 import ams.aps.entity.City;
 import ams.aps.entity.Country;
@@ -243,14 +244,14 @@ public class RouteController implements Serializable {
 
     public void getRouteDistance(Route thisRoute, RouteHelper routeHelper) {
         List<LegHelper> legHelpers = routePlanningSession.calcRouteLegDist(thisRoute);
-        float totalDist = 0;
+        double totalDist = 0;
         for (LegHelper thisLegHelper : legHelpers) {
             totalDist += thisLegHelper.getDistance();
         }
         routeHelper.setTotalDistance(totalDist);
         routeHelper.setLegs(legHelpers);
     }
-
+    
     public void onCountryChange() {
         setCities((List<City>) routePlanningSession.getCityListByCountry(country.getIsoCode()));
         if (cities.isEmpty()) {
