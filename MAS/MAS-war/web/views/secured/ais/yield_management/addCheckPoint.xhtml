@@ -5,15 +5,16 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui">
 
-
     <ui:define name="title">
-        Reallocate booking class seats 
+        Add a reallocation check point 
     </ui:define>
 
     <ui:define name="content">
         <h:form id="createCabinClassForm">
             <h:panelGrid columns="2" columnClasses="label, value">
-
+                
+                <h:outputText value="DaysBeforeDeparture"/>
+                <p:inputText required="true" requiredMessage="Please enter days before departure" id="daysBeforeDeparture" value="#{seatReallocationController.daysBeforeDeparture}"/>                
                 <h:outputText value="NewDemandMean"/>
                 <p:inputText required="true" requiredMessage="Please enter new demand mean" id="newDemandMean" value="#{seatReallocationController.newDemandMean}"/>                
                 <h:outputText value="NewDemandDev"/>
@@ -21,7 +22,7 @@
 
                 </p:inputText>
 
-                <p:commandButton action="#{seatReallocationController.reallocateBookingClassSeats()}" value="Reallocate" update="messages"/>    
+                <p:commandButton action="#{seatReallocationController.addPhaseDemand()}" value="Add" update="messages"/>    
 
             </h:panelGrid>
         </h:form>

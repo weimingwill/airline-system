@@ -105,30 +105,19 @@ public class FlightSchedule implements Serializable {
         this.departTerminal = departTerminal;
     }
 
+    /**
+     * @return the departGate
+     */
     public String getDepartGate() {
         return departGate;
     }
 
+    /**
+     * @param departGate the departGate to set
+     */
     public void setDepartGate(String departGate) {
         this.departGate = departGate;
     }
-    
-    public Date getDepartDate() {
-        return departDate;
-    }
-
-    public void setDepartDate(Date departDate) {
-        this.departDate = departDate;
-    }
-
-    public Date getArrivalDate() {
-        return arrivalDate;
-    }
-
-    public void setArrivalDate(Date arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
 
     /**
      * @return the departTime
@@ -184,6 +173,22 @@ public class FlightSchedule implements Serializable {
      */
     public void setArrivalTime(Time arrivalTime) {
         this.arrivalTime = arrivalTime;
+    }
+
+    public Date getDepartDate() {
+        return departDate;
+    }
+
+    public void setDepartDate(Date departDate) {
+        this.departDate = departDate;
+    }
+
+    public Date getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(Date arrivalDate) {
+        this.arrivalDate = arrivalDate;
     }
 
     /**
