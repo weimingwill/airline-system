@@ -13,12 +13,12 @@
             <p:dataGrid var="flight" value="#{flightController.incompleteFlights}" columns="4" layout="grid"
                         rows="8" paginator="true" id="inCompleteFlight"
                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                        rowsPerPageTemplate="4, 8" rendered="#{not empty flightController.incompleteFlights}" style="text-align: center">
+                        rowsPerPageTemplate="4, 8" emptyMessage="No outstanding new flights. All flights has been created" style="text-align: center">
                 <f:facet name="header">
                     Choose one flight to continue
                 </f:facet>
                 <p:panelGrid style="width:100%">
-                    <ez:CCTile header="#{flight.flightNo}" subheader="Route Id: #{flight.route.routeId}" icon="fa fa-plane" displayBtn="true"/>
+                    <ez:CCTile header="#{flight.flightNo}/#{flight.returnedFlight.flightNo}" subheader="#{flightController.getOriDestString(flight)}" icon="fa fa-plane" displayBtn="true"/>
                 </p:panelGrid>
             </p:dataGrid>
             <p:separator/>
@@ -32,14 +32,23 @@
                 </h:form>
 
                 <h:form id="createFligtForm">
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                     <p:panel header="Create Flight">
                         <p:panelGrid columns="2">
                             <p:outputLabel value="Flight Number"/>
-                            <p:inputMask mask="MA999" value="#{flightController.flightNo}" required="true"/>
-                            <p:outputLabel value="Select Route"/>
+                            <p:inputMask id="flightNum" mask="MA999" value="#{flightController.flightNo}" required="true">
+                                <p:tooltip for="flightNum" value="Flight number must be a 3-digit odd number" showEvent="focus"/>
+                            </p:inputMask>
+                            <p:outputLabel value="Select Route and Return Route"/>
 
-                            <p:selectOneMenu value="#{flightController.route}" converter="routeConverter" filter="true" filterMatchMode="contains" style="width: 100%">
-                                <f:selectItems value="#{flightController.availibleRoutes}" var="route" itemLabel="#{route.routeId}"/>
+                            <p:selectOneMenu value="#{flightController.route}" converter="routeConverter" filter="true" var="r" filterMatchMode="contains" style="width: 100%">
+                                <f:selectItems value="#{flightController.availibleRoutes}" var="route" itemLabel="#{route.routeId}-#{route.returnRoute.routeId}"/>
+                                <p:column>
+                                    <p:outputLabel value="#{r.routeId}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{r.returnRoute.routeId}"/>
+                                </p:column>
                             </p:selectOneMenu>
 
                         </p:panelGrid>
@@ -49,7 +58,22 @@
                 </h:form>
             </p:panelGrid>
         </p:dialog>
-
+        <p:dialog widgetVar="updateFlightNumDlg" id="updateFlightNumDlg" header="Update Flight Number" modal="true" appendTo="@(body)" resizable="false">
+            <h:form>
+                <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Flight Number"/>
+                    <p:inputMask id="flightNum" mask="MA999" value="#{flightController.selectedFlight.flightNo}" required="true">
+                        <p:tooltip for="flightNum" value="Flight number must be a 3-digit odd number" showEvent="focus"/>
+                        <p:ajax event="change" listener="#{flightController.onFlightNumChange}" update="returnFlightNum"/>
+                    </p:inputMask>
+                    <p:outputLabel value="Return Flight Number"/>
+                    <p:outputLabel id="returnFlightNum" value="#{flightController.selectedFlight.returnedFlight.flightNo}"/>
+                </p:panelGrid>
+                <p:separator/>
+                <p:commandButton value="Update" action="#{flightController.updateFlightNo()}"/>
+            </h:form>
+        </p:dialog>
     </ui:define>
 
 </ui:composition>

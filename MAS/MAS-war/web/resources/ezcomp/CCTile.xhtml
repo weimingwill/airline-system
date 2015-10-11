@@ -43,6 +43,7 @@
                     <p:commandButton icon="fa fa-trash-o" rendered="#{cc.attrs.displayBtn}" action="#{flightController.deleteFlight(cc.attrs.header)}" style="color: lightcoral;">
                         <p:confirm header="Confirm" message="Are you sure you want to delete flight" icon="ui-icon-alert"/>
                     </p:commandButton>
+                    <p:commandButton icon="fa fa-pencil" rendered="#{cc.attrs.displayBtn}" actionListener="#{flightController.setThisSelectedFlight(cc.attrs.header)}" update="updateFlightNumDlg" oncomplete="PF('updateFlightNumDlg').show()" style="color: lightseagreen;"/>
                 </p:column>
             </p:row>
         </p:panelGrid>

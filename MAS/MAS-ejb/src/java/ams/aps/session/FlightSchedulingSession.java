@@ -78,10 +78,11 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     @Override
     public Flight checkFlightExistence(String flightNo) throws ObjectDoesNotExistException {
         try {
-            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo");
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo AND f.deleted =FALSE");
             query.setParameter("fNo", flightNo);
 
             Flight flight = (Flight) query.getSingleResult();
+            System.out.println("checkFlightExistence(): " + flight);
             return flight;
         } catch (Exception e) {
             throw new ObjectDoesNotExistException("Flight " + flightNo + " Does Not Exist");
@@ -218,10 +219,24 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     public void deleteFlight(String flightNo) throws DeleteFailedException {
         try {
             Flight flight = checkFlightExistence(flightNo);
+            Flight returnedFlight = flight.getReturnedFlight();
+            returnedFlight.setDeleted(Boolean.TRUE);
             flight.setDeleted(Boolean.TRUE);
             em.merge(flight);
+            em.merge(returnedFlight);
         } catch (ObjectDoesNotExistException ex) {
             throw new DeleteFailedException();
+        }
+    }
+
+    @Override
+    public void updateFlight(Flight flight) throws ObjectDoesNotExistException {
+        try {
+            em.merge(flight);
+            em.merge(flight.getReturnedFlight());
+        } catch (Exception e) {
+            System.out.println("Error!!!!");
+            throw new ObjectDoesNotExistException();
         }
     }
 

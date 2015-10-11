@@ -10,6 +10,7 @@ import ams.aps.entity.Flight;
 import ams.aps.entity.Route;
 import ams.aps.session.FlightSchedulingSessionLocal;
 import ams.aps.session.RoutePlanningSessionLocal;
+import ams.aps.util.exception.ObjectDoesNotExistException;
 import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteDisplayHelper;
 import ams.aps.util.helper.RouteHelper;
@@ -18,6 +19,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -34,22 +37,22 @@ import managedbean.application.NavigationController;
 @Named(value = "flightManager")
 @SessionScoped
 public class FlightManager implements Serializable {
-
+    
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
-
+    
     @EJB
     private FlightSchedulingSessionLocal flightSchedulingSession;
-
+    
     @Inject
     MsgController msgController;
-
+    
     @Inject
     NavigationController navigationController;
-
+    
     @Inject
     RouteController routeController;
-
+    
     private Flight flight;
     private Flight returnedFlight;
     private RouteDisplayHelper route = new RouteDisplayHelper();
@@ -70,7 +73,7 @@ public class FlightManager implements Serializable {
      */
     public FlightManager() {
     }
-
+    
     @PostConstruct
     public void init() {
         getAddedFlight();
@@ -79,20 +82,59 @@ public class FlightManager implements Serializable {
         getAircraftModelsForFlight();
         setSpeedFraction(flight.getSpeedFraction()); // get defualt speedFraction
     }
-
+    
+    public void initAircraftModel(Flight flight){
+        setSelectedModels(flight.getAircraftTypes());
+        getModelWithMinMachNo();
+        routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
+        routePlanningSession.getRouteDetail(flight.getRoute(), returnRouteHelper);
+        setFlightDuration();
+        System.out.println("routeHelper = " + routeHelper.getTotalDistance());
+        System.out.println("returnRouteHelper = " + returnRouteHelper.getTotalDistance());
+    }
+    
     private void getAddedFlight() {
         Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         setFlight((Flight) map.get("flight"));
         setReturnedFlight((Flight) map.get("returnedFlight"));
     }
-
+    
+    public String updateFlight(Flight flight) {
+        try {
+            flightSchedulingSession.updateFlight(flight);
+            msgController.addMessage("Flight " + flight.getFlightNo() + " and Return Flight "+ flight.getReturnedFlight().getFlightNo() + " Saved!");
+            return navigationController.toCreateFlight();
+        } catch (ObjectDoesNotExistException ex) {
+            msgController.addErrorMessage("Update Flight " + flight.getFlightNo() + " and Return Flight "+ flight.getReturnedFlight().getFlightNo() +" Information!");
+            return "";
+        }
+    }
+    
+    public String updateFlightAircraftModel() {
+        flight.setAircraftTypes(selectedModels);
+        flight.getReturnedFlight().setAircraftTypes(selectedModels);
+        return updateFlight(flight);
+    }
+    
+    public String saveFlight() {
+        flight.setAircraftTypes(selectedModels);
+        flight.setSpeedFraction(speedFraction);
+        flight.setWeeklyFrequency(weeklyFreq);
+        flight.setCompleted(Boolean.TRUE);
+        flight.getReturnedFlight().setAircraftTypes(selectedModels);
+        flight.getReturnedFlight().setSpeedFraction(speedFraction);
+        flight.getReturnedFlight().setWeeklyFrequency(weeklyFreq);
+        flight.getReturnedFlight().setCompleted(Boolean.TRUE);
+        return updateFlight(flight);
+    }
+    
     public void getRouteDetails() {
         Route thisRoute = flight.getRoute();
         Route thisReturnedRoute = thisRoute.getReturnRoute();
         setValueForRouteHelper(thisRoute, getRouteHelper(), route);
         setValueForRouteHelper(thisReturnedRoute, getReturnRouteHelper(), returnedRoute);
     }
-
+    
     private void setValueForRouteHelper(Route thisRoute, RouteHelper thisRouteHelper, RouteDisplayHelper thisRouteDisplayHelper) {
         routePlanningSession.getRouteDetail(thisRoute, thisRouteHelper);
         thisRouteDisplayHelper.setId(thisRouteHelper.getId());
@@ -102,23 +144,23 @@ public class FlightManager implements Serializable {
         thisRouteDisplayHelper.setLegs(routeController.getStopoverString(thisRouteHelper.getStopovers(), "name"));
         thisRouteDisplayHelper.setTotalDistance(thisRouteHelper.getTotalDistance());
     }
-
+    
     public void getAircraftModelsForFlight() {
         getMaxLegDistInRoute(routeHelper.getLegs());
         setModelsForFlight(flightSchedulingSession.getCapableAircraftTypesForRoute(getMaxDist()));
     }
-
+    
     public void setFlightDuration() {
         getModelWithMinMachNo();
         flightSchedulingSession.calcFlightDuration(modelWithMinMach, routeHelper, speedFraction);
         flightSchedulingSession.calcFlightDuration(modelWithMinMach, returnRouteHelper, speedFraction);
     }
-
+    
     public String checkSelectedAircraftModels() {
         boolean sameTypeFamily = true;
         // no aircraft model selected
         if (selectedModels.isEmpty()) {
-            msgController.error("Please select aircraft model for flight " + flight.getFlightNo());
+            msgController.error("Please select aircraft model");
             return "";
         } else {
             for (int i = 0; i < selectedModels.size() - 1; i++) {
@@ -137,22 +179,21 @@ public class FlightManager implements Serializable {
             }
         }
     }
-
+    
     public void onSpeedFractionChange(AjaxBehaviorEvent event) {
         setFlightDuration();
     }
-
+    
     public int getMaxFreq() {
         double totalDuration = routeHelper.getTotalDuration() + returnRouteHelper.getTotalDuration();
         int maxFreq = (int) Math.floor(HOURS_PER_WEEK / totalDuration);
         return maxFreq > DAYS_PER_WEEK ? DAYS_PER_WEEK : maxFreq;
     }
-
+    
     public double getCruiseSpeed() {
         return speedFraction * modelWithMinMach.getMaxMachNo() * 1225.044;
     }
-
-
+    
     private void getMaxLegDistInRoute(List<LegHelper> legs) {
         setMaxDist(legs.get(0).getDistance());
         for (int i = 1; i < legs.size(); i++) {
@@ -160,7 +201,7 @@ public class FlightManager implements Serializable {
         }
         System.out.println("FlightManager: getMaxLegDistInRoute(): maxDist = " + getMaxDist());
     }
-
+    
     private void getModelWithMinMachNo() {
         setModelWithMinMach(flightSchedulingSession.getModelWithMinMachNo(selectedModels));
     }
@@ -332,5 +373,5 @@ public class FlightManager implements Serializable {
     public void setReturnedFlight(Flight returnedFlight) {
         this.returnedFlight = returnedFlight;
     }
-
+    
 }
