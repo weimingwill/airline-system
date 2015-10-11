@@ -13,7 +13,6 @@ import ams.aps.entity.FlightSchedule;
 import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
-import ams.aps.util.exception.FlightDoesNotExistException;
 import ams.aps.util.exception.NoSuchFlightException;
 import ams.aps.util.exception.NoSuchRouteException;
 import ams.aps.util.exception.ObjectDoesNotExistException;
@@ -28,7 +27,7 @@ import javax.ejb.Local;
 @Local
 public interface FlightSchedulingSessionLocal {
     public boolean createFlight(Flight flight);
-    public Flight checkFlightExistence(String flightNo) throws FlightDoesNotExistException;
+    public Flight checkFlightExistence(String flightNo) throws ObjectDoesNotExistException;
     public List<Flight> getFlight(Boolean complete) throws EmptyTableException;
     public void deleteFlight(String flightNo) throws DeleteFailedException;
     public boolean changeFlightNo(String flightNo, String newFlightNo);
@@ -36,11 +35,11 @@ public interface FlightSchedulingSessionLocal {
     public List<Aircraft> getAvailableAircraftsByType(AircraftType type);
     public void assignFlightScheduleToAircraft(FlightSchedule flightSchedule);
     public void modifyFlightSchedule(FlightSchedule newFlightSchedule) throws ObjectDoesNotExistException;
-    public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper);
     public List<Flight> getAllUnscheduledFlights() throws NoSuchFlightException;
     public List<String> getUnscheduledFlightAircraftTypeFamilys();
     public List<AircraftType> getUnscheduledAircraftTypesByTypeFamily(String typeFamily);
     public List<Route> getUnscheduledFlightRoutes() throws NoSuchRouteException;
     public List<Flight> getUnscheduledFlights(Airport deptAirport, List<AircraftType> aircraftTypes) 
             throws NoSuchFlightException, NoSuchRouteException;
+    public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper, double speedFraction);
 }

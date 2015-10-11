@@ -7,7 +7,6 @@ package managedbean.aps;
 
 import ams.aps.entity.Airport;
 import ams.aps.entity.Route;
-import ams.aps.entity.RouteLeg;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.helper.RouteDisplayHelper;
 import java.io.Serializable;
@@ -21,7 +20,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
-import managedbean.application.MsgController;
 
 /**
  *

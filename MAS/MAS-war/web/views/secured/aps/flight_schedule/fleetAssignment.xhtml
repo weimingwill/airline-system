@@ -19,15 +19,15 @@
             <p:panelGrid columns="2">
                 <p:panel header="Route Information for Flight: #{flightManager.flight.flightNo}" style="min-width: 362px">
                     <p:panelGrid>
-                        <pa:CCRouteDisplayPanel route="#{route}"/>
-                        <pa:CCRouteDisplayPanel route="#{returnRoute}"/>
+                        <pa:CCRouteDistDisplayPanel route="#{route}"/>
+                        <pa:CCRouteDistDisplayPanel route="#{returnRoute}"/>
                         <p:row>
                             <p:column colspan="3" styleClass="label">
-                                <p:outputLabel value="Total Distance"/>
+                                <p:outputLabel value="Total Distance (km)"/>
                             </p:column>
                             <p:column styleClass="label">
                                 <p:outputLabel value="#{route.totalDistance + returnRoute.totalDistance}">
-                                    <f:convertNumber maxFractionDigits="3" groupingUsed="false"/>
+                                    <f:convertNumber maxFractionDigits="4"/>
                                 </p:outputLabel>
                             </p:column>
                         </p:row>

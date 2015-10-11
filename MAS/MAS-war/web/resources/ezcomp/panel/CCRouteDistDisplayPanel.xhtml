@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -51,7 +52,9 @@
                     </p:outputLabel>
                 </p:column>
                 <p:column>
-                    <p:outputLabel value="#{leg.distance}"/>
+                    <p:outputLabel value="#{leg.distance}">
+                        <f:convertNumber maxFractionDigits="4"/>
+                    </p:outputLabel>
                 </p:column>
             </p:row>
         </c:forEach>
@@ -61,7 +64,9 @@
                 <p:outputLabel value="Total"/>
             </p:column>
             <p:column colspan="1">
-                <p:outputLabel value="#{thisRoute.totalDistance}"/>
+                <p:outputLabel value="#{thisRoute.totalDistance}">
+                    <f:convertNumber maxFractionDigits="4"/>
+                </p:outputLabel>
             </p:column>
         </p:row>
 

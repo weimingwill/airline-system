@@ -5,17 +5,14 @@
  */
 package managedbean.aps;
 
-import ams.aps.entity.AircraftType;
 import ams.aps.entity.Flight;
 import ams.aps.entity.Route;
 import ams.aps.session.FlightSchedulingSessionLocal;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
-import ams.aps.util.exception.FlightDoesNotExistException;
-import ams.aps.util.helper.LegHelper;
+import ams.aps.util.exception.ObjectDoesNotExistException;
 import ams.aps.util.helper.RouteDisplayHelper;
-import ams.aps.util.helper.RouteHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +87,7 @@ public class FlightController implements Serializable {
             flightSchedulingSession.checkFlightExistence(flightNo);
             msgController.addErrorMessage("Flight Number: " + flightNo + " existed already!");
             return navigationController.redirectToCurrentPage();
-        } catch (FlightDoesNotExistException ex) {
+        } catch (ObjectDoesNotExistException ex) {
             flight = new Flight();
             flight.setFlightNo(flightNo);
             flight.setRoute(route);
@@ -119,7 +116,7 @@ public class FlightController implements Serializable {
     public String findFlightByFlightNo(String thisFlightNo) {
         try {
             flight = flightSchedulingSession.checkFlightExistence(thisFlightNo);
-        } catch (FlightDoesNotExistException ex) {
+        } catch (ObjectDoesNotExistException ex) {
             return navigationController.redirectToCurrentPage();
         }
         return toCreateFlightStep();

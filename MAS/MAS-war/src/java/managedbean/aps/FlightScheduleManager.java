@@ -9,6 +9,7 @@ import ams.aps.entity.AircraftType;
 import ams.aps.entity.Airport;
 import ams.aps.entity.Route;
 import ams.aps.session.FlightSchedulingSessionLocal;
+import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.NoSuchRouteException;
 import ams.aps.util.helper.RouteHelper;
 import javax.inject.Named;
@@ -39,6 +40,8 @@ public class FlightScheduleManager implements Serializable {
 
     @EJB
     private FlightSchedulingSessionLocal flightSchedulingSession;
+    @EJB
+    private RoutePlanningSessionLocal routePlanningSession;
     private List<String> aircraftTypeFamilys;
     private List<AircraftType> aircraftTypes;
     private String selectedAircraftTypeFamily;
@@ -71,7 +74,7 @@ public class FlightScheduleManager implements Serializable {
         try {
             for (Route route : flightSchedulingSession.getUnscheduledFlightRoutes()) {
                 RouteHelper routeHelper = new RouteHelper();
-                routeController.getRouteDetail(route, routeHelper);
+                routePlanningSession.getRouteDetail(route, routeHelper);
                 routeHelpers.add(routeHelper);
             }
         } catch (NoSuchRouteException e) {
@@ -83,7 +86,7 @@ public class FlightScheduleManager implements Serializable {
         try {
             for (Route route : flightSchedulingSession.getUnscheduledFlightRoutes()) {
                 RouteHelper routeHelper = new RouteHelper();
-                routeController.getRouteDetail(route, routeHelper);
+                routePlanningSession.getRouteDetail(route, routeHelper);
                 deptAirports.add(routeHelper.getOrigin());
             }
         } catch (NoSuchRouteException e) {
