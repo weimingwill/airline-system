@@ -10,6 +10,7 @@ import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
 import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.session.SeatReallocationSessionLocal;
 import ams.ais.util.exception.DuplicatePriceException;
 import ams.ais.util.exception.NeedBookingClassException;
 import ams.ais.util.exception.WrongSumOfBookingClassSeatQtyException;
@@ -49,6 +50,9 @@ public class BookingClassController implements Serializable {
     private BookingClassSessionLocal bookingClassSession;
     @EJB
     private FlightScheduleSessionLocal flightScheduleSession;
+    
+    @EJB
+    private SeatReallocationSessionLocal seatReallocationSession;
 
     private String bookingClassName;
     private Long flightScheduleId;
@@ -122,6 +126,7 @@ public class BookingClassController implements Serializable {
     public String priceBookingClasses() {
         try {
             bookingClassSession.priceBookingClasses(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers, priceMap);
+            seatReallocationSession.yieldManagement(flightScheduleId);
             msgController.addMessage("Price booking class succesfully!");
         } catch (NoSuchFlightScheduleBookingClassException | DuplicatePriceException ex) {
             msgController.addErrorMessage(ex.getMessage());

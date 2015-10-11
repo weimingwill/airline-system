@@ -261,6 +261,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         seatAllocationHistory.setSeatNoAfter(seatNoAfter);
         entityManager.persist(seatAllocationHistory);
         System.out.println("seat reallocation histroy content is set");
+        System.out.println("Seat reallocation history creation date is: "+seatAllocationHistory.getAllocateTime());
 
         //update the seat allocation history of a booking class
         FlightScheduleBookingClass fsbc = entityManager.find(FlightScheduleBookingClass.class, f.getFlightScheduleBookingClassId());
@@ -276,13 +277,21 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
 // reallocate seats for all exsiting booking classes 
     @Override
-    public void yieldManagement() {
+    public void yieldManagement(Long flightScheduleId) {
         int threadCount = 0;
         Thread[] threads;
         threads = new Thread[1000000];
+        
+        List<FlightScheduleBookingClass> fsbcs = new ArrayList<>();
+        fsbcs = getAllFlightScheduleBookingClasses();
+        
+        for(FlightScheduleBookingClass f:fsbcs){
+            if(f.getDeleted()==true || f.getFlightScheduleBookingClassId().getFlightScheduleId()!=flightScheduleId){
+                fsbcs.remove(f);
+            }           
+        }
 
-        List<FlightScheduleBookingClass> flightScheduleBookingClasses = getAllFlightScheduleBookingClasses();
-        for (FlightScheduleBookingClass flightScheduleBookingClass : SafeHelper.emptyIfNull(flightScheduleBookingClasses)) {
+        for (FlightScheduleBookingClass flightScheduleBookingClass : SafeHelper.emptyIfNull(fsbcs)) {
 
 //            fsbc = flightScheduleBookingClass;
             YieldMgtRunnable y = new YieldMgtRunnable(flightScheduleBookingClass);
@@ -301,22 +310,11 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
     public void reallocateSeatsforBookingClass(FlightScheduleBookingClass fsbc, float demandMean, float demandDev)
             throws NoSuchFlightScheduleBookingClassException {
 
-//        List<FlightScheduleBookingClass> flightScheduleBookingClasses = getAllFlightScheduleBookingClasses();
         List<FlightScheduleBookingClass> fsbcs
                 = flightScheduleSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(fsbc.getFlightSchedule().getFlightScheduleId(), fsbc.getBookingClass().getTicketFamily().getTicketFamilyId());
         fsbcs.remove(fsbc);
         List<FlightScheduleBookingClass> restFlightScheduleBookingClasses = fsbcs;
-//        for (FlightScheduleBookingClass fsbc : flightScheduleBookingClasses) {
-//            if (fsbc.getFlightScheduleBookingClassId().getFlightScheduleId() == flightScheduleBookingClass.getFlightScheduleBookingClassId().getFlightScheduleId()) {
-//                if (fsbc.getFlightScheduleBookingClassId().getBookingClassId() != flightScheduleBookingClass.getFlightScheduleBookingClassId().getBookingClassId()) {
-//                    if (fsbc.getDeleted() == false) {
-//                        restFlightScheduleBookingClasses.add(fsbc);
-//
-//                    }
-//
-//                }
-//            }
-//        }
+
         System.out.println("There are " + restFlightScheduleBookingClasses.size() + " more flight schedule booking class for the schedule flight.");
 
         reallocateBookingClassSeats(restFlightScheduleBookingClasses, fsbc, demandMean, demandDev);
@@ -405,6 +403,12 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                     }
 
                     restFlightScheduleBookingClasses.remove(f);
+                    
+                    try {
+                        reallocateSeatsforBookingClass(f, demandMean, demandDev);
+                    } catch (NoSuchFlightScheduleBookingClassException ex) {
+                        Logger.getLogger(SeatReallocationSession.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
 //                    reallocateBookingClassSeats(restFlightScheduleBookingClasses, f, demandMean, demandDev);
                     if (pdcount < checkPoints) {

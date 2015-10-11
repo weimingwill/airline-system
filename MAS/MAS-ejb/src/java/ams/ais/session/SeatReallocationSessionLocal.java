@@ -26,10 +26,9 @@ import javax.ejb.Local;
 @Local
 public interface SeatReallocationSessionLocal {
 
-//    public void reallocateSeats();
     public List<SeatAllocationHistory> getAllReallocationHitorys();
 
-    public void yieldManagement();
+    public void yieldManagement(Long flightScheduleId);
 
     public List<FlightScheduleBookingClass> getAllFlightScheduleBookingClasses();
 
@@ -37,9 +36,7 @@ public interface SeatReallocationSessionLocal {
 
     public void addPhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException;
 
-    public void deletePhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass,PhaseDemand phaseDemand) throws NoSuchPhaseDemandException;
-
-//    public PhaseDemand searchPhaseDemand(int daysBeforeDeparture) throws NoSuchPhaseDemandException;
+    public void deletePhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, PhaseDemand phaseDemand) throws NoSuchPhaseDemandException;
 
     public void validatePhaseDemand(int daysBeforeDeparture, FlightScheduleBookingClass f) throws ExistSuchCheckPointException;
 
@@ -47,13 +44,12 @@ public interface SeatReallocationSessionLocal {
 
     public void reallocateSeatsforBookingClass(FlightScheduleBookingClass flightScheduleBookingClass, float demandMean, float demandDev)
             throws NoSuchFlightScheduleBookingClassException;
-    
+
     public List<SeatAllocationHistory> getBookingClassSeatAllocationHistory(FlightScheduleBookingClass flightScheduleBookingClass);
+
     public List<PhaseDemand> getPhaseDemands(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers)
             throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException;
-    
+
     public PhaseDemand getPhaseDemandbyId(Long id);
-        
-//    public PhaseDemand getPhaseDemandByDays(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers, int daysBeforeDeparture) throws NoSuchPhaseDemandException;
 
 }
