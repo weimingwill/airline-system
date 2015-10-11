@@ -210,10 +210,10 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                 System.out.println("m4");
                 sah.setSeatNoAfter(fsbc.getSeatQty());
                 System.out.println("m5");
-                if(sah==null){
+                if (sah == null) {
                     System.out.println("the newly created seat allocation history is null");
                 }
-                    
+
                 entityManager.persist(sah);
                 System.out.println("Current seat no for the lower-price booking class is: " + sah.getSeatNoAfter());
 
@@ -229,14 +229,48 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                 entityManager.merge(fsbc);
                 System.out.println("m10");
 
-                entityManager.flush();
                 System.out.println("m11");
 
                 System.out.println("The booking class's current seat no is: " + fsbc.getSeatQty());
+                System.out.println("fsbc = " + fsbc);
+                System.out.println("sah = " + sah);
             }
 
         }
+        
+        entityManager.flush();
+        
+        int seatNoAfter = f.getSeatQty()+sum;
+        System.out.println("seatNoAfter is: "+seatNoAfter);
+        int seatNoBefore = f.getSeatQty();
+        System.out.println("SeatNoBefore is: "+ seatNoBefore);
+        createSeatReallocationRecord(seatNoBefore, seatNoAfter, f);
 
+//        //generate a seat reallocation record
+//        SeatAllocationHistory seatAllocationHistory = new SeatAllocationHistory();
+//        System.out.println("seat reallocation histroy is created");
+//        long yourmilliseconds = System.currentTimeMillis();
+//        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+//        Date date = new Date(yourmilliseconds);
+//        System.out.println(sdf.format(date));
+//        seatAllocationHistory.setAllocateTime(date);
+//        seatAllocationHistory.setSeatNoBefore(f.getSeatQty());
+//        f.setSeatQty(sum + f.getSeatQty());
+//        seatAllocationHistory.setSeatNoAfter(f.getSeatQty());
+//        entityManager.persist(seatAllocationHistory);
+//        System.out.println("seat reallocation histroy content is set");
+//
+//        //update the seat allocation history of a booking class
+//        List<SeatAllocationHistory> seatAllocationHistorys = f.getSeatAllocationHistory();
+//        seatAllocationHistorys.add(seatAllocationHistory);
+//        f.setSeatAllocationHistory(seatAllocationHistorys);
+//        entityManager.merge(f);
+//
+//        System.out.println("#seat reallocation history:" + f.getSeatAllocationHistory().size());
+    }
+
+    private void createSeatReallocationRecord(int seatNoBefore, int seatNoAfter, FlightScheduleBookingClass f) {
+        
         //generate a seat reallocation record
         SeatAllocationHistory seatAllocationHistory = new SeatAllocationHistory();
         System.out.println("seat reallocation histroy is created");
@@ -245,19 +279,21 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         Date date = new Date(yourmilliseconds);
         System.out.println(sdf.format(date));
         seatAllocationHistory.setAllocateTime(date);
-        seatAllocationHistory.setSeatNoBefore(f.getSeatQty());
-        f.setSeatQty(sum + f.getSeatQty());
-        seatAllocationHistory.setSeatNoAfter(f.getSeatQty());
+        seatAllocationHistory.setSeatNoBefore(seatNoBefore);
+        seatAllocationHistory.setSeatNoAfter(seatNoAfter);
         entityManager.persist(seatAllocationHistory);
         System.out.println("seat reallocation histroy content is set");
 
         //update the seat allocation history of a booking class
-        List<SeatAllocationHistory> seatAllocationHistorys = f.getSeatAllocationHistory();
+        FlightScheduleBookingClass fsbc = entityManager.find(FlightScheduleBookingClass.class, f.getFlightScheduleBookingClassId());
+        List<SeatAllocationHistory> seatAllocationHistorys = fsbc.getSeatAllocationHistory();
         seatAllocationHistorys.add(seatAllocationHistory);
-        f.setSeatAllocationHistory(seatAllocationHistorys);
-        entityManager.merge(f);
+        fsbc.setSeatAllocationHistory(seatAllocationHistorys);
+        fsbc.setSeatQty(seatNoAfter);
+        entityManager.merge(fsbc);
 
         System.out.println("#seat reallocation history:" + f.getSeatAllocationHistory().size());
+
     }
 
 // reallocate seats for all exsiting booking classes 
