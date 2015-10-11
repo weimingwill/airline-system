@@ -31,6 +31,7 @@ public class Flight implements Serializable {
     private Boolean completed;
     private Boolean scheduled;
     private Boolean deleted;
+    private Float speedFraction;
     
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private Route route;
@@ -137,5 +138,19 @@ public class Flight implements Serializable {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * @return the speedFraction
+     */
+    public Float getSpeedFraction() {
+        return speedFraction;
+    }
+
+    /**
+     * @param speedFraction the speedFraction to set
+     */
+    public void setSpeedFraction(Float speedFraction) {
+        this.speedFraction = speedFraction;
     }
 }
