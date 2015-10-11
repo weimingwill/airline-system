@@ -5,11 +5,12 @@
                 xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
 
     <ui:define name="content">
         <me:CCScheduleFlightMenu activeIndex="0"/>
-        <h:form id="form">
+        <h:form id="form"> 
             <p:ribbon id="unscheduledFlightFilter">
                 <p:tab title="Filter and find unscheduled flight to schedule">
                     <p:ribbonGroup label="Select departure airport">
@@ -47,18 +48,31 @@
                     </p:ribbonGroup>
                 </p:tab>
             </p:ribbon>
-            <p:dataGrid var="flight" columns="4" layout="grid"
-                        rows="8" paginator="true" id="unscheduleFlight"
+            
+            
+            <p:panelGrid style="width:100%">
+                <ez:CCFlightTile aircraft="MA865" deptAirport="AABS" deptAirportName="Singapore Airport" arriveAirport="DDSS" arriveAirportName="China Airport" flyingHours="6.9" index="1" />
+            </p:panelGrid>
+
+            <p:dataGrid var="flight" columns="4" layout="grid" value="#{flightScheduleManager.unscheduledFlights}"
+                        rows="8" paginator="true" id="unscheduleFlight" var="flight" rowIndexVar="index"
                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         rowsPerPageTemplate="4, 8" style="text-align: center">
                 <f:facet name="header">
                     Selected unscheduled flight
                 </f:facet>
+
                 <p:panelGrid style="width:100%">
+                    <ez:CCFlightTile aircraft="#{flight.flightNo}" index="#{index}" 
+                                     deptAirport="#{flightScheduleManager.getRouteHelper(flight).getOrigin().icaoCode}"
+                                     deptAirportName="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}"
+                                     arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
+                                     arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
+                                     flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}"  />
                 </p:panelGrid>
             </p:dataGrid>
         </h:form>
-        
+
         <p:separator/>
         <h:form>
             <p:panelGrid>
