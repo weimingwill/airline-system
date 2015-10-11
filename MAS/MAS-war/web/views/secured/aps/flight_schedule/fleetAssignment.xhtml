@@ -37,7 +37,7 @@
                 <p:dataTable value="#{flightManager.modelsForFlight}" var="model" selection="#{flightManager.selectedModels}" rows="3" rowKey="#{model.id}" tableStyleClass="table-small" sortMode="multiple">
                     
                     <f:facet name="header">
-                        <p:outputLabel value="Top 3 Aircraft models which are capable of flying this route"/>
+                        <p:outputLabel value="Top #{flightManager.modelsForFlight.size()} Aircraft models which are capable of flying this route"/>
                     </f:facet>
 
                     <p:column selectionMode="multiple" style="width:16px;text-align:center"/>

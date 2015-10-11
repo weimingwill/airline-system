@@ -5,6 +5,7 @@
  */
 package managedbean.aps;
 
+import ams.aps.entity.AircraftType;
 import ams.aps.entity.Flight;
 import ams.aps.entity.Route;
 import ams.aps.session.FlightSchedulingSessionLocal;
@@ -12,7 +13,9 @@ import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.exception.FlightDoesNotExistException;
+import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteDisplayHelper;
+import ams.aps.util.helper.RouteHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +95,7 @@ public class FlightController implements Serializable {
             flight.setFlightNo(flightNo);
             flight.setRoute(route);
             if (flightSchedulingSession.createFlight(flight)) {
-                msgController.addMessage("New flight assigned!");
+                msgController.addMessage("New flight created!");
                 return toCreateFlightStep();
             } else {
                 msgController.addErrorMessage("Fail to assign flight to route!");
@@ -141,20 +144,7 @@ public class FlightController implements Serializable {
     public void getRoutes() {
         System.out.println("FlightController: getRoutes()");
         setAvailibleRoutes(routePlanningSession.getAllRoutes());
-//        RouteHelper routeHelper;
-//        RouteDisplayHelper routeDisplayHelper;
-//        
-//        for(Route thisRoute: availibleRoutes){
-//            routeHelper = new RouteHelper();
-//            routeDisplayHelper = new RouteDisplayHelper();
-//            routeController.getRouteDetail(thisRoute, routeHelper);
-//            
-//            routeDisplayHelper.setId(routeHelper.getId());
-//            routeDisplayHelper.setOrigin(routeHelper.getOrigin().getIcaoCode());
-//            routeDisplayHelper.setLegs(routeController.getStopoverString(routeHelper.getStopovers(), "icao"));
-//            routeDisplayHelper.setDestination(routeHelper.getDestination().getIcaoCode());
-//            routeDisplayHelperList.add(routeDisplayHelper);
-//        }
+
     }
 
 //    public void resetFlightNo(String oldFlightNo, String newFlightNo) {

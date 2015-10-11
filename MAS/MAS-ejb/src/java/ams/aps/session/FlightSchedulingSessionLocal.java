@@ -13,6 +13,7 @@ import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.exception.FlightDoesNotExistException;
+import ams.aps.util.exception.ObjectDoesNotExistException;
 import ams.aps.util.helper.RouteHelper;
 import java.util.List;
 import javax.ejb.Local;
@@ -28,10 +29,10 @@ public interface FlightSchedulingSessionLocal {
     public List<Flight> getFlight(Boolean complete) throws EmptyTableException;
     public void deleteFlight(String flightNo) throws DeleteFailedException;
     public boolean changeFlightNo(String flightNo, String newFlightNo);
-    public List<AircraftType> getCapableAircraftTypesForRoute(Float maxDist);
+    public List<AircraftType> getCapableAircraftTypesForRoute(Double maxDist);
     public List<Aircraft> getAvailableAircraftsByType(AircraftType type);
-    public double getMaxFlightFrequency(AircraftType type, Route r);
     public void assignFlightScheduleToAircraft(FlightSchedule flightSchedule);
-    public void modifyFlightSchedule(FlightSchedule newFlightSchedule);
+    public void modifyFlightSchedule(FlightSchedule newFlightSchedule) throws ObjectDoesNotExistException;
+    public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper);
  
 }
