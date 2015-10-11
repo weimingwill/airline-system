@@ -6,7 +6,8 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
 
     <ui:define name="content">
         <me:CCScheduleFlightMenu activeIndex="0"/>
@@ -42,8 +43,8 @@
 
                     <p:ribbonGroup label="Actions">
                         <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
-                            <p:commandButton value="Apply" update=":form:unscheduleFlight" actionListener="#{flightScheduleManager.applyFilters()}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
-                            <p:commandButton value="Reset" update="unscheduledFlightFilter,:form:unscheduleFlight" actionListener="#{flightScheduleManager.resetFilters()}" icon="fa fa-refresh" styleClass="filterBtn"/>
+                            <!--<p:commandButton value="Apply" update=":form:unscheduledFlight" actionListener="{flightScheduleManager.applyFilters()}" icon="fa fa-check-square-o" styleClass="filterBtn"/>-->
+                            <!--<p:commandButton value="Reset" update="unscheduledFlightFilter,:form:unscheduleFlight" actionListener="{flightScheduleManager.resetFilters()}" icon="fa fa-refresh" styleClass="filterBtn"/>-->
                         </p:panelGrid>
                     </p:ribbonGroup>
                 </p:tab>
@@ -53,24 +54,9 @@
             <p:panelGrid style="width:100%">
                 <ez:CCFlightTile aircraft="MA865" deptAirport="AABS" deptAirportName="Singapore Airport" arriveAirport="DDSS" arriveAirportName="China Airport" flyingHours="6.9" index="1" />
             </p:panelGrid>
+            
+            <!--<ta:CCUnscheduledFlightTable />-->
 
-            <p:dataGrid var="flight" columns="4" layout="grid" value="#{flightScheduleManager.unscheduledFlights}"
-                        rows="8" paginator="true" id="unscheduleFlight" var="flight" rowIndexVar="index"
-                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                        rowsPerPageTemplate="4, 8" style="text-align: center">
-                <f:facet name="header">
-                    Selected unscheduled flight
-                </f:facet>
-
-                <p:panelGrid style="width:100%">
-                    <ez:CCFlightTile aircraft="#{flight.flightNo}" index="#{index}" 
-                                     deptAirport="#{flightScheduleManager.getRouteHelper(flight).getOrigin().icaoCode}"
-                                     deptAirportName="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}"
-                                     arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
-                                     arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
-                                     flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}"  />
-                </p:panelGrid>
-            </p:dataGrid>
         </h:form>
 
         <p:separator/>
