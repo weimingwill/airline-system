@@ -110,7 +110,8 @@ public class FlightScheduleManager implements Serializable {
     public RouteHelper getRouteHelper(Flight flight){
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
-        flightSchedulingSession.calcFlightDuration(null, routeHelper, flight.getSpeedFraction());
+        AircraftType aircraftType = flightSchedulingSession.getModelWithMinMachNo(flight.getAircraftTypes());
+        flightSchedulingSession.calcFlightDuration(aircraftType, routeHelper, flight.getSpeedFraction());
         return routeHelper;
     }
 
