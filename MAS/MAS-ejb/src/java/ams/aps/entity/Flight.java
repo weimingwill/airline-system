@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -39,6 +40,9 @@ public class Flight implements Serializable {
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<AircraftType> aircraftTypes;
+    
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Flight returnedFlight;
 
     public Long getId() {
         return id;
@@ -153,5 +157,19 @@ public class Flight implements Serializable {
      */
     public void setSpeedFraction(Double speedFraction) {
         this.speedFraction = speedFraction;
+    }
+
+    /**
+     * @return the returnedFlight
+     */
+    public Flight getReturnedFlight() {
+        return returnedFlight;
+    }
+
+    /**
+     * @param returnedFlight the returnedFlight to set
+     */
+    public void setReturnedFlight(Flight returnedFlight) {
+        this.returnedFlight = returnedFlight;
     }
 }
