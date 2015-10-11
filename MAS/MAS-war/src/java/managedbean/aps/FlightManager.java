@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
@@ -58,7 +59,12 @@ public class FlightManager implements Serializable {
     private List<AircraftType> modelsForFlight = new ArrayList();
     private AircraftType modelWithMinMach = new AircraftType();
     private double maxDist = 0;
-    private double speedFraction = 0.8;
+    private double speedFraction;
+    private final int HOURS_PER_WEEK = 24 * 7;
+    private final int DAYS_PER_WEEK = 7;
+    private int weeklyFreq = 1;
+    private final double minFraction = 0;
+    private final double maxFraction = 1;
 
     /**
      * Creates a new instance of FlightManager
@@ -72,6 +78,7 @@ public class FlightManager implements Serializable {
         System.out.println("init(): flight = " + flight);
         getRouteDetails();
         getAircraftModelsForFlight();
+        setSpeedFraction(flight.getSpeedFraction()); // get defualt speedFraction
     }
 
     private void getAddedFlight() {
@@ -102,7 +109,6 @@ public class FlightManager implements Serializable {
     }
 
     public void setFlightDuration() {
-        System.out.println("FlightManager: setRouteDuration(): selectedModel = " + selectedModels);
         getModelWithMinMachNo();
         flightSchedulingSession.calcFlightDuration(modelWithMinMach, routeHelper, speedFraction);
         flightSchedulingSession.calcFlightDuration(modelWithMinMach, returnRouteHelper, speedFraction);
@@ -130,7 +136,35 @@ public class FlightManager implements Serializable {
                 return navigationController.toFreqPlanning();
             }
         }
+    }
 
+    public String checkFlightFreq() {
+        System.out.println("speedFraction = " + speedFraction);
+        System.out.println("weeklyFreq = " + weeklyFreq);
+        return "";
+    }
+
+    public void onSpeedFractionChange(AjaxBehaviorEvent event) {
+        validateSpeedFraction();
+        setFlightDuration();
+    }
+
+    public int getMaxFreq() {
+        double totalDuration = routeHelper.getTotalDuration() + returnRouteHelper.getTotalDuration();
+        int maxFreq = (int) Math.floor(HOURS_PER_WEEK / totalDuration);
+        return maxFreq > DAYS_PER_WEEK ? DAYS_PER_WEEK : maxFreq;
+    }
+
+    public double getCruiseSpeed() {
+        validateSpeedFraction();
+        return speedFraction * modelWithMinMach.getMaxMachNo() * 1225.044;
+    }
+
+    private void validateSpeedFraction() {
+        if (speedFraction <= minFraction || speedFraction > maxFraction) {
+            speedFraction = speedFraction <= minFraction ? minFraction : maxFraction;
+            msgController.warn("Speed fraction must be a value from (0,1]");
+        }
     }
 
     private void getMaxLegDistInRoute(List<LegHelper> legs) {
@@ -142,15 +176,7 @@ public class FlightManager implements Serializable {
     }
 
     private void getModelWithMinMachNo() {
-        float minMach = selectedModels.get(0).getMaxMachNo();
-        int minIndex = 0;
-        for (int i = 1; i < selectedModels.size(); i++) {
-            if (selectedModels.get(i).getMaxMachNo() < minMach) {
-                minIndex = i;
-                minMach = selectedModels.get(i).getMaxMachNo();
-            }
-        }
-        setModelWithMinMach(selectedModels.get(minIndex));
+        setModelWithMinMach(flightSchedulingSession.getModelWithMinMachNo(selectedModels));
     }
 
     /**
@@ -291,6 +317,20 @@ public class FlightManager implements Serializable {
      */
     public void setSpeedFraction(double speedFraction) {
         this.speedFraction = speedFraction;
+    }
+
+    /**
+     * @return the weeklyFreq
+     */
+    public int getWeeklyFreq() {
+        return weeklyFreq;
+    }
+
+    /**
+     * @param weeklyFreq the weeklyFreq to set
+     */
+    public void setWeeklyFreq(int weeklyFreq) {
+        this.weeklyFreq = weeklyFreq;
     }
 
 }

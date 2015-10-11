@@ -32,5 +32,6 @@ public interface FlightSchedulingSessionLocal {
     public void assignFlightScheduleToAircraft(FlightSchedule flightSchedule);
     public void modifyFlightSchedule(FlightSchedule newFlightSchedule) throws ObjectDoesNotExistException;
     public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper, double speedFraction);
+    public AircraftType getModelWithMinMachNo(List<AircraftType> models);
  
 }

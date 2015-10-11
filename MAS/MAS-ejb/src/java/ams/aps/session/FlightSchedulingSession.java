@@ -18,7 +18,6 @@ import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteHelper;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -32,14 +31,12 @@ import javax.persistence.Query;
 @Stateless
 public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
 
-    @EJB
-    private RoutePlanningSessionLocal routePlanningSession;
-
     @PersistenceContext
     EntityManager em;
 
-    public final double BUFFER_TIME = 1 / 6; // buffer time for passengers to alight
-    public final double STOPOVER_TIME = 1 / 3; //time for plane to rest at the stop-over airport
+    public final double BUFFER_TIME = 1 / 6.0; // buffer time for passengers to alight
+    public final double STOPOVER_TIME = 1 / 3.0; //time for plane to rest at the stop-over airport
+    public final double DEFAULT_SPEED_FRACTION = 0.8;
 
     @Override
     public boolean createFlight(Flight flight) {
@@ -56,6 +53,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             flight.setDeleted(Boolean.FALSE);
             flight.setScheduled(Boolean.FALSE);
             flight.setCompleted(Boolean.FALSE);
+            flight.setSpeedFraction(DEFAULT_SPEED_FRACTION);
             em.merge(flight);
             return true;
         } catch (Exception ex) {
@@ -113,6 +111,20 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             return null;
         }
     }
+    
+    
+    @Override
+    public AircraftType getModelWithMinMachNo(List<AircraftType> models) {
+        float minMach = models.get(0).getMaxMachNo();
+        int minIndex = 0;
+        for (int i = 1; i < models.size(); i++) {
+            if (models.get(i).getMaxMachNo() < minMach) {
+                minIndex = i;
+                minMach = models.get(i).getMaxMachNo();
+            }
+        }
+        return models.get(minIndex);
+    }
 
     @Override
     public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper, double speedFraction) {
@@ -147,13 +159,14 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         if (acLength <= 35) {
             cleanUpTime += 0.5;
         } else if (acLength > 35 && acLength <= 50) {
-            cleanUpTime += 5 / 6;
+            cleanUpTime += 5 / 6.0;
         } else if (acLength > 50 && acLength <= 60) {
-            cleanUpTime += 7 / 6;
+            cleanUpTime += 7 / 6.0;
         } else {
             cleanUpTime += 1.5;
         }
         turnaroundTime += cleanUpTime;
+        System.out.println("getTurnaroundTime() " + turnaroundTime);
         return turnaroundTime;
     }
 
