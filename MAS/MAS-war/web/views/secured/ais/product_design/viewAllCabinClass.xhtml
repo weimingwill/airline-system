@@ -26,7 +26,7 @@
                     </p:commandButton></h:form>
             </p:column>
             
-            <p:column headerText="Delete" style="width:32px;text-align: center">
+            <p:column headerText="Delete" style="width:50px;text-align: center">
                 <h:form> <p:commandButton update="cabinClassDeleteDialog" oncomplete="PF('cabinClassDeleteDialog').show()" icon="ui-icon-trash">
                         <f:setPropertyActionListener value="#{cabinclass}" target="#{productDesignDeleteController.selectedCabinClass}" />
                     </p:commandButton></h:form>

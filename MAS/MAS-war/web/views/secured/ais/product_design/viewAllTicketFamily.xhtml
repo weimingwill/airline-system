@@ -26,7 +26,7 @@
                     <p:outputLabel value="#{ticketfamily.name}" />
                 </p:column>
 
-                <p:column headerText="Rule">
+                <p:column headerText="Rule" style="width:400px;text-align: center">
                     <p:dataTable value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(ticketfamily.ticketFamilyId)}" var="ticketfamilyrule">
                         <p:column>
                             <p:outputLabel value="#{ticketfamilyrule.rule.name}" />

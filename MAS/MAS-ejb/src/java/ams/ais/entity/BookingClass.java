@@ -37,6 +37,7 @@ public class BookingClass implements Serializable {
     public void create(String name){
         this.setName(name);
         this.setDeleted(false);
+        
     }
     
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
