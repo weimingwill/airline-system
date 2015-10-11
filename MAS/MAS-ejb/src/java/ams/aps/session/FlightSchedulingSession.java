@@ -15,6 +15,8 @@ import ams.aps.entity.RouteLeg;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.exception.FlightDoesNotExistException;
+import ams.aps.util.exception.NoSuchFlightException;
+import ams.aps.util.helper.ApsMsg;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -232,4 +234,45 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public List<Flight> getUnscheduledFlights() throws NoSuchFlightException {
+        Query query = em.createQuery("SELECT f.route FROM Flight f WHERE f.scheduled = FALSE AND f.deleted = FALSE");
+        List<Flight> flights = new ArrayList<>();
+        try {
+            flights = (List<Flight>)query.getResultList();
+        } catch (NoResultException e) {
+            throw new NoSuchFlightException(ApsMsg.NO_SUCH_FLIGHT_ERROR);
+        }
+        return flights;
+    }
+
+    @Override
+    public List<String> getUnscheduledFlightAircraftTypeFamilys() {
+        List<String> aircraftTypeFamilys = new ArrayList<>();
+        try {
+            for (Flight flight : getUnscheduledFlights()) {
+                for (AircraftType aircraftType : flight.getAircraftTypes()) {
+                    aircraftTypeFamilys.add(aircraftType.getTypeFamily());
+                }
+            }
+        } catch (NoSuchFlightException e) {
+        }
+        return aircraftTypeFamilys;
+    }
+
+    @Override
+    public List<AircraftType> getUnscheduledAircraftTypesByTypeFamily(String typeFamily) {
+       List<AircraftType> aircraftTypes = new ArrayList<>();
+        try {
+            for (Flight flight : getUnscheduledFlights()) {
+                for (AircraftType aircraftType : flight.getAircraftTypes()) {
+                    if (aircraftType.getTypeFamily().equals(typeFamily)) {
+                        aircraftTypes.add(aircraftType);
+                    }
+                }
+            }
+        } catch (NoSuchFlightException e) {
+        }
+        return aircraftTypes;        
+    }
 }

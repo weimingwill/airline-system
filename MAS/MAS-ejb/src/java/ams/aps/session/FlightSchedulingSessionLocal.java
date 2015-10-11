@@ -13,6 +13,8 @@ import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.exception.FlightDoesNotExistException;
+import ams.aps.util.exception.NoSuchAircraftTypeException;
+import ams.aps.util.exception.NoSuchFlightException;
 import ams.aps.util.helper.RouteHelper;
 import java.util.List;
 import javax.ejb.Local;
@@ -33,5 +35,7 @@ public interface FlightSchedulingSessionLocal {
     public double getMaxFlightFrequency(AircraftType type, Route r);
     public void assignFlightScheduleToAircraft(FlightSchedule flightSchedule);
     public void modifyFlightSchedule(FlightSchedule newFlightSchedule);
- 
+    public List<Flight> getUnscheduledFlights() throws NoSuchFlightException;
+    public List<String> getUnscheduledFlightAircraftTypeFamilys();
+    public List<AircraftType> getUnscheduledAircraftTypesByTypeFamily(String typeFamily);
 }
