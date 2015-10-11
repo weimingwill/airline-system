@@ -52,7 +52,7 @@ public class BookingClassSession implements BookingClassSessionLocal {
     
     @Override
     public void createBookingClass(String name, TicketFamily selectedTicketFamily) throws ExistSuchBookingClassNameException {
-        verifyBookingClassName(name);
+        verifyBookingClassName(name,selectedTicketFamily);
         BookingClass bookingClass = new BookingClass();
         bookingClass.create(name,selectedTicketFamily);
         entityManager.persist(bookingClass);
@@ -84,13 +84,14 @@ public class BookingClassSession implements BookingClassSessionLocal {
             throw new NoSuchBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
         }
     }
-
+    
+   
     @Override
-    public void verifyBookingClassName(String name) throws ExistSuchBookingClassNameException {
+    public void verifyBookingClassName(String name,TicketFamily ticketFamily) throws ExistSuchBookingClassNameException {
         List<BookingClass> bookingClasses = getAllBookingClasses();
         if (bookingClasses != null) {
             for (BookingClass bookingClass : bookingClasses) {
-                if (name.equals(bookingClass.getName())) {
+                if (name.toUpperCase().equals(bookingClass.getName())) {
                     throw new ExistSuchBookingClassNameException(AisMsg.EXIST_SUCH_BOOKING_CLASS_ERROR);
                 }
             }

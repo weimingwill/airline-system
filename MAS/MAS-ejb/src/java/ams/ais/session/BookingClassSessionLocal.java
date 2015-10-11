@@ -35,7 +35,7 @@ public interface BookingClassSessionLocal {
 
     public void createBookingClass(String name, TicketFamily ticketFamily) throws ExistSuchBookingClassNameException;
 
-    public void verifyBookingClassName(String name) throws ExistSuchBookingClassNameException;
+    public void verifyBookingClassName(String name,TicketFamily ticketFamily) throws ExistSuchBookingClassNameException;
     
     public List<TicketFamily> getAllTicketFamily();
     
