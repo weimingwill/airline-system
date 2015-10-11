@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -22,6 +23,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class Flight implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +33,16 @@ public class Flight implements Serializable {
     private Boolean completed;
     private Boolean scheduled;
     private Boolean deleted;
-    
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Double speedFraction;
+
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Route route;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<AircraftType> aircraftTypes;
+    
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Flight returnedFlight;
 
     public Long getId() {
         return id;
@@ -137,5 +143,33 @@ public class Flight implements Serializable {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * @return the speedFraction
+     */
+    public Double getSpeedFraction() {
+        return speedFraction;
+    }
+
+    /**
+     * @param speedFraction the speedFraction to set
+     */
+    public void setSpeedFraction(Double speedFraction) {
+        this.speedFraction = speedFraction;
+    }
+
+    /**
+     * @return the returnedFlight
+     */
+    public Flight getReturnedFlight() {
+        return returnedFlight;
+    }
+
+    /**
+     * @param returnedFlight the returnedFlight to set
+     */
+    public void setReturnedFlight(Flight returnedFlight) {
+        this.returnedFlight = returnedFlight;
     }
 }
