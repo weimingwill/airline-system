@@ -20,8 +20,9 @@ import ams.ais.util.helper.SeatClassHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
+import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
-import ams.aps.session.AircraftSessionLocal;
+import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
@@ -52,6 +53,8 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
     private TicketFamilySessionLocal ticketFamilySession;
     @EJB
     private AircraftSessionLocal aircraftSession;
+    @EJB
+    private RoutePlanningSessionLocal routePlanningSession;
 
     @Override
     public List<FlightSchedule> getAllFilghtSchedules() throws NoSuchFlightSchedulException {
@@ -276,6 +279,7 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
                 flightScheduleBookingClass.setBookingClass(bookingClass);
                 flightScheduleBookingClass.setSeatQty(0);
                 flightScheduleBookingClass.setDeleted(false);
+                flightScheduleBookingClass.setBasicPrice((float) 0);
                 flightScheduleBookingClass.setPrice((float) 0);
                 flightScheduleBookingClass.setPriceCoefficient((float) 0);
                 flightScheduleBookingClass.setDemandDev((float) 0);
@@ -337,5 +341,32 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
             System.out.println("Dislink Flight Schedule Booking Class: " + ex.getMessage());
         }
         return bookingClasses;
+    }
+
+    //distance * fuel cost per km
+    @Override
+    public double calcFlightFuelCostPerRoundTrip(Long flightScheduleId) {
+        try {
+            FlightSchedule flightSchedule = getFlightScheduleById(flightScheduleId);
+            Airport departureAirport = flightSchedule.getLeg().getDepartAirport();
+            Airport arriveAirport = flightSchedule.getLeg().getArrivalAirport();
+            double distance = routePlanningSession.distance(departureAirport, arriveAirport);
+            return distance * aircraftSession.calcAircraftFuelCostPerKm(getFlightScheduleAircraft(flightScheduleId).getAircraftId());
+        } catch (NoSuchFlightSchedulException | NoSuchAircraftException e) {
+            return 0;
+        }
+    }
+
+    //Fuel cost + purchased/rental cost
+    @Override
+    public double calcFlightScheduleBasicCostPerRoundTrip(Long flightScheduleId) {
+        return calcFlightFuelCostPerRoundTrip(flightScheduleId) + aircraftSession.calcAircraftCostPerRoundTrip(flightScheduleId);
+    }
+
+    @Override
+    public void verifyFlightScheduleBookingClassExistence(Long flightScheduleId) throws NoSuchFlightScheduleBookingClassException {
+        if (getFlightScheduleBookingClassJoinTables(flightScheduleId).isEmpty()) {
+            throw new NoSuchFlightScheduleBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
+        }
     }
 }

@@ -17,13 +17,17 @@ import ams.ais.util.exception.NeedTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
+import ams.ais.util.exception.NoSuchRuleException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
+import ams.ais.util.exception.NoSuchTicketFamilyRuleException;
 import ams.aps.util.exception.EmptyTableException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.entity.Aircraft;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
+import ams.aps.util.exception.NoSuchAircraftException;
+import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -59,12 +63,17 @@ public interface TicketFamilySessionLocal {
 
     public List<TicketFamily> getAllOtherTicketFamilyByTypeAndCabinClass(String type, String cabinclassname);
 
-    public List<Rule> getAllRules() throws EmptyTableException;
+    public List<Rule> getAllRules() throws NoSuchRuleException;
 
     public List<TicketFamilyRule> getTicketFamilyRuleByTicketFamilyId(long ticketFamilyId);
 
+    public List<Rule> getRulesByTicketFmailyId(Long ticketFamilyId) throws NoSuchRuleException;
+    
     public TicketFamilyRule getTicketFamilyRuleByTicketFamilyType(String ticketFamilyType);
 
+    public TicketFamilyRule getTicketFamilyRuleById(Long ticketFamilyId, Long RuleId) 
+            throws NoSuchTicketFamilyRuleException;
+    
     public TicketFamily getTicketFamilyById(Long id) throws NoSuchTicketFamilyException;
 
     public TicketFamily getTicketFamilyByName(String ticketFamilyName) throws NoSuchTicketFamilyException;
@@ -85,4 +94,13 @@ public interface TicketFamilySessionLocal {
             throws NeedTicketFamilyException, NoSuchAircraftCabinClassException, NoSuchCabinClassTicketFamilyException;
 
     public void disLinkCabinClassTicketFamily(List<CabinClassTicketFamily> cabinClassTicketFamilys);
+    
+    public void suggestTicketFamilyPrice(Long flightScheduleId) 
+            throws NoSuchAircraftException, NoSuchCabinClassException, NoSuchCabinClassTicketFamilyException, NoSuchFlightScheduleBookingClassException;
+    
+    public double calTicketFamilyCostBasedOnRule(Long ticketFamilyId);
+    
+    public double calTicketFamilyPrice(Long flightScheduleId, Long ticketFamilyId);
+    
+    public CabinClassTicketFamily getOriginalCabinClassTicketFamily(Long aircraftId, Long cabinClassId, Long ticketFamilyId);
 }

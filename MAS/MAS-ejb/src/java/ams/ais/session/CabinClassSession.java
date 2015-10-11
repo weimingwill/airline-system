@@ -15,7 +15,6 @@ import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
-import ams.aps.session.AircraftSessionLocal;
 import ams.aps.util.helper.AircraftStatus;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import mas.util.helper.SafeHelper;
@@ -113,6 +113,8 @@ public class CabinClassSession implements CabinClassSessionLocal {
             cabinclass = (CabinClass) query.getSingleResult();
         } catch (NoResultException ex) {
             throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
+        }catch(NonUniqueResultException e){
+            
         }
         return cabinclass;
     }

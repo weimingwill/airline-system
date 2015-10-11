@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package util.converter;
-
+ 
 import ams.ais.entity.BookingClass;
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
@@ -17,10 +17,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
-/**
- *
- * @author winga_000
- */
+ 
 @FacesConverter("bookingClassConverter")
 public class BookingClassConverter implements Converter {
     
@@ -46,6 +43,7 @@ public class BookingClassConverter implements Converter {
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
         if (object != null && !(object instanceof String)) {
             return String.valueOf(((BookingClass) object).getBookingClassId());
+//            return String.valueOf(((BookingClass) object).getBookingClassId().toString());
         } else {
             return null;
         }
@@ -53,3 +51,4 @@ public class BookingClassConverter implements Converter {
     
    
 }
+      

@@ -6,37 +6,40 @@
 package managedbean.ais;
 
 import ams.ais.entity.BookingClass;
-import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
 import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.util.exception.DuplicatePriceException;
+import ams.ais.util.exception.NeedBookingClassException;
+import ams.ais.util.exception.WrongSumOfBookingClassSeatQtyException;
+import ams.ais.util.exception.WrongSumOfTicketFamilySeatQtyException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
+import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.component.UIComponent;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
 
-/**
- *
- * @author Tongtong
- */
 @Named(value = "bookingClassController")
-@RequestScoped
+@ViewScoped
 public class BookingClassController implements Serializable {
 
     @Inject
@@ -55,10 +58,9 @@ public class BookingClassController implements Serializable {
     private float basicPrice;
     private BookingClass selectedBookingClass;
     private TicketFamily selectedTicketFamily;
-
-    
-
-    
+    private Map<Long, Float> priceMap = new HashMap<>();
+    private Map<Long, Float> priceCoefficientMap = new HashMap<>();
+    private String useless = null;
 
     /**
      * Creates a new instance of BookingClassController
@@ -71,25 +73,25 @@ public class BookingClassController implements Serializable {
         System.out.println("Initialize Booking Class Controler: ");
         System.out.println("FlightScheduleId: " + flightScheduleId);
         initialHelper();
-//        initialBasicPrice();
+        initialPrice();
         System.out.println("Helper: " + flightSchCabinClsTicFamBookingClsHelpers);
     }
 
     public BookingClassController() {
     }
-    
+
     public List<TicketFamily> getAllTicketFamily() {
         return bookingClassSession.getAllTicketFamily();
 
     }
-    
-    public List<BookingClass> getAllBookingClasses(){
+
+    public List<BookingClass> getAllBookingClasses() {
         return bookingClassSession.getAllBookingClasses();
     }
-            
+
     public String createBookingClass() {
         try {
-            bookingClassSession.createBookingClass(bookingClassName,selectedTicketFamily);
+            bookingClassSession.createBookingClass(bookingClassName, selectedTicketFamily);
             msgController.addMessage("Create booking class successfully!");
         } catch (ExistSuchBookingClassNameException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -99,7 +101,7 @@ public class BookingClassController implements Serializable {
 
     public String deleteBookingClass() {
         try {
-            System.out.printf("selected booking class is: "+selectedBookingClass);
+            System.out.printf("selected booking class is: " + selectedBookingClass);
             bookingClassSession.deleteBookingClass(selectedBookingClass.getName());
             msgController.addMessage("Booking class is deleted successfully!");
         } catch (NoSuchBookingClassException ex) {
@@ -108,23 +110,22 @@ public class BookingClassController implements Serializable {
         return navigationController.redirectToDeleteBookingClass();
     }
 
-    
-    public String updateBookingClass() {
+    public String assignFlightScheduleBookingClass() {
         try {
-            System.out.printf("BookingClass is"+selectedBookingClass);
-            bookingClassSession.updateBookingClass(selectedBookingClass.getBookingClassId(),selectedBookingClass.getName());
-            msgController.addMessage("Edit rule successfully!");
-        }catch( ExistSuchBookingClassNameException | NoSuchBookingClassException  ex) {
+            flightScheduleSession.assignFlightScheduleBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+            msgController.addMessage("assign flight schedule booking class succesffully!");
+            return navigationController.redirectToViewFlightSchedule();
+        } catch (NoSuchFlightSchedulException | NoSuchFlightScheduleBookingClassException | NeedBookingClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
+            return "";
         }
-        return navigationController.redirectToViewAllRules();
-        
     }
+
     public String allocateSeats() {
         try {
             bookingClassSession.allocateSeats(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
             msgController.addMessage("Allocate seats succesfully!");
-        } catch (NoSuchAircraftCabinClassException | NoSuchAircraftException | NoSuchFlightScheduleBookingClassException ex) {
+        } catch (NoSuchAircraftCabinClassException | NoSuchAircraftException | NoSuchFlightScheduleBookingClassException | WrongSumOfBookingClassSeatQtyException | WrongSumOfTicketFamilySeatQtyException ex) {
             msgController.addErrorMessage(ex.getMessage());
             return "";
         }
@@ -133,31 +134,45 @@ public class BookingClassController implements Serializable {
 
     public String priceBookingClasses() {
         try {
-            bookingClassSession.priceBookingClasses(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+            bookingClassSession.priceBookingClasses(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers, priceMap);
             msgController.addMessage("Price booking class succesfully!");
-        } catch (NoSuchFlightScheduleBookingClassException ex) {
+        } catch (NoSuchFlightScheduleBookingClassException | DuplicatePriceException ex) {
             msgController.addErrorMessage(ex.getMessage());
             return "";
         }
         return navigationController.redirectToViewFlightSchedule();
     }
 
-    public float initialBasicPrice() {
+    public void onPriceCoefficientChange(AjaxBehaviorEvent event) {
+        String id = (String) ((UIComponent) event.getComponent()).getId();
+        float priceCoefficient = (float) ((UIComponent) event.getComponent()).getAttributes().get("value");
+        Long bookingClassId = Long.parseLong(id.split("priceCoefficient")[1]);
+        priceMap.put(bookingClassId, getCalculatedPrice(priceCoefficient));
+    }
+
+//    public void onPriceChange(AjaxBehaviorEvent event) {
+//        System.out.println("On Price Change");
+//        String id = (String) ((UIComponent) event.getComponent()).getId();
+//        float price = (float) ((UIComponent) event.getComponent()).getAttributes().get("value");
+//        System.out.println("ID: " + id + " price: " + price);
+//        Long bookingClassId = Long.parseLong(id.split("price")[1]);
+//        System.out.println("bookingClassId: " + bookingClassId);
+//        priceCoefficientMap.put(bookingClassId, getCalculatedPriceCoefficient(price));
+//    }
+    public void initialPrice() {
         if (!flightSchCabinClsTicFamBookingClsHelpers.isEmpty()) {
             for (FlightSchCabinClsTicFamBookingClsHelper helper : flightSchCabinClsTicFamBookingClsHelpers) {
                 for (TicketFamilyBookingClassHelper tfbcHelper : helper.getTicketFamilyBookingClassHelpers()) {
                     for (BookingClassHelper bcHelper : tfbcHelper.getBookingClassHelpers()) {
-                        if (bcHelper.getPrice() == 0 && bcHelper.getPriceCoefficient() == 0) {
-                            basicPrice = 0;
-                        } else {
-                            basicPrice = bcHelper.getPrice() / bcHelper.getPriceCoefficient();
+                        if (bcHelper != null) {
+                            priceMap.put(bcHelper.getBookingClass().getBookingClassId(), bcHelper.getPrice());
+                            priceCoefficientMap.put(bcHelper.getBookingClass().getBookingClassId(), bcHelper.getPriceCoefficient());
+                            basicPrice = bcHelper.getBasicPrice();
                         }
-                        break;
                     }
                 }
             }
         }
-        return basicPrice;
     }
 
     private void initialHelper() {
@@ -168,6 +183,12 @@ public class BookingClassController implements Serializable {
         return priceCoefficient * basicPrice;
     }
 
+//    public float getCalculatedPriceCoefficient(float price) {
+//        System.out.println("Price : " + price);
+//        System.out.println("Basic price: " + basicPrice);
+//        System.out.println("Price Coefficient: " + price / basicPrice);
+//        return price / basicPrice;
+//    }
     //Getter and Setter
     public String getBookingClassName() {
         return bookingClassName;
@@ -200,7 +221,7 @@ public class BookingClassController implements Serializable {
     public void setBasicPrice(float basicPrice) {
         this.basicPrice = basicPrice;
     }
-    
+
     public BookingClass getSelectedBookingClass() {
         return selectedBookingClass;
     }
@@ -208,12 +229,36 @@ public class BookingClassController implements Serializable {
     public void setSelectedBookingClass(BookingClass selectedBookingClass) {
         this.selectedBookingClass = selectedBookingClass;
     }
-    
+
     public TicketFamily getSelectedTicketFamily() {
         return selectedTicketFamily;
     }
 
     public void setSelectedTicketFamily(TicketFamily selectedTicketFamily) {
         this.selectedTicketFamily = selectedTicketFamily;
+    }
+
+    public Map<Long, Float> getPriceMap() {
+        return priceMap;
+    }
+
+    public void setPriceMap(Map<Long, Float> priceMap) {
+        this.priceMap = priceMap;
+    }
+
+    public Map<Long, Float> getPriceCoefficientMap() {
+        return priceCoefficientMap;
+    }
+
+    public void setPriceCoefficientMap(Map<Long, Float> priceCoefficientMap) {
+        this.priceCoefficientMap = priceCoefficientMap;
+    }
+
+    public String getUseless() {
+        return useless;
+    }
+
+    public void setUseless(String useless) {
+        this.useless = useless;
     }
 }

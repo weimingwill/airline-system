@@ -76,14 +76,14 @@
                                             <c:forEach var="bc" items="#{tf.bookingClassHelpers}">
                                                 <p:panelGrid columns="5">
                                                     <p:outputLabel value="#{bc.bookingClass.name}" />
-                                                    <p:inputText value="#{bc.priceCoefficient}" style="width:35px" >
-                                                        <!--<p:ajax event="blur" update ="priceBookingClass" />-->
+                                                    <p:inputText id="priceCoefficient#{bc.bookingClass.bookingClassId}" value="#{bc.priceCoefficient}" style="width:35px" >
+                                                        <p:ajax event="blur" update ="price#{bc.bookingClass.bookingClassId}" listener="#{bookingClassController.onPriceCoefficientChange}" />
                                                     </p:inputText>
                                                     <p:outputLabel value=" X " />
-                                                    <p:inputText value="#{bookingClassController.basicPrice}" style="width:35px" >
-                                                        <!--<p:ajax event="blur" update ="priceBookingClass" />-->
+                                                    <p:inputText id="basicPrice#{bc.bookingClass.bookingClassId}" value="#{bookingClassController.basicPrice}" style="width:35px" >
+                                                        <p:ajax event="blur" update ="price#{bc.bookingClass.bookingClassId}"/>                                    
                                                     </p:inputText>
-                                                    <p:inputText value="#{bc.price}" />
+                                                    <p:outputLabel id="price#{bc.bookingClass.bookingClassId}" value="#{bookingClassController.priceMap.get(bc.bookingClass.bookingClassId)}" /> 
                                                 </p:panelGrid>
                                             </c:forEach>
                                         </p:column>
@@ -92,6 +92,12 @@
                             </p:column>
                         </p:row>
                     </c:forEach>
+
+
+
+
+
+
 
                     <ui:remove>
                         <c:forEach var="helper" items="#{bookingClassController.flightSchCabinClsTicFamBookingClsHelpers}" varStatus="index">
@@ -112,15 +118,15 @@
                                         <p:column colspan="1">#{bc.bookingClass.name}</p:column>
                                         <p:column colspan="1">
                                             <p:inputText value="#{bc.priceCoefficient}" style="width:35px" >
-                                                <p:ajax event="blur" update="priceOf#{bc.bookingClass.name}" listener="#{bookingClassController.getCalculatedPrice(bc.priceCoefficient)}" />
+                                                <p:ajax event="blur" update="priceBookingClass" />
                                             </p:inputText>
                                             <p:outputLabel value=" X " />
                                             <p:inputText value="#{bookingClassController.basicPrice}" style="width:35px">
-                                                <p:ajax event="blur" update ="pricing" />
+                                                <p:ajax event="blur" update ="priceBookingClass" />
                                             </p:inputText>
                                         </p:column>
                                         <p:column id="priceOf#{bc.bookingClass.name}" colspan="1">
-                                            <p:inputText  />
+                                            <p:inputText value="#{bc.priceCoefficient * bookingClassController.basicPrice}"  />
                                         </p:column>
                                     </p:row>
                                 </c:forEach>

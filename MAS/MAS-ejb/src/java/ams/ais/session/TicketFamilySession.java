@@ -19,7 +19,9 @@ import ams.ais.util.exception.NeedTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
+import ams.ais.util.exception.NoSuchRuleException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
+import ams.ais.util.exception.NoSuchTicketFamilyRuleException;
 import ams.ais.util.helper.AisMsg;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.helper.Message;
@@ -29,8 +31,9 @@ import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.helper.AircraftCabinClassId;
-import ams.aps.session.AircraftSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
+import ams.aps.util.exception.NoSuchAircraftException;
+import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -99,27 +102,26 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         Query query = entityManager.createQuery("SELECT c FROM CabinClass c WHERE c.deleted = false");
         return query.getResultList();
     }
-    
-    
+
     @Override
-    public void createTicketFamily(String type, String name, String cabinclassname,List<TicketFamilyRuleHelper> displayRuleList) 
+    public void createTicketFamily(String type, String name, String cabinclassname, List<TicketFamilyRuleHelper> displayRuleList)
             throws ExistSuchTicketFamilyException, NoSuchCabinClassException {
         verifyTicketFamilyExistence(type, name, cabinclassname);
         TicketFamily ticketFamily = new TicketFamily();
         ticketFamily.create(type, name);
-        System.out.print("The cabinclass name is: "+ cabinclassname);
+        System.out.print("The cabinclass name is: " + cabinclassname);
         ticketFamily.setCabinClass(cabinClassSession.getCabinClassByName(cabinclassname));
         entityManager.persist(ticketFamily);
-        entityManager.flush(); 
+        entityManager.flush();
         addTicketFamilyRule(ticketFamily, displayRuleList);
     }
-    
-    private void addTicketFamilyRule(TicketFamily ticketFamily, List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers){
+
+    private void addTicketFamilyRule(TicketFamily ticketFamily, List<TicketFamilyRuleHelper> newTicketFamilyRuleHelpers) {
         Rule thisRule;
         List<TicketFamilyRule> ticketFamilyRuleList = new ArrayList(); //too be added at aircraft side
 
         for (TicketFamilyRuleHelper ticketFamilyRuleHelper : newTicketFamilyRuleHelpers) {
-            
+
             TicketFamilyRule thisTicketFamilyRule = new TicketFamilyRule();
             thisRule = entityManager.find(Rule.class, ticketFamilyRuleHelper.getRuleId());
             // add necessary attributes to aircraftCabinClass object
@@ -127,11 +129,11 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
             thisTicketFamilyRule.setTicketFamilyId(ticketFamily.getTicketFamilyId());
             thisTicketFamilyRule.setRule(thisRule);
             thisTicketFamilyRule.setRuleId(thisRule.getRuleId());
-            thisTicketFamilyRule.setRuleValue((float)ticketFamilyRuleHelper.getRuleValue());
-            
-            System.out.print("this display rule ticketfamily id is:" +ticketFamilyRuleHelper.getTicketFamilyId());
-            System.out.print("this display rule id is: "+ticketFamilyRuleHelper.getRuleId());
-            System.out.print("this display rule value is: "+ticketFamilyRuleHelper.getRuleValue());
+            thisTicketFamilyRule.setRuleValue((float) ticketFamilyRuleHelper.getRuleValue());
+
+            System.out.print("this display rule ticketfamily id is:" + ticketFamilyRuleHelper.getTicketFamilyId());
+            System.out.print("this display rule id is: " + ticketFamilyRuleHelper.getRuleId());
+            System.out.print("this display rule value is: " + ticketFamilyRuleHelper.getRuleValue());
             entityManager.persist(thisTicketFamilyRule);
             ticketFamilyRuleList.add(thisTicketFamilyRule);
         }
@@ -139,6 +141,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         entityManager.merge(ticketFamily);
         entityManager.flush();
     }
+
     @Override
     public void verifyTicketFamilyExistence(String type, String name, String cabinclassname) throws ExistSuchTicketFamilyException {
 
@@ -275,32 +278,30 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     }
 
     @Override
-    public List<Rule> getAllRules() throws EmptyTableException {
+    public List<Rule> getAllRules() throws NoSuchRuleException {
         Query query = entityManager.createQuery("SELECT c FROM Rule c WHERE c.deleted=False");
-        List<Rule> rules = null;
+        List<Rule> rules = new ArrayList<>();
         try {
             rules = (List<Rule>) query.getResultList();
         } catch (NoResultException ex) {
-            throw new EmptyTableException(Message.EMPTY_TABLE);
+            throw new NoSuchRuleException(AisMsg.NO_SUCH_RULE_ERROR);
         }
         return rules;
     }
-    
-    
+
     @Override
-    public void updateTicketFamilyRuleVlaue(TicketFamilyRule ticketFamilyRule){
-        TicketFamilyRule thisTicketFamilyRule = getTicketFamilyRuleByTwoId(ticketFamilyRule.getTicketFamilyId(),ticketFamilyRule.getRuleId());
+    public void updateTicketFamilyRuleVlaue(TicketFamilyRule ticketFamilyRule) {
+        TicketFamilyRule thisTicketFamilyRule = getTicketFamilyRuleByTwoId(ticketFamilyRule.getTicketFamilyId(), ticketFamilyRule.getRuleId());
         thisTicketFamilyRule.setRuleValue(ticketFamilyRule.getRuleValue());
         entityManager.merge(thisTicketFamilyRule);
         entityManager.flush();
-        
+
     }
-   
-    public TicketFamilyRule getTicketFamilyRuleByTwoId(long ticketFamilyId, long ruleId){
-        
-        Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId AND u.ruleId = :inruleId");
+
+    public TicketFamilyRule getTicketFamilyRuleByTwoId(long ticketFamilyId, long ruleId) {
+        Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId AND u.ruleId = :inruleId AND u.rule.deleted = FALSE AND u.ticketFamily.deleted = FALSE");
         query.setParameter("inticketFamilyId", ticketFamilyId);
-        query.setParameter("inruleId",ruleId);
+        query.setParameter("inruleId", ruleId);
         TicketFamilyRule tfr = null;
         try {
             tfr = (TicketFamilyRule) query.getSingleResult();
@@ -309,7 +310,21 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         }
         return tfr;
     }
-    
+
+    @Override
+    public TicketFamilyRule getTicketFamilyRuleById(Long ticketFamilyId, Long ruleId) throws NoSuchTicketFamilyRuleException {
+        Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId AND u.ruleId = :inruleId AND u.rule.deleted = FALSE AND u.ticketFamily.deleted = FALSE");
+        query.setParameter("inticketFamilyId", ticketFamilyId);
+        query.setParameter("inruleId", ruleId);
+        TicketFamilyRule tfr;
+        try {
+            tfr = (TicketFamilyRule) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new NoSuchTicketFamilyRuleException(AisMsg.NO_SUCH_TICKETFAMILY_RULE_ERROR);
+        }
+        return tfr;
+    }
+
 //    private boolean addTicketFamilyRule(TicketFamily newTicketFamily, List<TicketFamilyRuleHelper> newAircraftCabinClassHelpers) {
 //        CabinClass thisCabinClass;
 //        List<AircraftCabinClass> aircraftCabinClassList = new ArrayList(); //too be added at aircraft side
@@ -331,30 +346,38 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
 //        entityManager.flush();
 //        return true;
 //    }
-
     @Override
     public List<TicketFamilyRule> getTicketFamilyRuleByTicketFamilyId(long ticketFamilyId) {
         Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId AND u.rule.deleted = FALSE");
         query.setParameter("inticketFamilyId", ticketFamilyId);
         List<TicketFamilyRule> ticketFamilyRules = null;
-        
-        
-            ticketFamilyRules = (List<TicketFamilyRule>) query.getResultList();
-           
-        
+
+        ticketFamilyRules = (List<TicketFamilyRule>) query.getResultList();
+
         return ticketFamilyRules;
     }
 
     @Override
+    public List<Rule> getRulesByTicketFmailyId(Long ticketFamilyId) throws NoSuchRuleException {
+        Query query = entityManager.createQuery("SELECT r FROM TicketFamilyRule tr, Rule r WHERE tr.ticketFamilyId = :inticketFamilyId AND tr.ruleId = r.ruleId AND tr.rule.deleted = FALSE AND tr.ticketFamily.deleted = FALSE");
+        query.setParameter("inticketFamilyId", ticketFamilyId);
+        List<Rule> rules = new ArrayList<>();
+        try {
+            rules = (List<Rule>) query.getResultList();
+        } catch (NoResultException e) {
+            throw new NoSuchRuleException(AisMsg.NO_SUCH_RULE_ERROR);
+        }
+        return rules;
+    }
+
+    @Override
     public TicketFamilyRule getTicketFamilyRuleByTicketFamilyType(String ticketFamilyType) {
-       Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.type = :inticketFamilyType");
+        Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.type = :inticketFamilyType");
         query.setParameter("inticketFamilyType", ticketFamilyType);
         TicketFamilyRule ticketFamilyRule = null;
-       
-        
-            ticketFamilyRule = (TicketFamilyRule) query.getSingleResult();
-           
-        
+
+        ticketFamilyRule = (TicketFamilyRule) query.getSingleResult();
+
         return ticketFamilyRule;
     }
 
@@ -381,10 +404,9 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         return ticketFamily;
     }
 
-
     @Override
-    public void updateTicketFamilyByType(long ticketFamilyId, String oldCabinClassName, String type, String name) throws ExistSuchTicketFamilyException,NoSuchTicketFamilyException{
-       TicketFamily c = getTicketFamilyById(ticketFamilyId);
+    public void updateTicketFamilyByType(long ticketFamilyId, String oldCabinClassName, String type, String name) throws ExistSuchTicketFamilyException, NoSuchTicketFamilyException {
+        TicketFamily c = getTicketFamilyById(ticketFamilyId);
         if (c == null) {
             throw new NoSuchTicketFamilyException(AisMsg.NO_SUCH_TICKET_FAMILY_ERROR);
         } else {
@@ -421,11 +443,10 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         }
         c.setName(name);
         c.setType(type);
-        
+
         entityManager.merge(c);
         entityManager.flush();
-    } 
-    
+    }
 
     @Override
     public List<BookingClassHelper> getTicketFamilyBookingClassHelpers(String cabinClassName, String ticketFamilyName) {
@@ -457,6 +478,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
             TicketFamilyBookingClassHelper helper = new TicketFamilyBookingClassHelper();
             helper.setSeatQty(cabinClassTicketFamily.getSeatQty());
             helper.setTicketFamily(cabinClassTicketFamily.getTicketFamily());
+            helper.setPrice(cabinClassTicketFamily.getPrice());
             helper.setBookingClassHelpers(bookingClassSession.getBookingClassHelpers(flightScheduleId, ticketFamilyId));
             try {
                 helper.setBookingClasses(flightScheduleSession.getFlightScheduleBookingClassesOfTicketFamily(flightScheduleId, ticketFamilyId));
@@ -477,11 +499,11 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
 
             //Get CabinClass
             CabinClass cabinClass = entityManager.find(CabinClass.class, helper.getCabinClass().getCabinClassId());
-            
+
             /**
-             * Get original CabinClassTicketFamily
-             * DisLink all CabinClassTicketFamily (set their deleted to true.),
-             * later if cabinClass exist, just set deleted to false
+             * Get original CabinClassTicketFamily DisLink all
+             * CabinClassTicketFamily (set their deleted to true.), later if
+             * cabinClass exist, just set deleted to false
              */
             List<CabinClassTicketFamily> originCabinClassTicketFamilys
                     = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraft.getAircraftId(), cabinClass.getCabinClassId());
@@ -499,8 +521,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                 TicketFamily originTicketFamily = entityManager.find(TicketFamily.class, ticketFamily.getTicketFamilyId());
                 //Create CabinClassTicketFamilyId
                 CabinClassTicketFamilyId cabinClassTicketFamilyId = new CabinClassTicketFamilyId(aircraftCabinClassId, originTicketFamily.getTicketFamilyId());
-                CabinClassTicketFamily cabinClassTicketFamily;
-                cabinClassTicketFamily = entityManager.find(CabinClassTicketFamily.class, cabinClassTicketFamilyId);
+                CabinClassTicketFamily cabinClassTicketFamily = entityManager.find(CabinClassTicketFamily.class, cabinClassTicketFamilyId);
                 if (cabinClassTicketFamily != null) {
                     cabinClassTicketFamily.setDeleted(false);
                     entityManager.merge(cabinClassTicketFamily);
@@ -511,6 +532,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                     cabinClassTicketFamily.setCabinClassTicketFamilyId(cabinClassTicketFamilyId);
                     cabinClassTicketFamily.setTicketFamily(originTicketFamily);
                     cabinClassTicketFamily.setSeatQty(0);
+                    cabinClassTicketFamily.setPrice((float) 0);
                     cabinClassTicketFamily.setDeleted(false);
                     entityManager.persist(cabinClassTicketFamily);
                     entityManager.flush();
@@ -542,6 +564,44 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
             cabinClassTicketFamily.setDeleted(true);
         }
     }
-    
-    
+
+    @Override
+    public void suggestTicketFamilyPrice(Long flightScheduleId)
+            throws NoSuchAircraftException, NoSuchCabinClassException, NoSuchCabinClassTicketFamilyException, NoSuchFlightScheduleBookingClassException {
+        Aircraft aircraft = flightScheduleSession.getFlightScheduleAircraft(flightScheduleId);
+        List<CabinClass> cabinClasses = aircraftSession.getAircraftCabinClasses(flightScheduleId);
+        for (CabinClass cabinClass : cabinClasses) {
+            List<CabinClassTicketFamily> cabinClassTicketFamilys
+                    = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraft.getAircraftId(), cabinClass.getCabinClassId());
+            for (CabinClassTicketFamily cctf : cabinClassTicketFamilys) {
+                Long ticketFamilyId = cctf.getTicketFamily().getTicketFamilyId();
+                CabinClassTicketFamily cabinClassTicketFamily = 
+                        getOriginalCabinClassTicketFamily(aircraft.getAircraftId(), cabinClass.getCabinClassId(), ticketFamilyId);
+                double basicPrice = calTicketFamilyPrice(flightScheduleId, ticketFamilyId);
+                cabinClassTicketFamily.setPrice((float)basicPrice);
+                bookingClassSession.setBookingClassDefaultPrice(flightScheduleId, ticketFamilyId, (float)basicPrice);
+                entityManager.merge(cabinClassTicketFamily);
+            }
+        }
+    }
+
+    @Override
+    public double calTicketFamilyCostBasedOnRule(Long ticketFamilyId) {
+        return 0;
+    }
+
+    @Override
+    public double calTicketFamilyPrice(Long flightScheduleId, Long ticketFamilyId) {
+        double basicCost = flightScheduleSession.calcFlightScheduleBasicCostPerRoundTrip(flightScheduleId);
+        double ticketFamilyRuleCost = calTicketFamilyCostBasedOnRule(ticketFamilyId);
+        return basicCost + ticketFamilyRuleCost;
+    }
+
+    @Override
+    public CabinClassTicketFamily getOriginalCabinClassTicketFamily(Long aircraftId, Long cabinClassId, Long ticketFamilyId) {
+        AircraftCabinClassId aircraftCabinClassId = new AircraftCabinClassId(aircraftId, cabinClassId);
+        CabinClassTicketFamilyId cabinClassTicketFamilyId = new CabinClassTicketFamilyId(aircraftCabinClassId, ticketFamilyId);
+        CabinClassTicketFamily cabinClassTicketFamily = entityManager.find(CabinClassTicketFamily.class, cabinClassTicketFamilyId);
+        return cabinClassTicketFamily;
+    }
 }

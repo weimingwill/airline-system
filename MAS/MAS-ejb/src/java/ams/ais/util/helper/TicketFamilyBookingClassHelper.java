@@ -16,6 +16,7 @@ import java.util.List;
 public class TicketFamilyBookingClassHelper {
     private TicketFamily ticketFamily;
     private int seatQty;
+    private float price;
     private List<BookingClassHelper> bookingClassHelpers;
     private List<BookingClass> bookingClasses;
 
@@ -61,6 +62,12 @@ public class TicketFamilyBookingClassHelper {
     public void setBookingClasses(List<BookingClass> bookingClasses) {
         this.bookingClasses = bookingClasses;
     }
-    
-    
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
 }

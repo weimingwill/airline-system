@@ -6,7 +6,7 @@
 package util.converter;
  
 import ams.aps.entity.Aircraft;
-import ams.aps.session.AircraftSessionLocal;
+import ams.ais.session.AircraftSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
