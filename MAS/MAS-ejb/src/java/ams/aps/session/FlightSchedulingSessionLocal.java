@@ -42,4 +42,5 @@ public interface FlightSchedulingSessionLocal {
     public List<Flight> getUnscheduledFlights(Airport deptAirport, List<AircraftType> aircraftTypes) 
             throws NoSuchFlightException, NoSuchRouteException;
     public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper, double speedFraction);
+    public AircraftType getModelWithMinMachNo(List<AircraftType> models);
 }
