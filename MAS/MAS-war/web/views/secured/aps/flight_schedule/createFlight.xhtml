@@ -19,7 +19,7 @@
                     Choose one flight to continue
                 </f:facet>
                 <p:panelGrid style="width:100%">
-                    <ez:CCTile header="#{flight.flightNo}/#{flight.returnedFlight.flightNo}" subheader="#{flightController.getOriDestString(flight)}" numericValue="Done" displayNum="true" icon="fa fa-plane" displayViewBtn="true" displayEditBtn="true" rendered="#{flight.completed}"/>
+                    <ez:CCTile header="#{flight.flightNo}/#{flight.returnedFlight.flightNo}" subheader="#{flightController.getOriDestString(flight)}" numericValue="Done" displayNum="true" icon="fa fa-plane" displayDeleteBtn="true" displayEditBtn="true" displayViewBtn="true" rendered="#{flight.completed}"/>
                     <ez:CCTile header="#{flight.flightNo}/#{flight.returnedFlight.flightNo}" subheader="#{flightController.getOriDestString(flight)}" icon="fa fa-plane" displayContBtn="true" displayDeleteBtn="true" displayEditBtn="true" rendered="#{not flight.completed}"/>
                 </p:panelGrid>
 

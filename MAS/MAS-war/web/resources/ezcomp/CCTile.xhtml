@@ -44,7 +44,7 @@
                     <p:outputLabel value="#{cc.attrs.footer}" styleClass="tileFooter"/>
                     <p:commandButton value="Continue" rendered="#{cc.attrs.displayContBtn}" action="#{flightController.findFlightByFlightNo(cc.attrs.header)}"/>
                     <p:commandButton icon="fa fa-trash-o" rendered="#{cc.attrs.displayDeleteBtn}" action="#{flightController.deleteFlight(cc.attrs.header)}" style="color: lightcoral;">
-                        <p:confirm header="Confirm" message="Are you sure you want to delete flight" icon="ui-icon-alert"/>
+                        <p:confirm header="Confirm" message="Are you sure you want to delete the selected flight?" icon="ui-icon-alert"/>
                     </p:commandButton>
                     <p:commandButton icon="fa fa-pencil" rendered="#{cc.attrs.displayEditBtn}" actionListener="#{flightController.setThisSelectedFlight(cc.attrs.header)}" update="updateFlightNumDlg" oncomplete="PF('updateFlightNumDlg').show()" style="color: lightseagreen;"/>
                     <p:commandButton icon="fa fa-search" rendered="#{cc.attrs.displayViewBtn}" actionListener="#{flightController.setThisSelectedFlight(cc.attrs.header)}" update="viewFlightInfoDlg" oncomplete="PF('viewFlightInfoDlg').show()"/>

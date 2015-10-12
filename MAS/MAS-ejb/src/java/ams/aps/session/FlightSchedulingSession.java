@@ -220,12 +220,15 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         try {
             Flight flight = checkFlightExistence(flightNo);
             Flight returnedFlight = flight.getReturnedFlight();
+            if(flight.getScheduled() || returnedFlight.getScheduled()){
+                throw new DeleteFailedException("Flight is scheduled, cannot be deleted!");
+            }
             returnedFlight.setDeleted(Boolean.TRUE);
             flight.setDeleted(Boolean.TRUE);
             em.merge(flight);
             em.merge(returnedFlight);
         } catch (ObjectDoesNotExistException ex) {
-            throw new DeleteFailedException();
+            throw new DeleteFailedException("Flight does not exist!");
         }
     }
 
