@@ -240,4 +240,17 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
     }
 
+    @Override
+    public List<Flight> getAllFlights() {
+        Query query = em.createQuery("SELECT f FROM Flight f WHERE f.deleted = FALSE");
+        List<Flight> outputFlights = new ArrayList();
+        try {
+            outputFlights = (List<Flight>) query.getResultList();
+
+        } catch (NoResultException ex) {
+
+        }
+        return outputFlights;
+    }
+
 }

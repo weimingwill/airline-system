@@ -24,6 +24,7 @@ import javax.ejb.Local;
 public interface FlightSchedulingSessionLocal {
     public Flight checkFlightExistence(String flightNo) throws ObjectDoesNotExistException;
     public List<Flight> getFlight(Boolean complete) throws EmptyTableException;
+    public List<Flight> getAllFlights();
     public void deleteFlight(String flightNo) throws DeleteFailedException;
     public boolean changeFlightNo(String flightNo, String newFlightNo);
     public List<AircraftType> getCapableAircraftTypesForRoute(Double maxDist);
