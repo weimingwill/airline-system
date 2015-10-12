@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <!-- INTERFACE -->
     <cc:interface>
+        <cc:attribute name="flight"/>
         <cc:attribute name="route" required="true"/>
-        <cc:attribute name="flight" />
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
@@ -22,9 +22,9 @@
                 <p:outputLabel value="Flight: #{thisFlight.flightNo}"/>
             </p:column>
         </p:row>
-
+        
         <p:row>
-            <p:column colspan="4">
+            <p:column colspan="5">
                 <p:outputLabel value="Route (id: #{thisRoute.id}) #{thisRoute.origin.city.cityName} - #{thisRoute.destination.city.cityName}" styleClass="label"/>
             </p:column>
         </p:row>
@@ -38,6 +38,9 @@
             </p:column>
             <p:column>
                 <p:outputLabel value="To"/>
+            </p:column>
+            <p:column>
+                <p:outputLabel value="Duration (hrs)"/>
             </p:column>
             <p:column>
                 <p:outputLabel value="Distance (km)"/>
@@ -60,8 +63,13 @@
                     </p:outputLabel>
                 </p:column>
                 <p:column>
+                    <p:outputLabel value="#{leg.flyingTime + leg.turnaroundTime}">
+                        <f:convertNumber maxFractionDigits="2"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
                     <p:outputLabel value="#{leg.distance}">
-                        <f:convertNumber maxFractionDigits="4"/>
+                        <f:convertNumber maxFractionDigits="2"/>
                     </p:outputLabel>
                 </p:column>
             </p:row>
@@ -72,11 +80,15 @@
                 <p:outputLabel value="Total"/>
             </p:column>
             <p:column colspan="1">
+                <p:outputLabel value="#{thisRoute.totalDuration}">
+                    <f:convertNumber maxFractionDigits="2"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column colspan="1">
                 <p:outputLabel value="#{thisRoute.totalDistance}">
-                    <f:convertNumber maxFractionDigits="4"/>
+                    <f:convertNumber maxFractionDigits="2"/>
                 </p:outputLabel>
             </p:column>
         </p:row>
-
     </cc:implementation>
 </html>

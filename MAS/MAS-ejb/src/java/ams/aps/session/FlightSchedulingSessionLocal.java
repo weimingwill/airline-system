@@ -26,7 +26,6 @@ import javax.ejb.Local;
  */
 @Local
 public interface FlightSchedulingSessionLocal {
-    public boolean createFlight(Flight flight);
     public Flight checkFlightExistence(String flightNo) throws ObjectDoesNotExistException;
     public List<Flight> getFlight(Boolean complete) throws EmptyTableException;
     public void deleteFlight(String flightNo) throws DeleteFailedException;
@@ -43,4 +42,6 @@ public interface FlightSchedulingSessionLocal {
             throws NoSuchFlightException, NoSuchRouteException;
     public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper, double speedFraction);
     public AircraftType getModelWithMinMachNo(List<AircraftType> models);
+    public boolean createReturnedFlight(Flight flight, Flight returnedFlight);
+    public void updateFlight(Flight flight) throws ObjectDoesNotExistException;
 }

@@ -41,8 +41,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     public final double STOPOVER_TIME = 1 / 3.0; //time for plane to rest at the stop-over airport
     public final double DEFAULT_SPEED_FRACTION = 0.8;
 
-    @Override
-    public boolean createFlight(Flight flight) {
+    private boolean createFlight(Flight flight) {
         Route route = flight.getRoute();
         System.out.println("FlightSchedulingSession: createFlight(): route =" + route);
         try {
@@ -65,12 +64,28 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     @Override
+    public boolean createReturnedFlight(Flight flight, Flight returnedFlight) {
+        try {
+            createFlight(flight);
+            createFlight(returnedFlight);
+            flight.setReturnedFlight(returnedFlight);
+            returnedFlight.setReturnedFlight(flight);
+            em.merge(flight);
+            em.merge(returnedFlight);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
     public Flight checkFlightExistence(String flightNo) throws ObjectDoesNotExistException {
         try {
-            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo");
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo =:fNo AND f.deleted =FALSE");
             query.setParameter("fNo", flightNo);
 
             Flight flight = (Flight) query.getSingleResult();
+            System.out.println("checkFlightExistence(): " + flight);
             return flight;
         } catch (Exception e) {
             throw new ObjectDoesNotExistException("Flight " + flightNo + " Does Not Exist");
@@ -114,8 +129,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             return null;
         }
     }
-    
-    
+
     @Override
     public AircraftType getModelWithMinMachNo(List<AircraftType> models) {
         float minMach = models.get(0).getMaxMachNo();
@@ -169,7 +183,6 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             cleanUpTime += 1.5;
         }
         turnaroundTime += cleanUpTime;
-        System.out.println("getTurnaroundTime() " + turnaroundTime);
         return turnaroundTime;
     }
 
@@ -195,7 +208,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     @Override
     public List<Flight> getFlight(Boolean complete) throws EmptyTableException {
         try {
-            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.completed = :inComplete");
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.completed = :inComplete AND f.deleted = FALSE");
             query.setParameter("inComplete", complete);
             List<Flight> outputFlights;
             outputFlights = (List<Flight>) query.getResultList();
@@ -209,8 +222,11 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     public void deleteFlight(String flightNo) throws DeleteFailedException {
         try {
             Flight flight = checkFlightExistence(flightNo);
+            Flight returnedFlight = flight.getReturnedFlight();
+            returnedFlight.setDeleted(Boolean.TRUE);
             flight.setDeleted(Boolean.TRUE);
             em.merge(flight);
+            em.merge(returnedFlight);
         } catch (ObjectDoesNotExistException ex) {
             throw new DeleteFailedException();
         }
@@ -304,4 +320,15 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
         return routes;
     }
+    
+    public void updateFlight(Flight flight) throws ObjectDoesNotExistException {
+        try {
+            em.merge(flight);
+            em.merge(flight.getReturnedFlight());
+        } catch (Exception e) {
+            System.out.println("Error!!!!");
+            throw new ObjectDoesNotExistException();
+        }
+    }
+
 }

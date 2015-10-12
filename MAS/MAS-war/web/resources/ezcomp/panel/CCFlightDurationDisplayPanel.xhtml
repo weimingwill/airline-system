@@ -9,11 +9,18 @@
     <!-- INTERFACE -->
     <cc:interface>
         <cc:attribute name="route" required="true"/>
+        <cc:attribute name="flight" />
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <c:set value="#{cc.attrs.route}" var="thisRoute"/>
+        <c:set value="#{cc.attrs.flight}" var="thisFlight"/>
+        <p:row>
+            <p:column colspan="6" class="ui-widget-header">
+                <p:outputLabel value="Flight: #{thisFlight.flightNo}"/>
+            </p:column>
+        </p:row>
 
         <p:row>
             <p:column colspan="6">
