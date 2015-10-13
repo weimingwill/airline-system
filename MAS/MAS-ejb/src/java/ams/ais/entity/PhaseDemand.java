@@ -21,12 +21,12 @@ public class PhaseDemand implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer daysBeforeDeparture;
+    private Float daysBeforeDeparture;
     private Float demandMean;
     private Float demandDev;
     private Boolean isDeleted;
     
-    public void create(int daysBeforeDeparture, float demandMean, float demandDev){
+    public void create(float daysBeforeDeparture, float demandMean, float demandDev){
         this.daysBeforeDeparture = daysBeforeDeparture;
         this.demandMean = demandMean;
         this.demandDev = demandDev;
@@ -41,16 +41,18 @@ public class PhaseDemand implements Serializable {
         this.id = id;
     }
 
-    public Integer getDaysBeforeDeparture() {
-        return daysBeforeDeparture;
-    }
 
-    public void setDaysBeforeDeparture(Integer daysBeforeDeparture) {
-        this.daysBeforeDeparture = daysBeforeDeparture;
-    }
 
     public Float getDemandMean() {
         return demandMean;
+    }
+
+    public Float getDaysBeforeDeparture() {
+        return daysBeforeDeparture;
+    }
+
+    public void setDaysBeforeDeparture(Float daysBeforeDeparture) {
+        this.daysBeforeDeparture = daysBeforeDeparture;
     }
 
     public void setDemandMean(Float demandMean) {
