@@ -29,6 +29,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
+import managedbean.common.LoginController;
 
 /**
  *
@@ -40,6 +41,9 @@ public class FlightController implements Serializable {
 
     @Inject
     RouteController routeController;
+
+    @Inject
+    LoginController loginController;
 
     @Inject
     MsgController msgController;
@@ -153,7 +157,6 @@ public class FlightController implements Serializable {
             setFlight(flightSchedulingSession.checkFlightExistence(flight.getFlightNo()));
             setReturnedFlight(flightSchedulingSession.checkFlightExistence(returnedFlight.getFlightNo()));
 
-            FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
             Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
             map.put("flight", flight);
             map.put("returnedFlight", returnedFlight);

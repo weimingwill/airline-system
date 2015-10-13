@@ -335,3 +335,27 @@ tr.hide{
 .table-small-font{
     font-size:small;
 }
+
+.ui-menu-child{
+    width: 100% !important;
+}
+
+.navigationMenu > ul > li > .navMenuItem{
+    padding-left: 25px !important;
+    padding-top:13px;
+}
+
+.navigationMenu > ul > li {
+    top: 8px !important;
+    padding-left: 5px !important;
+}
+
+.navBtn{
+    margin-top:8px;
+}
+
+.loginPanel{
+        margin: 4%;
+    background: rgba(251, 251, 252, 0.66);
+    max-width: 330px; 
+}

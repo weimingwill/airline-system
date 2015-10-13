@@ -50,7 +50,7 @@ public class FlightManager implements Serializable {
     
     @Inject
     RouteController routeController;
-    
+     
     private Flight flight;
     private Flight returnedFlight;
     private RouteDisplayHelper route = new RouteDisplayHelper();
@@ -74,11 +74,26 @@ public class FlightManager implements Serializable {
     
     @PostConstruct
     public void init() {
+        cleanVariable();
         getAddedFlight();
         System.out.println("init(): flight = " + flight);
         getRouteDetails();
         getAircraftModelsForFlight();
         setSpeedFraction(flight.getSpeedFraction()); // get defualt speedFraction
+    }
+    
+    private void cleanVariable(){
+        setFlight(new Flight());
+        setReturnedFlight(new Flight());
+        setRoute(new RouteDisplayHelper());
+        setReturnedRoute(new RouteDisplayHelper());
+        setRouteHelper(new RouteHelper());
+        setReturnRouteHelper(new RouteHelper());
+        setSelectedModels(new ArrayList());
+        setModelsForFlight(new ArrayList());
+        setModelWithMinMach(new AircraftType());
+        setWeeklyFreq(1);
+        setMaxDist(0);
     }
     
     public void initAircraftModel(Flight flight){
@@ -205,7 +220,7 @@ public class FlightManager implements Serializable {
     private void getModelWithMinMachNo() {
         setModelWithMinMach(flightSchedulingSession.getModelWithMinMachNo(selectedModels));
     }
-
+    
     /**
      * @return the flight
      */

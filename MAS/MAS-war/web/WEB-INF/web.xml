@@ -23,7 +23,7 @@
     <!--Primefaces Theme-->
     <context-param>
         <param-name>primefaces.THEME</param-name>
-        <param-value>primefaces-theme</param-value>
+        <param-value>mas</param-value>
     </context-param>
     <context-param>
         <param-name>primefaces.FONT_AWESOME</param-name>
