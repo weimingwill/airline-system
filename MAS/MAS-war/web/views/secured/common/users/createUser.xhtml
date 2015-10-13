@@ -45,17 +45,17 @@
                     </p:panel>
                     <p:panel header="Select Roles">
                         <p:selectManyMenu id="advanced" value="#{userController.roleList}" converter="roleConverter"
-                                          var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:600px;">
+                                          var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:100%; min-width: 400px">
                             <f:selectItems value="#{roleController.roles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
                             <p:ajax update="permissionTable"/>
                             <p:column>
-                                <h:outputText value="#{role.roleName}"  />
+                                <p:outputLabel value="#{role.roleName}"  />
                             </p:column>
                         </p:selectManyMenu>
                     </p:panel>
 
                 </p:panelGrid>
-                <p:dataTable id="permissionTable" value="#{userController.roleList}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
+                <p:dataTable id="permissionTable" value="#{userController.roleList}" var="role" emptyMessage="No role selected" class="userRoleDataTable" tableStyleClass="table-small-font">
                     <f:facet name="header">
                         Role Permissions
                     </f:facet>

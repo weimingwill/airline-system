@@ -32,7 +32,7 @@
                     <p:menuitem  value="Change password" url="#{navigationController.redirectToChangePassword()}" />
                 </p:submenu>
                 <f:facet name="options">
-                    <p:outputLabel value="Welcome: #{loginController.username}! " rendered="#{loginController.loggedIn}"/>
+                    <p:outputLabel value="Welcome: #{loginController.username} [From #{userController.department}]! " rendered="#{loginController.loggedIn}"/>
                     <p:commandButton action="#{navigationController.redirectToLogin()}" value="Login" rendered="#{not loginController.loggedIn}" icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>
                     <p:commandButton action="#{loginController.doLogout()}" value="Logout" rendered="#{loginController.loggedIn}" icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>
                 </f:facet>

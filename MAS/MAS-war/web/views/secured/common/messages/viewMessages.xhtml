@@ -14,7 +14,7 @@
 
     <ui:define name="content">
         <p:panel header="View Messgae">
-            <p:tabView orientation="left" id="messagePanel">
+            <p:tabView orientation="left" id="messagePanel" rendered="#{not empty internalMsgController.systemMsgHelpers}">
                 <c:forEach items="#{internalMsgController.systemMsgHelpers}" var="msg">
                     <p:tab title="#{msg.sender}" class="messagePanel#{msg.sender}">
                         <c:forEach items="#{msg.msgs}"  var="message" varStatus="status">

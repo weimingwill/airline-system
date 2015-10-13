@@ -11,7 +11,9 @@
 
     <ui:define name="content">
         <p:panel header="View permissions">
-            <p:dataTable value="#{permissionController.allPermissions}" var="permission">
+            <p:dataTable value="#{permissionController.allPermissions}" var="permission" tableStyleClass="table-small-font"
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" rowKey="#{aircraft.aircraftId}" rows="10">
                 <p:column headerText="System">
                     <p:outputLabel value="#{permission.system}" />
                 </p:column>

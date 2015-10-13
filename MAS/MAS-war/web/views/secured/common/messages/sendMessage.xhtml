@@ -9,7 +9,7 @@
     <ui:define name="content">
         <p:panel header="Send Message">
             <h:form id="sendMessage">
-                <h:panelGrid columns="2" cellpadding="5">  
+                <p:panelGrid columns="2">  
                     <p:outputLabel value="Message subject" />
                     <p:inputText id="subject" binding="#{subject}" /> 
                     <p:outputLabel value="Message content" />
@@ -31,7 +31,7 @@
 
                     <p:commandButton action="#{internalMsgController.saveMessage(subject.value, message.value, receivers.value)}" value="send message" update="messages"  />
 
-                </h:panelGrid>  
+                </p:panelGrid>  
 
             </h:form>
         </p:panel>

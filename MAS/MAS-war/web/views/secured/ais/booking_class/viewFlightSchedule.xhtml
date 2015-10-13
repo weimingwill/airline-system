@@ -38,12 +38,7 @@
                 </p:column>
                 <p:column headerText="Departure Date">
                     <p:outputLabel value="#{flightSchedule.departDate}">
-                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
-                    </p:outputLabel>
-                </p:column>
-                <p:column headerText="Departure Time">
-                    <p:outputLabel value="#{flightSchedule.departTime}">
-                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
                     </p:outputLabel>
                 </p:column>
                 <p:column headerText="Arrival Terminal">
@@ -54,14 +49,8 @@
                 </p:column>
                 <p:column headerText="Arrival Date">
                     <p:outputLabel value="#{flightSchedule.arrivalDate}">
-                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
                     </p:outputLabel>
-                </p:column>
-                <p:column headerText="Arrival Time">
-                    <p:outputLabel value="#{flightSchedule.arrivalTime}">
-                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
-                    </p:outputLabel>
-
                 </p:column>
                 <f:facet name="footer">
                     <p:commandButton icon="ui-icon-search" value="View booking classes" 

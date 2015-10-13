@@ -13,11 +13,11 @@
     <cc:implementation id="leftMenu">
         <h:form>
             <p:panelMenu style="width:240px;">
-                <p:submenu label="Message">
+                <p:submenu label="Message" expanded="true">
                     <p:menuitem action="#{navigationController.redirectToSendMessages()}" value="send message" />
                     <p:menuitem action="#{navigationController.redirectToViewMessages()}" value="view message (unread  #{internalMsgController.unreadMessagesNumber})" actionListener="#{internalMsgController.readUnreadMessages}"/>
                 </p:submenu>
-                <p:submenu label="Access Control" rendered="#{userController.hasRole('Admin') or userController.admin}">
+                <p:submenu label="Access Control" rendered="#{userController.hasRole('Admin') or userController.admin}" expanded="true">
                     <p:submenu label="User management">
                         <p:menuitem  value="Create user" action="#{navigationController.redirectToCreateUser()}" />
                         <p:menuitem  value="Assign user roles" action="#{navigationController.redirectToAssignUserRoles()}" />

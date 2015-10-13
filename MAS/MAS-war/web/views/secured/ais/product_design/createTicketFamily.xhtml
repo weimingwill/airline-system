@@ -13,48 +13,71 @@
     </ui:define >
 
     <ui:define name="content">
-        <p:panel id="addTicketFamily" header="Add New Ticket Family" style="margin-bottom:20px">
-            <h:form id="createTicketFamilyForm">
-                <p:messages autoUpdate="true"/>
-                <h:panelGrid columns="2" columnClasses="label, value">
+        <f:facet name="header">
+            Add New Ticket Family
+        </f:facet>
+        <h:form id="createTicketFamilyForm">
+            <p:messages autoUpdate="true"/>
+            <p:panelGrid columns="2">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Ticket Family Type"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText required="true" requiredMessage="Please enter new ticket family type" id="type" value="#{ticketFamilyController.type}"/>                
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                    
+                            <h:outputText value="Ticket Family"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText required="true" requiredMessage="Please enter new ticket family name" id="name" value="#{ticketFamilyController.name}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>    
+                            <p:outputLabel value="Select Cabin Class:" />
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="cabinclasslist" value="#{ticketFamilyController.cabinclassname}" style="width: 100%">
+                                <f:selectItems value="#{ticketFamilyController.allCabinClass}" var="cabinclass" itemLabel="#{cabinclass.name}" itemValue="#{cabinclass.name}" />
+                                <p:column>
+                                    <p:outputLabel id="selectlist" value="#{ticketFamilyController.cabinclassname}" />
+                                </p:column>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="Update value for each rule:" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:panelGrid columns="4">
+                    <p:outputLabel  value="Rule Name" styleClass="label"/>
+                    <p:outputLabel  value="Rule Value" styleClass="label"/>
+                    <p:outputLabel  value="Rule Name" styleClass="label"/>
+                    <p:outputLabel  value="Rule Value" styleClass="label"/>
 
-                    <h:outputText value="Type"/>
-                    <p:inputText required="true" requiredMessage="Please enter new ticket family type" id="type" value="#{ticketFamilyController.type}"/>                
-                    <h:outputText value="Name"/>
-                    <p:inputText required="true" requiredMessage="Please enter new ticket family name" id="name" value="#{ticketFamilyController.name}">
-
-                    </p:inputText>
-
-                </h:panelGrid>
-
-                <h:panelGroup>
-                    <p:column headerText="Select Cabin Class: ">
-                        <p:outputLabel value="Select Cabin Class:" />
-                        <p:selectOneListbox id="cabinclasslist" value="#{ticketFamilyController.cabinclassname}">
-
-
-                            <f:selectItems value="#{ticketFamilyController.allCabinClass}" var="cabinclass" itemLabel="#{cabinclass.name}" itemValue="#{cabinclass.name}" />
-                            <p:column>
-                                <h:outputText id = "selectlist" value="#{ticketFamilyController.cabinclassname}" />
-                            </p:column>
-                        </p:selectOneListbox>
-                    </p:column>
-                </h:panelGroup>
-
-
-                <p:outputLabel value="Update value for each rule:" />
-                <h:panelGrid columns="3">
                     <c:forEach var="ticketFamilyRule" items="#{ticketFamilyController.displayRuleList}">
-                        <p:outputLabel value="Rule Name: #{ticketFamilyRule.name} "/>
-                        <p:outputLabel value="Description: #{ticketFamilyRule.description}.   Please input rule value"/>
-                        <p:inputText required="true" requiredMessage="Please input rule value" value="#{ticketFamilyRule.ruleValue}"/>
-                    </c:forEach>
-                </h:panelGrid>
 
-                <p:commandButton action="#{ticketFamilyController.createTicketFamily()}" value="Create" update="messages"/> 
-            </h:form>
-        </p:panel>
-            
+                        <p:outputLabel id="rule-#{ticketFamilyRule.ruleId}" value="#{ticketFamilyRule.name}">
+                            <p:tooltip value="#{ticketFamilyRule.description}" for="rule-#{ticketFamilyRule.ruleId}"/>
+                        </p:outputLabel>
+
+                        <p:inputText required="true" requiredMessage="Please input rule value" value="#{ticketFamilyRule.ruleValue}"/>
+
+                    </c:forEach>
+                </p:panelGrid>
+            </p:panelGrid>
+
+            <p:separator/>
+            <p:commandButton action="#{ticketFamilyController.createTicketFamily()}" value="Create" update="messages"/> 
+        </h:form>
+
+
     </ui:define>
 
 </ui:composition>

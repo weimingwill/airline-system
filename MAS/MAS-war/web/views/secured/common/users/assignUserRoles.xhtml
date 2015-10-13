@@ -21,7 +21,7 @@
                             <p:ajax update="assignUserRolesPanel,selectRoles" listener="#{userController.onUserSelected()}"/>
                             <f:selectItems value="#{userController.allUsers}" var="user" itemLabel="#{user.username}" itemValue="#{user}" />
                             <p:column>
-                                <h:outputText value="#{user.username}" />
+                                <p:outputLabel value="#{user.username}" />
                             </p:column>
 
                         </p:selectOneListbox>
@@ -31,7 +31,7 @@
                         <p:outputLabel value="Select user roles:" />
 
                         <p:selectManyMenu id="assignUserRoles-roleList" value="#{userController.roleList}" converter="roleConverter"
-                                          var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:600px;">
+                                          var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:100%; min-width: 400px">
                             <f:selectItems value="#{roleController.allRoles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
 
                             <p:column>
@@ -41,7 +41,7 @@
                     </p:panel>
                 </p:panelGrid>
                 
-                <p:dataTable id="assignUserRolesPanel" value="#{userController.roleList}" var="role" emptyMessage="No role selected" class="userRoleDataTable">
+                <p:dataTable id="assignUserRolesPanel" value="#{userController.roleList}" var="role" emptyMessage="No role selected" class="userRoleDataTable" tableStyleClass="table-small-font">
                     <f:facet name="header">
                         Existing user roles
                     </f:facet>

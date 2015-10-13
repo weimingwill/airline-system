@@ -29,7 +29,7 @@
                     <p:panel header="Select permissions:" id="grantRolePermissionsPanel">
                         <p:outputLabel value=" " />
                         <p:selectManyMenu id="grantRolePermissions-permissionList" value="#{roleController.permissionList}" converter="permissionConverter"
-                                          var="permission" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:600px;">
+                                          var="permission" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:100%; min-width: 400px">
                             <f:selectItems value="#{permissionController.allPermissions}" var="permission" itemLabel="#{permission.permissionName}" itemValue="#{permission}"/>
 
                             <p:column>
@@ -39,7 +39,7 @@
                     </p:panel>
                 </p:panelGrid>
 
-                <p:dataTable id="selectPermissions" value="#{roleController.permissionList}" var="permission" class="userRoleDataTable" emptyMessage="No role selected">
+                <p:dataTable id="selectPermissions" value="#{roleController.permissionList}" var="permission" class="userRoleDataTable" emptyMessage="No role selected" tableStyleClass="table-small-font">
                     <f:facet name="header">
                         Existing Permissions
                     </f:facet>

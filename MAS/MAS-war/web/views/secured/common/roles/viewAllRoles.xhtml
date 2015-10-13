@@ -11,13 +11,15 @@
 
     <ui:define name="content">
         <p:panel header="View Roles">
-            <p:dataTable value="#{roleController.allRoles}" var="role">
+            <p:dataTable value="#{roleController.allRoles}" var="role" tableStyleClass="table-small-font"
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" rowKey="#{aircraft.aircraftId}" rows="5">
                 <p:column headerText="Role">
                     <p:outputLabel value="#{role.roleName}" />
                 </p:column>
 
                 <p:column headerText="Permission">
-                    <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                    <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission" tableStyleClass="table-small-font">
                         <p:column>
                             <p:outputLabel value="#{permission.permissionName}" />
                         </p:column>

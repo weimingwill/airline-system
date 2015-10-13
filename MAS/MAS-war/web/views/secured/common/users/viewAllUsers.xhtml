@@ -13,7 +13,9 @@
     <ui:define name="content">
         <h:form>
             <p:panel header="View Users">
-                <p:dataTable value="#{userController.allUsers}" var="user">
+                <p:dataTable value="#{userController.allUsers}" var="user" tableStyleClass="table-small-font"
+                             paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" rowKey="#{aircraft.aircraftId}" rows="3">
                     <p:column headerText="Username">
                         <p:outputLabel value="#{user.username}"/>
                     </p:column>
@@ -23,7 +25,7 @@
                     </p:column>
 
                     <p:column headerText="Role">
-                        <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role">
+                        <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role" tableStyleClass="table-small">
                             <p:column>
                                 <p:outputLabel value="#{role.roleName}" />
                             </p:column>
@@ -32,7 +34,7 @@
 
 
                     <p:column headerText="Permissions">
-                        <p:dataTable value="#{userController.getUserPermissions(user.username)}" var="permission">
+                        <p:dataTable value="#{userController.getUserPermissions(user.username)}" var="permission" tableStyleClass="table-small">
                             <p:column>
                                 <p:outputLabel value="#{permission.permissionName}" />
                             </p:column>

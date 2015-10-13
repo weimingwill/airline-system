@@ -30,7 +30,7 @@
                         <p:outputLabel value="#{userController.department}"/>                
                     </p:panelGrid>
 
-                    <p:dataTable value="#{userController.getUserRolesByUsername(username)}" var="role" emptyMessage="No role selected">
+                    <p:dataTable value="#{userController.getUserRolesByUsername(username)}" var="role" emptyMessage="No role selected" tableStyleClass="table-small-font">
                         <f:facet name="header">
                             Existing user roles
                         </f:facet>
@@ -39,7 +39,7 @@
                         </p:column>
 
                         <p:column headerText="Permisssions">
-                            <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                            <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission" tableStyleClass="table-small">
                                 <p:column>
                                     <p:outputLabel value="#{permission.permissionName}"/>
                                 </p:column>

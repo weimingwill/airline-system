@@ -65,6 +65,7 @@ public class FlightManager implements Serializable {
     private final int HOURS_PER_WEEK = 24 * 7;
     private final int DAYS_PER_WEEK = 7;
     private int weeklyFreq = 1;
+    private int unScheduled = 0;
 
     /**
      * Creates a new instance of FlightManager
@@ -130,15 +131,16 @@ public class FlightManager implements Serializable {
     }
     
     public String saveFlight() {
+        setUnScheduled(weeklyFreq);
         flight.setAircraftTypes(selectedModels);
         flight.setSpeedFraction(speedFraction);
         flight.setWeeklyFrequency(weeklyFreq);
-        flight.setNumOfUnscheduled(weeklyFreq);
+        flight.setNumOfUnscheduled(unScheduled);
         flight.setCompleted(Boolean.TRUE);
         flight.getReturnedFlight().setAircraftTypes(selectedModels);
         flight.getReturnedFlight().setSpeedFraction(speedFraction);
         flight.getReturnedFlight().setWeeklyFrequency(weeklyFreq);
-        flight.getReturnedFlight().setNumOfUnscheduled(weeklyFreq);
+        flight.getReturnedFlight().setNumOfUnscheduled(unScheduled);
         flight.getReturnedFlight().setCompleted(Boolean.TRUE);
         return updateFlight(flight);
     }
@@ -387,6 +389,20 @@ public class FlightManager implements Serializable {
      */
     public void setReturnedFlight(Flight returnedFlight) {
         this.returnedFlight = returnedFlight;
+    }
+
+    /**
+     * @return the unScheduled
+     */
+    public int getUnScheduled() {
+        return unScheduled;
+    }
+
+    /**
+     * @param unScheduled the unScheduled to set
+     */
+    public void setUnScheduled(int unScheduled) {
+        this.unScheduled = unScheduled;
     }
     
 }
