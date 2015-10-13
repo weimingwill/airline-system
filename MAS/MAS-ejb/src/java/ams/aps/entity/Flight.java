@@ -31,7 +31,7 @@ public class Flight implements Serializable {
     private String flightNo;
     private Integer weeklyFrequency;
     private Boolean completed;
-    private Boolean scheduled;
+    private Integer numOfUnscheduledFlight; //default value is weeklyFrequency
     private Boolean deleted;
     private Double speedFraction;
 
@@ -40,7 +40,7 @@ public class Flight implements Serializable {
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<AircraftType> aircraftTypes;
-    
+
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight returnedFlight;
 
@@ -129,14 +129,6 @@ public class Flight implements Serializable {
         this.aircraftTypes = aircraftTypes;
     }
 
-    public Boolean getScheduled() {
-        return scheduled;
-    }
-
-    public void setScheduled(Boolean scheduled) {
-        this.scheduled = scheduled;
-    }
-
     public Boolean getDeleted() {
         return deleted;
     }
@@ -171,5 +163,19 @@ public class Flight implements Serializable {
      */
     public void setReturnedFlight(Flight returnedFlight) {
         this.returnedFlight = returnedFlight;
+    }
+
+    /**
+     * @return the numOfUnscheduledFlight
+     */
+    public Integer getNumOfUnscheduledFlight() {
+        return numOfUnscheduledFlight;
+    }
+
+    /**
+     * @param numOfUnscheduledFlight the numOfUnscheduledFlight to set
+     */
+    public void setNumOfUnscheduledFlight(Integer numOfUnscheduledFlight) {
+        this.numOfUnscheduledFlight = numOfUnscheduledFlight;
     }
 }
