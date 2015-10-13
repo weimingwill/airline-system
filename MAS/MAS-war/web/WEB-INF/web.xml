@@ -31,7 +31,7 @@
     </context-param>
     <!--Default page-->
     <welcome-file-list>
-        <welcome-file>index.xhtml</welcome-file>
+        <welcome-file>views/secured/common/users/login.xhtml</welcome-file>
     </welcome-file-list>
     <!--Set SSL Protection-->
 <!--    <security-constraint>

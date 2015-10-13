@@ -16,24 +16,22 @@
     </h:head>
 
     <h:body>
-
         <me:CCNavigationMenu id="navigation-menu" />
         <p:growl id="messages" showDetail="true"/>
-        <!--<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />-->
-        <p:layout style="min-width:400px;min-height:500px;">
+        <p:layout style="min-height:100%;">
             <p:layoutUnit position="center">
                 <ui:insert name="content">Content</ui:insert>
             </p:layoutUnit>
         </p:layout>
-
-
-        <!--ui:remove>
-            <div id="bottom">
-                <ui:insert name="bottom">Powered by Kent Ridge Technology</ui:insert>
-            </div>
-        </ui:remove-->
-
-
     </h:body>
+
+    <style type="text/css">
+        .ui-layout-unit-content{
+            background-image: url('../../../../resources/images/homepage.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+    </style>
 
 </html>

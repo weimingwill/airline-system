@@ -54,7 +54,7 @@ public class LoginController implements Serializable {
 
     public String doLogin() throws NoSuchUsernameException, InvalidPasswordException, InterruptedException {
         CountdownHelper countdownHelper = new CountdownHelper(systemUserSession);
-//        boolean isHuman = captcha.validate(captchaCode);
+        boolean isHuman = captcha.validate(captchaCode);
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         try {
@@ -71,10 +71,10 @@ public class LoginController implements Serializable {
             return navigationController.redirectToLogin();
         }
 
-//        if (!isHuman) {
-//            msgController.addErrorMessage("Captcha code entered is incorrect");
-//            return navigationController.redirectToLogin();
-//        }
+        if (!isHuman) {
+            msgController.addErrorMessage("Captcha code entered is incorrect");
+            return navigationController.redirectToLogin();
+        }
         CryptographicHelper cryptographicHelper = new CryptographicHelper();
         try {
             systemUserSession.doLogin(username, cryptographicHelper.doMD5Hashing(password));

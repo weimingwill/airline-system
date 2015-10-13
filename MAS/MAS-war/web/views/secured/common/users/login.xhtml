@@ -7,32 +7,50 @@
                 xmlns:botDetect="botDetectFacelets">
 
     <ui:define name="content">
-        <h:form id="loginForm" prependId="false">      
-            <h:panelGrid columns="2">
-                <h:outputText value="Username"/>
-                <p:inputText required="true" requiredMessage="Please enter your username" id="username" value="#{loginController.username}"/>
-                <h:outputText value="Password"/>
-                <p:password required="true" requiredMessage="Please enter your password" id="password" value="#{loginController.password}"/>
-            </h:panelGrid>
-
-            <ui:remove>
-                <h:panelGrid>
-                    <p:outputLabel for="loginCaptcha" value="Retype the code from the picture:"/>
-                    <p:outputLabel value="" />
-                    <botDetect:jsfCaptcha id="loginCaptcha" binding="#{loginController.captcha}"/>
-                    <p:inputText id="captchaCodeTextBox" value="#{loginController.captchaCode}"/> 
-
-                </h:panelGrid>
-            </ui:remove>
-            <p:commandButton action="#{loginController.doLogin()}" value="Login" update="messages" ></p:commandButton>
-
-        </h:form>
-
-        <h:form id="resetPassword">
-            <h:panelGrid columns="2" columnClasses="label, value">
-                <h:outputText value="Forget password?"></h:outputText>
-                <h:commandLink action="#{navigationController.toPasswordResetSendEmail()}" value="reset password"></h:commandLink>
-            </h:panelGrid>
+        <h:form id="loginForm" prependId="false">    
+            <p:panel header="Login" style="max-width: 330px">
+                <p:panelGrid columnClasses="label, value">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Username"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText required="true" requiredMessage="Please enter your username" id="username" value="#{loginController.username}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Password"/>
+                        </p:column>
+                        <p:column>
+                            <p:password required="true" requiredMessage="Please enter your password" id="password" value="#{loginController.password}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="Forget password?"/>
+                            <h:commandLink action="#{navigationController.toPasswordResetSendEmail()}" value="Reset password"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel for="loginCaptcha" value="Retype the code from the picture:"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <botDetect:jsfCaptcha id="loginCaptcha" binding="#{loginController.captcha}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:inputText id="captchaCodeTextBox" value="#{loginController.captchaCode}"/> 
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:separator/>
+                <p:commandButton action="#{loginController.doLogin()}" value="Login" update="messages"></p:commandButton>
+            </p:panel>
         </h:form>
 
     </ui:define>

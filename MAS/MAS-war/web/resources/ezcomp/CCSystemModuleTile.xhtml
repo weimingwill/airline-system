@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="header"/>
+        <cc:attribute name="subheader"/>
+        <cc:attribute name='displayNum' default="false"/>
+        <cc:attribute name="numericValue"/>
+        <cc:attribute name='displayContBtn' default='false'/>
+        <cc:attribute name="icon"/>
+        <cc:attribute name="footer"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:panelGrid styleClass="tile">
+            <p:row>
+                <p:column colspan="2">
+                    <p:outputLabel value="#{cc.attrs.header}" styleClass="tileHeader"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="2">
+                    <p:outputLabel value="#{cc.attrs.subheader}" styleClass="tileSubheader"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="1">
+                    <p:outputLabel styleClass="#{cc.attrs.icon} tileIcon"/>
+                </p:column>
+                <p:column colspan="1" style="text-align: right;">
+                    <p:outputLabel value="#{cc.attrs.numericValue}" styleClass="tileValue" rendered="#{cc.attrs.displayNum}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="2" styleClass="tileFooterContainer">
+                    <p:outputLabel value="#{cc.attrs.footer}" styleClass="tileFooter"/>
+                    <p:commandButton value="Continue" rendered="#{cc.attrs.displayContBtn}" action="#{flightController.findFlightByFlightNo(cc.attrs.header)}"/>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+        </p:confirmDialog>
+        <style>
+            .tile{
+                width: 11.375rem;
+                height: 10.875rem;
+                display: inline-block;
+                overflow: hidden;
+                background: #007cc0;
+                border-radius: 4px;
+                border: 0.0625rem transparent dotted;
+                outline: none;
+                box-shadow: 0 0 0.25rem rgba(0,0,0,0.4);
+            }
+            .tile:hover{
+                /*box-shadow: 0 0 0 4px #65AEE4;*/
+                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.6);
+                border-radius: 5px;
+                cursor: hand;
+            }
+            .tileHeader{
+                color: #333333;
+                font-family: Arial,Helvetica,sans-serif;
+                font-size: 1rem !important;
+                font-weight: normal;
+            }
+            .tileSubheader{
+                font-family: Arial,Helvetica,sans-serif;
+                font-size: 0.875rem !important;
+                font-weight: normal;
+                color: #666666;
+                line-height: 18px;
+            }
+            .tileIcon{
+                font-size: 34px !important;
+                height: 34px;
+                width: 34px;
+                margin-top: .625rem;
+                color: #007cc0;
+            }
+            .tileValue{
+                color: #848f94;
+                font-size: 30px !important;
+            }
+            .tileFooter{
+                color: #666666;
+                font-size: 14px !important;
+                line-height: 14px;
+                height: 1rem;
+            }
+            .tileFooterContainer{
+                text-align: right;
+            }
+            .tile > tbody > tr{
+                border: inherit !important;
+            }
+        </style>
+    </cc:implementation>
+</html>

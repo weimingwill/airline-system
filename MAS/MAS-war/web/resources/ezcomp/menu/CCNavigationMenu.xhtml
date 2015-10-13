@@ -14,8 +14,9 @@
     <cc:implementation>
         <h:form id="navigationMenu">
             <p:menubar>
-                <p:menuitem value="Merline Airline" url="#{navigationController.redirectToHome()}"></p:menuitem>
-                
+                <p:menuitem value="Merline Airline"  url="#{navigationController.redirectToHome()}">
+                </p:menuitem>
+
                 <p:menuitem value="User Workspace" url="#{navigationController.redirectToWorkspace()}" icon="ui-icon-home"></p:menuitem>
                 <p:menuitem value="Airline Planning System" url="#{navigationController.redirectToAPS()}" rendered="#{loginController.loggedIn}" icon="ui-icon-pencil"></p:menuitem>
                 <p:menuitem value="Airline Inventory System" url="#{navigationController.redirectToAIS()}" rendered="#{loginController.loggedIn}" icon="ui-icon-clipboard"></p:menuitem>
