@@ -49,7 +49,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
     private EntityManager em;
 
     @Override
-    public void addPhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException {
+    public void addPhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, float daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException {
 
         List<PhaseDemand> pds = new ArrayList<>();
         pds = flightScheduleBookingClass.getPhaseDemands();
@@ -88,7 +88,6 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                 throw new ExistSuchCheckPointException(AisMsg.EXIST_SUCH_CHECK_POINT_ERROR);
             }
         }
-
     }
 
     @Override
@@ -168,9 +167,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                                 }
                             }
                         }
-
                     }
-
                 }
 
                 sum = sum + count;
@@ -191,10 +188,6 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                 System.out.println("m3");
 
                 FlightScheduleBookingClass fsbc = entityManager.find(FlightScheduleBookingClass.class, flightScheduleBookingClassTemp.getFlightScheduleBookingClassId());
-//                FlightScheduleBookingClass fsbc
-//                        = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleBookingClassTemp.getFlightSchedule().getFlightScheduleId(), flightScheduleBookingClassTemp.getBookingClass().getBookingClassId());
-//                System.out.println("m4");
-//               FlightScheduleBookingClass ffss = entityManager.find(FlightScheduleBookingClass.class, fsbc.getFlightScheduleBookingClassId());
 
                 sah.setSeatNoBefore(fsbc.getSeatQty());
                 System.out.println("Original seat no for the lower-price booking class is: " + sah.getSeatNoBefore());
@@ -232,40 +225,18 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
             }
 
         }
-        
-        entityManager.flush();
-        
-        int seatNoAfter = f.getSeatQty()+sum;
-        System.out.println("seatNoAfter is: "+seatNoAfter);
-        int seatNoBefore = f.getSeatQty();
-        System.out.println("SeatNoBefore is: "+ seatNoBefore);
-        createSeatReallocationRecord(seatNoBefore, seatNoAfter, f);
 
-//        //generate a seat reallocation record
-//        SeatAllocationHistory seatAllocationHistory = new SeatAllocationHistory();
-//        System.out.println("seat reallocation histroy is created");
-//        long yourmilliseconds = System.currentTimeMillis();
-//        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-//        Date date = new Date(yourmilliseconds);
-//        System.out.println(sdf.format(date));
-//        seatAllocationHistory.setAllocateTime(date);
-//        seatAllocationHistory.setSeatNoBefore(f.getSeatQty());
-//        f.setSeatQty(sum + f.getSeatQty());
-//        seatAllocationHistory.setSeatNoAfter(f.getSeatQty());
-//        entityManager.persist(seatAllocationHistory);
-//        System.out.println("seat reallocation histroy content is set");
-//
-//        //update the seat allocation history of a booking class
-//        List<SeatAllocationHistory> seatAllocationHistorys = f.getSeatAllocationHistory();
-//        seatAllocationHistorys.add(seatAllocationHistory);
-//        f.setSeatAllocationHistory(seatAllocationHistorys);
-//        entityManager.merge(f);
-//
-//        System.out.println("#seat reallocation history:" + f.getSeatAllocationHistory().size());
+        entityManager.flush();
+
+        int seatNoAfter = f.getSeatQty() + sum;
+        System.out.println("seatNoAfter is: " + seatNoAfter);
+        int seatNoBefore = f.getSeatQty();
+        System.out.println("SeatNoBefore is: " + seatNoBefore);
+        createSeatReallocationRecord(seatNoBefore, seatNoAfter, f);
     }
 
     private void createSeatReallocationRecord(int seatNoBefore, int seatNoAfter, FlightScheduleBookingClass f) {
-        
+
         //generate a seat reallocation record
         SeatAllocationHistory seatAllocationHistory = new SeatAllocationHistory();
         System.out.println("seat reallocation histroy is created");
@@ -288,10 +259,9 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         entityManager.merge(fsbc);
 
         System.out.println("#seat reallocation history:" + f.getSeatAllocationHistory().size());
-
     }
 
-// reallocate seats for all exsiting booking classes 
+    // reallocate seats for all exsiting booking classes 
     @Override
     public void yieldManagement() {
         int threadCount = 0;
@@ -300,16 +270,10 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
         List<FlightScheduleBookingClass> flightScheduleBookingClasses = getAllFlightScheduleBookingClasses();
         for (FlightScheduleBookingClass flightScheduleBookingClass : SafeHelper.emptyIfNull(flightScheduleBookingClasses)) {
-
-//            fsbc = flightScheduleBookingClass;
             YieldMgtRunnable y = new YieldMgtRunnable(flightScheduleBookingClass);
-
             threads[threadCount] = new Thread(y, "Thread" + threadCount);
-
             threads[threadCount].start();
-
             threadCount++;
-
         }
 
     }
@@ -318,22 +282,11 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
     public void reallocateSeatsforBookingClass(FlightScheduleBookingClass fsbc, float demandMean, float demandDev)
             throws NoSuchFlightScheduleBookingClassException {
 
-//        List<FlightScheduleBookingClass> flightScheduleBookingClasses = getAllFlightScheduleBookingClasses();
         List<FlightScheduleBookingClass> fsbcs
                 = flightScheduleSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(fsbc.getFlightSchedule().getFlightScheduleId(), fsbc.getBookingClass().getTicketFamily().getTicketFamilyId());
         fsbcs.remove(fsbc);
         List<FlightScheduleBookingClass> restFlightScheduleBookingClasses = fsbcs;
-//        for (FlightScheduleBookingClass fsbc : flightScheduleBookingClasses) {
-//            if (fsbc.getFlightScheduleBookingClassId().getFlightScheduleId() == flightScheduleBookingClass.getFlightScheduleBookingClassId().getFlightScheduleId()) {
-//                if (fsbc.getFlightScheduleBookingClassId().getBookingClassId() != flightScheduleBookingClass.getFlightScheduleBookingClassId().getBookingClassId()) {
-//                    if (fsbc.getDeleted() == false) {
-//                        restFlightScheduleBookingClasses.add(fsbc);
-//
-//                    }
-//
-//                }
-//            }
-//        }
+
         System.out.println("There are " + restFlightScheduleBookingClasses.size() + " more flight schedule booking class for the schedule flight.");
 
         reallocateBookingClassSeats(restFlightScheduleBookingClasses, fsbc, demandMean, demandDev);
@@ -388,7 +341,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
             //sort phase demand in descending order according to DaysBeforeDeparture 
             Collections.sort(phaseDemands, new Comparator<PhaseDemand>() {
                 public int compare(PhaseDemand pd1, PhaseDemand pd2) {
-                    return pd2.getDaysBeforeDeparture() - pd1.getDaysBeforeDeparture();
+                    return Integer.parseInt(pd2.getDaysBeforeDeparture() - pd1.getDaysBeforeDeparture());
                 }
             });
 
@@ -403,7 +356,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
             for (Date date = (Date) start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = (Date) start.getTime()) {
                 int pdcount = 0;
 
-                int daysBefore = phaseDemands.get(pdcount).getDaysBeforeDeparture();
+                flaot daysBefore = phaseDemands.get(pdcount).getDaysBeforeDeparture();
 
                 Calendar checkPoint = new GregorianCalendar();
                 checkPoint.setTime(endDate);
@@ -423,7 +376,6 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
                     restFlightScheduleBookingClasses.remove(f);
 
-//                    reallocateBookingClassSeats(restFlightScheduleBookingClasses, f, demandMean, demandDev);
                     if (pdcount < checkPoints) {
                         pdcount++;
                     }
