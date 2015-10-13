@@ -21,6 +21,7 @@
                             <p:selectOneMenu id="selectAircraft" value="#{productDesignController.selectedAircraft}" converter="aircraftConverter" panelStyle="width:180px"
                                              effect="fade" var="aircraft" style="width:160px" filter="true" filterMatchMode="startsWith">
                                 <p:ajax listener="#{productDesignController.onAircraftChange()}" update="selectTicketFamily, ticketFamilyRule" />
+
                                 <f:selectItems value="#{productDesignController.scheduledAircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}" itemValue="#{aircraft}" />
                                 <p:column>
                                     <h:outputText value="#{aircraft.aircraftType.typeCode}" />

@@ -13,9 +13,9 @@
     <ui:define name="content">
         <h:form>
         <p:dataTable value="#{seatReallocationController.allSeatReAllocationHistorys}" var="seatAllocationHistory">
-            <p:column headerText="Reallocate date">
+            <p:column headerText="Reallocate time">
                 <p:outputLabel value="#{seatAllocationHistory.allocateTime}">
-                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" />
+                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" timeZone="GMT+8"/>
                 </p:outputLabel>
             </p:column>
             

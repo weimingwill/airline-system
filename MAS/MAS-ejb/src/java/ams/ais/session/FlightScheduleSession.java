@@ -38,6 +38,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.sound.midi.SysexMessage;
 import mas.util.helper.SafeHelper;
 
 /**
@@ -356,10 +357,15 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
     @Override
     public double calcFlightFuelCostPerRoundTrip(Long flightScheduleId) {
         try {
+            System.out.println("M1");
             FlightSchedule flightSchedule = getFlightScheduleById(flightScheduleId);
+            System.out.println("M2");
             Airport departureAirport = flightSchedule.getLeg().getDepartAirport();
+            System.out.println("M3");
             Airport arriveAirport = flightSchedule.getLeg().getArrivalAirport();
+            System.out.println("M4");
             double distance = routePlanningSession.distance(departureAirport, arriveAirport);
+            System.out.println("M5");
             return distance * aircraftSession.calcAircraftFuelCostPerKm(getFlightScheduleAircraft(flightScheduleId).getAircraftId());
         } catch (NoSuchFlightSchedulException | NoSuchAircraftException e) {
             return 0;

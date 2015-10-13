@@ -220,6 +220,7 @@ public class BookingClassSession implements BookingClassSessionLocal {
             }
         }
     }
+    
 
     @Override
     public void updateBookingClass(Long bookingClassId, String bookingClassName) throws NoSuchBookingClassException, ExistSuchBookingClassNameException {
