@@ -7,7 +7,6 @@ package ams.aps.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
 import java.io.Serializable;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,12 +35,14 @@ public class FlightSchedule implements Serializable {
     private String departGate;
     @Temporal(value = TemporalType.DATE)
     private Date departDate;
-    private Time departTime;
+    @Temporal(value = TemporalType.TIME)
+    private Date departTime;
     private String arrivalTerminal;
     private String arrivalGate;
     @Temporal(value = TemporalType.DATE)
     private Date arrivalDate;
-    private Time arrivalTime;
+    @Temporal(value = TemporalType.TIME)
+    private Date arrivalTime;
     private Boolean deleted;
     private Boolean completed;
     private Boolean seatAllocated;
@@ -120,20 +121,6 @@ public class FlightSchedule implements Serializable {
     }
 
     /**
-     * @return the departTime
-     */
-    public Time getDepartTime() {
-        return departTime;
-    }
-
-    /**
-     * @param departTime the departTime to set
-     */
-    public void setDepartTime(Time departTime) {
-        this.departTime = departTime;
-    }
-
-    /**
      * @return the arrivalTerminal
      */
     public String getArrivalTerminal() {
@@ -159,20 +146,6 @@ public class FlightSchedule implements Serializable {
      */
     public void setArrivalGate(String arrivalGate) {
         this.arrivalGate = arrivalGate;
-    }
-
-    /**
-     * @return the arrivalTime
-     */
-    public Time getArrivalTime() {
-        return arrivalTime;
-    }
-
-    /**
-     * @param arrivalTime the arrivalTime to set
-     */
-    public void setArrivalTime(Time arrivalTime) {
-        this.arrivalTime = arrivalTime;
     }
 
     public Date getDepartDate() {
@@ -280,4 +253,22 @@ public class FlightSchedule implements Serializable {
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
     }
+
+    public Date getDepartTime() {
+        return departTime;
+    }
+
+    public void setDepartTime(Date departTime) {
+        this.departTime = departTime;
+    }
+
+    public Date getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(Date arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+    
+    
 }
