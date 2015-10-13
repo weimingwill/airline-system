@@ -11,8 +11,9 @@
             Plan a returned route
         </f:facet>
         <h:form id="myForm">
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
             <h:panelGrid columns="5" style="margin-bottom:10px;alignment-adjust: central" cellpadding="5">
-
+                
                 <p:outputLabel for="origin" value="Origin:" />
                 <p:selectOneMenu id="origin" value="#{routeExistenceController.origin}" converter="airportConverter"  style="width:200px" required="true" requiredMessage="Field required" filter="true" filterMatchMode="contains">
                     <p:ajax listener="#{routeExistenceController.onOriginChange()}" update="destination" />
@@ -30,9 +31,9 @@
 
             </h:panelGrid>
 
-            <p:commandButton update="myForm:myDialog" value="Plan the route" style="left:20px" actionListener="#{routeExistenceController.checkRouteExistence}" oncomplete="PF('confirmDlg').show()"/>
+            <p:commandButton value="Plan the route" style="left:20px" actionListener="#{routeExistenceController.checkRouteExistence}"/>
 
-            <p:dialog id="myDialog" header="#{routeExistenceController.headMsg}" widgetVar="confirmDlg" showEffect="fade" hideEffect="fade">
+            <p:dialog id="confirmDlg" header="#{routeExistenceController.headMsg}" widgetVar="confirmDlg" showEffect="fade" hideEffect="fade">
                 <p:dataTable var="routeList" value="#{routeExistenceController.routeDisplayList}" style="width:550px" rows="5" paginator="true">
 
                     <p:column headerText="Id" sortBy="#{routeList.id}">

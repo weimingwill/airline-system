@@ -70,6 +70,7 @@ public class AirportController implements Serializable {
 
         newCountry.setIsoCode(isoCode.toUpperCase());
         newCountry.setCountryName(capitalize(countryName));
+
         if (routePlanningSession.checkISO(newCountry.getIsoCode(), newCountry.getCountryName())) {
             if (routePlanningSession.addCountry(newCountry.getIsoCode(), newCountry.getCountryName())) {
                 msgController.addMessage("Add country succesfully!");

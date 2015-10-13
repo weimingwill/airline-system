@@ -104,14 +104,12 @@ public class RoutePlanningController implements Serializable {
 
         List<Airport> stops = routePlanningSession.getShortestHSRoute(origin, destination);
         if (stops.isEmpty()) {
-            setHs(od);
             System.out.println("RoutePlanningController: planHSRoute(): planning as OD");
         } else {
             setHs(routePlanningSession.compareRoutePreparation("Pass by hub", stops));
             System.out.println("RoutePlanningController: planHSRoute(): planning successful");
+            routeList.add(hs);
         }
-
-        routeList.add(hs);
     }
 
     public void custRoute() {
