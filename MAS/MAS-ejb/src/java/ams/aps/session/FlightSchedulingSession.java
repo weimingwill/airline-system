@@ -15,10 +15,13 @@ import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
 import ams.aps.util.exception.NoMoreUnscheduledFlightException;
+import ams.aps.util.exception.NoSelectAircraftException;
+import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightException;
 import ams.aps.util.exception.NoSuchRouteException;
 import ams.aps.util.helper.ApsMsg;
 import ams.aps.util.exception.ObjectDoesNotExistException;
+import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteHelper;
 import java.util.ArrayList;
@@ -312,7 +315,11 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         for (Route route : getRoutesByDeptAirport(deptAirport)) {
             for (String aircraftTypeCode : aircraftTypeCodes) {
                 AircraftType aircraftType = fleetPlanningSession.getAircraftTypeByCode(aircraftTypeCode);
-                hs.addAll(getUnscheduledFlightsByRouteAndAircraftType(route, aircraftType));
+                for (Flight flight : getUnscheduledFlightsByRouteAndAircraftType(route, aircraftType)) {
+                    hs.add(flight);
+                    hs.add(flight.getReturnedFlight());
+                }
+//                hs.addAll(getUnscheduledFlightsByRouteAndAircraftType(route, aircraftType));
             }
         }
         flights.addAll(hs);
@@ -364,14 +371,27 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
 
     @Override
     public void createFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrivalDate)
-            throws NoSuchFlightException, NoMoreUnscheduledFlightException {
+            throws NoSuchFlightException, NoMoreUnscheduledFlightException, NoSelectAircraftException {
+        System.out.println("create flight in process");
         Flight flight = getFlightByFlightNo(flightNo);
-        verifyUnscheduledFlightNumber(flight);
+        deptDate = setFlightSchedule(flight, aircraft, deptDate);
+        verifyUnscheduledFlightNumber(flight.getReturnedFlight());
+        setFlightSchedule(flight.getReturnedFlight(), aircraft, deptDate);
+    }
+
+    public Date setFlightSchedule(Flight flight, Aircraft selectedAircraft, Date deptDate) 
+            throws NoMoreUnscheduledFlightException, NoSelectAircraftException{
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
+        calcFlightDuration(getModelWithMinMachNo(flight.getAircraftTypes()), routeHelper, flight.getSpeedFraction());
         List<LegHelper> legHelpers = routeHelper.getLegs();
         Date dept = deptDate;
         Date arrival;
+        Aircraft aircraft = em.find(Aircraft.class, selectedAircraft.getAircraftId());
+        Flight f = em.find(Flight.class, flight.getId());
+        if (aircraft == null) {
+            throw new NoSelectAircraftException(ApsMsg.NO_SELECT_AIRCRAFT_ERROR);
+        }
         for (LegHelper legHelper : legHelpers) {
             arrival = addHourToDate(dept, legHelper.getFlyingTime());
             Leg leg = em.find(Leg.class, legHelper.getLegId());
@@ -381,7 +401,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             flightSchedule.setDepartTime(dept);
             flightSchedule.setArrivalDate(arrival);
             flightSchedule.setArrivalTime(arrival);
-            flightSchedule.setFlight(flight);
+            flightSchedule.setFlight(f);
             flightSchedule.setAircraft(aircraft);
             flightSchedule.setLeg(leg);
             flightSchedule.setDepartTerminal("");
@@ -393,12 +413,14 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             flightSchedule.setDeleted(false);
             flightSchedule.setCompleted(false);
             em.persist(flightSchedule);
+//            em.flush();
             dept = addHourToDate(arrival, legHelper.getTurnaroundTime());
         }
-        completeOneFlightSchedule(flight);
+        completeOneFlightSchedule(flight);     
+        return dept;
     }
-
-    public void completeOneFlightSchedule(Flight flight) throws NoMoreUnscheduledFlightException{
+    
+    public void completeOneFlightSchedule(Flight flight) throws NoMoreUnscheduledFlightException {
         if (flight.getNumOfUnscheduled() <= 0) {
             throw new NoMoreUnscheduledFlightException(ApsMsg.NO_MORE_UNSCHEDULED_FLIGHT_ERROR);
         } else {
@@ -408,9 +430,12 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
     }
 
+    @Override
     public Date addHourToDate(Date start, double hours) {
         long time = start.getTime();
         long minutes = (long) (hours * 60);
+        Date newDate = new Date(time + (minutes * ONE_MINUTE_IN_MILLIS));
+
         return new Date(time + (minutes * ONE_MINUTE_IN_MILLIS));
     }
 
@@ -439,4 +464,34 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return outputFlights;
     }
 
+    @Override
+    public Aircraft getAircraftByTailNo(String tailNo) throws NoSuchAircraftException{
+        Query query = em.createQuery("SELECT a FROM Aircraft a WHERE a.tailNo = :inTailNo AND a.status <> :inRetired AND a.status <> :inCrashed");
+        query.setParameter("inTailNo", tailNo);
+        query.setParameter("inRetired", AircraftStatus.RETIRED);
+        query.setParameter("inCrashed", AircraftStatus.CRASHED);
+        Aircraft aircraft = new Aircraft();
+        try {
+           aircraft = (Aircraft)query.getSingleResult();
+        } catch (NoResultException e) {
+            throw new NoSuchAircraftException(ApsMsg.NO_SUCH_AIRCRAFT_ERROR);
+        }
+        return aircraft;
+    }
+
+    @Override
+    public List<FlightSchedule> getFlightSchedulesByTailNoAndTime(String tailNo, Date startDate, Date endDate) {
+        Query query = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.aircraft.tailNo = :inTailNo AND fs.deleted = FALSE AND fs.departDate BETWEEN :inStartDate AND :inEndDate");
+        query.setParameter("inTailNo", tailNo);
+        query.setParameter("inStartDate", startDate);
+        query.setParameter("inEndDate", endDate);
+        
+        List<FlightSchedule> flightSchedules;
+        try {
+            flightSchedules = (List<FlightSchedule>)query.getResultList();
+        } catch (NoResultException e) {
+            flightSchedules = new ArrayList<>();
+        }
+        return flightSchedules;
+    }
 }

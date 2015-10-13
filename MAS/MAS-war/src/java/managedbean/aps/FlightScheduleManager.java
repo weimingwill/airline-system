@@ -9,10 +9,14 @@ import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftType;
 import ams.aps.entity.Airport;
 import ams.aps.entity.Flight;
+import ams.aps.entity.FlightSchedule;
 import ams.aps.entity.Route;
 import ams.aps.session.FleetPlanningSessionLocal;
 import ams.aps.session.FlightSchedulingSessionLocal;
 import ams.aps.session.RoutePlanningSessionLocal;
+import ams.aps.util.exception.NoMoreUnscheduledFlightException;
+import ams.aps.util.exception.NoSelectAircraftException;
+import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightException;
 import ams.aps.util.exception.NoSuchRouteException;
 import ams.aps.util.helper.RouteHelper;
@@ -76,6 +80,14 @@ public class FlightScheduleManager implements Serializable {
     private String arriveAirport = new String();
     private ScheduleModel eventModel;
     private ScheduleEvent event = new DefaultScheduleEvent();
+    private Date calendarMinDate;
+    private Date calendarMaxDate;
+    private int fixedEndHour;
+    private int fixedEndMinute;
+    private Date fixedEndDate;
+    private double routeDuration;
+
+    private List<FlightSchedule> flightSchedules;
 
     /**
      * Creates a new instance of FlightScheduleManager
@@ -92,6 +104,7 @@ public class FlightScheduleManager implements Serializable {
     public FlightScheduleManager() {
     }
 
+    //Initialize
     public void initializeAircraftTypeFamilys() {
         aircraftTypeFamilys = flightSchedulingSession.getUnscheduledFlightAircraftTypeFamilys();
     }
@@ -125,13 +138,10 @@ public class FlightScheduleManager implements Serializable {
         }
     }
 
-    public void resetFilters() {
-        unscheduledFlights = new ArrayList<>();
-    }
-
+    //Select Flight
     public void applyFilters() {
         try {
-            unscheduledFlights = flightSchedulingSession.getUnscheduledFlights(selectedAirport, aircraftTypeCodes);
+            setUnscheduledFlights();
             for (String aircraftTypeCode : aircraftTypeCodes) {
                 AircraftType aircraftType = fleetPlanningSession.getAircraftTypeByCode(aircraftTypeCode);
                 SelectItemGroup group = new SelectItemGroup(aircraftType.getTypeFamily());
@@ -152,6 +162,14 @@ public class FlightScheduleManager implements Serializable {
         }
     }
 
+    public void setUnscheduledFlights() throws NoSuchFlightException, NoSuchRouteException {
+        unscheduledFlights = flightSchedulingSession.getUnscheduledFlights(selectedAirport, aircraftTypeCodes);
+    }
+
+    public void resetFilters() {
+        unscheduledFlights = new ArrayList<>();
+    }
+
     public RouteHelper getRouteHelper(Flight flight) {
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
@@ -159,12 +177,41 @@ public class FlightScheduleManager implements Serializable {
         flightSchedulingSession.calcFlightDuration(aircraftType, routeHelper, flight.getSpeedFraction());
         return routeHelper;
     }
-    
+
+    //Schedule flight
     public void initiliazeCalendarDate() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.YEAR, 1);
         selectedDate = calendar.getTime();
+        calcCalendarMinDate();
+        calcCalendarMaxDate();
+    }
+
+    public void calcCalendarMinDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(selectedDate);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        calendarMinDate = calendar.getTime();
+        System.out.println("Min Date: " + calendarMinDate);
+    }
+
+    public void calcCalendarMaxDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(selectedDate);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        calendar.add(Calendar.DATE, 7);
+        calendarMaxDate = calendar.getTime();
+        System.out.println("Max Date: " + calendarMaxDate);
+    }
+
+    public void calcFixedEndTime() {
+        Date newDate = flightSchedulingSession.addHourToDate(event.getStartDate(), routeDuration * 2);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(newDate);
+        fixedEndDate = calendar.getTime();
+        fixedEndHour = calendar.get(Calendar.HOUR_OF_DAY);
+        fixedEndMinute = calendar.get(Calendar.MINUTE);
     }
 
     public Date getInitialDate() {
@@ -174,40 +221,67 @@ public class FlightScheduleManager implements Serializable {
         return calendar.getTime();
     }
 
-    private Calendar today() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
+    public void onCalendarDateChange() {
+        calcCalendarMinDate();
+        calcCalendarMaxDate();
+    }
 
-        return calendar;
+    public void onStartTimeChange() {
+        System.out.println("Date: " + event.getStartDate() + " - " + event.getEndDate());
+        calcFixedEndTime();
+    }
+
+    public void onAircraftChange() {
+        flightSchedules = flightSchedulingSession.getFlightSchedulesByTailNoAndTime(selectedAircraftTailNo, calendarMinDate, calendarMaxDate);
+        for (FlightSchedule flightSchedule : flightSchedules) {
+            Flight flight = flightSchedule.getFlight();
+            RouteHelper routeHelper = new RouteHelper();
+            if (routeHelper.getOrigin().getIsHub()) {
+                routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
+                flightSchedulingSession.calcFlightDuration(flightSchedulingSession.getModelWithMinMachNo(flight.getAircraftTypes()), routeHelper, flight.getSpeedFraction());
+                Date deptDate = flightSchedule.getDepartDate();
+                Date arriveDate = flightSchedulingSession.addHourToDate(deptDate, routeHelper.getTotalDuration());
+                eventModel.clear();
+                eventModel.addEvent(new DefaultScheduleEvent(flight.getFlightNo() + "/" + flight.getReturnedFlight().getFlightNo(), deptDate, arriveDate));
+            }
+        }
     }
 
     public void onFlightDrop(DragDropEvent ddEvent) {
+        System.out.println("Dropped Flight: ");
         droppedFlight = ((Flight) ddEvent.getData());
-        Date date = new Date();
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(droppedFlight.getRoute(), routeHelper);
+        if (!routeHelper.getOrigin().getIsHub()) {
+            droppedFlight = droppedFlight.getReturnedFlight();
+        }
+        flightSchedulingSession.calcFlightDuration(flightSchedulingSession.getModelWithMinMachNo(droppedFlight.getAircraftTypes()), routeHelper, droppedFlight.getSpeedFraction());
         System.out.println("Dropped Flight: " + droppedFlight.getFlightNo());
         deptAirport = routeHelper.getOrigin().getAirportName();
         arriveAirport = routeHelper.getDestination().getAirportName();
         System.out.println("Airports: " + deptAirport + " - " + arriveAirport);
+        routeDuration = routeHelper.getTotalDuration();
 
         //Need to fix time duration
-        event = new DefaultScheduleEvent(droppedFlight.getFlightNo(), date, date);
+        event = new DefaultScheduleEvent(droppedFlight.getFlightNo() + "/" + droppedFlight.getReturnedFlight().getFlightNo(), selectedDate, flightSchedulingSession.addHourToDate(selectedDate, routeDuration * 2));
     }
 
     public void addEvent(ActionEvent actionEvent) {
+        System.out.println("Dropped Flight:" + droppedFlight);
         if (event.getId() == null) {
             eventModel.addEvent(event);
-//            try {
-//                flightSchedulingSession.createFlightSchedule(event.getTitle(), selectedAircraft, event.getStartDate(), event.getEndDate());
-//                msgController.addMessage("Add flight schedule succesffuly");
-//            } catch (NoSuchFlightException | NoMoreUnscheduledFlightException e) {
-//                msgController.addErrorMessage(e.getMessage());
-//            }
+            try {
+                selectedAircraft = flightSchedulingSession.getAircraftByTailNo(selectedAircraftTailNo);
+                String flightNo = event.getTitle().split("/")[0];
+                flightSchedulingSession.createFlightSchedule(flightNo, selectedAircraft, event.getStartDate(), event.getEndDate());
+                msgController.addMessage("Add flight schedule succesffuly");
+                setUnscheduledFlights();
+            } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException | NoSuchAircraftException | NoSuchRouteException e) {
+                msgController.addErrorMessage(e.getMessage());
+            }
         } else {
             eventModel.updateEvent(event);
         }
-
         event = new DefaultScheduleEvent();
     }
 
@@ -223,7 +297,10 @@ public class FlightScheduleManager implements Serializable {
         msgController.addMessage("Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
     }
 
-//Getter and Setter
+    /**
+     * Getter and Setter
+     *
+     */
     public List<String> getAircraftTypeFamilys() {
         return aircraftTypeFamilys;
     }
@@ -356,6 +433,51 @@ public class FlightScheduleManager implements Serializable {
         this.selectedAircraftTailNo = selectedAircraftTailNo;
     }
 
-  
-    
+    public Date getCalendarMinDate() {
+        return calendarMinDate;
+    }
+
+    public void setCalendarMinDate(Date calendarMinDate) {
+        this.calendarMinDate = calendarMinDate;
+    }
+
+    public Date getCalendarMaxDate() {
+        return calendarMaxDate;
+    }
+
+    public void setCalendarMaxDate(Date calendarMaxDate) {
+        this.calendarMaxDate = calendarMaxDate;
+    }
+
+    public int getFixedEndHour() {
+        return fixedEndHour;
+    }
+
+    public void setFixedEndHour(int fixedEndHour) {
+        this.fixedEndHour = fixedEndHour;
+    }
+
+    public int getFixedEndMinute() {
+        return fixedEndMinute;
+    }
+
+    public void setFixedEndMinute(int fixedEndMinute) {
+        this.fixedEndMinute = fixedEndMinute;
+    }
+
+    public Date getFixedEndDate() {
+        return fixedEndDate;
+    }
+
+    public void setFixedEndDate(Date fixedEndDate) {
+        this.fixedEndDate = fixedEndDate;
+    }
+
+    public List<FlightSchedule> getFlightSchedules() {
+        return flightSchedules;
+    }
+
+    public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
+        this.flightSchedules = flightSchedules;
+    }
 }

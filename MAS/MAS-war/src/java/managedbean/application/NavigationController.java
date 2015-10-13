@@ -358,6 +358,14 @@ public class NavigationController implements Serializable {
         return "/views/secured/aps/flight_schedule/scheduleFlight.xhtml";
     }
 
+    public String redirectToScheduleFlight() {
+        return "/views/secured/aps/flight_schedule/scheduleFlight.xhtml" + REDIRECT;
+    }
+
+    public String redirectToConfirmScheduleFlight() {
+        return "/views/secured/aps/flight_schedule/confirmFlightSchedule.xhtml" + REDIRECT;
+    }
+
     public String toConfirmScheduleFlight() {
         return "/views/secured/aps/flight_schedule/confirmFlightSchedule.xhtml";
     }

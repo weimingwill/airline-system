@@ -28,21 +28,21 @@
                 <p:row>
                     <p:column>
                         <p:panel header="Weekly Frequency: #{flight.weeklyFrequency} Unscheduled Flights: #{flight.numOfUnscheduled}">
-                            <c:forEach begin="1" end="2">
 
                             <ez:CCFlightTile aircraft="#{flight.flightNo}" index="#{index}"
                                              deptAirport="#{flightScheduleManager.getRouteHelper(flight).getOrigin().icaoCode}"
                                              deptAirportName="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}"
                                              arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
                                              arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
-                                             flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" />                                
+                                             flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" />        
+                            <ui:remove>
                             <ez:CCFlightTile aircraft="#{flight.returnedFlight.flightNo}" index="#{index}r"
                                              deptAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().icaoCode}"
                                              deptAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().airportName}"
                                              arriveAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().icaoCode}"
                                              arriveAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().airportName}"
                                              flyingHours="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getTotalDuration()}"  />
-                            </c:forEach>
+                            </ui:remove>
                         </p:panel>
                     </p:column>
                 </p:row>

@@ -118,6 +118,30 @@ tr.hide{
     margin-bottom: 10px;
 }
 
+.ui-steps.flightScheduleMenu {
+    margin-bottom: 50px;
+    margin-top: 10px;
+}
+
+.ui-steps.flightScheduleMenu .ui-steps-item{
+    width: 33%;
+}
+
+.ui-steps.flightScheduleMenu .ui-steps-item .ui-menuitem-link {
+    height: 10px;
+    padding: 0 1em;
+}
+
+.ui-steps.flightScheduleMenu .ui-steps-item .ui-steps-number {
+    background-color: #0081c2;
+    color: #FFFFFF;
+    display: inline-block;
+    width: 30px;
+    border-radius: 10px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
 .cabinClassHelperDlg{
     /*    top: 10% !important;*/
 }
