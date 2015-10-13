@@ -51,4 +51,10 @@ public class MsgController {
     public void fatal(String msg) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Fatal!", msg));
     }
+
+    public void sendReminder(String summary) {
+        FacesMessage message = new FacesMessage("Reminder", summary);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
 }

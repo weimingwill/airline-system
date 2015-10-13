@@ -12,8 +12,10 @@ import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
 import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.session.SeatReallocationSessionLocal;
 import ams.ais.util.exception.DuplicatePriceException;
 import ams.ais.util.exception.NeedBookingClassException;
+import ams.ais.util.exception.TimeToReallocateException;
 import ams.ais.util.exception.WrongSumOfBookingClassSeatQtyException;
 import ams.ais.util.exception.WrongSumOfTicketFamilySeatQtyException;
 import ams.ais.util.helper.BookingClassHelper;
@@ -23,9 +25,13 @@ import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
@@ -46,11 +52,16 @@ public class BookingClassController implements Serializable {
     private MsgController msgController;
     @Inject
     private NavigationController navigationController;
+    @Inject
+    private SeatReallocationController seatReallocationController;
 
     @EJB
     private BookingClassSessionLocal bookingClassSession;
     @EJB
     private FlightScheduleSessionLocal flightScheduleSession;
+
+    @EJB
+    private SeatReallocationSessionLocal seatReallocationSession;
 
     private String bookingClassName;
     private Long flightScheduleId;
@@ -96,6 +107,7 @@ public class BookingClassController implements Serializable {
         } catch (ExistSuchBookingClassNameException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
+
         return navigationController.redirectToCreateBookingClass();
     }
 
@@ -114,6 +126,7 @@ public class BookingClassController implements Serializable {
         try {
             flightScheduleSession.assignFlightScheduleBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
             msgController.addMessage("assign flight schedule booking class succesffully!");
+
             return navigationController.redirectToViewFlightSchedule();
         } catch (NoSuchFlightSchedulException | NoSuchFlightScheduleBookingClassException | NeedBookingClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -135,12 +148,39 @@ public class BookingClassController implements Serializable {
     public String priceBookingClasses() {
         try {
             bookingClassSession.priceBookingClasses(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers, priceMap);
+            List<Date> checkPoints = new ArrayList<>();
+
+            checkPoints = seatReallocationSession.yieldManagement(flightScheduleId);
+            sendYieldMgtReminder(checkPoints);
+
             msgController.addMessage("Price booking class succesfully!");
         } catch (NoSuchFlightScheduleBookingClassException | DuplicatePriceException ex) {
             msgController.addErrorMessage(ex.getMessage());
             return "";
         }
+
         return navigationController.redirectToViewFlightSchedule();
+    }
+
+    private void sendYieldMgtReminder(List<Date> checkDates) {
+        Timer[] timers = new Timer[checkDates.size()];
+        int count = 0;
+        for (Date date : checkDates) {
+            timers[count] = new Timer();
+            timers[count].schedule(new YieldMgtTask(), date);
+            count++;
+
+        }
+
+    }
+
+    class YieldMgtTask extends TimerTask {
+
+        @Override
+        public void run() {
+            msgController.sendReminder("It's time to perform yield management for flight schedule " + flightScheduleId);
+        }
+
     }
 
     public void onPriceCoefficientChange(AjaxBehaviorEvent event) {
