@@ -18,34 +18,35 @@
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <p:dataGrid columns="4" layout="grid" styleClass="unscheduledFlight" value="#{flightScheduleManager.unscheduledFlights}"
-                    rows="8" paginator="true" rowIndexVar="index" var="flight"
+                    rows="8" paginator="true" rowIndexVar="index" var="flight" id="unscheduledFlights"
                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                     rowsPerPageTemplate="4, 8" style="text-align: center">
             <f:facet name="header">
                 Selected unscheduled flight
             </f:facet>
             <p:panelGrid styleClass="unscheduledFlightPanelGrid" style="width:100%;">
-                <!--<c:forEach items="{flightScheduleManager.unscheduledFlights}" var="flight" varStatus="index">-->
                 <p:row>
                     <p:column>
-                        <p:panel header="Weekly Frequency: #{flightScheduleManager.unscheduledFlights.get(index).weeklyFrequency} Unscheduled Flights: 3">
-                        <ez:CCFlightTile aircraft="#{flight.flightNo}" index="#{index}"
-                                         deptAirport="#{flightScheduleManager.getRouteHelper(flight).getOrigin().icaoCode}"
-                                         deptAirportName="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}"
-                                         arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
-                                         arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
-                                         flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" />                                
-                        <ez:CCFlightTile aircraft="#{flight.returnedFlight.flightNo}" index="#{index}r"
-                                         deptAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().icaoCode}"
-                                         deptAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().airportName}"
-                                         arriveAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().icaoCode}"
-                                         arriveAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().airportName}"
-                                         flyingHours="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getTotalDuration()}"  />
-                    </p:panel>
+                        <p:panel header="Weekly Frequency: #{flight.weeklyFrequency} Unscheduled Flights: #{flight.numOfUnscheduled}">
+                            <c:forEach begin="1" end="2">
+
+                            <ez:CCFlightTile aircraft="#{flight.flightNo}" index="#{index}"
+                                             deptAirport="#{flightScheduleManager.getRouteHelper(flight).getOrigin().icaoCode}"
+                                             deptAirportName="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}"
+                                             arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
+                                             arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
+                                             flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" />                                
+                            <ez:CCFlightTile aircraft="#{flight.returnedFlight.flightNo}" index="#{index}r"
+                                             deptAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().icaoCode}"
+                                             deptAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().airportName}"
+                                             arriveAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().icaoCode}"
+                                             arriveAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().airportName}"
+                                             flyingHours="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getTotalDuration()}"  />
+                            </c:forEach>
+                        </p:panel>
                     </p:column>
                 </p:row>
 
-                <!--</c:forEach>-->
             </p:panelGrid>
 
 

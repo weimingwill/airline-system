@@ -13,6 +13,7 @@ import ams.aps.entity.FlightSchedule;
 import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.exception.NoMoreUnscheduledFlightException;
 import ams.aps.util.exception.NoSuchFlightException;
 import ams.aps.util.exception.NoSuchRouteException;
 import ams.aps.util.exception.ObjectDoesNotExistException;
@@ -65,5 +66,8 @@ public interface FlightSchedulingSessionLocal {
 
     public void updateFlight(Flight flight) throws ObjectDoesNotExistException;
     
-    public void createFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrivalDate) throws NoSuchFlightException;
+    public void createFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrivalDate) 
+            throws NoSuchFlightException, NoMoreUnscheduledFlightException;
+    
+    public void verifyUnscheduledFlightNumber(Flight flight) throws NoMoreUnscheduledFlightException;
 }
