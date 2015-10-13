@@ -5,12 +5,13 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
-                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
+
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
 
     <ui:define name="content">
-        <h:form>
-            <p:dataGrid var="flight" value="#{flightController.incompleteFlights}" columns="4" layout="grid"
+        <h:form id="flightForm">
+            <p:dataGrid var="flight" value="#{flightController.flights}" columns="4" layout="grid"
                         rows="8" paginator="true" id="inCompleteFlight"
                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         rowsPerPageTemplate="4, 8" emptyMessage="No outstanding new flights. All flights has been created" style="text-align: center">
@@ -18,8 +19,17 @@
                     Choose one flight to continue
                 </f:facet>
                 <p:panelGrid style="width:100%">
-                    <ez:CCTile header="#{flight.flightNo}/#{flight.returnedFlight.flightNo}" subheader="#{flightController.getOriDestString(flight)}" icon="fa fa-plane" displayBtn="true"/>
+                    <ez:CCTile header="#{flight.flightNo}/#{flight.returnedFlight.flightNo}" subheader="#{flightController.getOriDestString(flight)}" numericValue="Done" displayNum="true" icon="fa fa-plane" displayDeleteBtn="true" displayEditBtn="true" displayViewBtn="true" rendered="#{flight.completed}"/>
+                    <ez:CCTile header="#{flight.flightNo}/#{flight.returnedFlight.flightNo}" subheader="#{flightController.getOriDestString(flight)}" icon="fa fa-plane" displayContBtn="true" displayDeleteBtn="true" displayEditBtn="true" rendered="#{not flight.completed}"/>
                 </p:panelGrid>
+
+                <f:facet name="footer">
+                    <p:selectManyCheckbox value="#{flightController.selectedType}" style="color: #FFFFFF; font-weight: bold">
+                        <f:selectItem itemLabel="Completed" itemValue="1" />
+                        <f:selectItem itemLabel="Incomplete" itemValue="0" />
+                        <p:ajax listener="#{flightController.onFlightFilterChange}" update="flightForm"/>
+                    </p:selectManyCheckbox>
+                </f:facet>
             </p:dataGrid>
             <p:separator/>
             <p:commandButton value="Create New" icon="ui-icon-plusthick" oncomplete="PF('addNewFlightDlg').show()"/>
@@ -74,6 +84,18 @@
                 <p:commandButton value="Update" action="#{flightController.updateFlightNo()}"/>
             </h:form>
         </p:dialog>
+        <p:dialog widgetVar="viewFlightInfoDlg" id="viewFlightInfoDlg" header="Flight Details for #{flightController.selectedFlight.flightNo}" modal="true" appendTo="@(body)" resizable="false">
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Flight Number" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.flightNo}"/>
+                <p:outputLabel value="Return Flight Number" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.returnedFlight.flightNo}"/>
+                <p:outputLabel value="From - To" styleClass="label"/><p:outputLabel value="#{flightController.getOriDestString(flightController.selectedFlight)}"/>
+                <p:outputLabel value="Aircraft Models" styleClass="label"/><p:outputLabel value="#{flightController.getAircraftTypeString(flightController.selectedFlight)}"/>
+                <p:outputLabel value="Aircraft Type Family" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.aircraftTypes.get(0).typeFamily}"/>
+                <p:outputLabel value="Speed Fraction (%)" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.speedFraction * 100}"><f:convertNumber maxFractionDigits="2"/></p:outputLabel>
+                <p:outputLabel value="Weekly Frequency" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.weeklyFrequency}"/>
+            </p:panelGrid>
+        </p:dialog>
+
     </ui:define>
 
 </ui:composition>

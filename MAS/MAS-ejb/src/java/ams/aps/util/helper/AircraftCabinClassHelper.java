@@ -22,6 +22,9 @@ public class AircraftCabinClassHelper {
         this.seatQty = seatQty;
     }
 
+    public AircraftCabinClassHelper() {
+    }
+
     /**
      * @return the name
      */

@@ -9,6 +9,7 @@ import ams.ais.entity.CabinClass;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftType;
 import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.exception.ObjectExistsException;
 import ams.aps.util.helper.AircraftCabinClassHelper;
 import ams.aps.util.helper.AircraftModelFilterHelper;
 import ams.aps.util.helper.RetireAircraftFilterHelper;
@@ -31,7 +32,6 @@ public interface FleetPlanningSessionLocal {
     public AircraftType getAircraftTypeByCode(String typeCode);
     public List<CabinClass> getAllCabinClasses() throws EmptyTableException;
     public CabinClass getCabinClassById(Long id);
-    public List<List<AircraftCabinClassHelper>> getCabinClassByAircraftType(String typeCode);
     public boolean retireSelectedAircrafts(List<Aircraft> aircrafts);
     public List<Aircraft> filterAircraftsForRetire(RetireAircraftFilterHelper filters);
     public void initRetireAicraftFilter(RetireAircraftFilterHelper retireAircraftFilterHelper);
@@ -39,4 +39,6 @@ public interface FleetPlanningSessionLocal {
     public void initAircraftModelFilter(AircraftModelFilterHelper aircraftModelFilterHelper);
     public List<String> getAllManufacturer();
     public List<String> getAllTypeFamily();
+    public List<AircraftCabinClassHelper> getCabinClassByAircaftType(String typeCode);
+    public void checkTailNoExist(String tailNo) throws ObjectExistsException;
 }

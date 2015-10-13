@@ -11,27 +11,35 @@ import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.AircraftType;
 import ams.aps.session.FleetPlanningSessionLocal;
 import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.exception.ObjectExistsException;
 import ams.aps.util.helper.AircraftCabinClassHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
+import managedbean.application.NavigationController;
 
 /**
  *
  * @author Lewis
  */
 @Named(value = "fleetController")
-@RequestScoped
+@ViewScoped
 public class FleetController implements Serializable {
 
     @Inject
     MsgController msgController;
+
+    @Inject
+    NavigationController navigationController;
 
     @EJB
     private FleetPlanningSessionLocal fleetPlanningSession;
@@ -42,6 +50,7 @@ public class FleetController implements Serializable {
     private int[] seatQtyList = new int[10];
     private String seatConfigString = null;
     private List<AircraftCabinClassHelper> aircraftCabinClassHelpers = new ArrayList<>();
+    private List<AircraftCabinClassHelper> suggestedCabinClass;
     private List<List<AircraftCabinClassHelper>> selectedModelCabinClassesSet;
     private List<AircraftCabinClassHelper> selectedModelCabinClassList;
 
@@ -80,7 +89,8 @@ public class FleetController implements Serializable {
     }
 
     private void getCabinClassByAircraftModel(String typeCode) {
-        setSelectedModelCabinClassesSet(fleetPlanningSession.getCabinClassByAircraftType(typeCode));
+//        setSelectedModelCabinClassesSet(fleetPlanningSession.getCabinClassByAircraftType(typeCode));
+        setSuggestedCabinCalss(fleetPlanningSession.getCabinClassByAircaftType(typeCode));
     }
 
     public int calculateTotalSeat(Aircraft aircraft) {
@@ -91,26 +101,58 @@ public class FleetController implements Serializable {
         return totalSeat;
     }
 
-    public void addNewAircraft(String tailNo, String lifespan, String source, String cost, String seatConfig) {
-        System.out.println("FleetController: addNewAircraft():");
-        Aircraft newAircraft = new Aircraft();
-        newAircraft.setTailNo(tailNo.toUpperCase());
-        newAircraft.setLifetime(Float.parseFloat(lifespan));
-        newAircraft.setSource(source);
-        newAircraft.setCost(Float.parseFloat(cost));
-        newAircraft.setAircraftType(aircraftModel);
-        newAircraft.setAircraftCabinClasses(null);
-        List<AircraftCabinClassHelper> cabinClassHelpers = new ArrayList();
-        for (AircraftCabinClassHelper thisHelper : aircraftCabinClassHelpers) {
-            if (thisHelper.getSeatQty() != 0) {
-                cabinClassHelpers.add(thisHelper);
+    public String addNewAircraft(String tailNo, String lifespan, String source, String cost, String seatConfig) {
+        int totalQty = getTotalSeatQty();
+        if (totalQty > aircraftModel.getMaxSeating()) {
+            msgController.addErrorMessage("Total seat quantity (" + totalQty + ") must be lower than maximum quantity (" + aircraftModel.getMaxSeating() + ")");
+            return "";
+        } else {
+            try {
+                fleetPlanningSession.checkTailNoExist(tailNo);
+                System.out.println("FleetController: addNewAircraft():");
+                Aircraft newAircraft = new Aircraft();
+                newAircraft.setTailNo(tailNo.toUpperCase());
+                newAircraft.setLifetime(Float.parseFloat(lifespan));
+                newAircraft.setSource(source);
+                newAircraft.setCost(Float.parseFloat(cost));
+                newAircraft.setAircraftType(aircraftModel);
+                newAircraft.setAircraftCabinClasses(null);
+                List<AircraftCabinClassHelper> cabinClassHelpers = new ArrayList();
+                for (AircraftCabinClassHelper thisHelper : aircraftCabinClassHelpers) {
+                    if (thisHelper.getSeatQty() != 0) {
+                        cabinClassHelpers.add(thisHelper);
+                    }
+                }
+                if (fleetPlanningSession.addNewAircraft(newAircraft, cabinClassHelpers)) {
+                    msgController.addMessage("Add New Aircraft");
+                    return navigationController.redirectToCurrentPage();
+                } else {
+                    msgController.addErrorMessage("Add New Aircraft");
+                    return "";
+                }
+            } catch (ObjectExistsException ex) {
+                msgController.addErrorMessage(ex.getMessage());
+                return "";
             }
         }
-        if (fleetPlanningSession.addNewAircraft(newAircraft, cabinClassHelpers)) {
-            msgController.addMessage("Add New Aircraft");
-        } else {
-            msgController.addErrorMessage("Add New Aircraft");
+    }
+
+    public void onSeatQtyChange(AjaxBehaviorEvent event) {
+        int totalQty = getTotalSeatQty();
+
+        if (totalQty > aircraftModel.getMaxSeating()) {
+            msgController.addErrorMessage("Total seat quantity (" + totalQty + ") must be lower than maximum quantity (" + aircraftModel.getMaxSeating() + ")");
+        } else if (totalQty > aircraftModel.getTypicalSeating()) {
+            msgController.warn("Total seat quantity (" + totalQty + ") is suggested to be lower or equal to typical seating quantity (" + aircraftModel.getTypicalSeating() + ")");
         }
+    }
+
+    private int getTotalSeatQty() {
+        int totalQty = 0;
+        for (AircraftCabinClassHelper thisHelper : aircraftCabinClassHelpers) {
+            totalQty += thisHelper.getSeatQty();
+        }
+        return totalQty;
     }
 
     public void onModelSelectChange() {
@@ -250,6 +292,20 @@ public class FleetController implements Serializable {
      */
     public void setSelectedModelCabinClassList(List<AircraftCabinClassHelper> selectedModelCabinClassList) {
         this.selectedModelCabinClassList = selectedModelCabinClassList;
+    }
+
+    /**
+     * @return the suggestedCabinClass
+     */
+    public List<AircraftCabinClassHelper> getSuggestedCabinCalss() {
+        return suggestedCabinClass;
+    }
+
+    /**
+     * @param suggestedCabinClass the suggestedCabinClass to set
+     */
+    public void setSuggestedCabinCalss(List<AircraftCabinClassHelper> suggestedCabinClass) {
+        this.suggestedCabinClass = suggestedCabinClass;
     }
 
 }

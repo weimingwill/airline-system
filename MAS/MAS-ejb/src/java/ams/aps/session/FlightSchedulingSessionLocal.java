@@ -32,6 +32,8 @@ public interface FlightSchedulingSessionLocal {
 
     public List<Flight> getFlight(Boolean complete) throws EmptyTableException;
 
+    public List<Flight> getAllFlights();
+
     public void deleteFlight(String flightNo) throws DeleteFailedException;
 
     public boolean changeFlightNo(String flightNo, String newFlightNo);

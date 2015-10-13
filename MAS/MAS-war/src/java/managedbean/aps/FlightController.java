@@ -5,6 +5,7 @@
  */
 package managedbean.aps;
 
+import ams.aps.entity.AircraftType;
 import ams.aps.entity.Flight;
 import ams.aps.entity.Route;
 import ams.aps.session.FlightSchedulingSessionLocal;
@@ -16,10 +17,9 @@ import ams.aps.util.helper.RouteDisplayHelper;
 import ams.aps.util.helper.RouteHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
@@ -60,29 +60,35 @@ public class FlightController implements Serializable {
     private Flight flight;
     private Flight returnedFlight;
     private Flight selectedFlight;
-    private List<Flight> incompleteFlights;
+    private List<Flight> flights;
     private Route route;
     private List<RouteDisplayHelper> routeDisplayHelperList = new ArrayList();
     private RouteDisplayHelper selectedRouteDisplayHelper;
     private String oldFlightNo;
     private List<Route> availibleRoutes;
+    private Boolean isComplete = null;
+    private List<String> selectedType = new ArrayList(Arrays.asList("0","1"));
 
     /**
      * Creates a new instance of FlightController
      */
     @PostConstruct
     public void init() {
-        getIncompleteFlight();
+        getFlightList(isComplete);
         getRoutes();
     }
 
     public FlightController() {
     }
 
-    public void getIncompleteFlight() {
+    public void getFlightList(Boolean isComplete) {
         try {
-            setIncompleteFlights(flightSchedulingSession.getFlight(Boolean.FALSE));
-            removeReturned(incompleteFlights);
+            if (isComplete == null) {
+                setFlights(flightSchedulingSession.getAllFlights());
+            } else {
+                setFlights(flightSchedulingSession.getFlight(isComplete));
+            }
+            removeReturned(flights);
         } catch (EmptyTableException ex) {
             System.out.println(ex.getMessage());
         }
@@ -177,9 +183,24 @@ public class FlightController implements Serializable {
     }
 
     public String getOriDestString(Flight thisFlight) {
-        RouteHelper thisRouteHelper = new RouteHelper();
-        routePlanningSession.getRouteAirports(thisFlight.getRoute(), thisRouteHelper);
-        return thisRouteHelper.getOrigin().getCity().getCityName() + " - " + thisRouteHelper.getDestination().getCity().getCityName();
+        if (thisFlight != null) {
+            RouteHelper thisRouteHelper = new RouteHelper();
+            routePlanningSession.getRouteAirports(thisFlight.getRoute(), thisRouteHelper);
+            return thisRouteHelper.getOrigin().getCity().getCityName() + " - " + thisRouteHelper.getDestination().getCity().getCityName();
+        } else {
+            return "";
+        }
+
+    }
+
+    public String getAircraftTypeString(Flight thisFlight) {
+        String output = "";
+        if (thisFlight != null) {
+            for (AircraftType model : thisFlight.getAircraftTypes()) {
+                output += model.getTypeCode() + " ";
+            }
+        }
+        return output;
     }
 
     private boolean failValidateFlightNo(String flightNo) {
@@ -220,6 +241,19 @@ public class FlightController implements Serializable {
         } else {
             String thisReturnFlightNo = getReturnedFlightNo(thisFlightNo);
             selectedFlight.getReturnedFlight().setFlightNo(thisReturnFlightNo);
+        }
+
+    }
+
+    public void onFlightFilterChange(AjaxBehaviorEvent event) {
+        System.out.println("Selected type = " + selectedType);
+
+        if (selectedType.isEmpty() || selectedType.size() == 2) {
+            getFlightList(null);
+        } else if (selectedType.contains("1")) {
+            getFlightList(true);
+        } else {
+            getFlightList(false);
         }
 
     }
@@ -329,20 +363,6 @@ public class FlightController implements Serializable {
     }
 
     /**
-     * @return the incompleteFlights
-     */
-    public List<Flight> getIncompleteFlights() {
-        return incompleteFlights;
-    }
-
-    /**
-     * @param incompleteFlights the incompleteFlights to set
-     */
-    public void setIncompleteFlights(List<Flight> incompleteFlights) {
-        this.incompleteFlights = incompleteFlights;
-    }
-
-    /**
      * @return the returnedFlight
      */
     public Flight getReturnedFlight() {
@@ -368,6 +388,48 @@ public class FlightController implements Serializable {
      */
     public void setSelectedFlight(Flight selectedFlight) {
         this.selectedFlight = selectedFlight;
+    }
+
+    /**
+     * @return the flights
+     */
+    public List<Flight> getFlights() {
+        return flights;
+    }
+
+    /**
+     * @param flights the flights to set
+     */
+    public void setFlights(List<Flight> flights) {
+        this.flights = flights;
+    }
+
+    /**
+     * @return the isComplete
+     */
+    public Boolean getIsComplete() {
+        return isComplete;
+    }
+
+    /**
+     * @param isComplete the isComplete to set
+     */
+    public void setIsComplete(Boolean isComplete) {
+        this.isComplete = isComplete;
+    }
+
+    /**
+     * @return the selectedType
+     */
+    public List<String> getSelectedType() {
+        return selectedType;
+    }
+
+    /**
+     * @param selectedType the selectedType to set
+     */
+    public void setSelectedType(List<String> selectedType) {
+        this.selectedType = selectedType;
     }
 
 }

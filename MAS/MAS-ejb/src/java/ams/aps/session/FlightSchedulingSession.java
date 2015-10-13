@@ -63,7 +63,6 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             route.setFlights(fList);
             em.merge(route);
             flight.setDeleted(Boolean.FALSE);
-            flight.setScheduled(Boolean.FALSE);
             flight.setCompleted(Boolean.FALSE);
             flight.setSpeedFraction(DEFAULT_SPEED_FRACTION);
             em.merge(flight);
@@ -233,12 +232,15 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         try {
             Flight flight = checkFlightExistence(flightNo);
             Flight returnedFlight = flight.getReturnedFlight();
+            if(flight.getNumOfUnscheduled() < flight.getWeeklyFrequency() || returnedFlight.getNumOfUnscheduled() < returnedFlight.getWeeklyFrequency()){
+                throw new DeleteFailedException("Flight is scheduled, cannot be deleted!");
+            }
             returnedFlight.setDeleted(Boolean.TRUE);
             flight.setDeleted(Boolean.TRUE);
             em.merge(flight);
             em.merge(returnedFlight);
         } catch (ObjectDoesNotExistException ex) {
-            throw new DeleteFailedException();
+            throw new DeleteFailedException("Flight does not exist!");
         }
     }
 
@@ -386,4 +388,16 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
         return flight;
     }
+    public List<Flight> getAllFlights() {
+        Query query = em.createQuery("SELECT f FROM Flight f WHERE f.deleted = FALSE");
+        List<Flight> outputFlights = new ArrayList();
+        try {
+            outputFlights = (List<Flight>) query.getResultList();
+
+        } catch (NoResultException ex) {
+
+        }
+        return outputFlights;
+    }
+
 }
