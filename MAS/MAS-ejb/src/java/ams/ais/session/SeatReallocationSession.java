@@ -341,7 +341,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
             //sort phase demand in descending order according to DaysBeforeDeparture 
             Collections.sort(phaseDemands, new Comparator<PhaseDemand>() {
                 public int compare(PhaseDemand pd1, PhaseDemand pd2) {
-                    return Integer.parseInt(pd2.getDaysBeforeDeparture() - pd1.getDaysBeforeDeparture());
+                    return Integer.parseInt(""+(pd2.getDaysBeforeDeparture() - pd1.getDaysBeforeDeparture()));
                 }
             });
 
@@ -356,11 +356,11 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
             for (Date date = (Date) start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = (Date) start.getTime()) {
                 int pdcount = 0;
 
-                flaot daysBefore = phaseDemands.get(pdcount).getDaysBeforeDeparture();
+                float daysBefore = phaseDemands.get(pdcount).getDaysBeforeDeparture();
 
                 Calendar checkPoint = new GregorianCalendar();
                 checkPoint.setTime(endDate);
-                checkPoint.add(Calendar.DAY_OF_YEAR, -daysBefore);
+                checkPoint.add(Calendar.DAY_OF_YEAR, Float.parseFloat(-daysBefore));
 
                 if (date.equals(checkPoint.getTime())) {
                     float demandMean = phaseDemands.get(pdcount).getDemandMean();
