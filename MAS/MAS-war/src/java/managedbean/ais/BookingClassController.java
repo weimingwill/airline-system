@@ -15,6 +15,7 @@ import ams.ais.session.FlightScheduleSessionLocal;
 import ams.ais.session.SeatReallocationSessionLocal;
 import ams.ais.util.exception.DuplicatePriceException;
 import ams.ais.util.exception.NeedBookingClassException;
+import ams.ais.util.exception.TimeToReallocateException;
 import ams.ais.util.exception.WrongSumOfBookingClassSeatQtyException;
 import ams.ais.util.exception.WrongSumOfTicketFamilySeatQtyException;
 import ams.ais.util.helper.BookingClassHelper;
@@ -24,9 +25,13 @@ import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
@@ -52,7 +57,7 @@ public class BookingClassController implements Serializable {
     private BookingClassSessionLocal bookingClassSession;
     @EJB
     private FlightScheduleSessionLocal flightScheduleSession;
-    
+
     @EJB
     private SeatReallocationSessionLocal seatReallocationSession;
 
@@ -139,13 +144,39 @@ public class BookingClassController implements Serializable {
     public String priceBookingClasses() {
         try {
             bookingClassSession.priceBookingClasses(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers, priceMap);
-            seatReallocationSession.yieldManagement(flightScheduleId);
+            List<Date> checkPoints = new ArrayList<>();
+
+            checkPoints = seatReallocationSession.yieldManagement(flightScheduleId);
+            sendYieldMgtReminder(checkPoints);
+
             msgController.addMessage("Price booking class succesfully!");
         } catch (NoSuchFlightScheduleBookingClassException | DuplicatePriceException ex) {
             msgController.addErrorMessage(ex.getMessage());
             return "";
         }
+
         return navigationController.redirectToViewFlightSchedule();
+    }
+
+    private void sendYieldMgtReminder(List<Date> checkDates) {
+        Timer[] timers = new Timer[checkDates.size()];
+        int count = 0;
+        for (Date date : checkDates) {
+            timers[count] = new Timer();
+            timers[count].schedule(new YieldMgtTask(), date);
+            count++;
+
+        }
+
+    }
+
+    class YieldMgtTask extends TimerTask {
+
+        @Override
+        public void run() {
+            msgController.sendReminder("It's time to perform yield management for flight schedule " + flightScheduleId);
+        }
+
     }
 
     public void onPriceCoefficientChange(AjaxBehaviorEvent event) {

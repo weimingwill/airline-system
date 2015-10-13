@@ -15,7 +15,7 @@ import ams.ais.util.exception.NoSuchPhaseDemandException;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -28,13 +28,13 @@ public interface SeatReallocationSessionLocal {
 
     public List<SeatAllocationHistory> getAllReallocationHitorys();
 
-    public void yieldManagement(Long flightScheduleId);
+    public List<Date> yieldManagement(Long flightScheduleId);
 
     public List<FlightScheduleBookingClass> getAllFlightScheduleBookingClasses();
 
     public List<NormalDistribution> getAllNormalDistributions();
 
-    public void addPhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException;
+    public void addPhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, float daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException;
 
     public void deletePhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, PhaseDemand phaseDemand) throws NoSuchPhaseDemandException;
 
@@ -51,5 +51,7 @@ public interface SeatReallocationSessionLocal {
             throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException;
 
     public PhaseDemand getPhaseDemandbyId(Long id);
+    
+    public List<PhaseDemand> getAllPhaseDemands();
 
 }

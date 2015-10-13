@@ -35,4 +35,10 @@ public class MsgController {
         FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
+
+    public void sendReminder(String summary) {
+        FacesMessage message = new FacesMessage("Reminder", summary);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
 }

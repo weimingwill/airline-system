@@ -14,8 +14,10 @@ import ams.ais.helper.FlightScheduleBookingClassId;
 import ams.ais.util.exception.ExistSuchCheckPointException;
 import ams.ais.util.exception.NeedBookingClassException;
 import ams.ais.util.exception.NoSuchPhaseDemandException;
+import ams.ais.util.exception.TimeToReallocateException;
 import ams.ais.util.helper.AisMsg;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
+import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.util.Date;
@@ -26,6 +28,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -46,10 +53,14 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
     @PersistenceContext
     private EntityManager entityManager;
-    private EntityManager em;
+
+    private FlightSchedule flightSchedule;
+    private List<FlightScheduleBookingClass> fsbcs;
+    private Date departureDate;
+    private Long flightScheduleID;
 
     @Override
-    public void addPhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, int daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException {
+    public void addPhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, float daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException {
 
         List<PhaseDemand> pds = new ArrayList<>();
         pds = flightScheduleBookingClass.getPhaseDemands();
@@ -200,34 +211,6 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                     entityManager.merge(fsbc);
                 }
 
-//                sum = sum + count;
-//
-//                int currentSeatNo = flightScheduleBookingClassTemp.getSeatQty() - count;
-//
-//                //create seat reallocation history for lower-price booking class
-//                SeatAllocationHistory sah = new SeatAllocationHistory();
-//
-//                long yourmilliseconds = System.currentTimeMillis();
-//                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-//                Date date = new Date(yourmilliseconds);
-//                sah.setAllocateTime(date);
-//
-//                FlightScheduleBookingClass fsbc = entityManager.find(FlightScheduleBookingClass.class, flightScheduleBookingClassTemp.getFlightScheduleBookingClassId());
-//
-//                sah.setSeatNoBefore(fsbc.getSeatQty());
-//
-//                fsbc.setSeatQty(currentSeatNo);
-//                sah.setSeatNoAfter(fsbc.getSeatQty());
-//
-//                entityManager.persist(sah);
-//
-//                List<SeatAllocationHistory> sahs = fsbc.getSeatAllocationHistory();
-//
-//                sahs.add(sah);
-//
-//                fsbc.setSeatAllocationHistory(sahs);
-//
-//                entityManager.merge(fsbc);
             }
 
         }
@@ -256,7 +239,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         seatAllocationHistory.setSeatNoAfter(seatNoAfter);
         entityManager.persist(seatAllocationHistory);
         System.out.println("seat reallocation histroy content is set");
-        System.out.println("Seat reallocation history creation date is: "+seatAllocationHistory.getAllocateTime());
+        System.out.println("Seat reallocation history creation date is: " + seatAllocationHistory.getAllocateTime());
 
         //update the seat allocation history of a booking class
         FlightScheduleBookingClass fsbc = entityManager.find(FlightScheduleBookingClass.class, f.getFlightScheduleBookingClassId());
@@ -267,37 +250,6 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         entityManager.merge(fsbc);
 
         System.out.println("#seat reallocation history:" + f.getSeatAllocationHistory().size());
-
-    }
-
-// reallocate seats for all exsiting booking classes 
-    @Override
-    public void yieldManagement(Long flightScheduleId) {
-        int threadCount = 0;
-        Thread[] threads;
-        threads = new Thread[1000000];
-        
-        List<FlightScheduleBookingClass> fsbcs = new ArrayList<>();
-        fsbcs = getAllFlightScheduleBookingClasses();
-        
-        for(FlightScheduleBookingClass f:fsbcs){
-            if(f.getDeleted()==true || f.getFlightScheduleBookingClassId().getFlightScheduleId()!=flightScheduleId){
-                fsbcs.remove(f);
-            }           
-        }
-
-        for (FlightScheduleBookingClass flightScheduleBookingClass : SafeHelper.emptyIfNull(fsbcs)) {
-
-//            fsbc = flightScheduleBookingClass;
-            YieldMgtRunnable y = new YieldMgtRunnable(flightScheduleBookingClass);
-
-            threads[threadCount] = new Thread(y, "Thread" + threadCount);
-
-            threads[threadCount].start();
-
-            threadCount++;
-
-        }
 
     }
 
@@ -349,72 +301,224 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         return pd;
     }
 
-    public class YieldMgtRunnable implements Runnable {
+    @Override
+    public List<PhaseDemand> getAllPhaseDemands() {
+        Query query = entityManager.createQuery("SELECT p FROM PhaseDemand p");
+        return query.getResultList();
 
-        private FlightScheduleBookingClass f;
+    }
 
-        public YieldMgtRunnable(FlightScheduleBookingClass flightScheduleBookingClass) {
-            this.f = flightScheduleBookingClass;
+// reallocate seats for all exsiting booking classes 
+    @Override
+    public List<Date> yieldManagement(Long flightScheduleId) {
+        flightScheduleID = flightScheduleId;
+
+        try {
+            flightSchedule = flightScheduleSession.getFlightScheduleById(flightScheduleId);
+        } catch (NoSuchFlightSchedulException ex) {
+            System.out.println(ex.getMessage());
         }
 
-        @Override
-        public void run() {
+        try {
+            fsbcs = flightScheduleSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
+        } catch (NoSuchFlightScheduleBookingClassException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        departureDate = flightSchedule.getDepartDate();
+
+        long departureDateInMs = departureDate.getTime();
+
+        List<Float> allCheckPoints = new ArrayList<>();
+        for (FlightScheduleBookingClass f : fsbcs) {
             List<PhaseDemand> phaseDemands = f.getPhaseDemands();
-
-            //sort phase demand in descending order according to DaysBeforeDeparture 
-            Collections.sort(phaseDemands, new Comparator<PhaseDemand>() {
-                public int compare(PhaseDemand pd1, PhaseDemand pd2) {
-                    return pd2.getDaysBeforeDeparture() - pd1.getDaysBeforeDeparture();
-                }
-            });
-
-            int checkPoints = phaseDemands.size();
-
-            Date endDate = f.getFlightSchedule().getDepartDate();
-
-            Calendar start = Calendar.getInstance();
-            Calendar end = Calendar.getInstance();
-            end.setTime(endDate);
-
-            for (Date date = (Date) start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = (Date) start.getTime()) {
-                int pdcount = 0;
-
-                int daysBefore = phaseDemands.get(pdcount).getDaysBeforeDeparture();
-
-                Calendar checkPoint = new GregorianCalendar();
-                checkPoint.setTime(endDate);
-                checkPoint.add(Calendar.DAY_OF_YEAR, -daysBefore);
-
-                if (date.equals(checkPoint.getTime())) {
-                    float demandMean = phaseDemands.get(pdcount).getDemandMean();
-                    float demandDev = phaseDemands.get(pdcount).getDemandDev();
-                    List<FlightScheduleBookingClass> fsbcs = getAllFlightScheduleBookingClasses();
-                    List<FlightScheduleBookingClass> restFlightScheduleBookingClasses = new ArrayList<>();
-                    for (FlightScheduleBookingClass fsbc : fsbcs) {
-                        if (fsbc.getFlightScheduleBookingClassId().getFlightScheduleId() == f.getFlightScheduleBookingClassId().getFlightScheduleId()) {
-                            restFlightScheduleBookingClasses.add(fsbc);
-                        }
-
-                    }
-
-                    restFlightScheduleBookingClasses.remove(f);
-                    
-                    try {
-                        reallocateSeatsforBookingClass(f, demandMean, demandDev);
-                    } catch (NoSuchFlightScheduleBookingClassException ex) {
-                        Logger.getLogger(SeatReallocationSession.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-//                    reallocateBookingClassSeats(restFlightScheduleBookingClasses, f, demandMean, demandDev);
-                    if (pdcount < checkPoints) {
-                        pdcount++;
-                    }
-
-                    break;
+            for (PhaseDemand p : phaseDemands) {
+                if (!allCheckPoints.contains(p.getDaysBeforeDeparture())) {
+                    allCheckPoints.add(p.getDaysBeforeDeparture());
                 }
 
             }
-        }
-    }
 
+        }
+
+        List<Date> allCheckDates = new ArrayList<>();
+
+        for (Float f : allCheckPoints) {
+            Long temp = f.longValue();
+            temp = temp * 86400000;
+            Date d = new Date(departureDateInMs - temp);
+            allCheckDates.add(d);
+        }
+
+        return allCheckDates;
+
+    }
 }
+
+//        Timer[] timers = new Timer[allCheckDates.size()];
+//        int count = 0;
+//        for (Date date : allCheckDates) {
+//            timers[count] = new Timer();
+//            timers[count].schedule(new YieldMgtTask(), date);
+//
+//        }
+//
+//    public class YieldMgtTask extends TimerTask {
+//
+//        @Override
+//        public void run() {
+//
+//            try {
+//                throw new TimeToReallocateException("It's time to perform yiled management for FlightSchedule " + flightScheduleID);
+//            } catch (TimeToReallocateException ex) {
+//                
+//            }
+//
+//        }
+//
+//    }
+//
+//}
+//        try {
+//            flightSchedule = flightScheduleSession.getFlightScheduleById(flightScheduleId);
+//        } catch (NoSuchFlightSchedulException ex) {
+//            System.out.println(ex.getMessage());
+//        }
+//
+//        try {
+//            fsbcs = flightScheduleSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
+//        } catch (NoSuchFlightScheduleBookingClassException ex) {
+//            System.out.println(ex.getMessage());
+//        }
+//
+//        departureDate = flightSchedule.getDepartDate();
+//
+//        Timer timer = new Timer();
+//
+//        Date date = new Date();
+//
+//        timer.scheduleAtFixedRate(new ReallocationTask(), date, TimeUnit.DAYS.toMillis(1));
+//
+//        return "";
+//
+//    }
+//
+//    class ReallocationTask extends TimerTask {
+//
+//        public void run() {
+//            Date currentDate = new Date();
+//            long diff = Math.abs(currentDate.getTime() - departureDate.getTime());
+//
+//            if (diff == 0) {
+//                
+//            } else {
+//                for (FlightScheduleBookingClass f : fsbcs) {
+//                    List<PhaseDemand> phaseDemands = f.getPhaseDemands();
+//                    for (PhaseDemand p : phaseDemands) {
+//                        if (p.getDaysBeforeDeparture() == diff) {
+//
+//                        }
+//                    }
+//
+//                }
+//
+//            }
+////            long diffDays = diff / (24 * 60 * 60 * 1000);
+//
+//        }
+//    }
+//        Old YiledManagement() function!!!!!!!!!!!!!!!!!!!!
+//        System.out.println("Yield management is started!");
+//        int threadCount = 0;
+//        Thread[] threads;
+//        threads = new Thread[1000000];
+//
+//        List<FlightScheduleBookingClass> fsbcs = new ArrayList<>();
+//        try {
+//            fsbcs = flightScheduleSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
+//
+//        } catch (NoSuchFlightScheduleBookingClassException ex) {
+//
+//        }
+//
+//        for (FlightScheduleBookingClass flightScheduleBookingClass : SafeHelper.emptyIfNull(fsbcs)) {
+//
+//            YieldMgtRunnable y = new YieldMgtRunnable(flightScheduleBookingClass);
+//
+//            threads[threadCount] = new Thread(y, "Thread" + threadCount);
+//
+//            threads[threadCount].start();
+//
+//            threadCount++;
+//
+//        }
+//    public class YieldMgtRunnable implements Runnable {
+//
+//        private FlightScheduleBookingClass f;
+//
+//        public YieldMgtRunnable(FlightScheduleBookingClass flightScheduleBookingClass) {
+//            this.f = flightScheduleBookingClass;
+//        }
+//
+//        @Override
+//        public void run() {
+//            System.out.println("Yield mgt runnable is running!");
+//            List<PhaseDemand> phaseDemands = f.getPhaseDemands();
+//
+//            //sort phase demand in descending order according to DaysBeforeDeparture 
+//            Collections.sort(phaseDemands, new Comparator<PhaseDemand>() {
+//                public int compare(PhaseDemand pd1, PhaseDemand pd2) {
+//                    return Float.compare(pd1.getDaysBeforeDeparture(), pd2.getDaysBeforeDeparture());
+//
+//                }
+//            });
+//
+//            int checkPoints = phaseDemands.size();
+//
+//            Date endDate = f.getFlightSchedule().getDepartDate();
+//
+//            Calendar start = Calendar.getInstance();
+//            Calendar end = Calendar.getInstance();
+//            end.setTime(endDate);
+//
+//            for (Date date = (Date) start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = (Date) start.getTime()) {
+//                System.out.println();
+//                int pdcount = 0;
+//
+//                float daysBefore = phaseDemands.get(pdcount).getDaysBeforeDeparture();
+//
+//                Calendar checkPoint = new GregorianCalendar();
+//                checkPoint.setTime(endDate);
+//                checkPoint.add(Calendar.DAY_OF_YEAR, Math.round(-daysBefore));
+//
+//                if (date.equals(checkPoint.getTime())) {
+//                    float demandMean = phaseDemands.get(pdcount).getDemandMean();
+//                    float demandDev = phaseDemands.get(pdcount).getDemandDev();
+//                    List<FlightScheduleBookingClass> fsbcs = getAllFlightScheduleBookingClasses();
+//                    List<FlightScheduleBookingClass> restFlightScheduleBookingClasses = new ArrayList<>();
+//                    for (FlightScheduleBookingClass fsbc : fsbcs) {
+//                        if (fsbc.getFlightScheduleBookingClassId().getFlightScheduleId() == f.getFlightScheduleBookingClassId().getFlightScheduleId()) {
+//                            restFlightScheduleBookingClasses.add(fsbc);
+//                        }
+//
+//                    }
+//
+//                    restFlightScheduleBookingClasses.remove(f);
+//
+//                    try {
+//                        reallocateSeatsforBookingClass(f, demandMean, demandDev);
+//                    } catch (NoSuchFlightScheduleBookingClassException ex) {
+//                    }
+//
+////                    reallocateBookingClassSeats(restFlightScheduleBookingClasses, f, demandMean, demandDev);
+//                    if (pdcount < checkPoints) {
+//                        pdcount++;
+//                    }
+//
+//                    break;
+//                }
+//
+//            }
+//        }
+//    }
+
