@@ -127,6 +127,7 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
         return entityManager.find(AircraftType.class, id);
     }
 
+    @Override
     public AircraftType getAircraftTypeByCode(String typeCode) {
         Query query = entityManager.createQuery("SELECT t FROM AircraftType t WHERE t.typeCode = :inTypeCode");
         query.setParameter("inTypeCode", typeCode);

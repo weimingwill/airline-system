@@ -119,6 +119,30 @@ tr.hide{
     margin-bottom: 10px;
 }
 
+.ui-steps.flightScheduleMenu {
+    margin-bottom: 50px;
+    margin-top: 10px;
+}
+
+.ui-steps.flightScheduleMenu .ui-steps-item{
+    width: 33%;
+}
+
+.ui-steps.flightScheduleMenu .ui-steps-item .ui-menuitem-link {
+    height: 10px;
+    padding: 0 1em;
+}
+
+.ui-steps.flightScheduleMenu .ui-steps-item .ui-steps-number {
+    background-color: #0081c2;
+    color: #FFFFFF;
+    display: inline-block;
+    width: 30px;
+    border-radius: 10px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
 .cabinClassHelperDlg{
     /*    top: 10% !important;*/
 }
@@ -146,7 +170,7 @@ tr.hide{
     color:#e17009 !important;
 }
 .ui-ribbon-group-content{
-    height: 150px !important;
+    /*height: 150px important;*/
     margin-bottom: 10px;
 }
 
@@ -330,6 +354,30 @@ tr.hide{
     font-style: italic;
     font-weight: normal;
     padding-left: 79%;
+}
+/*.unscheduledFlight > .ui-panel-content {
+    overflow-x: scroll !important;
+}*/
+
+/*.unscheduledFlight > .ui-datagrid-content {
+    overflow-x: scroll !important;
+}*/
+
+.unscheduledFlightPanelGrid.ui-panelgrid>*>tr,
+.unscheduledFlightPanelGrid.ui-panelgrid .ui-panelgrid-cell {
+    border: none;
+    padding-bottom: 10px;
+}
+
+.flightTile {
+    padding: 0px;
+    border: none;
+    z-index: 1000;
+}
+
+.flightFilter > .ui-ribbon-group-content{
+    height: 30px !important;
+    margin-bottom: 10px;
 }
 
 .table-small-font{

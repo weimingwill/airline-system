@@ -29,6 +29,7 @@ public interface FleetPlanningSessionLocal {
     public boolean addNewAircraftModel(AircraftType newAircraftModel);
     public boolean updateAircraftModel(AircraftType updatedAircraftModel);
     public AircraftType getAircraftTypeById(Long id);
+    public AircraftType getAircraftTypeByCode(String typeCode);
     public List<CabinClass> getAllCabinClasses() throws EmptyTableException;
     public CabinClass getCabinClassById(Long id);
     public boolean retireSelectedAircrafts(List<Aircraft> aircrafts);

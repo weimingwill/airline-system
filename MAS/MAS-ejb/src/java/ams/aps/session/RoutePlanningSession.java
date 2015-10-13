@@ -693,11 +693,9 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
         TreeMap<Integer, Airport> legAirports = new TreeMap();
         int numOfLegs = thisRoute.getRouteLegs().size();
 
-        System.out.println("Route Controller: getRouteDetail(): thisRoute = " + routeHelper.getId());
         for (RouteLeg thisRouteLeg : thisRoute.getRouteLegs()) {
             int legSeq = thisRouteLeg.getLegSeq();
 
-            System.out.println("Route Controller: getRouteDetail(): FROM - TO (" + legSeq + "): " + thisRouteLeg.getLeg().getDepartAirport().getAirportName() + " - " + thisRouteLeg.getLeg().getArrivalAirport().getAirportName());
             if (numOfLegs == 1) {
                 routeHelper.setOrigin(thisRouteLeg.getLeg().getDepartAirport());
                 routeHelper.setDestination(thisRouteLeg.getLeg().getArrivalAirport());

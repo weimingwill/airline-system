@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <span id="#{cc.clientId}">
+        </span>
+        <!--<cc:attribute name="id" />-->
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dataGrid columns="4" layout="grid" styleClass="unscheduledFlight" value="#{flightScheduleManager.unscheduledFlights}"
+                    rows="8" paginator="true" rowIndexVar="index" var="flight" id="unscheduledFlights"
+                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    rowsPerPageTemplate="4, 8" style="text-align: center">
+            <f:facet name="header">
+                Selected unscheduled flight
+            </f:facet>
+            <p:panelGrid styleClass="unscheduledFlightPanelGrid" style="width:100%;">
+                <p:row>
+                    <p:column>
+                        <p:panel header="Weekly Frequency: #{flight.weeklyFrequency} Unscheduled Flights: #{flight.numOfUnscheduled}">
+
+                            <ez:CCFlightTile aircraft="#{flight.flightNo}" index="#{index}"
+                                             deptAirport="#{flightScheduleManager.getRouteHelper(flight).getOrigin().icaoCode}"
+                                             deptAirportName="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}"
+                                             arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
+                                             arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
+                                             flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" />        
+                            <ui:remove>
+                            <ez:CCFlightTile aircraft="#{flight.returnedFlight.flightNo}" index="#{index}r"
+                                             deptAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().icaoCode}"
+                                             deptAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().airportName}"
+                                             arriveAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().icaoCode}"
+                                             arriveAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().airportName}"
+                                             flyingHours="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getTotalDuration()}"  />
+                            </ui:remove>
+                        </p:panel>
+                    </p:column>
+                </p:row>
+
+            </p:panelGrid>
+
+
+        </p:dataGrid>
+
+        <ui:remove>
+            <p:panel header="Selected unscheduled flight" styleClass="unscheduledFlight">
+                <p:panelGrid styleClass="noBorderPanelGrid unscheduledFlightPanelGrid">
+                    <c:forEach items="#{flightScheduleManager.unscheduledFlights}" var="flight" varStatus="index">
+                        <p:row>
+                            <c:forEach begin="0" end="#{flight.weeklyFrequency}" >
+                                <p:column>
+                                    <ez:CCFlightTile aircraft="#{flight.flightNo}" index="#{index.index}"
+                                                     deptAirport="#{flightScheduleManager.getRouteHelper(flight).getOrigin().icaoCode}"
+                                                     deptAirportName="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}"
+                                                     arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
+                                                     arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
+                                                     flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" />                                
+                                </p:column>
+                                <p:column>
+                                    <ez:CCFlightTile aircraft="#{flight.returnedFlight.flightNo}" index="#{index.index}r"
+                                                     deptAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().icaoCode}"
+                                                     deptAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().airportName}"
+                                                     arriveAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().icaoCode}"
+                                                     arriveAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().airportName}"
+                                                     flyingHours="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getTotalDuration()}"  />
+                                </p:column>
+                                <p:column>
+
+                                </p:column>
+                            </c:forEach>
+                        </p:row>
+                    </c:forEach>
+                </p:panelGrid>
+            </p:panel>
+        </ui:remove>
+
+    </cc:implementation>
+</html>

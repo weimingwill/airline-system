@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!--<span id="{cc.clientId}}" ></span>-->
+        <cc:attribute name="aircraft" />
+        <cc:attribute name="flyingHours" />
+        <cc:attribute name="diasplayDateTime" default="false" />
+        <cc:attribute name="deptDate" />
+        <cc:attribute name="deptTime" />
+        <cc:attribute name="arriveDate" />
+        <cc:attribute name="arriveTime" />
+        <cc:attribute name="deptAirport" />
+        <cc:attribute name="arriveAirport" />
+        <cc:attribute name="index" required="true" />
+        <cc:attribute name="deptAirportName" />
+        <cc:attribute name="arriveAirportName" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+
+        <p:panel id="flightTile#{index}" styleClass="flightTile">
+            <p:panelGrid styleClass="tile"  >
+                <p:row>
+                    <p:column rowspan="2" style="text-align: center;">
+                        <p:outputLabel styleClass="fa fa-plane tileIcon"/>
+                        <p:outputLabel id="deptAirport#{cc.attrs.index}" value="#{cc.attrs.deptAirport}" >
+                            <!--<p:tooltip for="deptAirport{cc.attrs.index}" value="{cc.attrs.deptAirportName}" />-->
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column colspan="1">
+                        <p:outputLabel value="  #{cc.attrs.aircraft}  " styleClass="tileHeader" />
+                    </p:column>
+                    <p:column rowspan="2" style="text-align: center;">
+                        <p:outputLabel styleClass="fa fa-plane tileIcon" style="transform: rotate(90deg)"/>
+                        <p:outputLabel id="arriveAirport#{cc.attrs.index}" value="#{cc.attrs.arriveAirport}">
+                            <!--<p:tooltip for="arriveAirport{cc.attrs.index}" value="{cc.attrs.arriveAirportName}" />-->
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="1" style="text-align: right;">
+                        <p:outputLabel styleClass="fa fa-clock-o" style="font-size: 15px;"/>
+                        <h:outputText value="#{cc.attrs.flyingHours}" styleClass="tileValue">
+                            <f:convertNumber maxFractionDigits="1" pattern="#0.0" />
+                        </h:outputText>
+                        <p:outputLabel value=" hours" styleClass="tileFooter"/>
+                    </p:column>
+
+                </p:row>
+            </p:panelGrid>
+        </p:panel>
+        <p:draggable for="flightTile" revert="true"/>
+        <style>
+            .tile{
+                width: 11.375rem;
+                height: 5.875rem;
+                display: inline-block;
+                overflow: hidden;
+                background: #ffffff;
+                border-radius: 4px;
+                border: 0.0625rem transparent dotted;
+                outline: none;
+                box-shadow: 0 0 0.25rem rgba(0,0,0,0.4);
+                padding:10px;
+            }
+            .tile:hover{
+                /*box-shadow: 0 0 0 4px #65AEE4;*/
+                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.6);
+                border-radius: 5px;
+                cursor: hand;
+            }
+            .tileHeader{
+                color: #333333;
+                font-family: Arial,Helvetica,sans-serif;
+                font-size: 1.1rem !important;
+                font-weight: normal;
+            }
+            .tileIconAirport{
+                font-size: 22px !important;
+                height: 22px;
+                width: 22px;
+                color: #007cc0;
+                padding-bottom: 3px;
+            }
+            .tileIcon{
+                font-size: 25px !important;
+                height: 25px;
+                width: 25px;
+                color: #007cc0;
+                margin-bottom: 20px;
+            }
+            .tileValue{
+                color: #848f94;
+                font-size: 22px !important;
+            }
+            .tileFooter{
+                color: #666666;
+                font-size: 10px !important;
+            }
+            .tileFooterContainer{
+                text-align: right;
+            }
+            .tile > tbody > tr{
+                border: inherit !important;
+            }
+        </style>        
+    </cc:implementation>
+</html>
