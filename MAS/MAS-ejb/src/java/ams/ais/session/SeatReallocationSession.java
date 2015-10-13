@@ -360,7 +360,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
                 Calendar checkPoint = new GregorianCalendar();
                 checkPoint.setTime(endDate);
-                checkPoint.add(Calendar.DAY_OF_YEAR, Float.parseFloat(-daysBefore));
+                checkPoint.add(Calendar.DAY_OF_YEAR, Integer.parseInt(""+(-daysBefore)));
 
                 if (date.equals(checkPoint.getTime())) {
                     float demandMean = phaseDemands.get(pdcount).getDemandMean();
