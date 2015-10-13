@@ -187,7 +187,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
     public void createUser(String username, String password, String email, List<SystemRole> roles) throws ExistSuchUserException, NoSuchRoleException {
         verifySystemUserExistence(username, email);
         SystemUser systemUser = new SystemUser();
-        systemUser.create(username, password, email);
+//        systemUser.create(username, password, email);
         for (SystemRole role : roles) {
             SystemRole r = roleSession.getSystemRoleByName(role.getRoleName());
             systemUser.getSystemRoles().add(r);
