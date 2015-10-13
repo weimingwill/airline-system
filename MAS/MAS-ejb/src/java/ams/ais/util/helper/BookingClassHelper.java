@@ -15,6 +15,7 @@ public class BookingClassHelper {
     private BookingClass bookingClass;
     private int seatQty;
     private float price;
+    private float basicPrice;
     private float priceCoefficient;
     private float demandMean;
     private float demandDev;
@@ -68,6 +69,14 @@ public class BookingClassHelper {
 
     public void setDemandDev(float demandDev) {
         this.demandDev = demandDev;
+    }
+
+    public float getBasicPrice() {
+        return basicPrice;
+    }
+
+    public void setBasicPrice(float basicPrice) {
+        this.basicPrice = basicPrice;
     }
     
 }

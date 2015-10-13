@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package util.converter;
-
+ 
 import ams.ais.entity.BookingClass;
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
@@ -17,16 +17,14 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
-/**
- *
- * @author winga_000
- */
+ 
 @FacesConverter("bookingClassConverter")
 public class BookingClassConverter implements Converter {
     
     @EJB
     private BookingClassSessionLocal bookingClassSession;
     
+    @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
@@ -41,12 +39,16 @@ public class BookingClassConverter implements Converter {
         }
     }
 
+    @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if (object != null) {
+        if (object != null && !(object instanceof String)) {
             return String.valueOf(((BookingClass) object).getBookingClassId());
+//            return String.valueOf(((BookingClass) object).getBookingClassId().toString());
         } else {
             return null;
         }
     }
-
+    
+   
 }
+      

@@ -62,4 +62,11 @@ public interface FlightScheduleSessionLocal {
     public List<FlightScheduleBookingClass> dislinkFlightScheduleBookingClass(CabinClassTicketFamily cabinClassTicketFamily);
 
     public void dislinkFlightScheduleBookingClass(List<FlightScheduleBookingClass> flightScheduleBookingClasses);
+
+    public double calcFlightFuelCostPerRoundTrip(Long flightScheduleId);
+    
+    //including cost: fuelCostPerRoundTrip
+    public double calcFlightScheduleBasicCostPerRoundTrip(Long flightScheduleId);
+    
+    public void verifyFlightScheduleBookingClassExistence(Long flightScheduleId) throws NoSuchFlightScheduleBookingClassException;
 }

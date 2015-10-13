@@ -79,7 +79,8 @@ public class CabinClassController implements Serializable{
     
     public String updateCabinClass() {
         try {
-            cabinClassSession.updateCabinClass(selectedCabinClass.getName(),type, name);
+            System.out.println("selected cabin class name is: "+selectedCabinClass);
+            cabinClassSession.updateCabinClass(selectedCabinClass.getCabinClassId(),selectedCabinClass.getType(),selectedCabinClass.getName());
             msgController.addMessage("Edit cabin class successfully!");
         }catch( ExistSuchCabinClassNameException | NoSuchCabinClassException | ExistSuchCabinClassTypeException ex) {
             msgController.addErrorMessage(ex.getMessage());

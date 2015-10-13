@@ -20,7 +20,9 @@ import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.BookingClassHelper;
-import ams.aps.session.AircraftSessionLocal;
+import ams.ais.session.AircraftSessionLocal;
+import ams.ais.util.exception.NoSuchRuleException;
+import ams.ais.util.exception.NoSuchTicketFamilyRuleException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
@@ -155,10 +157,9 @@ public class TicketFamilyController implements Serializable {
         try {
             setRuleList(ticketFamilySession.getAllRules());
             for (Rule rule : ruleList) {
-                displayRuleList.add(new TicketFamilyRuleHelper(rule.getRuleId(), rule.getName(), 0));
+                displayRuleList.add(new TicketFamilyRuleHelper(rule.getRuleId(), rule.getName(),rule.getDescription(), 0));
             }
-        } catch (EmptyTableException ex) {
-            Logger.getLogger(TicketFamilyController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchRuleException ex) {
         }
         System.out.println("Number of Rules in database = " + displayRuleList.size());
 
@@ -171,6 +172,33 @@ public class TicketFamilyController implements Serializable {
 
     }
 
+    public List<Rule> getRulesByTicketFmailyId(Long ticketFamilyId) {
+        List<Rule> rules = new ArrayList<>();
+        try {
+            rules = ticketFamilySession.getRulesByTicketFmailyId(ticketFamilyId);
+        } catch (NoSuchRuleException e) {
+        }
+        return rules;
+    }
+    
+    public List<Rule> getAllRules(){
+        List<Rule> rules = new ArrayList<>();
+        try {
+            rules = ticketFamilySession.getAllRules();
+        } catch (NoSuchRuleException e) {
+        }
+        return rules;
+    }
+    
+    public TicketFamilyRule getTicketFamilyRuleById(Long tfId, Long ruleid) {
+        TicketFamilyRule ticketFamilyRule = new TicketFamilyRule();
+        try {
+            ticketFamilyRule = ticketFamilySession.getTicketFamilyRuleById(tfId, ruleid);
+        } catch (NoSuchTicketFamilyRuleException e) {
+        }
+        return ticketFamilyRule;
+    } 
+    
     public String createTicketFamily() {
 //        System.out.println("type = " + type);
 //        System.out.println("name = " + name);
@@ -200,6 +228,8 @@ public class TicketFamilyController implements Serializable {
 
     public void deleteTicketFamily() {
         try {
+            System.out.print("we are in delete ticket Family!");
+            System.out.print("the deleted select ticket family name is: "+selectedTicketFamily);
             ticketFamilySession.deleteTicketFamilyByType(selectedTicketFamily.getType());
             msgController.addMessage("Delete ticket family successfully");
         } catch (NoSuchTicketFamilyException ex) {

@@ -5,6 +5,7 @@
  */
 package managedbean.ais;
 
+import ams.ais.entity.TicketFamily;
 import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.NeedTicketFamilyException;
@@ -13,7 +14,7 @@ import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.aps.entity.Aircraft;
-import ams.aps.session.AircraftSessionLocal;
+import ams.ais.session.AircraftSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import javax.inject.Named;
@@ -47,7 +48,7 @@ public class ProductDesignController implements Serializable {
     private CabinClassSessionLocal cabinClassSession;
 
     private List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers;
-    private Aircraft selectedAircraft;
+    private Aircraft selectedAircraft = new Aircraft();
 
     /**
      * Creates a new instance of ProductDesignController
@@ -76,7 +77,7 @@ public class ProductDesignController implements Serializable {
             msgController.addErrorMessage(ex.getMessage());
             return "";
         }
-        return navigationController.redirectToAIS();
+        return navigationController.redirectToProductDesign();
     }
 
     public List<Aircraft> getScheduledAircrafts() {
@@ -89,11 +90,23 @@ public class ProductDesignController implements Serializable {
         return aircrafts;
     }
 
-    public void cleanAttribute(){
+    public List<TicketFamily> getAircraftTicketFamilys() {
+        System.out.println("Selected Aircraft: " + selectedAircraft);
+        List<TicketFamily> ticketFamilys = new ArrayList<>();
+        try {
+            if (selectedAircraft != null) {
+                ticketFamilys = aircraftSession.getAircraftTicketFamilys(selectedAircraft.getAircraftId());
+            }
+        } catch (NoSuchTicketFamilyException ex) {
+        }
+        return ticketFamilys;
+    }
+
+    public void cleanAttribute() {
         selectedAircraft = null;
         cabinClassTicketFamilyHelpers = null;
     }
-    
+
     //Getter and setter
     public List<CabinClassTicketFamilyHelper> getCabinClassTicketFamilyHelpers() {
         return cabinClassTicketFamilyHelpers;

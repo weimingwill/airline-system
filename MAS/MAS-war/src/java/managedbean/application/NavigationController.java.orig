@@ -8,8 +8,6 @@ package managedbean.application;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -26,10 +24,6 @@ public class NavigationController implements Serializable {
 
     public String toLogin() {
         return "/views/secured/common/users/login.xhtml";
-    }
-
-    public String redirectToLogin() {
-        return "/views/secured/common/users/login.xhtml" + REDIRECT;
     }
 
     public String redirectToHome() {
@@ -224,9 +218,7 @@ public class NavigationController implements Serializable {
     public String redirectToCreateBookingClass() {
         return "/views/secured/ais/booking_class/createBookingClass.xhtml" + REDIRECT;
     }
-    public String redirectToViewAllBookingClass(){
-        return "/views/secured/ais/booking_class/viewBookingClass.xhtml" + REDIRECT;
-    }
+
     public String redirectToDeleteBookingClass() {
         return "/views/secured/ais/booking_class/deleteBookingClass.xhtml" + REDIRECT;
     }
@@ -235,6 +227,7 @@ public class NavigationController implements Serializable {
         return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
     }
 
+    //Flight Schedule Booking Class
     public String redirectToAssignFlightScheduleBookingClass() {
         return "/views/secured/ais/booking_class/assignFlightScheduleBookingClasses.xhtml" + REDIRECT;
     }
@@ -276,98 +269,45 @@ public class NavigationController implements Serializable {
         return "/views/secured/ais/yield_management/addCheckPoint.xhtml" + REDIRECT;
     }
 
-    //Airline Planning System
-    //Fleet Planning Module
+    //APS
     public String redirectToAPS() {
-        return "/views/secured/aps/apsMain.xhtml" + REDIRECT;
+        return "/views/secured/aps/apsMain.xhtml?faces-redirect=true";
     }
 
     public String toViewAircraftModel() {
-        return "/views/secured/aps/fleet/viewAircraftModel.xhtml" + REDIRECT;
+        return "/views/secured/aps/fleet/viewAircraftModel.xhtml";
     }
 
     public String toAddNewAircraft() {
-        return "/views/secured/aps/fleet/addNewAircraft.xhtml" + REDIRECT;
+        return "/views/secured/aps/fleet/addNewAircraft.xhtml";
     }
 
-    public String toViewFleet() {
-        return "/views/secured/aps/fleet/viewFleet.xhtml" + REDIRECT;
-    }
-
-    public String toRetireAicraft() {
-        return "/views/secured/aps/fleet/retireAircraft.xhtml" + REDIRECT;
-    }
-
-    public String toViewRetiredFleet() {
-        return "/views/secured/aps/fleet/viewRetiredFleet.xhtml" + REDIRECT;
-    }
-
-    // Route Planning Module
-    public String toAddHub() {
+    public String redirectToAddHub() {
         return "/views/secured/aps/route/addHub.xhtml" + REDIRECT;
     }
 
-    public String toCancelHub() {
+    public String redirectToCancelHub() {
         return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
+
+    }
+
+    public String redirectToAddRoute() {
+        return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
+
+    }
+
+    public String redirectToViewRoutes() {
+        return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
+
+    }
+
+    public String redirectToViewObsoleteRoutes() {
+        return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
+
     }
 
     public String toAddRoute() {
-        return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
-    }
-
-    public String toCheckRoute() {
-        return "/views/secured/aps/route/checkRouteExistence.xhtml" + REDIRECT;
-    }
-
-    public String toGenerateRoute() {
-        return "/views/secured/aps/route/generateRoute.xhtml" + REDIRECT;
-    }
-
-    public String toCustomizeRoute() {
-        return "/views/secured/aps/route/customizeRoute.xhtml" + REDIRECT;
-    }
-
-    public String toViewRoutes() {
-        return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
-    }
-
-    public String toViewObsoleteRoutes() {
-        return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
-    }
-    
-    
-    public String toAddAirport(){
-        return "/views/secured/aps/route/addAirport.xhtml" + REDIRECT;
-    }
-    
-    
-    // Flight Scheduling
-    public String toCreateFlight(){
-        return "/views/secured/aps/flight_schedule/createFlight.xhtml" + REDIRECT;
-    }
-    
-    public String toFleetAssignment(){
-        return "/views/secured/aps/flight_schedule/fleetAssignment.xhtml";
-    }
-    
-    public String toFreqPlanning(){
-        return "/views/secured/aps/flight_schedule/freqPlanning.xhtml";
-    }
-    
-    public String toConfirmFlight(){
-        return "/views/secured/aps/flight_schedule/confirmFlight.xhtml";
-    }
-    
-    public String toScheduleFlight(){
-        return "/views/secured/aps/flight_schedule/scheduleFlight.xhtml" + REDIRECT;
-    }
-    
-
-    public String redirectToCurrentPage() {
-        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        String uri = request.getRequestURI();
-        uri = uri.substring(uri.indexOf('/', 1));
-        return uri + REDIRECT;
+        return "/views/secured/aps/route/addRoute.xhtml?faces-redirect=true";
     }
 
 }

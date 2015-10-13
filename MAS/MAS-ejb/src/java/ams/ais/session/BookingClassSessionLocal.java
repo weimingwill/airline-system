@@ -6,14 +6,20 @@
 package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
+import ams.ais.entity.TicketFamily;
+import ams.ais.util.exception.DuplicatePriceException;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
+import ams.ais.util.exception.WrongSumOfBookingClassSeatQtyException;
+import ams.ais.util.exception.WrongSumOfTicketFamilySeatQtyException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
+import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Local;
 
 /**
@@ -31,17 +37,39 @@ public interface BookingClassSessionLocal {
 
     public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId);
 
-    public void createBookingClass(String name) throws ExistSuchBookingClassNameException;
+    public void createBookingClass(String name, TicketFamily ticketFamily) throws ExistSuchBookingClassNameException;
 
-    public void verifyBookingClassName(String name) throws ExistSuchBookingClassNameException;
-
+    public void verifyBookingClassName(String name,TicketFamily ticketFamily) throws ExistSuchBookingClassNameException;
+    
+    public List<TicketFamily> getAllTicketFamily();
+    
     public void deleteBookingClass(String name) throws NoSuchBookingClassException;
 
     public BookingClass search(String name) throws NoSuchBookingClassException;
 
     public void allocateSeats(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightHelpers)
-            throws NoSuchAircraftException, NoSuchAircraftCabinClassException, NoSuchFlightScheduleBookingClassException;
+            throws NoSuchAircraftException, NoSuchAircraftCabinClassException, NoSuchFlightScheduleBookingClassException,
+            WrongSumOfBookingClassSeatQtyException, WrongSumOfTicketFamilySeatQtyException;
 
-    public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers)
+    public void allocateBookingClassSeats(Long flightScheduleId, TicketFamilyBookingClassHelper tfbcHelper)
+            throws WrongSumOfBookingClassSeatQtyException, NoSuchFlightScheduleBookingClassException;
+    
+    public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers, Map<Long, Float> priceMap)
+            throws NoSuchFlightScheduleBookingClassException, DuplicatePriceException;
+
+    public void verifyUniqueBookingClassPrices(Map<Long, Float> priceMap) throws DuplicatePriceException;
+
+    public void verifyBookingClassSeatsSum(Long flightScheduleId, TicketFamilyBookingClassHelper tfbcHelper) 
+            throws WrongSumOfBookingClassSeatQtyException;
+
+    public void verifyTicketFamilySeatsSum(Long flightScheduleId, FlightSchCabinClsTicFamBookingClsHelper flightHelper)
+            throws WrongSumOfTicketFamilySeatQtyException;
+    
+    public void setBookingClassDefaultPrice(Long flightScheduleId, Long ticketFamilyId, float ticketFamilyPrice)
             throws NoSuchFlightScheduleBookingClassException;
-}
+    
+    public void updateBookingClass(Long bookingClassId, String bookingClassName) throws NoSuchBookingClassException, ExistSuchBookingClassNameException;
+    
+    public List<BookingClass> getAllOtherBookingClassById(Long bookingClassId);
+}   
+
