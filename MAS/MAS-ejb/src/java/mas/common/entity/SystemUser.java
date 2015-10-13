@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import mas.common.util.helper.UserStatus;
 
 /**
  *
@@ -22,6 +23,7 @@ import javax.persistence.ManyToMany;
  */
 @Entity
 public class SystemUser implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long systemUserId;
@@ -32,17 +34,29 @@ public class SystemUser implements Serializable {
     private Boolean locked;
     private Boolean activated;
     private Boolean deleted;
+    private String name;
+    private String address;
+    private String department;
+    private String phone;
     private String status;
-    
+
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemRole> systemRoles = new ArrayList<>();
-    @ManyToMany(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemMsg> systemMsgs = new ArrayList<>();
-    
-    public void create(String username, String password, String email){
+
+    public void create(String username, String password, String name, String email, String phone, String address, String department){
         this.setUsername(username);
         this.setPassword(password);
+        this.setName(name);
         this.setEmail(email);
+        this.setPhone(phone);
+        this.setAddress(address);
+        this.setDepartment(department);
+        this.setActivated(false);
+        this.setDeleted(false);
+        this.setLocked(false);
+        this.setStatus(UserStatus.IDLE);
     }
 
     public Long getSystemUserId() {
@@ -52,7 +66,7 @@ public class SystemUser implements Serializable {
     public void setSystemUserId(Long systemUserId) {
         this.systemUserId = systemUserId;
     }
-    
+
     public List<SystemMsg> getSystemMsgs() {
         return systemMsgs;
     }
@@ -60,7 +74,6 @@ public class SystemUser implements Serializable {
     public void setSystemMsgs(List<SystemMsg> systemMsgs) {
         this.systemMsgs = systemMsgs;
     }
-
 
     @Override
     public int hashCode() {
@@ -169,5 +182,39 @@ public class SystemUser implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
-    }    
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    
 }

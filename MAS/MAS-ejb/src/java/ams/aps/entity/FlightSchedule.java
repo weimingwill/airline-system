@@ -33,16 +33,12 @@ public class FlightSchedule implements Serializable {
     private Long flightScheduleId;
     private String departTerminal;
     private String departGate;
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date departDate;
-    @Temporal(value = TemporalType.TIME)
-    private Date departTime;
     private String arrivalTerminal;
     private String arrivalGate;
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date arrivalDate;
-    @Temporal(value = TemporalType.TIME)
-    private Date arrivalTime;
     private Boolean deleted;
     private Boolean completed;
     private Boolean seatAllocated;
@@ -252,22 +248,6 @@ public class FlightSchedule implements Serializable {
 
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
-    }
-
-    public Date getDepartTime() {
-        return departTime;
-    }
-
-    public void setDepartTime(Date departTime) {
-        this.departTime = departTime;
-    }
-
-    public Date getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(Date arrivalTime) {
-        this.arrivalTime = arrivalTime;
     }
     
     
