@@ -10,6 +10,7 @@ import ams.aps.entity.AircraftType;
 import ams.aps.entity.Airport;
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
+import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
@@ -20,7 +21,12 @@ import ams.aps.util.exception.ObjectDoesNotExistException;
 import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteHelper;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -37,6 +43,10 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     @PersistenceContext
     EntityManager em;
 
+    @EJB
+    private FleetPlanningSessionLocal fleetPlanningSession;
+    @EJB
+    private RoutePlanningSessionLocal routePlanningSession;
     public final double BUFFER_TIME = 1 / 6.0; // buffer time for passengers to alight
     public final double STOPOVER_TIME = 1 / 3.0; //time for plane to rest at the stop-over airport
     public final double DEFAULT_SPEED_FRACTION = 0.8;
@@ -250,7 +260,9 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         try {
             for (Flight flight : getAllUnscheduledFlights()) {
                 for (AircraftType aircraftType : flight.getAircraftTypes()) {
-                    aircraftTypeFamilys.add(aircraftType.getTypeFamily());
+                    if (!aircraftTypeFamilys.contains(aircraftType.getTypeFamily())) {
+                        aircraftTypeFamilys.add(aircraftType.getTypeFamily());
+                    }
                 }
             }
         } catch (NoSuchFlightException e) {
@@ -259,13 +271,15 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     @Override
-    public List<AircraftType> getUnscheduledAircraftTypesByTypeFamily(String typeFamily) {
-        List<AircraftType> aircraftTypes = new ArrayList<>();
+    public List<String> getUnscheduledAircraftTypeCodesByTypeFamily(String typeFamily) {
+        List<String> aircraftTypes = new ArrayList<>();
         try {
             for (Flight flight : getAllUnscheduledFlights()) {
                 for (AircraftType aircraftType : flight.getAircraftTypes()) {
                     if (aircraftType.getTypeFamily().equals(typeFamily)) {
-                        aircraftTypes.add(aircraftType);
+                        if (!aircraftTypes.contains(aircraftType.getTypeCode())) {
+                            aircraftTypes.add(aircraftType.getTypeCode());
+                        }
                     }
                 }
             }
@@ -287,32 +301,37 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     @Override
-    public List<Flight> getUnscheduledFlights(Airport deptAirport, List<AircraftType> aircraftTypes) 
+    public List<Flight> getUnscheduledFlights(Airport deptAirport, List<String> aircraftTypeCodes)
             throws NoSuchFlightException, NoSuchRouteException {
         List<Flight> flights = new ArrayList<>();
+        Set<Flight> hs = new HashSet<>();
         for (Route route : getRoutesByDeptAirport(deptAirport)) {
-            for (AircraftType aircraftType  : aircraftTypes) {
-                flights.addAll(getUnscheduledFlightsByRouteAndAircraftType(route, aircraftType));
+            for (String aircraftTypeCode : aircraftTypeCodes) {
+                AircraftType aircraftType = fleetPlanningSession.getAircraftTypeByCode(aircraftTypeCode);
+                hs.addAll(getUnscheduledFlightsByRouteAndAircraftType(route, aircraftType));
             }
         }
+        flights.addAll(hs);
         return flights;
     }
 
-    public List<Flight> getUnscheduledFlightsByRouteAndAircraftType(Route route, AircraftType aircraftType) throws NoSuchFlightException{
+    public List<Flight> getUnscheduledFlightsByRouteAndAircraftType(Route route, AircraftType aircraftType) throws NoSuchFlightException {
         Query query = em.createQuery("SELECT f FROM Flight f, AircraftType a WHERE f.route.routeId = :inRouteId AND :inAircraftType MEMBER OF f.aircraftTypes AND f.route.deleted = FALSE AND f.scheduled = FALSE AND f.deleted = FALSE");
+        query.setParameter("inRouteId", route.getRouteId());
+        query.setParameter("inAircraftType", aircraftType);
         List<Flight> flights = new ArrayList<>();
         try {
             flights = (List<Flight>) query.getResultList();
         } catch (NoResultException e) {
             throw new NoSuchFlightException(ApsMsg.NO_SUCH_FLIGHT_ERROR);
         }
-        return flights;    
+        return flights;
     }
 
-    public List<Route> getRoutesByDeptAirport(Airport deptAirport) throws NoSuchRouteException{
+    public List<Route> getRoutesByDeptAirport(Airport deptAirport) throws NoSuchRouteException {
         Query query = em.createQuery("SELECT r FROM Route r, RouteLeg rl, Leg l WHERE r.routeId = rl.routeId AND rl.legSeq = 0 AND rl.leg.legId = l.legId AND l.departAirport.id = :inId AND r.deleted = FALSE");
         query.setParameter("inId", deptAirport.getId());
-        List<Route> routes= new ArrayList<>();
+        List<Route> routes = new ArrayList<>();
         try {
             routes = (List<Route>) query.getResultList();
         } catch (NoResultException e) {
@@ -320,7 +339,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
         return routes;
     }
-    
+
     public void updateFlight(Flight flight) throws ObjectDoesNotExistException {
         try {
             em.merge(flight);
@@ -331,4 +350,40 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
     }
 
+    @Override
+    public void createFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrivalDate) throws NoSuchFlightException {
+        Flight flight = getFlightByFlightNo(flightNo);
+        RouteHelper routeHelper = new RouteHelper();
+        routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
+        List<LegHelper> legHelpers = routeHelper.getLegs();
+        Calendar dept = dateToCalendar(deptDate);
+        Calendar arrival = dateToCalendar(arrivalDate);
+        Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        for (LegHelper legHelper : legHelpers) {
+            start = (Calendar)dept.clone();
+            end = (Calendar)dept.clone();
+            end.set(Calendar.MINUTE, start.get(Calendar.MINUTE) + (int) (60 * (double)legHelper.getFlyingTime()));
+            Leg leg = em.find(Leg.class, legHelper.getLegId());
+        }
+        
+    }
+    
+    public Calendar dateToCalendar(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
+    
+    public Flight getFlightByFlightNo(String fligthNo) throws NoSuchFlightException {
+        Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightNo = :inFlightNo AND f.deleted = FALSE AND f.scheduled = FALSE");
+        query.setParameter("inFlightNo", fligthNo);
+        Flight flight = new Flight();
+        try {
+            flight = (Flight) query.getSingleResult();
+        } catch (NoResultException e) {
+            throw new NoSuchFlightException(ApsMsg.NO_SUCH_FLIGHT_ERROR);
+        }
+        return flight;
+    }
 }

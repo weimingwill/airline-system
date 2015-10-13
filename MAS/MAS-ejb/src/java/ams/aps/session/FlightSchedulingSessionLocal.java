@@ -17,6 +17,7 @@ import ams.aps.util.exception.NoSuchFlightException;
 import ams.aps.util.exception.NoSuchRouteException;
 import ams.aps.util.exception.ObjectDoesNotExistException;
 import ams.aps.util.helper.RouteHelper;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -26,22 +27,41 @@ import javax.ejb.Local;
  */
 @Local
 public interface FlightSchedulingSessionLocal {
+
     public Flight checkFlightExistence(String flightNo) throws ObjectDoesNotExistException;
+
     public List<Flight> getFlight(Boolean complete) throws EmptyTableException;
+
     public void deleteFlight(String flightNo) throws DeleteFailedException;
+
     public boolean changeFlightNo(String flightNo, String newFlightNo);
+
     public List<AircraftType> getCapableAircraftTypesForRoute(Double maxDist);
+
     public List<Aircraft> getAvailableAircraftsByType(AircraftType type);
+
     public void assignFlightScheduleToAircraft(FlightSchedule flightSchedule);
+
     public void modifyFlightSchedule(FlightSchedule newFlightSchedule) throws ObjectDoesNotExistException;
+
     public List<Flight> getAllUnscheduledFlights() throws NoSuchFlightException;
+
     public List<String> getUnscheduledFlightAircraftTypeFamilys();
-    public List<AircraftType> getUnscheduledAircraftTypesByTypeFamily(String typeFamily);
+
+    public List<String> getUnscheduledAircraftTypeCodesByTypeFamily(String typeFamily);
+
     public List<Route> getUnscheduledFlightRoutes() throws NoSuchRouteException;
-    public List<Flight> getUnscheduledFlights(Airport deptAirport, List<AircraftType> aircraftTypes) 
+
+    public List<Flight> getUnscheduledFlights(Airport deptAirport, List<String> aircraftTypeCodes)
             throws NoSuchFlightException, NoSuchRouteException;
+
     public void calcFlightDuration(AircraftType selectedModel, RouteHelper routeHelper, double speedFraction);
+
     public AircraftType getModelWithMinMachNo(List<AircraftType> models);
+
     public boolean createReturnedFlight(Flight flight, Flight returnedFlight);
+
     public void updateFlight(Flight flight) throws ObjectDoesNotExistException;
+    
+    public void createFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrivalDate) throws NoSuchFlightException;
 }

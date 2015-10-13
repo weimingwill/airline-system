@@ -13,9 +13,9 @@
     <ui:define name="content">
         <me:CCScheduleFlightMenu activeIndex="0"/>
         <h:form id="form"> 
-            <p:ribbon id="unscheduledFlightFilter">
+            <p:ribbon id="unscheduledFlightFilter" styleClass="flightFilter">
                 <p:tab title="Filter and find unscheduled flight to schedule">
-                    <p:ribbonGroup label="Select departure airport">
+                    <p:ribbonGroup label="Select departure airport" style="width:175px;">
                         <p:selectOneMenu id="deptAirport"  value="#{flightScheduleManager.selectedAirport}" converter="airportConverter" panelStyle="width:180px"
                                          effect="fade" var="deptAirport" style="width:160px" filter="true" filterMatchMode="startsWith">
                             <f:selectItem itemLabel="Select departure " itemValue="" />
@@ -36,29 +36,22 @@
                     </p:ribbonGroup>
 
                     <p:ribbonGroup label="Select aircraft models" style="width:188px">
-                        <p:selectCheckboxMenu id="aircraftModels" label="Select aircraft models" value="#{flightScheduleManager.selectedAircraftTypes}"
-                                              filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
-                            <f:selectItems value="#{flightScheduleManager.aircraftTypes}"/>
+                        <p:selectCheckboxMenu id="aircraftModels" label="Select aircraft models" value="#{flightScheduleManager.selectedAircraftTypeCodes}"
+                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                            <f:selectItems value="#{flightScheduleManager.aircraftTypeCodes}" var="aircraftType"/>
                         </p:selectCheckboxMenu>
                     </p:ribbonGroup>
 
                     <p:ribbonGroup label="Actions">
-                        <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
-                            <!--<p:commandButton value="Apply" update=":form:unscheduledFlight" actionListener="{flightScheduleManager.applyFilters()}" icon="fa fa-check-square-o" styleClass="filterBtn"/>-->
-                            <!--<p:commandButton value="Reset" update="unscheduledFlightFilter,:form:unscheduleFlight" actionListener="{flightScheduleManager.resetFilters()}" icon="fa fa-refresh" styleClass="filterBtn"/>-->
+                        <p:panelGrid>
+                            <p:commandButton value="Apply" update="form" actionListener="#{flightScheduleManager.applyFilters()}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
+                            <p:commandButton value="Reset" update="form" actionListener="#{flightScheduleManager.resetFilters()}" icon="fa fa-refresh" styleClass="filterBtn"/>
                         </p:panelGrid>
                     </p:ribbonGroup>
                 </p:tab>
             </p:ribbon>
-
-            
-            
-
-            <p:panelGrid style="width:100%">
-                <ez:CCFlightTile aircraft="MA865" deptAirport="AABS" deptAirportName="Singapore Airport" arriveAirport="DDSS" arriveAirportName="China Airport" flyingHours="6.9" index="1" />
-            </p:panelGrid>
-
-            <!--<ta:CCUnscheduledFlightTable />-->
+ 
+            <ta:CCUnscheduledFlightTable id="unscheduledFlight" />
 
         </h:form>
 

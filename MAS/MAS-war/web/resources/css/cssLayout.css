@@ -145,7 +145,7 @@ tr.hide{
     color:#e17009 !important;
 }
 .ui-ribbon-group-content{
-    height: 150px !important;
+    /*height: 150px important;*/
     margin-bottom: 10px;
 }
 
@@ -164,3 +164,29 @@ tr.hide{
     width:auto !important; 
     font-size:small;
 }
+
+/*.unscheduledFlight > .ui-panel-content {
+    overflow-x: scroll !important;
+}*/
+
+/*.unscheduledFlight > .ui-datagrid-content {
+    overflow-x: scroll !important;
+}*/
+
+.unscheduledFlightPanelGrid.ui-panelgrid>*>tr,
+.unscheduledFlightPanelGrid.ui-panelgrid .ui-panelgrid-cell {
+    border: none;
+    padding-bottom: 10px;
+}
+
+.flightTile {
+    padding: 0px;
+    border: none;
+    z-index: 1000;
+}
+
+.flightFilter > .ui-ribbon-group-content{
+    height: 30px !important;
+    margin-bottom: 10px;
+}
+

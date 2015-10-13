@@ -2,10 +2,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <!-- INTERFACE -->
     <cc:interface>
+        <!--<span id="{cc.clientId}}" ></span>-->
         <cc:attribute name="aircraft" />
         <cc:attribute name="flyingHours" />
         <cc:attribute name="diasplayDateTime" default="false" />
@@ -22,34 +25,39 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <p:panelGrid styleClass="tile">
-            <p:row>
-                <p:column rowspan="2" style="text-align: center;">
-                    <p:outputLabel styleClass="fa fa-plane tileIcon"/>
-                    <p:outputLabel id="deptAirport#{cc.attrs.index}" value="#{cc.attrs.deptAirport}" >
-                        <p:tooltip for="deptAirport#{cc.attrs.index}" value="#{cc.attrs.deptAirportName}" />
-                    </p:outputLabel>
-                </p:column>
-                <p:column colspan="1">
-                    <p:outputLabel value=" #{cc.attrs.aircraft}" styleClass="tileHeader" />
-                </p:column>
-                <p:column rowspan="2" style="text-align: center;">
-                    <p:outputLabel styleClass="fa fa-plane tileIcon" style="transform: rotate(90deg)"/>
-                    <p:outputLabel id="arriveAirport#{cc.attrs.index}" value="#{cc.attrs.arriveAirport}">
-                        <p:tooltip for="arriveAirport#{cc.attrs.index}" value="#{cc.attrs.arriveAirportName}" />
-                    </p:outputLabel>
 
-                </p:column>
-            </p:row>
-            <p:row>
-                <p:column colspan="1" style="text-align: right;">
-                    <p:outputLabel styleClass="fa fa-clock-o" style="font-size: 15px;"/>
-                    <p:outputLabel value=" #{cc.attrs.flyingHours}" styleClass="tileValue"/>
-                    <p:outputLabel value=" hours" styleClass="tileFooter"/>
-                </p:column>
+        <p:panel id="flightTile#{index}" styleClass="flightTile">
+            <p:panelGrid styleClass="tile"  >
+                <p:row>
+                    <p:column rowspan="2" style="text-align: center;">
+                        <p:outputLabel styleClass="fa fa-plane tileIcon"/>
+                        <p:outputLabel id="deptAirport#{cc.attrs.index}" value="#{cc.attrs.deptAirport}" >
+                            <!--<p:tooltip for="deptAirport{cc.attrs.index}" value="{cc.attrs.deptAirportName}" />-->
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column colspan="1">
+                        <p:outputLabel value="  #{cc.attrs.aircraft}  " styleClass="tileHeader" />
+                    </p:column>
+                    <p:column rowspan="2" style="text-align: center;">
+                        <p:outputLabel styleClass="fa fa-plane tileIcon" style="transform: rotate(90deg)"/>
+                        <p:outputLabel id="arriveAirport#{cc.attrs.index}" value="#{cc.attrs.arriveAirport}">
+                            <!--<p:tooltip for="arriveAirport{cc.attrs.index}" value="{cc.attrs.arriveAirportName}" />-->
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="1" style="text-align: right;">
+                        <p:outputLabel styleClass="fa fa-clock-o" style="font-size: 15px;"/>
+                        <h:outputText value="#{cc.attrs.flyingHours}" styleClass="tileValue">
+                            <f:convertNumber maxFractionDigits="1" pattern="#0.0" />
+                        </h:outputText>
+                        <p:outputLabel value=" hours" styleClass="tileFooter"/>
+                    </p:column>
 
-            </p:row>
-        </p:panelGrid>
+                </p:row>
+            </p:panelGrid>
+        </p:panel>
+        <p:draggable for="flightTile" revert="true" />
         <style>
             .tile{
                 width: 11.375rem;

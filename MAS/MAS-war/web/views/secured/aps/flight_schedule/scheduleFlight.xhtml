@@ -6,32 +6,38 @@
                 xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
 
     <ui:define name="content">
         <me:CCScheduleFlightMenu activeIndex="1"/>
-
-        <!--<ta:CCUnscheduledFlightTable />-->
-
         <h:form>
-            <p:growl id="messages" showDetail="true" />
+
+            <p:fieldset id="unscheduledFlights" legend="Available Unscheduled Flights">
+                <ta:CCUnscheduledFlightTable />
+            </p:fieldset>
+
 
             <h:panelGrid columnClasses="value">
-                <h3 style="margin-top: 0">Editable Schedule</h3>
-                <p:schedule id="schedule" value="#{flightScheduleManager.eventModel}" widgetVar="myschedule" timeZone="GMT+2">
+                <h3 style="margin-top: 10px;">Flight Schedule</h3>
+                <p:schedule id="schedule" value="#{flightScheduleManager.eventModel}" widgetVar="myschedule" timeZone="GMT+2" resizable="false">
 
                     <p:ajax event="dateSelect" listener="#{flightScheduleManager.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
                     <p:ajax event="eventSelect" listener="#{flightScheduleManager.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
                     <p:ajax event="eventMove" listener="#{flightScheduleManager.onEventMove}" update="messages" />
-                    <p:ajax event="eventResize" listener="#{flightScheduleManager.onEventResize}" update="messages" />
 
                 </p:schedule>
             </h:panelGrid>
 
-            <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
+            <p:dialog widgetVar="eventDialog" header="Flight Details" showEffect="clip" hideEffect="clip" style="width:500px;">
                 <h:panelGrid id="eventDetails" columns="2">
-                    <p:outputLabel for="title" value="Titles:" />
-                    <p:inputText id="title" value="#{flightScheduleManager.event.title}" required="true" />
+                    <p:outputLabel for="flightNo" value="Flight Number: " />
+                    <p:inputText id="flightNo" value="#{flightScheduleManager.event.title}" required="true" />
+                    
+                    <p:outputLabel for="deptAirport" value="Departure Airport: " />
+                    <p:inputText id="deptAirport" value="#{flightScheduleManager.deptAirport}" required="true" />
+                    
+                    <p:outputLabel for="arrivalAirport" value="Arrival Airport:" />
+                    <p:inputText id="arrivalAirport" value="#{flightScheduleManager.arriveAirport}" required="true" />
 
                     <p:outputLabel for="from" value="From:" />
                     <p:calendar id="from" value="#{flightScheduleManager.event.startDate}" timeZone="GMT+2" pattern="dd/MM/yyyy HH:mm"/>
@@ -46,31 +52,29 @@
                     <p:commandButton id="addButton" value="Save" actionListener="#{flightScheduleManager.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
                 </h:panelGrid>
             </p:dialog>    
+
+            <p:droppable for="schedule" tolerance="touch" activeStyleClass="ui-state-highlight" datasource="unscheduledFlights" onDrop="handleDrop">
+                <p:ajax listener="" update="" oncomplete="PF('eventDialog').show();" />
+            </p:droppable>
+            <script type="text/javascript">
+                function handleDrop(event, ui) {
+                    var droppedCar = ui.draggable;
+
+                    droppedCar.fadeOut('fast');
+                }
+            </script>
         </h:form>
 
         <script type="text/javascript">
-            PrimeFaces.locales['tr'] = {
-                closeText: 'kapat',
-                prevText: 'geri',
-                nextText: 'ileri',
-                currentText: 'bugün',
-                monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-                monthNamesShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
-                    'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
-                dayNames: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
-                dayNamesShort: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
-                dayNamesMin: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
-                weekHeader: 'Hf',
-                firstDay: 1,
-                isRTL: false,
-                showMonthAfterYear: false,
-                yearSuffix: '',
-                month: 'Ay',
-                week: 'Hafta',
-                day: 'Gün',
-                allDayText: 'Tüm Gün'
-            };
+            $('#schedule').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,basicWeek,basicDay'
+                },
+                defaultView: 'basicWeek'
+            });
+
         </script>
         <style type="text/css">
             .value {
