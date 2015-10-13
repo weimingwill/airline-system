@@ -65,7 +65,7 @@ public class AirportController implements Serializable {
     }
 
     public void addCountry(ActionEvent event) {
-        newCountry.setIsoCode(newCountry.getCountryName().toUpperCase());
+        newCountry.setIsoCode(newCountry.getIsoCode().toUpperCase());
         if (routePlanningSession.checkISO(newCountry.getIsoCode(), newCountry.getCountryName())) {
             if (routePlanningSession.addCountry(newCountry.getIsoCode(), newCountry.getCountryName())) {
                 msgController.addMessage("Add country succesfully!");
