@@ -86,8 +86,8 @@
             <h:form>
 
                 <p:panelGrid columns="2">
-                    <h:outputText value="ISO Code: *" />
-                    <p:inputMask id="countryISO" value="#{airportController.newCountry.isoCode}" mask="aaa" required="true"/>
+                    <h:outputText value="ISO Code (2-Alphabet): *" />
+                    <p:inputMask id="countryISO" value="#{airportController.newCountry.isoCode}" mask="aa" required="true"/>
                     <h:outputText value="Country Name: *" />
                     <p:inputText value="#{airportController.newCountry.countryName}" required="true" label="countryName"/>
                 </p:panelGrid>

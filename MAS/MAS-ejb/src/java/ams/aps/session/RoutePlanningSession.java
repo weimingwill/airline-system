@@ -207,7 +207,12 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     @Override
     public boolean softDeleteRoute(Long id) {
         try {
-
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.route.routeId = :id AND f.deleted = FALSE AND f.completed = TRUE");
+            query.setParameter("id", id);
+            query.setMaxResults(1);
+            query.getSingleResult();
+            return false;      
+        } catch (NoResultException ex) {
             System.out.println("RoutePlanningSession: softDeleteRoute: " + id);
 
             Route route = em.find(Route.class, id);
@@ -219,8 +224,6 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
             em.merge(route);
             em.merge(returnRoute);
             return true;
-        } catch (Exception ex) {
-            return false;
         }
     }
 
@@ -619,22 +622,16 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public boolean checkISO(String iso, String countryName) {
-        Query q = em.createQuery("SELECT c FROM Country c WHERE c.isoCode =:isoCode");
-        q.setParameter("isoCode", iso);
-        Query q1 = em.createQuery("SELECT c FROM Country c WHERE c.countryName =:name");
-        q1.setParameter("name", countryName);
+        Query q = em.createQuery("SELECT c FROM Country c WHERE c.countryName LIKE :inName OR c.isoCode LIKE :inIsoCode");
+        q.setParameter("inIsoCode", iso);
+        q.setParameter("inName", countryName);
 
         try {
             Country a = (Country) q.getSingleResult();
-            Country b = (Country) q1.getSingleResult();
-            if (a != null || b != null) {
-                return false;
-            } else {
-                return true;
-            }
+            return false;
         } catch (NoResultException e) {
             return true;
-        } catch (Exception e) {
+        } catch (NonUniqueResultException  e) {
             return false;
         }
     }
