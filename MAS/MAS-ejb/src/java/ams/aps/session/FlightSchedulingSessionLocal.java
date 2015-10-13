@@ -71,11 +71,17 @@ public interface FlightSchedulingSessionLocal {
     public void createFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrivalDate)
             throws NoSuchFlightException, NoMoreUnscheduledFlightException, NoSelectAircraftException;
 
+    public void updateFlightSchedule(String flightNo, Date deptDate) throws NoMoreUnscheduledFlightException, NoSelectAircraftException, NoSuchFlightException;
+
     public void verifyUnscheduledFlightNumber(Flight flight) throws NoMoreUnscheduledFlightException;
 
     public Date addHourToDate(Date start, double hours);
-    
+
     public Aircraft getAircraftByTailNo(String tailNo) throws NoSuchAircraftException;
-    
+
     public List<FlightSchedule> getFlightSchedulesByTailNoAndTime(String aircraftTailNo, Date startDate, Date endDate);
+
+    public List<FlightSchedule> getFlightSchedulesByTailNo(String aircraftTailNo);
+
+    public Flight getFlightByFlightNo(String fligthNo) throws NoSuchFlightException;
 }

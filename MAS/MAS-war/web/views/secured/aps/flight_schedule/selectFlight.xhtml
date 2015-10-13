@@ -26,11 +26,11 @@
                         </p:selectOneMenu>
                     </p:ribbonGroup>
 
-                    <p:ribbonGroup label="Select aircraft family" style="width:175px">
+                    <p:ribbonGroup label="Select aircraft type family" style="width:175px">
                         <p:selectOneMenu id="aircraftFamily"  value="#{flightScheduleManager.selectedAircraftTypeFamily}" panelStyle="width:180px"
                                          effect="fade" style="width:160px" filter="true" filterMatchMode="startsWith">
                             <p:ajax update="aircraftModels" listener="#{flightScheduleManager.onAircraftTypeFamilyChange()}" />
-                            <f:selectItem itemLabel="Select aircraft family" itemValue="" />
+                            <f:selectItem itemLabel="Select aircraft type family" itemValue="" />
                             <f:selectItems value="#{flightScheduleManager.aircraftTypeFamilys}"/>
                         </p:selectOneMenu>                        
                     </p:ribbonGroup>
@@ -59,10 +59,9 @@
         <h:form>
             <p:panelGrid>
                 <p:row style="border: transparent">
-                    <p:column style="width:76%"></p:column>
+                    <p:column style="width:100%"></p:column>
                     <p:column style="text-align: right">
                         <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{navigationController.redirectToScheduleFlight()}" />
-                        <p:commandButton value="Save &amp; Exit" icon="fa fa-floppy-o"/>
                     </p:column>
                 </p:row>
             </p:panelGrid>

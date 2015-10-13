@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ActionEvent;
@@ -76,8 +78,8 @@ public class FlightScheduleManager implements Serializable {
     private List<RouteHelper> routeHelpers = new ArrayList<>();
     private List<Flight> unscheduledFlights = new ArrayList<>();
 //    private List<Aircraft> availableAircrafts = new ArrayList<>();
-    private String deptAirport = new String();
-    private String arriveAirport = new String();
+//    private String deptAirport = new String();
+//    private String arriveAirport = new String();
     private ScheduleModel eventModel;
     private ScheduleEvent event = new DefaultScheduleEvent();
     private Date calendarMinDate;
@@ -142,7 +144,8 @@ public class FlightScheduleManager implements Serializable {
     public void applyFilters() {
         try {
             setUnscheduledFlights();
-            for (String aircraftTypeCode : aircraftTypeCodes) {
+            availableAircrafts = new ArrayList<>();
+            for (String aircraftTypeCode : selectedAircraftTypeCodes) {
                 AircraftType aircraftType = fleetPlanningSession.getAircraftTypeByCode(aircraftTypeCode);
                 SelectItemGroup group = new SelectItemGroup(aircraftType.getTypeFamily());
                 SelectItem[] selectItems = new SelectItem[aircraftType.getAircrafts().size()];
@@ -154,9 +157,9 @@ public class FlightScheduleManager implements Serializable {
                 group.setSelectItems(selectItems);
                 availableAircrafts.add(group);
             }
-//            if (unscheduledFlights.isEmpty()) {
-//                msgController.addErrorMessage("There is no unscheduled flight starting from " + selectedAirport.getAirportName() + " with aircraft type " + aircraftTypeCodes.toString());
-//            }
+            if (unscheduledFlights.isEmpty()) {
+                msgController.warn("There is no such unscheduled flight");
+            }
         } catch (NoSuchFlightException | NoSuchRouteException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
@@ -206,7 +209,7 @@ public class FlightScheduleManager implements Serializable {
     }
 
     public void calcFixedEndTime() {
-        Date newDate = flightSchedulingSession.addHourToDate(event.getStartDate(), routeDuration * 2);
+        Date newDate = flightSchedulingSession.addHourToDate(event.getStartDate(), routeDuration);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(newDate);
         fixedEndDate = calendar.getTime();
@@ -232,13 +235,15 @@ public class FlightScheduleManager implements Serializable {
     }
 
     public void onAircraftChange() {
+        System.out.println("calendarMinDate: " + calendarMinDate);
+        System.out.println("calendarMaxDate: " + calendarMaxDate);
         flightSchedules = flightSchedulingSession.getFlightSchedulesByTailNoAndTime(selectedAircraftTailNo, calendarMinDate, calendarMaxDate);
+        System.out.println("Flight Schedules: " + flightSchedules);
         for (FlightSchedule flightSchedule : flightSchedules) {
             Flight flight = flightSchedule.getFlight();
             RouteHelper routeHelper = new RouteHelper();
+            initializeRouteHelper(flight, routeHelper);
             if (routeHelper.getOrigin().getIsHub()) {
-                routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
-                flightSchedulingSession.calcFlightDuration(flightSchedulingSession.getModelWithMinMachNo(flight.getAircraftTypes()), routeHelper, flight.getSpeedFraction());
                 Date deptDate = flightSchedule.getDepartDate();
                 Date arriveDate = flightSchedulingSession.addHourToDate(deptDate, routeHelper.getTotalDuration());
                 eventModel.clear();
@@ -251,50 +256,88 @@ public class FlightScheduleManager implements Serializable {
         System.out.println("Dropped Flight: ");
         droppedFlight = ((Flight) ddEvent.getData());
         RouteHelper routeHelper = new RouteHelper();
-        routePlanningSession.getRouteDetail(droppedFlight.getRoute(), routeHelper);
+        initializeRouteHelper(droppedFlight, routeHelper);
         if (!routeHelper.getOrigin().getIsHub()) {
             droppedFlight = droppedFlight.getReturnedFlight();
         }
-        flightSchedulingSession.calcFlightDuration(flightSchedulingSession.getModelWithMinMachNo(droppedFlight.getAircraftTypes()), routeHelper, droppedFlight.getSpeedFraction());
         System.out.println("Dropped Flight: " + droppedFlight.getFlightNo());
-        deptAirport = routeHelper.getOrigin().getAirportName();
-        arriveAirport = routeHelper.getDestination().getAirportName();
-        System.out.println("Airports: " + deptAirport + " - " + arriveAirport);
-        routeDuration = routeHelper.getTotalDuration();
+//        deptAirport = routeHelper.getOrigin().getAirportName();
+//        arriveAirport = routeHelper.getDestination().getAirportName();
+//        System.out.println("Airports: " + deptAirport + " - " + arriveAirport);
+        setRouteDuration(routeHelper);
 
         //Need to fix time duration
-        event = new DefaultScheduleEvent(droppedFlight.getFlightNo() + "/" + droppedFlight.getReturnedFlight().getFlightNo(), selectedDate, flightSchedulingSession.addHourToDate(selectedDate, routeDuration * 2));
+        event = new DefaultScheduleEvent(droppedFlight.getFlightNo() + "/" + droppedFlight.getReturnedFlight().getFlightNo(), selectedDate, flightSchedulingSession.addHourToDate(selectedDate, routeDuration));
     }
 
     public void addEvent(ActionEvent actionEvent) {
         System.out.println("Dropped Flight:" + droppedFlight);
         if (event.getId() == null) {
             eventModel.addEvent(event);
-            try {
-                selectedAircraft = flightSchedulingSession.getAircraftByTailNo(selectedAircraftTailNo);
-                String flightNo = event.getTitle().split("/")[0];
-                flightSchedulingSession.createFlightSchedule(flightNo, selectedAircraft, event.getStartDate(), event.getEndDate());
-                msgController.addMessage("Add flight schedule succesffuly");
-                setUnscheduledFlights();
-            } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException | NoSuchAircraftException | NoSuchRouteException e) {
-                msgController.addErrorMessage(e.getMessage());
-            }
+            createFligthSchedule();
         } else {
             eventModel.updateEvent(event);
+            updateFlightSchedule();
         }
         event = new DefaultScheduleEvent();
     }
 
     public void onEventSelect(SelectEvent selectEvent) {
         event = (ScheduleEvent) selectEvent.getObject();
-    }
+        String flightNo = event.getTitle().split("/")[0];
+        System.out.println("FlightNo: " + flightNo);
 
-    public void onDateSelect(SelectEvent selectEvent) {
-        event = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
+        Flight flight = new Flight();
+        try {
+            flight = flightSchedulingSession.getFlightByFlightNo(flightNo);
+        } catch (NoSuchFlightException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+
+        RouteHelper routeHelper = new RouteHelper();
+        initializeRouteHelper(flight, routeHelper);
+        setRouteDuration(routeHelper);
     }
 
     public void onEventMove(ScheduleEntryMoveEvent event) {
         msgController.addMessage("Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
+    }
+
+    public void createFligthSchedule() {
+        try {
+            selectedAircraft = flightSchedulingSession.getAircraftByTailNo(selectedAircraftTailNo);
+            String flightNo = event.getTitle().split("/")[0];
+            flightSchedulingSession.createFlightSchedule(flightNo, selectedAircraft, event.getStartDate(), event.getEndDate());
+            msgController.addMessage("Add flight schedule succesffuly");
+            setUnscheduledFlights();
+        } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException | NoSuchAircraftException | NoSuchRouteException e) {
+            msgController.addErrorMessage(e.getMessage());
+        }
+    }
+
+    public void updateFlightSchedule() {
+        try {
+            String flightNo = event.getTitle().split("/")[0];
+            flightSchedulingSession.updateFlightSchedule(flightNo, event.getStartDate());
+            msgController.addMessage("Add flight schedule succesffuly");
+            setUnscheduledFlights();
+        } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException | NoSuchRouteException e) {
+            msgController.addErrorMessage(e.getMessage());
+        }
+    }
+
+    public AircraftType getModelWithMinMachNo(Flight flight) {
+        return flightSchedulingSession.getModelWithMinMachNo(flight.getAircraftTypes());
+    }
+
+    //Helper classes
+    public void initializeRouteHelper(Flight flight, RouteHelper routeHelper) {
+        routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
+        flightSchedulingSession.calcFlightDuration(getModelWithMinMachNo(flight), routeHelper, flight.getSpeedFraction());
+    }
+
+    public void setRouteDuration(RouteHelper routeHelper) {
+        routeDuration = routeHelper.getTotalDuration() * 2;
     }
 
     /**
@@ -365,21 +408,21 @@ public class FlightScheduleManager implements Serializable {
         this.unscheduledFlights = unscheduledFlights;
     }
 
-    public String getDeptAirport() {
-        return deptAirport;
-    }
-
-    public void setDeptAirport(String deptAirport) {
-        this.deptAirport = deptAirport;
-    }
-
-    public String getArriveAirport() {
-        return arriveAirport;
-    }
-
-    public void setArriveAirport(String arriveAirport) {
-        this.arriveAirport = arriveAirport;
-    }
+//    public String getDeptAirport() {
+//        return deptAirport;
+//    }
+//
+//    public void setDeptAirport(String deptAirport) {
+//        this.deptAirport = deptAirport;
+//    }
+//
+//    public String getArriveAirport() {
+//        return arriveAirport;
+//    }
+//
+//    public void setArriveAirport(String arriveAirport) {
+//        this.arriveAirport = arriveAirport;
+//    }
 
     public ScheduleEvent getEvent() {
         return event;
