@@ -31,7 +31,7 @@ public class Flight implements Serializable {
     private String flightNo;
     private Integer weeklyFrequency;
     private Boolean completed;
-    private Integer numOfUnscheduledFlight; //default value is weeklyFrequency
+    private Integer numOfUnscheduled; //default value is weeklyFrequency
     private Boolean deleted;
     private Double speedFraction;
 
@@ -166,16 +166,16 @@ public class Flight implements Serializable {
     }
 
     /**
-     * @return the numOfUnscheduledFlight
+     * @return the numOfUnscheduled
      */
-    public Integer getNumOfUnscheduledFlight() {
-        return numOfUnscheduledFlight;
+    public Integer getNumOfUnscheduled() {
+        return numOfUnscheduled;
     }
 
     /**
-     * @param numOfUnscheduledFlight the numOfUnscheduledFlight to set
+     * @param numOfUnscheduled the numOfUnscheduled to set
      */
-    public void setNumOfUnscheduledFlight(Integer numOfUnscheduledFlight) {
-        this.numOfUnscheduledFlight = numOfUnscheduledFlight;
+    public void setNumOfUnscheduled(Integer numOfUnscheduled) {
+        this.numOfUnscheduled = numOfUnscheduled;
     }
 }
