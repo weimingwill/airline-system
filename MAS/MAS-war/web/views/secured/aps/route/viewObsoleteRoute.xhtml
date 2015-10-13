@@ -7,7 +7,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-        <p:dataTable var="routeObsoleted" value="#{routeController.obsRouteDisplayList}" style="margin-bottom:40px" rows="10"
+        <p:dataTable var="routeObsoleted" value="#{routeController.obsRouteDisplayList}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small-font"
                      paginator="true"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="5,10,15">
@@ -29,6 +29,10 @@
             <p:column headerText="Destination" sortBy="#{routeObsoleted.destination}">
                 <h:outputText value="#{routeObsoleted.destination}" />
             </p:column>
+            
+            <f:facet name="footer">
+                <p:outputLabel/>
+            </f:facet>
 
         </p:dataTable>
 

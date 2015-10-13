@@ -12,7 +12,7 @@
         </f:facet>
         <h:form id="myForm">
             <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-            <h:panelGrid columns="5" style="margin-bottom:10px;alignment-adjust: central" cellpadding="5">
+            <p:panelGrid columns="5" style="margin-bottom:10px;alignment-adjust: central">
                 
                 <p:outputLabel for="origin" value="Origin:" />
                 <p:selectOneMenu id="origin" value="#{routeExistenceController.origin}" converter="airportConverter"  style="width:200px" required="true" requiredMessage="Field required" filter="true" filterMatchMode="contains">
@@ -29,7 +29,7 @@
                     <f:selectItems value="#{routeExistenceController.airports}" var="destination" itemLabel="#{destination.airportName}" itemValue="#{destination}" />
                 </p:selectOneMenu>
 
-            </h:panelGrid>
+            </p:panelGrid>
 
             <p:commandButton value="Plan the route" style="left:20px" actionListener="#{routeExistenceController.checkRouteExistence}"/>
 
@@ -53,7 +53,7 @@
                     </p:column>
 
                 </p:dataTable>
-                <h:outputText id="confirmMsg" value="#{routeExistenceController.confirmMsg}"/>
+                <p:outputLabel id="confirmMsg" value="#{routeExistenceController.confirmMsg}"/>
                 <p:separator/>
                 <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action ="#{navigationController.toGenerateRoute}" actionListener="#{routeExistenceController.proceedToPlanning}"/>
                 <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('confirmDlg').hide()"/>

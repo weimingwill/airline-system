@@ -164,3 +164,7 @@ tr.hide{
     width:auto !important; 
     font-size:small;
 }
+
+.table-small-font{
+    font-size:small;
+}

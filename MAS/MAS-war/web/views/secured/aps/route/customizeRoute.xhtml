@@ -10,7 +10,7 @@
         Customize a route:
 
         <h:form>
-            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+            <p:panelGrid columns="2" style="margin-bottom:10px">
                 <p:outputLabel value="Origin: " />
                 <p:outputLabel value="#{routePlanningController.origin.airportName}" />
 
@@ -25,7 +25,7 @@
 
                 <p:commandButton value="Add route to comparison" update="messages" action="#{navigationController.toGenerateRoute}" actionListener="#{routePlanningController.custRoute}" icon="ui-icon-check" />
 
-            </h:panelGrid>
+            </p:panelGrid>
 
         </h:form>
     </ui:define>
