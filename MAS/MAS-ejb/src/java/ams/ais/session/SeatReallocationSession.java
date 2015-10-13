@@ -134,7 +134,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         float price = f.getPrice();
         System.out.println(price);
 
-        int diff = 0;
+        int sum = 0;
         for (FlightScheduleBookingClass flightScheduleBookingClassTemp : restFlightScheduleBookingClasses) {
 
             int count = 0;
@@ -186,44 +186,85 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
                     }
 
                 }
-                if (count > f.getSeatQty()) {
-                    diff = count - f.getSeatQty();
-                    int currentSeatNo = flightScheduleBookingClassTemp.getSeatQty() - diff;
-                    SeatAllocationHistory sah = new SeatAllocationHistory();
-                    long yourmilliseconds = System.currentTimeMillis();
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-                    Date date = new Date(yourmilliseconds);
-                    sah.setAllocateTime(date);
-                    FlightScheduleBookingClass fsbc = entityManager.find(FlightScheduleBookingClass.class, flightScheduleBookingClassTemp.getFlightScheduleBookingClassId());
-                    sah.setSeatNoBefore(fsbc.getSeatQty());
 
-                    fsbc.setSeatQty(currentSeatNo);
-                    sah.setSeatNoAfter(fsbc.getSeatQty());
+                sum = sum + count;
 
-                    entityManager.persist(sah);
+                int currentSeatNo = flightScheduleBookingClassTemp.getSeatQty() - count;
 
-                    List<SeatAllocationHistory> sahs = fsbc.getSeatAllocationHistory();
+                //create seat reallocation history for lower-price booking class
+                SeatAllocationHistory sah = new SeatAllocationHistory();
 
-                    sahs.add(sah);
+                long yourmilliseconds = System.currentTimeMillis();
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+                Date date = new Date(yourmilliseconds);
+                sah.setAllocateTime(date);
 
-                    fsbc.setSeatAllocationHistory(sahs);
+                FlightScheduleBookingClass fsbc = entityManager.find(FlightScheduleBookingClass.class, flightScheduleBookingClassTemp.getFlightScheduleBookingClassId());
 
-                    entityManager.merge(fsbc);
-                }
+                sah.setSeatNoBefore(fsbc.getSeatQty());
 
+                fsbc.setSeatQty(currentSeatNo);
+                sah.setSeatNoAfter(fsbc.getSeatQty());
+
+                entityManager.persist(sah);
+
+                List<SeatAllocationHistory> sahs = fsbc.getSeatAllocationHistory();
+
+                sahs.add(sah);
+
+                fsbc.setSeatAllocationHistory(sahs);
+
+                entityManager.merge(fsbc);
             }
+        }
+
+//                if (count > f.getSeatQty()) {
+//                    diff = count - f.getSeatQty();
+//                    int currentSeatNo = flightScheduleBookingClassTemp.getSeatQty() - diff;
+//                    if (currentSeatNo < 0) {
+//                        currentSeatNo = 0;
+//                        diff = flightScheduleBookingClassTemp.getSeatQty();
+//                    }
+//                    
+//                    SeatAllocationHistory sah = new SeatAllocationHistory();
+//                    long yourmilliseconds = System.currentTimeMillis();
+//                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+//                    Date date = new Date(yourmilliseconds);
+//                    sah.setAllocateTime(date);
+//                    FlightScheduleBookingClass fsbc = entityManager.find(FlightScheduleBookingClass.class, flightScheduleBookingClassTemp.getFlightScheduleBookingClassId());
+//                    sah.setSeatNoBefore(fsbc.getSeatQty());
+//
+//                    fsbc.setSeatQty(currentSeatNo);
+//                    sah.setSeatNoAfter(fsbc.getSeatQty());
+//
+//                    entityManager.persist(sah);
+//
+//                    List<SeatAllocationHistory> sahs = fsbc.getSeatAllocationHistory();
+//
+//                    sahs.add(sah);
+//
+//                    fsbc.setSeatAllocationHistory(sahs);
+//
+//                    entityManager.merge(fsbc);
+//                }
+//
+//            }
+//
+//        }
+//
+            entityManager.flush();
+
+            int seatNoAfter = f.getSeatQty() + sum;
+            System.out.println("seatNoAfter is: " + seatNoAfter);
+            int seatNoBefore = f.getSeatQty();
+            System.out.println("SeatNoBefore is: " + seatNoBefore);
+            createSeatReallocationRecord(seatNoBefore, seatNoAfter, f);
 
         }
 
-        entityManager.flush();
+    
 
-        int seatNoAfter = f.getSeatQty() + diff;
-        System.out.println("seatNoAfter is: " + seatNoAfter);
-        int seatNoBefore = f.getSeatQty();
-        System.out.println("SeatNoBefore is: " + seatNoBefore);
-        createSeatReallocationRecord(seatNoBefore, seatNoAfter, f);
-
-    }
+    
 
     private void createSeatReallocationRecord(int seatNoBefore, int seatNoAfter, FlightScheduleBookingClass f) {
 

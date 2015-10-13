@@ -228,9 +228,9 @@ public class SeatReallocationController implements Serializable {
         } catch (NoSuchFlightScheduleBookingClassException e) {
             msgController.addErrorMessage(e.getMessage());
         }
-        cabinClass = null;
-        ticketFamily = null;
-        bookingClass = null;
+//        cabinClass = null;
+//        ticketFamily = null;
+//        bookingClass = null;
 
         msgController.addMessage("Reallocate booking class seats succesffully!");
         return navigationController.redirectToViewFlightSchedule();
@@ -238,9 +238,9 @@ public class SeatReallocationController implements Serializable {
 
     public List<SeatAllocationHistory> getAllSeatAllocationHistroy() throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
         allSeatReAllocationHistorys = seatReallocationSession.getBookingClassSeatAllocationHistory(flightScheduleBookingClass);
-        cabinClass = null;
-        ticketFamily = null;
-        bookingClass = null;
+//        cabinClass = null;
+//        ticketFamily = null;
+//        bookingClass = null;
         return allSeatReAllocationHistorys;
     }
 
@@ -257,9 +257,9 @@ public class SeatReallocationController implements Serializable {
         } catch (ExistSuchCheckPointException e) {
             msgController.addErrorMessage(e.getMessage());
         }
-        cabinClass = null;
-        ticketFamily = null;
-        bookingClass = null;
+//        cabinClass = null;
+//        ticketFamily = null;
+//        bookingClass = null;
         return navigationController.redirectToUpdateYieldManagementModel();
     }
 
@@ -271,9 +271,9 @@ public class SeatReallocationController implements Serializable {
         System.out.println("selected phase demand is:" + selectedPhaseDemand.getDaysBeforeDeparture());
         seatReallocationSession.deletePhaseDemand(flightScheduleBookingClass, selectedPhaseDemand);
         msgController.addMessage("Yield management model is updated successfully");
-        cabinClass = null;
-        ticketFamily = null;
-        bookingClass = null;
+//        cabinClass = null;
+//        ticketFamily = null;
+//        bookingClass = null;
         return navigationController.redirectToYieldManagement();
 
     }
