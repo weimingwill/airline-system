@@ -67,7 +67,7 @@ public class FlightController implements Serializable {
     private String oldFlightNo;
     private List<Route> availibleRoutes;
     private Boolean isComplete = null;
-    private List<String> selectedType = new ArrayList(Arrays.asList("0","1"));
+    private List<String> selectedType = new ArrayList(Arrays.asList("0", "1"));
 
     /**
      * Creates a new instance of FlightController
@@ -190,7 +190,6 @@ public class FlightController implements Serializable {
         } else {
             return "";
         }
-
     }
 
     public String getAircraftTypeString(Flight thisFlight) {
@@ -201,6 +200,16 @@ public class FlightController implements Serializable {
             }
         }
         return output;
+    }
+
+    public RouteHelper getFlightRouteInfo(Flight thisFlight) {
+        if (thisFlight != null) {
+            RouteHelper thisFlightRoute = new RouteHelper();
+            routePlanningSession.getRouteDistance(thisFlight.getRoute(), thisFlightRoute);
+            flightSchedulingSession.calcFlightDuration(flightSchedulingSession.getModelWithMinMachNo(thisFlight.getAircraftTypes()), thisFlightRoute, thisFlight.getSpeedFraction());
+            return thisFlightRoute;
+        }
+        return null;
     }
 
     private boolean failValidateFlightNo(String flightNo) {

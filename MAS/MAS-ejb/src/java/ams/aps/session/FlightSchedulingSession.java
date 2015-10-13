@@ -237,13 +237,16 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         try {
             Flight flight = checkFlightExistence(flightNo);
             Flight returnedFlight = flight.getReturnedFlight();
-            if (flight.getNumOfUnscheduled() < flight.getWeeklyFrequency() || returnedFlight.getNumOfUnscheduled() < returnedFlight.getWeeklyFrequency()) {
+            if ((!flight.getCompleted() && !returnedFlight.getCompleted()) || 
+                    (flight.getNumOfUnscheduled().equals(flight.getWeeklyFrequency()) 
+                    || returnedFlight.getNumOfUnscheduled().equals(returnedFlight.getWeeklyFrequency()))) {
+                returnedFlight.setDeleted(Boolean.TRUE);
+                flight.setDeleted(Boolean.TRUE);
+                em.merge(flight);
+                em.merge(returnedFlight);
+            } else {
                 throw new DeleteFailedException("Flight is scheduled, cannot be deleted!");
             }
-            returnedFlight.setDeleted(Boolean.TRUE);
-            flight.setDeleted(Boolean.TRUE);
-            em.merge(flight);
-            em.merge(returnedFlight);
         } catch (ObjectDoesNotExistException ex) {
             throw new DeleteFailedException("Flight does not exist!");
         }
@@ -354,6 +357,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     @Override
     public void updateFlight(Flight flight) throws ObjectDoesNotExistException {
         try {
+            System.out.println("UpdateFlight(): flight = " + flight);
             em.merge(flight);
             em.merge(flight.getReturnedFlight());
         } catch (Exception e) {

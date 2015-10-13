@@ -17,7 +17,7 @@
             <p:wizard id="myWizard" flowListener="#{airportController.onFlowProcess}">
                 <p:tab id="countryTab" title="Country">
                     <p:panel header="Select Country">
-                        <h:panelGrid columns="2">
+                        <p:panelGrid columns="2">
                             <p:outputLabel for="country" value="Country:" />
                             <p:selectOneMenu id="country" value="#{airportController.country}" converter="countryConverter"  style="width:200px" filter="true" filterMatchMode="contains" required="true">
                                 <p:ajax listener="#{airportController.onCountryChange}" update="myForm:myWizard" />
@@ -27,54 +27,54 @@
                             <h:outputText value="Can't find the wanted country?" />
                             <p:commandButton update="countryDlg" value="Add a new country" style="left:20px" oncomplete="PF('countryDlg').show()"/>
 
-                        </h:panelGrid>
+                        </p:panelGrid>
                     </p:panel>
                 </p:tab>
 
                 <p:tab id="cityTab" title="City">
                     <p:panel header="Select City">
-                        <h:panelGrid columns="2">
+                        <p:panelGrid columns="2">
                             <p:outputLabel for="city" value="City:" />
                             <p:selectOneMenu id="city" value="#{airportController.city}" converter="cityConverter" style="width:200px" required="true">
                                 <p:ajax listener="#{airportController.onCityChange}" update="myForm:myWizard" />
                                 <f:selectItems id="cityList" value="#{airportController.cities}" var="city" itemLabel="#{city.cityName}" itemValue="#{city}"/>
                             </p:selectOneMenu>
 
-                            <h:outputText value="Can't find the wanted city?" />
+                            <p:outputLabel value="Can't find the wanted city?" />
                             <p:commandButton update="cityDlg" value="Add a new city" style="left:20px" oncomplete="PF('cityDlg').show()"/>
 
-                        </h:panelGrid>
+                        </p:panelGrid>
                     </p:panel>
                 </p:tab>
 
                 <p:tab id="airportTab" title="Airport">
                     <p:panel header="Airport Information">
-                        <h:panelGrid columns="2" columnClasses="label, value">
-                            <h:outputText value="ICAO Code: *" />
+                        <p:panelGrid columns="2" columnClasses="label, value">
+                            <p:outputLabel value="ICAO Code: *" />
                             <p:inputMask id="airicao" value="#{airportController.airport.icaoCode}" mask="aaaa" required="true" label="icao">
                                 <p:tooltip id="air_icao" for="airicao" showEvent="focus" hideEvent="blur" 
                                            value="Please enter 4 capital letters"/>
                             </p:inputMask>
 
-                            <h:outputText value="IATA Code: *" />
+                            <p:outputLabel value="IATA Code: *" />
                             <p:inputMask id="airiata" value="#{airportController.airport.iataCode}" mask="aaa" required="true" label="iata">
                                 <p:tooltip id="air_iata" for="airiata" showEvent="focus" hideEvent="blur" 
                                            value="Please enter 3 capital letters"/>
                             </p:inputMask>
 
-                            <h:outputText value="Airport Name: *" />
+                            <p:outputLabel value="Airport Name: *" />
                             <p:inputText value="#{airportController.airport.airportName}" required="true" label="airportName"/>
                             
-                            <h:outputText value="Altitude (Feet): *" />
+                            <p:outputLabel value="Altitude (Feet): *" />
                             <p:inputText value="#{airportController.airport.altitude}" required="true" label="altitude"/>
 
-                            <h:outputText value="Latitude (Degree): *" />
+                            <p:outputLabel value="Latitude (Degree): *" />
                             <p:spinner id="lat" value="#{airportController.airport.latitude}" min="-180" max="180" stepFactor="0.5" required="true" label="latitude"/>
 
-                            <h:outputText value="Longitude (Degree): *" />
+                            <p:outputLabel value="Longitude (Degree): *" />
                             <p:spinner id="long" value="#{airportController.airport.longitude}" min="-90" max="90" stepFactor="0.5" required="true" label="longitude"/>
 
-                        </h:panelGrid>
+                        </p:panelGrid>
                         <p:commandButton value="Submit" type="submit" actionListener="#{airportController.addAirport}" action="#{navigationController.toAddAirport()}" update="messages" />
                     </p:panel>
                 </p:tab>
@@ -86,13 +86,13 @@
             <h:form>
 
                 <p:panelGrid columns="2">
-                    <h:outputText value="ISO Code: *" />
-                    <p:inputMask id="countryISO" value="#{airportController.newCountry.isoCode}" mask="aaa" required="true"/>
-                    <h:outputText value="Country Name: *" />
+                    <p:outputLabel value="ISO Code (2-Alphabet): *" />
+                    <p:inputMask id="countryISO" value="#{airportController.newCountry.isoCode}" mask="aa" required="true"/>
+                    <p:outputLabel value="Country Name: *" />
                     <p:inputText value="#{airportController.newCountry.countryName}" required="true" label="countryName"/>
                 </p:panelGrid>
 
-                <h:outputText id="confirmMsg" value="Confirm adding the new country?"/>
+                <p:outputLabel id="confirmMsg" value="Confirm adding the new country?"/>
                 <p:separator/>
                 <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="myForm:myWizard,messages" onclick="PF('countryDlg').hide()" actionListener="#{airportController.addCountry}"/>
                 <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('countryDlg').hide()"/>
@@ -103,12 +103,12 @@
             <h:form>
 
                 <p:panelGrid columns="2">
-                    <h:outputText value="City Name: *" />
+                    <p:outputLabel value="City Name: *" />
                     <p:inputText value="#{airportController.newCity.cityName}" required="true" label="cityName"/>
-                    <h:outputText value="UTC: *" />
+                    <p:outputLabel value="UTC: *" />
                     <p:spinner id="step" value="#{airportController.newCity.UTC}" stepFactor="0.5" required="true" label="cityUTC" min="-12" max="12"/>
                 </p:panelGrid>
-                <h:outputText id="confirmCityMsg" value="Confirm adding the new city?"/>
+                <p:outputLabel id="confirmCityMsg" value="Confirm adding the new city?"/>
                 <p:separator/>
                 <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="myForm:myWizard,messages" onclick="PF('cityDlg').hide()" actionListener="#{airportController.addCity}"/>
                 <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('cityDlg').hide()"/>

@@ -65,7 +65,12 @@ public class AirportController implements Serializable {
     }
 
     public void addCountry(ActionEvent event) {
-        newCountry.setIsoCode(newCountry.getCountryName().toUpperCase());
+        String isoCode = newCountry.getIsoCode();
+        String countryName = newCountry.getCountryName();
+
+        newCountry.setIsoCode(isoCode.toUpperCase());
+        newCountry.setCountryName(capitalize(countryName));
+
         if (routePlanningSession.checkISO(newCountry.getIsoCode(), newCountry.getCountryName())) {
             if (routePlanningSession.addCountry(newCountry.getIsoCode(), newCountry.getCountryName())) {
                 msgController.addMessage("Add country succesfully!");
@@ -81,6 +86,8 @@ public class AirportController implements Serializable {
     }
 
     public void addCity() {
+        String cityName = newCity.getCityName();
+        newCity.setCityName(capitalize(cityName));
         if (routePlanningSession.checkCityName(newCity.getCityName(), country.getIsoCode())) {
             if (routePlanningSession.addCity(country.getIsoCode(), newCity.getCityName(), newCity.getUTC())) {
                 msgController.addMessage("Add city succesfully!");
@@ -100,6 +107,7 @@ public class AirportController implements Serializable {
         System.out.println("Airport: " + airport);
         airport.setIcaoCode(airport.getIcaoCode().toUpperCase());
         airport.setIataCode(airport.getIataCode().toUpperCase());
+        airport.setAirportName(capitalize(airport.getAirportName()));
 
         if (routePlanningSession.checkIATA(airport.getIataCode())) {
             if (routePlanningSession.checkICAO(airport.getIcaoCode())) {
@@ -121,6 +129,20 @@ public class AirportController implements Serializable {
             msgController.addErrorMessage("IATA code exists!");
         }
 
+    }
+
+    public String capitalize(String source) {
+        StringBuilder res = new StringBuilder();
+        String[] strArr = source.split(" ");
+        for (String str : strArr) {
+            char[] stringArray = str.trim().toCharArray();
+            stringArray[0] = Character.toUpperCase(stringArray[0]);
+            str = new String(stringArray);
+
+            res.append(str).append(" ");
+        }
+        System.out.println(res.toString());
+        return res.toString();
     }
 
     public String onFlowProcess(FlowEvent event) {

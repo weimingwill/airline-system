@@ -53,6 +53,7 @@ public class FleetController implements Serializable {
     private List<AircraftCabinClassHelper> suggestedCabinClass;
     private List<List<AircraftCabinClassHelper>> selectedModelCabinClassesSet;
     private List<AircraftCabinClassHelper> selectedModelCabinClassList;
+    private double approxCost;
 
     /**
      * Creates a new instance of FleetController
@@ -157,6 +158,7 @@ public class FleetController implements Serializable {
 
     public void onModelSelectChange() {
         getCabinClassByAircraftModel(aircraftModel.getTypeCode());
+        setApproxCost(aircraftModel.getApproxCost());
     }
 
     public List<Aircraft> getFleet(String status) {
@@ -306,6 +308,20 @@ public class FleetController implements Serializable {
      */
     public void setSuggestedCabinCalss(List<AircraftCabinClassHelper> suggestedCabinClass) {
         this.suggestedCabinClass = suggestedCabinClass;
+    }
+
+    /**
+     * @return the approxCost
+     */
+    public double getApproxCost() {
+        return approxCost;
+    }
+
+    /**
+     * @param approxCost the approxCost to set
+     */
+    public void setApproxCost(double approxCost) {
+        this.approxCost = approxCost;
     }
 
 }

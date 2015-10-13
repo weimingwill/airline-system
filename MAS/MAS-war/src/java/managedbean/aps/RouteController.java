@@ -135,7 +135,7 @@ public class RouteController implements Serializable {
         for (RouteDisplayHelper r : routesToBeDeleted) {
             if (!routePlanningSession.softDeleteRoute(r.getId())) {
                 deleted = false;
-                msgController.addErrorMessage("Fail to delete routes and return routes!");
+                msgController.addErrorMessage("Route is associated with flight, cannot be deleted!");
                 break;
             }
         }

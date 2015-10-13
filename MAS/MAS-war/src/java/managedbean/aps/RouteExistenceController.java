@@ -20,6 +20,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import managedbean.application.MsgController;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -31,7 +33,10 @@ public class RouteExistenceController implements Serializable {
 
     @Inject
     RouteController routeController;
-    
+
+    @Inject
+    private MsgController msgController;
+
     @Inject
     RoutePlanningController routePlanningController;
 
@@ -60,17 +65,23 @@ public class RouteExistenceController implements Serializable {
     }
 
     public void checkRouteExistence(ActionEvent event) {
-        setSameODRoutes(routePlanningSession.getRoutesByOD(getOrigin(), getDestination()));
-        if (sameODRoutes.isEmpty()) {
-            setHeadMsg("Route not existed");
-            setConfirmMsg("Do you want to plan the route?");
-        } else {
-            setHeadMsg("Following routes are existed");
-            setConfirmMsg("Do you still want to plan the route?");
-            setRouteDisplayList(new ArrayList());
-            routeController.createRouteDisplayHelpers(sameODRoutes, routeDisplayList);
+        if (!origin.getAirportName().equals(destination.getAirportName())) {
+            setSameODRoutes(routePlanningSession.getRoutesByOD(getOrigin(), getDestination()));
+            if (sameODRoutes.isEmpty()) {
+                setHeadMsg("Route not existed");
+                setConfirmMsg("Do you want to plan the route?");
+            } else {
+                setHeadMsg("Following routes are existed");
+                setConfirmMsg("Do you still want to plan the route?");
+                setRouteDisplayList(new ArrayList());
+                routeController.createRouteDisplayHelpers(sameODRoutes, routeDisplayList);
+            }
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.update("confirmDlg");
+            context.execute("PF('confirmDlg').show();");
+        }else{
+            msgController.addErrorMessage("Origin and destination cannot be the same!");
         }
-
     }
 
     public void proceedToPlanning() {
