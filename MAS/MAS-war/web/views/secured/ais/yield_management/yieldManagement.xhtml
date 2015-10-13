@@ -15,28 +15,28 @@
         <h:form>
             <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
                 <p:outputLabel for="cabinClass" value="Cabin Class:" />
-                <p:selectOneMenu id="cabinClass" value="#{seatReallocationController.cabinClass}" converter="cabinClassConverter"  style="width:200px" filter="true" filterMatchMode="startsWith">
-                    <p:ajax listener="#{seatReallocationController.onCabinClassChange()}" update="ticketFamily" />
+                <p:selectOneMenu id="cabinClass" value="#{yieldManagementController.cabinClass}" converter="cabinClassConverter"  style="width:200px" filter="true" filterMatchMode="startsWith">
+                    <p:ajax listener="#{yieldManagementController.onCabinClassChange()}" update="ticketFamily" />
                     <f:selectItem itemLabel="Select Cabin Class" itemValue="" noSelectionOption="true"/>
-                    <f:selectItems value="#{seatReallocationController.cabinClasses}" var="cabinClass" itemLabel="#{cabinClass.name}" itemValue="#{cabinClass}" />
+                    <f:selectItems value="#{yieldManagementController.cabinClasses}" var="cabinClass" itemLabel="#{cabinClass.name}" itemValue="#{cabinClass}" />
                 </p:selectOneMenu>
 
                 <p:outputLabel for="ticketFamily" value="Ticket Family:" />
-                <p:selectOneMenu id="ticketFamily" value="#{seatReallocationController.ticketFamily}" converter="ticketFamilyConverter" style="width:200px">
-                    <p:ajax listener="#{seatReallocationController.onTicketFamilyChange()}" update="bookingClass" />
+                <p:selectOneMenu id="ticketFamily" value="#{yieldManagementController.ticketFamily}" converter="ticketFamilyConverter" style="width:200px">
+                    <p:ajax listener="#{yieldManagementController.onTicketFamilyChange()}" update="bookingClass" />
                     <f:selectItem itemValue="" itemLabel="Select Ticket Family" noSelectionOption="true"/>
-                    <f:selectItems value="#{seatReallocationController.ticketFamilys}" var="ticketFamily" itemLabel="#{ticketFamily.name}" itemValue="#{ticketFamily}"/>
+                    <f:selectItems value="#{yieldManagementController.ticketFamilys}" var="ticketFamily" itemLabel="#{ticketFamily.name}" itemValue="#{ticketFamily}"/>
                 </p:selectOneMenu>
 
                 <p:outputLabel for="bookingClass" value="Booking Class:" />
-                <p:selectOneMenu id="bookingClass" value="#{seatReallocationController.bookingClass}" converter="bookingClassConverter" style="width:200px">
+                <p:selectOneMenu id="bookingClass" value="#{yieldManagementController.bookingClass}" converter="bookingClassConverter" style="width:200px">
                     <f:selectItem itemLabel="Select Booking Class" itemValue="" noSelectionOption="true" />
-                    <f:selectItems value="#{seatReallocationController.bookingClasses}" var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}"/>
+                    <f:selectItems value="#{yieldManagementController.bookingClasses}" var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}"/>
                 </p:selectOneMenu>
 
-                <p:commandButton value="Reallocate seats" action="#{seatReallocationController.toReallocateBookingClassSeats()}" update="messages"/>
-                <p:commandButton value="View seat reallocation history" action="#{seatReallocationController.toViewSeatReallocationHistory()}" update="messages"/>
-                <p:commandButton value="Update yield management model" action="#{seatReallocationController.toUpdateYieldManagementModel()}" update="messages"/>
+                <p:commandButton value="Reallocate seats" action="#{yieldManagementController.toReallocateBookingClassSeats()}" update="messages"/>
+                <p:commandButton value="View seat reallocation history" action="#{yieldManagementController.toViewSeatReallocationHistory()}" update="messages"/>
+                <p:commandButton value="Update yield management model" action="#{yieldManagementController.toUpdateYieldManagementModel()}" update="messages"/>
 
             </h:panelGrid>
 

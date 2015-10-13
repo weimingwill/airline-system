@@ -52,6 +52,9 @@ public class FlightScheduleController implements Serializable {
     private NavigationController navigationController;
     @Inject
     private MsgController msgController;
+    @Inject
+    private SeatReallocationController seatReallocationController;
+    
 
     @EJB
     private FlightScheduleSessionLocal flightScheduleSession;

@@ -15,7 +15,7 @@
         <h:form>
             <p:panel id="basic" header="Check points" style="margin-bottom:20px">
                 <!--<p:outputLabel for="" value="{}"/>-->
-                <p:dataTable id="phaseDemand" var="phaseDemand" selection="#{seatReallocationController.selectedPhaseDemand}" value="#{seatReallocationController.phaseDemands}" rows="10"
+                <p:dataTable id="phaseDemand" var="phaseDemand" selection="#{seatReallocationController.selectedPhaseDemand}" value="#{seatReallocationController.phaseDemands}" 
                 rowKey="#{phaseDemand.daysBeforeDeparture}">
 
                 <p:column selectionMode="single" style="width:16px;text-align:center"/>

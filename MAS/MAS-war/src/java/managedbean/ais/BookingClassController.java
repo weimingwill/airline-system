@@ -52,6 +52,8 @@ public class BookingClassController implements Serializable {
     private MsgController msgController;
     @Inject
     private NavigationController navigationController;
+    @Inject
+    private SeatReallocationController seatReallocationController;
 
     @EJB
     private BookingClassSessionLocal bookingClassSession;
@@ -105,6 +107,7 @@ public class BookingClassController implements Serializable {
         } catch (ExistSuchBookingClassNameException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
+
         return navigationController.redirectToCreateBookingClass();
     }
 
@@ -123,6 +126,7 @@ public class BookingClassController implements Serializable {
         try {
             flightScheduleSession.assignFlightScheduleBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
             msgController.addMessage("assign flight schedule booking class succesffully!");
+
             return navigationController.redirectToViewFlightSchedule();
         } catch (NoSuchFlightSchedulException | NoSuchFlightScheduleBookingClassException | NeedBookingClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
