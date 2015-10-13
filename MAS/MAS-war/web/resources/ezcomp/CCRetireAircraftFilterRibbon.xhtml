@@ -37,12 +37,12 @@
 
                 <p:ribbonGroup label="Fuel Usage">
                     <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
-                        <p:outputLabel for="minFuelCap" value="Fuel Capacity (Min)"/>
+                        <p:outputLabel for="minFuelCap" value="Fuel Capacity (&gt;)"/>
                         <p:spinner id="minFuelCap" value="#{retireAircraftFilterHelper.minFuelCapacity}" stepFactor="0.5" min="#{retireAircraftFilterHelper.minFuelCapacity}">
                             <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="false"/>
                         </p:spinner>
 
-                        <p:outputLabel for="minFuelUsg" value="Average Fuel Usage (Min)"/>
+                        <p:outputLabel for="minFuelUsg" value="Average Fuel Usage (&gt;)"/>
                         <p:spinner id="minFuelUsg" value="#{retireAircraftFilterHelper.minAvgFuelUsage}" stepFactor="0.5" min="#{retireAircraftFilterHelper.minAvgFuelUsage}">
                             <f:convertNumber maxFractionDigits="2" minFractionDigits="0"/>
                         </p:spinner>
@@ -52,7 +52,7 @@
 
                 <p:ribbonGroup label="Maintenance">
                     <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
-                        <p:outputLabel for="timesOfMaint" value="# of Maintenance (Min)"/>
+                        <p:outputLabel for="timesOfMaint" value="# of Maintenance (&gt;)"/>
                         <p:spinner id="timesOfMaint" value="#{retireAircraftFilterHelper.timesOfMaint}" stepFactor="1" min="0"/>
 
                         <p:outputLabel for="typeOfMaint" value="Type of Maintenance"/>
@@ -68,10 +68,10 @@
 
                 <p:ribbonGroup label="Flight Cycle">
                     <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
-                        <p:outputLabel for="numOfFlightCycle" value="# of Flight Cycle (Min)"/>
+                        <p:outputLabel for="numOfFlightCycle" value="# of Flight Cycle (&gt;)"/>
                         <p:spinner id="numOfFlightCycle" value="#{retireAircraftFilterHelper.numOfFlightCycle}" stepFactor="1" min="0"/>
 
-                        <p:outputLabel for="totalFlightDist" value="Total Flight Distance in km (Max)"/>
+                        <p:outputLabel for="totalFlightDist" value="Total Flight Distance in km (&lt;)"/>
                         <p:selectOneRadio id="totalFlightDist" value="#{retireAircraftFilterHelper.maxTotalFlightDist}">
                             <f:selectItem itemLabel="1000" itemValue="1000" />
                             <f:selectItem itemLabel="10000" itemValue="10000" />

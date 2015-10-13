@@ -10,7 +10,7 @@
         <h:form id="form"> 
             <p:dataTable id="retired-fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="10" selection="#{fleetTableController.selectedAircrafts}" 
                          paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         rowsPerPageTemplate="10,15" rowKey="#{aircraft.aircraftId}" tableStyle="width:auto; font-size:small">
+                         rowsPerPageTemplate="10,15" rowKey="#{aircraft.aircraftId}" tableStyleClass="table-small">
                 <p:messages autoUpdate="true"/>
                 <f:facet name="header">
                     <p:outputLabel value="Obsolete Fleet"/>

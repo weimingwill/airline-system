@@ -42,8 +42,6 @@ public class TicketFamilyRule implements Serializable {
     @Column(name = "RULEVALUE")
     private Float ruleValue;
 
-    
-    
     public Long getTicketFamilyId() {
         return ticketFamilyId;
     }

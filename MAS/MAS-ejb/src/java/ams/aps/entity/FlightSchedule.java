@@ -7,9 +7,8 @@ package ams.aps.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
 import java.io.Serializable;
-import java.sql.Time;
 import java.util.ArrayList;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -19,6 +18,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -32,13 +33,22 @@ public class FlightSchedule implements Serializable {
     private Long flightScheduleId;
     private String departTerminal;
     private String departGate;
+    @Temporal(value = TemporalType.DATE)
     private Date departDate;
-    private Time departTime;
+    @Temporal(value = TemporalType.TIME)
+    private Date departTime;
     private String arrivalTerminal;
     private String arrivalGate;
+    @Temporal(value = TemporalType.DATE)
     private Date arrivalDate;
-    private Time arrivalTime;
-    private boolean deleted;
+    @Temporal(value = TemporalType.TIME)
+    private Date arrivalTime;
+    private Boolean deleted;
+    private Boolean completed;
+    private Boolean seatAllocated;
+    private Boolean priced;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date createdTime;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
@@ -56,7 +66,7 @@ public class FlightSchedule implements Serializable {
     public void setFlightScheduleId(Long flightScheduleId) {
         this.flightScheduleId = flightScheduleId;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -96,43 +106,18 @@ public class FlightSchedule implements Serializable {
         this.departTerminal = departTerminal;
     }
 
+    /**
+     * @return the departGate
+     */
     public String getDepartGate() {
         return departGate;
     }
 
+    /**
+     * @param departGate the departGate to set
+     */
     public void setDepartGate(String departGate) {
         this.departGate = departGate;
-    }
-    
-    public Date getDepartDate() {
-        return departDate;
-    }
-
-    public void setDepartDate(Date departDate) {
-        this.departDate = departDate;
-    }
-
-    public Date getArrivalDate() {
-        return arrivalDate;
-    }
-
-    public void setArrivalDate(Date arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
-
-    /**
-     * @return the departTime
-     */
-    public Time getDepartTime() {
-        return departTime;
-    }
-
-    /**
-     * @param departTime the departTime to set
-     */
-    public void setDepartTime(Time departTime) {
-        this.departTime = departTime;
     }
 
     /**
@@ -163,18 +148,20 @@ public class FlightSchedule implements Serializable {
         this.arrivalGate = arrivalGate;
     }
 
-    /**
-     * @return the arrivalTime
-     */
-    public Time getArrivalTime() {
-        return arrivalTime;
+    public Date getDepartDate() {
+        return departDate;
     }
 
-    /**
-     * @param arrivalTime the arrivalTime to set
-     */
-    public void setArrivalTime(Time arrivalTime) {
-        this.arrivalTime = arrivalTime;
+    public void setDepartDate(Date departDate) {
+        this.departDate = departDate;
+    }
+
+    public Date getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(Date arrivalDate) {
+        this.arrivalDate = arrivalDate;
     }
 
     /**
@@ -219,11 +206,11 @@ public class FlightSchedule implements Serializable {
         this.flight = flight;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -235,4 +222,53 @@ public class FlightSchedule implements Serializable {
         this.flightScheduleBookingClasses = flightScheduleBookingClasses;
     }
 
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+
+    public Boolean getSeatAllocated() {
+        return seatAllocated;
+    }
+
+    public void setSeatAllocated(Boolean seatAllocated) {
+        this.seatAllocated = seatAllocated;
+    }
+
+    public Boolean getPriced() {
+        return priced;
+    }
+
+    public void setPriced(Boolean priced) {
+        this.priced = priced;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Date getDepartTime() {
+        return departTime;
+    }
+
+    public void setDepartTime(Date departTime) {
+        this.departTime = departTime;
+    }
+
+    public Date getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(Date arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+    
+    
 }

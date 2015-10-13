@@ -32,8 +32,8 @@
                         
                         <p:outputLabel styleClass="fa fa-usd"/>
                         <p:outputLabel value="Average Fuel Cost:"/>
-                        <p:outputLabel value=""/>
-                        <p:outputLabel value="USD"/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.fuelCostPerKm}"/>
+                        <p:outputLabel value="USD/km"/>
                     </p:panelGrid>
                 </p:panel>
 
@@ -73,7 +73,7 @@
                         
                         <p:outputLabel styleClass="fa fa-info-circle"/>
                         <p:outputLabel value="Max Payload:"/>
-                        <p:outputLabel value=""/>
+                        <p:outputLabel value="#{fleetTableController.selectedAircraft.aircraftType.maxPayload}"/>
                         <p:outputLabel value="tonnes"/>
                         
                         <p:outputLabel styleClass="fa fa-battery-full"/>

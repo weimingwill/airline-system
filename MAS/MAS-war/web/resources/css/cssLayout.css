@@ -90,24 +90,25 @@ tr.hide{
     width:70% !important
 }
 
-.ui-steps .ui-steps-item {
-    width: 24%;
-}
-
 .ui-state-highlight {
     text-shadow: none !important;
 }
 
-.ui-steps.custom {
-    margin-bottom: 30px;
+.ui-steps.createFlight {
+    margin-bottom: 50px;
+    margin-top: 10px;
 }
 
-.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+.ui-steps.createFlight .ui-steps-item{
+    width: 33%;
+}
+
+.ui-steps.createFlight .ui-steps-item .ui-menuitem-link {
     height: 10px;
     padding: 0 1em;
 }
 
-.ui-steps.custom .ui-steps-item .ui-steps-number {
+.ui-steps.createFlight .ui-steps-item .ui-steps-number {
     background-color: #0081c2;
     color: #FFFFFF;
     display: inline-block;
@@ -154,18 +155,16 @@ tr.hide{
     font-weight: bold;
 }
 
-.systemHeader{
-    font-size: 15px;
+.label{
+    font-weight: bold;
+    color: #045491;
 }
 
-.modulePanelTable table tr td {
-    width: 800px;
-    padding: 20px;
-    border: none;
-    text-align: left;
+.table-small{
+    width:auto !important; 
+    font-size:small;
 }
 
-.modulePanel{
-    width: 200px;
-    height: 200px;
+.table-small-font{
+    font-size:small;
 }

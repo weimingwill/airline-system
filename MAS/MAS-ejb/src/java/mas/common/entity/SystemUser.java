@@ -29,28 +29,20 @@ public class SystemUser implements Serializable {
     private String password;
     private String email;
     private String resetDigest;
-    private boolean locked;
-    private boolean activated;
-    private boolean deleted;
-    private String name;
-    private String address;
-    private String department;
-    private String phone;
+    private Boolean locked;
+    private Boolean activated;
+    private Boolean deleted;
+    private String status;
     
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemRole> systemRoles = new ArrayList<>();
     @ManyToMany(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
     private List<SystemMsg> systemMsgs = new ArrayList<>();
     
-    public void create(String username, String password, String name, String email, 
-            String phone, String address, String department){
+    public void create(String username, String password, String email){
         this.setUsername(username);
         this.setPassword(password);
-        this.setName(name);
         this.setEmail(email);
-        this.setPhone(phone);
-        this.setAddress(address);
-        this.setDepartment(department);
     }
 
     public Long getSystemUserId() {
@@ -147,62 +139,35 @@ public class SystemUser implements Serializable {
         this.resetDigest = resetDigest;
     }
 
-    public boolean isLocked() {
+    public Boolean getLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 
-    public boolean isActivated() {
+    public Boolean getActivated() {
         return activated;
     }
 
-    public void setActivated(boolean activated) {
+    public void setActivated(Boolean activated) {
         this.activated = activated;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
-    public String getName() {
-        return name;
+    public String getStatus() {
+        return status;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    
-    
+    public void setStatus(String status) {
+        this.status = status;
+    }    
 }

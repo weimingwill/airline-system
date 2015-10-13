@@ -10,12 +10,12 @@ import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.AircraftType;
 import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.exception.ObjectExistsException;
 import ams.aps.util.helper.AircraftCabinClassHelper;
 import ams.aps.util.helper.AircraftModelFilterHelper;
 import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.Message;
 import ams.aps.util.helper.RetireAircraftFilterHelper;
-import java.awt.Point;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -108,6 +108,16 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
 
         entityManager.persist(newAircraft);
         entityManager.flush();
+
+        // add aircrafts for model
+        List<Aircraft> aircraftsForModel = (List<Aircraft>) model.getAircrafts();
+        if (aircraftsForModel == null) {
+            aircraftsForModel = new ArrayList();
+        }
+        aircraftsForModel.add(newAircraft);
+        model.setAircrafts(aircraftsForModel);
+        entityManager.merge(model);
+
         // Add cabin class configuration for aircraft
         return addAircraftCabinClass(newAircraft, newAircraftCabinClassHelpers);
     }
@@ -173,6 +183,12 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
             for (Aircraft thisAircraft : aircrafts) {
                 thisAircraft.setStatus(AircraftStatus.RETIRED);
                 entityManager.merge(thisAircraft);
+                AircraftType model = entityManager.find(AircraftType.class, thisAircraft.getAircraftType().getId());
+                List<Aircraft> aircraftsForModel = (List<Aircraft>) model.getAircrafts();
+                if (aircraftsForModel != null) {
+                    aircraftsForModel.remove(thisAircraft);
+                }
+                model.setAircrafts(aircraftsForModel);
             }
         } catch (IllegalArgumentException e) {
             return false;
@@ -181,35 +197,35 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
     }
 
     @Override
-    public List<List<AircraftCabinClassHelper>> getCabinClassByAircraftType(String typeCode) {
-        List<List<AircraftCabinClassHelper>> outputHelperList = new ArrayList();
-        for (Long aircraftId : getNumberOfConfigurations(typeCode)) {
-            Query query = entityManager.createQuery("SELECT a FROM AircraftCabinClass a WHERE a.aircraft.aircraftType.typeCode = :inTypeCode AND a.aircraftId=:inId");
-            query.setParameter("inId", aircraftId);
-            query.setParameter("inTypeCode", typeCode);
-            List<AircraftCabinClass> thisAircraftCabinClasses;
-            List<AircraftCabinClassHelper> outputHelpers = new ArrayList();
-            try {
-                thisAircraftCabinClasses = (List<AircraftCabinClass>) query.getResultList();
-                for (AircraftCabinClass thisAircraftCabinClass : thisAircraftCabinClasses) {
-                    outputHelpers.add(new AircraftCabinClassHelper(thisAircraftCabinClass.getCabinClassId(), thisAircraftCabinClass.getCabinClass().getType(), thisAircraftCabinClass.getCabinClass().getName(), thisAircraftCabinClass.getSeatQty()));
-                }
+    public List<AircraftCabinClassHelper> getCabinClassByAircaftType(String typeCode) {
+        List<AircraftCabinClassHelper> outputHelperList = new ArrayList();
+        AircraftCabinClassHelper thisHelper = new AircraftCabinClassHelper();
 
-            } catch (Exception e) {
-
-            }
-            outputHelperList.add(outputHelpers);
-        }
-        return outputHelperList;
-    }
-
-    private List<Long> getNumberOfConfigurations(String typeCode) {
-        Query query = entityManager.createQuery("SELECT a.aircraftId FROM AircraftCabinClass a WHERE a.aircraft.aircraftType.typeCode = :inTypeCode GROUP BY a.aircraftId");
-        query.setParameter("inTypeCode", typeCode);
+        Connection conn = MySQLConnection.establishConnection();
+        String query = "SELECT C.CABINCLASSID, C.TYPE, C.NAME, CEIL(AVG(AC.SEATQTY)) FROM CABINCLASS C, AIRCRAFT_CABINCLASS AC, AIRCRAFTTYPE T, AIRCRAFT A WHERE AC.AIRCRAFTID = A.AIRCRAFTID AND A.AIRCRAFTTYPE_ID = T.ID AND T.TYPECODE=\'" + typeCode + "\' AND C.CABINCLASSID=AC.CABINCLASSID GROUP BY AC.CABINCLASSID";
+        Statement stmt = null;
         try {
-            return (List<Long>) query.getResultList();
-        } catch (Exception e) {
-            return null;
+            stmt = conn.createStatement();
+            ResultSet resultSet = stmt.executeQuery(query);
+
+            while (resultSet.next()) {
+                thisHelper = new AircraftCabinClassHelper();
+                thisHelper.setId(resultSet.getLong(1));
+                thisHelper.setType(resultSet.getString(2));
+                thisHelper.setName(resultSet.getString(3));
+                thisHelper.setSeatQty(resultSet.getInt(4));
+                System.out.println(thisHelper.getId() + ", " + thisHelper.getType()
+                        + ", " + thisHelper.getName() + ", " + thisHelper.getSeatQty());
+
+                outputHelperList.add(thisHelper);
+            }
+
+            stmt.close();
+            System.out.println("outputHelperList = " + outputHelperList);
+        } catch (SQLException ex) {
+            Logger.getLogger(FleetPlanningSession.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            return outputHelperList;
         }
     }
 
@@ -306,7 +322,7 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
                 + "AND (t.maxPayload IS NULL OR t.maxPayload BETWEEN :inMinPayload AND :inMaxPayload) "
                 + "AND (t.maxMachNo IS NULL OR t.maxMachNo BETWEEN :inMinMaxMachNum AND :inMaxMaxMachNum) "
                 + "AND (t.maxFuelCapacity IS NULL OR t.maxFuelCapacity BETWEEN :inMinFuelCapacity AND :inMaxFuelCapacity)");
-        
+
         query.setParameter("inManufacturer", filters.getManufacturers());
         query.setParameter("inTypeFamily", filters.getTypeFamilies());
         query.setParameter("inMinMaxSeating", filters.getMinMaxSeating());
@@ -319,7 +335,7 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
         query.setParameter("inMaxRange", filters.getMaxRange() == 0 ? Math.pow(10, 10) : filters.getMaxRange());
         query.setParameter("inMinPayload", filters.getMinPayload());
         query.setParameter("inMaxPayload", filters.getMaxPayload() == 0 ? Math.pow(10, 10) : filters.getMaxPayload());
-        query.setParameter("inMinMaxMachNum", filters.getMinMaxMachNum()-0.001);
+        query.setParameter("inMinMaxMachNum", filters.getMinMaxMachNum() - 0.001);
         query.setParameter("inMaxMaxMachNum", filters.getMaxMaxMachNum() == 0 ? 1 : filters.getMaxMaxMachNum());
         query.setParameter("inMinFuelCapacity", filters.getMinFuelCapacity());
         query.setParameter("inMaxFuelCapacity", filters.getMaxFuelCapacity() == 0 ? Math.pow(10, 10) : filters.getMaxFuelCapacity());
@@ -372,7 +388,6 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
                 aircraftModelFilterHelper.setMinFuelCostPerKm(resultSet.getFloat(13));
                 aircraftModelFilterHelper.setMaxFuelCostPerKm(resultSet.getFloat(14));
             }
-
             stmt.close();
         } catch (SQLException ex) {
             Logger.getLogger(FleetPlanningSession.class.getName()).log(Level.SEVERE, null, ex);
@@ -387,6 +402,19 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
     @Override
     public List<String> getAllTypeFamily() {
         return (List<String>) entityManager.createQuery("SELECT DISTINCT t.typeFamily FROM AircraftType t").getResultList();
+    }
+
+    @Override
+    public void checkTailNoExist(String tailNo) throws ObjectExistsException {
+        Query query = entityManager.createQuery("SELECT a FROM Aircraft a WHERE a.tailNo = :inTailNo");
+        query.setParameter("inTailNo", tailNo);
+
+        try {
+            query.getSingleResult();
+            throw new ObjectExistsException("Aicraft with tail number " + tailNo + " already exists!");
+        } catch (NoResultException ex) {
+            
+        }
     }
 
 }

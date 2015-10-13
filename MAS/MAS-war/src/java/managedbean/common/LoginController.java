@@ -58,8 +58,13 @@ public class LoginController implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         try {
+<<<<<<< HEAD
             if (systemUserSession.getSystemUserByName(username).isLocked()) {
                 msgController.addErrorMessage("Your account has been locked, please reset password or wait 30mins to try again or contact systme admin");
+=======
+            if (systemUserSession.getSystemUserByName(username).getLocked()) {
+                msgController.addErrorMessage("Your account has been locked, please reset password or wait 30mins to try again");
+>>>>>>> c4a46d71dda68272c7f2007db627ef9c49b34319
                 return navigationController.toLogin();
             }
         } catch (NoSuchUsernameException ex) {

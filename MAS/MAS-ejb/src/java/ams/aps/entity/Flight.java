@@ -6,6 +6,7 @@
 package ams.aps.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -20,15 +23,26 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 public class Flight implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String flightNo;
-    
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Integer weeklyFrequency;
+    private Boolean completed;
+    private Integer numOfUnscheduled; //default value is weeklyFrequency
+    private Boolean deleted;
+    private Double speedFraction;
+
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Route route;
 
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<AircraftType> aircraftTypes;
+
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Flight returnedFlight;
 
     public Long getId() {
         return id;
@@ -90,5 +104,78 @@ public class Flight implements Serializable {
     public void setRoute(Route route) {
         this.route = route;
     }
-    
+
+    public Integer getWeeklyFrequency() {
+        return weeklyFrequency;
+    }
+
+    public void setWeeklyFrequency(Integer weeklyFrequency) {
+        this.weeklyFrequency = weeklyFrequency;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+
+    public List<AircraftType> getAircraftTypes() {
+        return aircraftTypes;
+    }
+
+    public void setAircraftTypes(List<AircraftType> aircraftTypes) {
+        this.aircraftTypes = aircraftTypes;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    /**
+     * @return the speedFraction
+     */
+    public Double getSpeedFraction() {
+        return speedFraction;
+    }
+
+    /**
+     * @param speedFraction the speedFraction to set
+     */
+    public void setSpeedFraction(Double speedFraction) {
+        this.speedFraction = speedFraction;
+    }
+
+    /**
+     * @return the returnedFlight
+     */
+    public Flight getReturnedFlight() {
+        return returnedFlight;
+    }
+
+    /**
+     * @param returnedFlight the returnedFlight to set
+     */
+    public void setReturnedFlight(Flight returnedFlight) {
+        this.returnedFlight = returnedFlight;
+    }
+
+    /**
+     * @return the numOfUnscheduled
+     */
+    public Integer getNumOfUnscheduled() {
+        return numOfUnscheduled;
+    }
+
+    /**
+     * @param numOfUnscheduled the numOfUnscheduled to set
+     */
+    public void setNumOfUnscheduled(Integer numOfUnscheduled) {
+        this.numOfUnscheduled = numOfUnscheduled;
+    }
 }

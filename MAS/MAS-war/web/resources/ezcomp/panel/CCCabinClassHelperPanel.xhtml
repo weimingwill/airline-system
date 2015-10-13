@@ -44,23 +44,23 @@
                         <p:outputLabel value="Used Cabin Class Configuration"/>
                     </p:column>
                 </p:row>
-                <ui:repeat var="cabinClassList" value="#{fleetController.selectedModelCabinClassesSet}" varStatus="status">
+
+                <p:row>
+                    <p:column colspan="2" styleClass="ui-widget-header">
+                        <p:outputLabel value="Cabin Class Configuration"/>
+                    </p:column>
+                </p:row>
+                <ui:repeat var="cabinClass" value="#{fleetController.suggestedCabinCalss}">
                     <p:row>
-                        <p:column colspan="2" styleClass="ui-widget-header">
-                            <p:outputLabel value="Configuration #{status.index+1}"/>
+                        <p:column colspan="1">
+                            <p:outputLabel value="#{cabinClass.name}"/>
+                        </p:column>
+                        <p:column colspan="1">
+                            <p:outputLabel value="#{cabinClass.seatQty}"/>
                         </p:column>
                     </p:row>
-                    <ui:repeat var="cabinClass" value="#{cabinClassList}">
-                        <p:row>
-                            <p:column colspan="1">
-                                <p:outputLabel value="#{cabinClass.name}"/>
-                            </p:column>
-                            <p:column colspan="1">
-                                <p:outputLabel value="#{cabinClass.seatQty}"/>
-                            </p:column>
-                        </p:row>
-                    </ui:repeat>
                 </ui:repeat>
+
             </p:panelGrid>
         </p:panel>
     </cc:implementation>
