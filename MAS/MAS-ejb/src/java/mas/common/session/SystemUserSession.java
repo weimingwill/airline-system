@@ -109,7 +109,7 @@ public class SystemUserSession implements SystemUserSessionLocal {
                 } catch (NoSuchUsernameException e) {
                     sender = null;
                 }
-                if (!msg.getDeleted() && sender != null && !sender.getDeleted() ) {
+                if (!msg.getDeleted() && sender != null && !sender.getDeleted()) {
                     msgs.add(msg);
                 }
             }
@@ -501,5 +501,4 @@ public class SystemUserSession implements SystemUserSessionLocal {
         entityManager.merge(user);
     }
 
-    
 }

@@ -23,6 +23,7 @@ import mas.common.util.helper.UserStatus;
  */
 @Entity
 public class SystemUser implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long systemUserId;
@@ -38,12 +39,12 @@ public class SystemUser implements Serializable {
     private String department;
     private String phone;
     private String status;
-    
+
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemRole> systemRoles = new ArrayList<>();
-    @ManyToMany(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemMsg> systemMsgs = new ArrayList<>();
-    
+
     public void create(String username, String password, String name, String email, String phone, String address, String department){
         this.setUsername(username);
         this.setPassword(password);
@@ -65,7 +66,7 @@ public class SystemUser implements Serializable {
     public void setSystemUserId(Long systemUserId) {
         this.systemUserId = systemUserId;
     }
-    
+
     public List<SystemMsg> getSystemMsgs() {
         return systemMsgs;
     }
@@ -73,7 +74,6 @@ public class SystemUser implements Serializable {
     public void setSystemMsgs(List<SystemMsg> systemMsgs) {
         this.systemMsgs = systemMsgs;
     }
-
 
     @Override
     public int hashCode() {
@@ -214,5 +214,8 @@ public class SystemUser implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
-    }    
+    }
+
+    
+    
 }
