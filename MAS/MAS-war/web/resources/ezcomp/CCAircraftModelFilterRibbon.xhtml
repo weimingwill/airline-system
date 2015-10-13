@@ -5,8 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -116,7 +115,7 @@
                 <p:ribbonGroup label="Actions">
                     <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
                         <p:commandButton value="Apply" update=":aircraftModelForm:aircraftModelTable" action="#{fleetTableController.applyFilters(target)}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
-                        <p:commandButton value="Reset" update=":aircraftModelForm:aircraftModelTable" action="#{fleetTableController.resetFilters(target)}" icon="fa fa-refresh" styleClass="filterBtn"/>
+                        <p:commandButton value="Reset" update="aircraftModelFilters,:aircraftModelForm:aircraftModelTable" action="#{fleetTableController.resetFilters(target)}" icon="fa fa-refresh" styleClass="filterBtn"/>
                     </p:panelGrid>
                 </p:ribbonGroup>
             </p:tab>

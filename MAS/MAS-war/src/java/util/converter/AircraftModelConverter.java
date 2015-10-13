@@ -21,7 +21,7 @@ public class AircraftModelConverter implements Converter {
     
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-        if(value != null && value.trim().length() > 0) {
+        if(value != null && value.trim().length() > 0 && !value.split(" ")[0].toLowerCase().equals("select")) {
             return fleetController.getAircraftModelById(Long.parseLong(value));
         }
         else {

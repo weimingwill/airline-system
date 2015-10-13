@@ -328,6 +328,34 @@ public class NavigationController implements Serializable {
     public String toViewObsoleteRoutes() {
         return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
     }
+    
+    
+    public String toAddAirport(){
+        return "/views/secured/aps/route/addAirport.xhtml" + REDIRECT;
+    }
+    
+    
+    // Flight Scheduling
+    public String toCreateFlight(){
+        return "/views/secured/aps/flight_schedule/createFlight.xhtml" + REDIRECT;
+    }
+    
+    public String toFleetAssignment(){
+        return "/views/secured/aps/flight_schedule/fleetAssignment.xhtml";
+    }
+    
+    public String toFreqPlanning(){
+        return "/views/secured/aps/flight_schedule/freqPlanning.xhtml";
+    }
+    
+    public String toConfirmFlight(){
+        return "/views/secured/aps/flight_schedule/confirmFlight.xhtml";
+    }
+    
+    public String toScheduleFlight(){
+        return "/views/secured/aps/flight_schedule/scheduleFlight.xhtml" + REDIRECT;
+    }
+    
 
     public String redirectToCurrentPage() {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();

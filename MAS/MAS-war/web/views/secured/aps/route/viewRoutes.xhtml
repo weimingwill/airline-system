@@ -3,45 +3,12 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/ApsTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
 
     <ui:define name="content">
         <h:form>
-
-            <p:dataTable var="routeList" value="#{routeController.viewRoutes()}" selection="#{routeController.routesToBeDeleted}" rowKey="#{routeList.id}" style="margin-bottom:40px; width:auto;" rows="10"
-                         paginator="true"
-                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         rowsPerPageTemplate="5,10,15">
-                <f:facet name="header">
-                    Current Routes In Operation
-                </f:facet>
-                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-                <p:column headerText="Id" sortBy="#{routeList.id}">
-                    <h:outputText value="#{routeList.id}" />
-                </p:column>
-
-                <p:column headerText="Origin" sortBy="#{routeList.origin}">
-                    <h:outputText value="#{routeList.origin}" />
-                </p:column>
-
-                <p:column headerText="Stopovers" sortBy="#{routeList.legs}">
-                    <h:outputText value="#{routeList.legs}" />
-                </p:column>
-
-                <p:column headerText="Destination" sortBy="#{routeList.destination}">
-                    <h:outputText value="#{routeList.destination}" />
-                </p:column>
-
-                <f:facet name="footer">
-                    <p:commandButton value="Delete route and return route" update="messages" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{routeController.deleteRoute}" style="left:27px" icon="ui-icon-check" />
-                </f:facet>
-
-            </p:dataTable>
-
-
+            <ta:CCDisplayRouteTable rows="10" footer="true"/>
         </h:form>
-
     </ui:define>
 
 </ui:composition>

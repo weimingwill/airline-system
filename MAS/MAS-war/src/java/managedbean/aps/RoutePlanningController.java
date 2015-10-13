@@ -53,9 +53,7 @@ public class RoutePlanningController implements Serializable {
     @PostConstruct
     public void init() {
 
-        stopOvers = routePlanningSession.getAllAirports();
-        stopOvers.remove(origin);
-        stopOvers.remove(destination);
+        refreshAirportList();
 
         odPass();
         autoGenerateRoute();
@@ -64,12 +62,26 @@ public class RoutePlanningController implements Serializable {
     public RoutePlanningController() {
     }
 
+    public void cleanOD() {
+        setOrigin(null);
+        setDestination(null);
+    }
+
     public void odPass() {
+        boolean refresh = false;
+        if (origin != null) {
+            refresh = true;
+        }
         Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         Airport temp = (Airport) map.get("origin");
         if (temp != null) {
             setOrigin(temp);
             setDestination((Airport) map.get("destination"));
+            if (refresh) {
+                routeList.clear();
+                refreshAirportList();
+                autoGenerateRoute();
+            }
         }
 
         System.out.println("RoutePlanningController: odPass: " + origin.getAirportName() + " " + destination.getAirportName());
@@ -81,7 +93,7 @@ public class RoutePlanningController implements Serializable {
         stops.add(destination);
 
         System.out.println("RoutePlanningController: planODRoute(): ");
-        setOd(routePlanningSession.compareRoutePreparation("O-D", stops));
+        setOd(routePlanningSession.compareRoutePreparation("Direct", stops));
         System.out.println("RoutePlanningController: planODRoute(): planning successful");
         routeList.add(od);
     }
@@ -91,14 +103,12 @@ public class RoutePlanningController implements Serializable {
 
         List<Airport> stops = routePlanningSession.getShortestHSRoute(origin, destination);
         if (stops.isEmpty()) {
-            setHs(od);
             System.out.println("RoutePlanningController: planHSRoute(): planning as OD");
         } else {
-            setHs(routePlanningSession.compareRoutePreparation("H&S", stops));
+            setHs(routePlanningSession.compareRoutePreparation("Pass by hub", stops));
             System.out.println("RoutePlanningController: planHSRoute(): planning successful");
+            routeList.add(hs);
         }
-
-        routeList.add(hs);
     }
 
     public void custRoute() {
@@ -107,7 +117,7 @@ public class RoutePlanningController implements Serializable {
         stops.add(origin);
         stops.add(stopover);
         stops.add(destination);
-        setCust(routePlanningSession.compareRoutePreparation("Customized", stops));
+        setCust(routePlanningSession.compareRoutePreparation("With stopover", stops));
 
         if (routeList.size() == 3) {
             routeList.remove(2);
@@ -154,6 +164,12 @@ public class RoutePlanningController implements Serializable {
                 msgController.addErrorMessage("Route existed! with type " + r.getType());
             }
         }
+    }
+    
+    public void refreshAirportList(){
+        stopOvers = routePlanningSession.getAllAirports();
+        stopOvers.remove(origin);
+        stopOvers.remove(destination);
     }
 
     public Airport getOrigin() {

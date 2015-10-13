@@ -22,6 +22,7 @@ import javax.persistence.ManyToMany;
  */
 @Entity
 public class Permission implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long permissionId;
@@ -98,6 +99,6 @@ public class Permission implements Serializable {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
-    }
+    }    
     
 }

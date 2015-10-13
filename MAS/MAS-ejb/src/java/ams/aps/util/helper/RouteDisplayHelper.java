@@ -10,15 +10,18 @@ package ams.aps.util.helper;
  * @author ChuningLiu
  */
 public class RouteDisplayHelper {
+
     private Long id;
     private String origin;
     private String destination;
     private String legs;
+    private Long returnRouteId;
+    private Double totalDistance;
+    private Double totalDuration;
 
     public RouteDisplayHelper() {
     }
 
-    
     public RouteDisplayHelper(String origin, String destination, String legs) {
         this.origin = origin;
         this.destination = destination;
@@ -79,6 +82,48 @@ public class RouteDisplayHelper {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * @return the returnRouteId
+     */
+    public Long getReturnRouteId() {
+        return returnRouteId;
+    }
+
+    /**
+     * @param returnRouteId the returnRouteId to set
+     */
+    public void setReturnRouteId(Long returnRouteId) {
+        this.returnRouteId = returnRouteId;
+    }
+
+    /**
+     * @return the totalDistance
+     */
+    public Double getTotalDistance() {
+        return totalDistance;
+    }
+
+    /**
+     * @param totalDistance the totalDistance to set
+     */
+    public void setTotalDistance(Double totalDistance) {
+        this.totalDistance = totalDistance;
+    }
+
+    /**
+     * @return the totalDuration
+     */
+    public Double getTotalDuration() {
+        return totalDuration;
+    }
+
+    /**
+     * @param totalDuration the totalDuration to set
+     */
+    public void setTotalDuration(Double totalDuration) {
+        this.totalDuration = totalDuration;
     }
 
 }

@@ -11,16 +11,15 @@
             Cancel an airport as hub
         </f:facet>
         <h:form>
-            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+            <p:panelGrid columns="2" style="margin-bottom:10px">
                 <p:outputLabel for="hub" value="Hub:" />
                 <p:selectOneMenu id="hub" value="#{routeController.hub}" converter="airportConverter" style="width:200px" filter="true" filterMatchMode="contains">
                     <f:selectItem itemLabel="Select" itemValue="" />
                     <f:selectItems value="#{routeController.hubs}" var="hub" itemLabel="#{hub.airportName}" itemValue="#{hub}" />
                 </p:selectOneMenu>
-                <p:commandButton value="Cancel hub" update="messages" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{routeController.cancelHub}" icon="ui-icon-check"/>
-
-            </h:panelGrid>
-
+            </p:panelGrid>
+            <p:separator/>
+            <p:commandButton value="Cancel hub" update="messages" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{routeController.cancelHub}" icon="ui-icon-check"/>
         </h:form>
     </ui:define>
 

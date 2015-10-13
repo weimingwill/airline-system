@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/ApsTemplate.xhtml"
+                xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="content">
+
+        <me:CCCreateFlightMenu activeIndex="0"/>
+        <h:form>
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+            <c:set value="#{flightManager.routeHelper}" var="route"/>
+            <c:set value="#{flightManager.returnRouteHelper}" var="returnRoute"/>
+            <p:panel header="Choose Aircraft Models for #{flightManager.flight.flightNo} and Its Returned Flight #{flightManager.returnedFlight.flightNo}">
+                <p:panelGrid columns="2">
+                    <p:panelGrid>
+                        <pa:CCRouteDistDisplayPanel route="#{route}" flight="#{flightManager.flight}"/>
+                        <pa:CCRouteDistDisplayPanel route="#{returnRoute}" flight="#{flightManager.returnedFlight}"/>
+                        <p:row>
+                            <p:column colspan="3" styleClass="label">
+                                <p:outputLabel value="Total Distance (km)"/>
+                            </p:column>
+                            <p:column styleClass="label">
+                                <p:outputLabel value="#{route.totalDistance + returnRoute.totalDistance}">
+                                    <f:convertNumber maxFractionDigits="4"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:dataTable value="#{flightManager.modelsForFlight}" var="model" selection="#{flightManager.selectedModels}" rows="3" rowKey="#{model.id}" tableStyleClass="table-small" sortMode="multiple">
+
+                        <f:facet name="header">
+                            <p:outputLabel value="Top #{flightManager.modelsForFlight.size()} Aircraft models which are capable of flying this route"/>
+                        </f:facet>
+
+                        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+
+                        <p:column headerText="Type">
+                            <p:outputLabel value="#{model.typeCode}"/>
+                        </p:column>
+
+                        <p:column headerText="Type Family">
+                            <p:outputLabel value="#{model.typeFamily}"/>
+                        </p:column>
+
+                        <p:column headerText="Range (km)">
+                            <p:outputLabel value="#{model.rangeInKm}"/>
+                        </p:column>
+
+                        <p:column headerText="Range Usage (%)" sortBy="#{(flightManager.maxDist/model.rangeInKm)*100}">
+                            <p:outputLabel value="#{(flightManager.maxDist/model.rangeInKm)*100}">
+                                <f:convertNumber maxFractionDigits="2"/>
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="# of Aircrafts" sortBy="#{model.aircrafts == null ? 0 : model.aircrafts.size()}">
+                            <p:outputLabel value="#{model.aircrafts == null ? 0 : model.aircrafts.size()}"/>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <p:outputLabel id="footer" value=" Please select aircraft models for flights #{flightManager.flight.flightNo}, #{flightManager.returnedFlight.flightNo} and continue" style="font-weight: bold" class="fa fa-info-circle">
+                                <p:tooltip for="footer" value="Note: Selected aircraft models must be of the same type family" trackMouse="true"/>
+                            </p:outputLabel>
+                        </f:facet>
+                    </p:dataTable>
+
+
+
+                </p:panelGrid>
+            </p:panel>
+
+
+
+            <p:separator/>
+
+            <p:panelGrid>
+                <p:row style="border: transparent">
+                    <p:column style="width:76%"></p:column>
+                    <p:column style="text-align: right">
+                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{flightManager.checkSelectedAircraftModels()}"/>
+                        <p:commandButton value="Save &amp; Exit" icon="fa fa-floppy-o" action="#{flightManager.updateFlightAircraftModel()}"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

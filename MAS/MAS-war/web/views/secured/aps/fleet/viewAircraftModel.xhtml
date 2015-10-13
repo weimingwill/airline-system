@@ -18,7 +18,7 @@
                 
                 <h:form id="aircraftModelForm">
 
-                    <p:dataTable id="aircraftModelTable" var="model" value="#{fleetTableController.aircraftModelList}" rows="5" 
+                    <p:dataTable id="aircraftModelTable" var="model" value="#{fleetTableController.aircraftModelList}" rows="5" tableStyleClass="table-small"
                                  paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="5,10" selection="#{fleetTableController.selectedAircraftType}" selectionMode="single" rowKey="#{model.id}">
                         <f:facet name="header">
