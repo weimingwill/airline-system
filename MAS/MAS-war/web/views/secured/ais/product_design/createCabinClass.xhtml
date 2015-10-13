@@ -3,27 +3,27 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../template/AisTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui">
-                
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
 
     <ui:define name="title">
         Create New Cabin Class
     </ui:define >
 
     <ui:define name="content">
+        <f:facet name="header">
+            Create Cabin Class
+        </f:facet>
         <h:form id="createCabinClassForm">
-            <h:panelGrid columns="2" columnClasses="label, value">
-
-                <h:outputText value="Type"/>
+            <p:panelGrid columns="2" columnClasses="label, value">
+                <p:outputLabel value="Cabin Class Type"/>
                 <p:inputText required="true" requiredMessage="Please enter flightschedule ID" id="type" value="#{cabinClassController.type}"/>                
-                <h:outputText value="Name"/>
-                <p:inputText required="true" requiredMessage="Please enter cabin class name" id="name" value="#{cabinClassController.name}">
-               
-                </p:inputText>
-                
-                <p:commandButton action="#{cabinClassController.createCabinClass()}" value="Create" update="messages"/>    
-
-            </h:panelGrid>
+                <p:outputLabel value="Cabin Class Name"/>
+                <p:inputText required="true" requiredMessage="Please enter cabin class name" id="name" value="#{cabinClassController.name}"/>
+            </p:panelGrid>
+            <p:separator/>
+            <p:commandButton action="#{cabinClassController.createCabinClass()}" value="Create" update="messages"/>    
         </h:form>
     </ui:define>
 

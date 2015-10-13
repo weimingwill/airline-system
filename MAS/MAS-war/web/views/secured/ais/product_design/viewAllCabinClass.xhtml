@@ -12,10 +12,7 @@
     </ui:define>
 
     <ui:define name="content">
-        <p:dataTable value="#{cabinClassController.allCabinClass}" var="cabinclass" style="margin-bottom:40px" rows="10"
-                     paginator="true"
-                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     rowsPerPageTemplate="10,15,30">
+        <p:dataTable value="#{cabinClassController.allCabinClass}" var="cabinclass" tableStyleClass="table-small-font" >
             <f:facet name="header">
                 Cabin Class
             </f:facet>

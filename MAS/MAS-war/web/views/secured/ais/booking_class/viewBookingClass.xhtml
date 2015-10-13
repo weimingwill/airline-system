@@ -13,7 +13,7 @@
 
     <ui:define name="content">
         <p:dataTable value="#{bookingClassController.allBookingClasses}" var="bookingClass" style="margin-bottom:40px" rows="10"
-                     paginator="true"
+                     paginator="true" tableStyleClass="table-small-font"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="10,15,30">
             
@@ -50,7 +50,6 @@
             <h:form>
                 <p:panel id="bookingClassDetail">
                     <p:panelGrid>
-                       
                         <p:row> 
                             <p:column>
                                 <p:outputLabel value="Booking Class Name: " />
@@ -61,8 +60,6 @@
                                 </p:inputText>
                             </p:column>
                         </p:row>
-
-                        
                     </p:panelGrid>
                 </p:panel>
                 <p:commandButton value="Submit" action="#{navigationController.redirectToViewAllBookingClass()}" actionListener="#{productDesignEditController.updateBookingClass()}" oncomplete="PF('bookingClassDialog').hide()"/>
@@ -73,7 +70,6 @@
             <h:form>
                 <p:panel id="bookingClassDeleteDetail">
                     <p:panelGrid>
-                       
                         <p:row> 
                             <p:column>
                                 <p:outputLabel value="Booking Class: " />
@@ -83,8 +79,6 @@
                                 </h:outputText>
                             </p:column>
                         </p:row>
-                        
-                        
                     </p:panelGrid>
                 </p:panel>
                 <p:commandButton value="Delete" action="#{navigationController.redirectToViewAllBookingClass()}" actionListener="#{productDesignDeleteController.deleteBookingClass()}" oncomplete="PF('ruleDialog').hide()"/>

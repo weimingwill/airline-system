@@ -11,12 +11,13 @@
     </ui:define>
 
     <ui:define name="content">
+        <f:facet name="header">
+            Add Booking Class
+        </f:facet>
         <h:form id="createBookingClassForm">
-            <h:panelGrid columns="2">
+            <p:panelGrid columns="2">
                 <p:outputLabel value="Booking class name: "/>
-
                 <p:inputText value="#{bookingClassController.bookingClassName}"/>
-                
                 <p:outputLabel for="type" value="Ticket Family:" />
                 <p:selectOneMenu id="type" var="bc" value="#{bookingClassController.selectedTicketFamily}" converter="ticketFamilyConverter" style="width:300px" filter="true" filterMatchMode="startsWith">
                     <f:selectItem itemLabel="Select" itemValue="" noSelectionOption="true" />
@@ -31,8 +32,10 @@
                         <h:outputText value="#{bc.name}"/>
                     </p:column>
                 </p:selectOneMenu>
-                <p:commandButton action="#{bookingClassController.createBookingClass()}" value="Create" update="messages" />
-            </h:panelGrid>
+            </p:panelGrid>
+
+            <p:separator/>
+            <p:commandButton action="#{bookingClassController.createBookingClass()}" value="Create" update="messages" />
         </h:form>
     </ui:define>
 

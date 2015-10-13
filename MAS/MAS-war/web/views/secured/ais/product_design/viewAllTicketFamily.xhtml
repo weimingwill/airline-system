@@ -13,10 +13,9 @@
 
     <ui:define name="content">
         <h:form>
-            <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily" style="margin-bottom:40px" rows="10"
-                     paginator="true"
-                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     rowsPerPageTemplate="10,15,30">
+            <p:dataTable value="#{ticketFamilyController.allTicketFamily}" var="ticketfamily" tableStyleClass="table-small-font" rows="5"
+                     paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="5,10">
 
                 <f:facet name="header">
                     Ticket Family
@@ -33,7 +32,7 @@
                 </p:column>
 
                 <p:column headerText="Rule" style="width:400px;text-align: center">
-                    <p:dataTable value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(ticketfamily.ticketFamilyId)}" var="ticketfamilyrule">
+                    <p:dataTable tableStyleClass="table-small-font" value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(ticketfamily.ticketFamilyId)}" var="ticketfamilyrule">
                         <p:column>
                             <p:outputLabel value="#{ticketfamilyrule.rule.name}" />
                         </p:column>
@@ -63,7 +62,7 @@
         </h:form>
 
         <h:form>
-            <p:dataTable value="#{ruleController.allRule}" var="rule" style="margin-bottom:40px" rows="10"
+            <p:dataTable value="#{ruleController.allRule}" var="rule" style="margin-bottom:40px" rows="10" tableStyleClass="table-small-font"
                      paginator="true"
                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="10,15,30">
@@ -82,7 +81,7 @@
         </h:form>
 
         <p:dialog id="ruleDialog" header="Edit #{ticketFamilyController.selectedTicketFamily.cabinClass.name}: #{ticketFamilyController.selectedTicketFamily.name}" widgetVar="ruleDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
-            <h:form>
+            <h:form style="max-height: 500px; overflow: scroll;">
                 <p:panel id="ruleDetail">
                     <p:panelGrid>
                         <ui:repeat var="ticketFamily" value="#{ticketFamilyController.selectedTicketFamily}" varStatus="status">
@@ -106,7 +105,6 @@
                             </p:row>
                         </ui:repeat>
 
-
                         <ui:repeat var="ticketFamilyRuleHelper" value="#{ticketFamilyController.ticketFamilyRuleHelpers}" varStatus="status">
                             <p:row>
                                 <p:column>
@@ -121,6 +119,7 @@
                         </ui:repeat>
                     </p:panelGrid>
                 </p:panel>
+                <p:separator/>
                 <p:commandButton value="Submit" action="#{navigationController.redirectToViewAllTicketFamily()}" actionListener="#{ticketFamilyController.editRuleValues()}" oncomplete="PF('ruleDialog').hide()"/>
             </h:form>
         </p:dialog>
@@ -160,6 +159,7 @@
                         </p:row>
                     </p:panelGrid>
                 </p:panel>
+                <p:separator/>
                 <p:commandButton value="Delete" action="#{navigationController.redirectToViewAllTicketFamily()}" actionListener="#{productDesignDeleteController.deleteTicketFamily()}" oncomplete="PF('ticketFamilyDeleteDialog').hide()"/>
             </h:form>
         </p:dialog>

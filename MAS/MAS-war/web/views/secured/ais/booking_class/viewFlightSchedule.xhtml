@@ -12,68 +12,70 @@
 
     <ui:define name="content">
         <h:form>
-            <p:panel id="basic" header="Flight schedule" style="margin-bottom:20px">
-                <!--<p:outputLabel for="" value="{}"/>-->
-                <p:dataTable id="flight-schedule" var="flightSchedule" selection="#{flightScheduleController.selectedFlightSchedule}" value="#{flightScheduleController.allFlightSchedule}" rows="10"
-                             rowKey="#{flightSchedule.flightScheduleId}" tableStyle="width:auto">
-                    <!--                     paginator="false"      rowsPerPageTemplate="10,15"    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"-->
 
-                    <p:column selectionMode="single" style="width:16px;text-align:center"/>
-                    <p:column headerText="Id">
-                        <p:outputLabel value="#{flightSchedule.flightScheduleId }" />
-                    </p:column>
-                    <p:column headerText="AircraftId">
-                        <p:outputLabel value="#{flightSchedule.aircraft.aircraftId}" />
-                    </p:column>  
-                    <p:column headerText="Aircraft Tail No.">
-                        <p:outputLabel value="#{flightSchedule.aircraft.tailNo}" />
-                    </p:column>  
-                    <p:column headerText="Departure Terminal">
-                        <p:outputLabel value="#{flightSchedule.departTerminal}"/>
-                    </p:column>
-                    <p:column headerText="Departure Gate">
-                        <p:outputLabel value="#{flightSchedule.departGate}"/>
-                    </p:column>
-                    <p:column headerText="Departure Date">
-                        <p:outputLabel value="#{flightSchedule.departDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
-                        </p:outputLabel>
-                    </p:column>
-                    <p:column headerText="Departure Time">
-                        <p:outputLabel value="#{flightSchedule.departTime}">
-                            <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
-                        </p:outputLabel>
-                    </p:column>
-                    <p:column headerText="Arrival Terminal">
-                        <p:outputLabel value="#{flightSchedule.arrivalTerminal}"/>
-                    </p:column>
-                    <p:column headerText="Arrival Gate">
-                        <p:outputLabel value="#{flightSchedule.arrivalGate}"/>
-                    </p:column>
-                    <p:column headerText="Arrival Date">
-                        <p:outputLabel value="#{flightSchedule.arrivalDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
-                        </p:outputLabel>
-                    </p:column>
-                    <p:column headerText="Arrival Time">
-                        <p:outputLabel value="#{flightSchedule.arrivalTime}">
-                            <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
-                        </p:outputLabel>
+            <p:dataTable id="flight-schedule" var="flightSchedule" selection="#{flightScheduleController.selectedFlightSchedule}" value="#{flightScheduleController.allFlightSchedule}" rows="10"
+                         rowKey="#{flightSchedule.flightScheduleId}" tableStyleClass="table-small"
+                         paginator="false" rowsPerPageTemplate="10,15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
-                    </p:column>
-                    <f:facet name="footer">
-                        <p:commandButton icon="ui-icon-search" value="View booking classes" 
-                                         update=":viewBookingClassForm:viewBookingClass"
-                                         oncomplete="PF('flightScheduleBookingClassDialog').show()"
-                                         actionListener="#{flightScheduleController.onViewBookingClassClick()}" />
-                        <p:commandButton action="#{flightScheduleController.toAssignFlightScheduleBookingClass()}" value="Add booking classes" update="messages"/>
-                        <p:commandButton action="#{flightScheduleController.toSeatAllocation()}" value="Seat allocation" update="messages" />
-                        <p:commandButton action="#{flightScheduleController.toPriceBookingClasses()}" value="Pricing" update="messages" />
-                        <p:commandButton action="#{flightScheduleController.toYieldManagement()}" value="Yield Management" update="messages" />
+                <f:facet name="header">
+                    Flight schedule
+                </f:facet>
+                <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                <p:column headerText="Id">
+                    <p:outputLabel value="#{flightSchedule.flightScheduleId }" />
+                </p:column>
+                <p:column headerText="AircraftId">
+                    <p:outputLabel value="#{flightSchedule.aircraft.aircraftId}" />
+                </p:column>  
+                <p:column headerText="Aircraft Tail No.">
+                    <p:outputLabel value="#{flightSchedule.aircraft.tailNo}" />
+                </p:column>  
+                <p:column headerText="Departure Terminal">
+                    <p:outputLabel value="#{flightSchedule.departTerminal}"/>
+                </p:column>
+                <p:column headerText="Departure Gate">
+                    <p:outputLabel value="#{flightSchedule.departGate}"/>
+                </p:column>
+                <p:column headerText="Departure Date">
+                    <p:outputLabel value="#{flightSchedule.departDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Departure Time">
+                    <p:outputLabel value="#{flightSchedule.departTime}">
+                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Arrival Terminal">
+                    <p:outputLabel value="#{flightSchedule.arrivalTerminal}"/>
+                </p:column>
+                <p:column headerText="Arrival Gate">
+                    <p:outputLabel value="#{flightSchedule.arrivalGate}"/>
+                </p:column>
+                <p:column headerText="Arrival Date">
+                    <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Arrival Time">
+                    <p:outputLabel value="#{flightSchedule.arrivalTime}">
+                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                    </p:outputLabel>
 
-                    </f:facet>
-                </p:dataTable>
-            </p:panel>    
+                </p:column>
+                <f:facet name="footer">
+                    <p:commandButton icon="ui-icon-search" value="View booking classes" 
+                                     update=":viewBookingClassForm:viewBookingClass"
+                                     oncomplete="PF('flightScheduleBookingClassDialog').show()"
+                                     actionListener="#{flightScheduleController.onViewBookingClassClick()}" />
+                    <p:commandButton action="#{flightScheduleController.toAssignFlightScheduleBookingClass()}" value="Add booking classes" update="messages"/>
+                    <p:commandButton action="#{flightScheduleController.toSeatAllocation()}" value="Seat allocation" update="messages" />
+                    <p:commandButton action="#{flightScheduleController.toPriceBookingClasses()}" value="Pricing" update="messages" />
+                    <p:commandButton action="#{flightScheduleController.toYieldManagement()}" value="Yield Management" update="messages" />
+
+                </f:facet>
+            </p:dataTable>
+
         </h:form>
 
         <p:dialog header="Flight Schedule Booking Class" widgetVar="flightScheduleBookingClassDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
