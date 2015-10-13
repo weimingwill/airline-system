@@ -15,46 +15,51 @@
             <p:panel id="basic" header="Flight schedule" style="margin-bottom:20px">
                 <!--<p:outputLabel for="" value="{}"/>-->
                 <p:dataTable id="flight-schedule" var="flightSchedule" selection="#{flightScheduleController.selectedFlightSchedule}" value="#{flightScheduleController.allFlightSchedule}" rows="10"
-                             rowKey="#{flightSchedule.flightScheduleId}">
+                             rowKey="#{flightSchedule.flightScheduleId}" tableStyle="width:auto">
                     <!--                     paginator="false"      rowsPerPageTemplate="10,15"    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"-->
 
                     <p:column selectionMode="single" style="width:16px;text-align:center"/>
-                    <p:column headerText="Id" sortBy="#{flightSchedule.flightScheduleId}" >
+                    <p:column headerText="Id">
                         <p:outputLabel value="#{flightSchedule.flightScheduleId }" />
                     </p:column>
-                    <p:column headerText="AircraftId" sortBy="#{flightSchedule.aircraft.aircraftId}" >
+                    <p:column headerText="AircraftId">
                         <p:outputLabel value="#{flightSchedule.aircraft.aircraftId}" />
                     </p:column>  
-                    <p:column headerText="Aircraft Tail No." sortBy="#{flightSchedule.aircraft.tailNo}" >
+                    <p:column headerText="Aircraft Tail No.">
                         <p:outputLabel value="#{flightSchedule.aircraft.tailNo}" />
                     </p:column>  
-                    <p:column headerText="Departure Terminal" sortBy="#{flightSchedule.departTerminal}">
+                    <p:column headerText="Departure Terminal">
                         <p:outputLabel value="#{flightSchedule.departTerminal}"/>
                     </p:column>
-                    <p:column headerText="Departure Gate" sortBy="#{flightSchedule.departGate}">
+                    <p:column headerText="Departure Gate">
                         <p:outputLabel value="#{flightSchedule.departGate}"/>
                     </p:column>
-                    <p:column headerText="Departure Date" sortBy="#{flightSchedule.departDate}">
+                    <p:column headerText="Departure Date">
                         <p:outputLabel value="#{flightSchedule.departDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
                         </p:outputLabel>
                     </p:column>
-                    <p:column headerText="Departure Time" sortBy="#{flightSchedule.departTime}">
-                        <p:outputLabel value="#{flightSchedule.departTime}"/>
+                    <p:column headerText="Departure Time">
+                        <p:outputLabel value="#{flightSchedule.departTime}">
+                            <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                        </p:outputLabel>
                     </p:column>
-                    <p:column headerText="Arrival Terminal" sortBy="#{flightSchedule.arrivalTerminal}">
+                    <p:column headerText="Arrival Terminal">
                         <p:outputLabel value="#{flightSchedule.arrivalTerminal}"/>
                     </p:column>
-                    <p:column headerText="Arrival Gate" sortBy="#{flightSchedule.arrivalGate}">
+                    <p:column headerText="Arrival Gate">
                         <p:outputLabel value="#{flightSchedule.arrivalGate}"/>
                     </p:column>
-                    <p:column headerText="Arrival Date" sortBy="#{flightSchedule.arrivalDate}">
+                    <p:column headerText="Arrival Date">
                         <p:outputLabel value="#{flightSchedule.arrivalDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
                         </p:outputLabel>
                     </p:column>
-                    <p:column headerText="Arrival Time" sortBy="#{flightSchedule.arrivalTime}">
-                        <p:outputLabel value="#{flightSchedule.arrivalTime}"/>
+                    <p:column headerText="Arrival Time">
+                        <p:outputLabel value="#{flightSchedule.arrivalTime}">
+                            <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                        </p:outputLabel>
+
                     </p:column>
                     <f:facet name="footer">
                         <p:commandButton icon="ui-icon-search" value="View booking classes" 
@@ -66,7 +71,6 @@
                         <p:commandButton action="#{flightScheduleController.toPriceBookingClasses()}" value="Pricing" update="messages" />
                         <p:commandButton action="#{flightScheduleController.toYieldManagement()}" value="Yield Management" update="messages" />
 
-                        <p:commandButton value="Delete" update="messages" />
                     </f:facet>
                 </p:dataTable>
             </p:panel>    
@@ -127,7 +131,7 @@
                                     <p:commandButton action="#{flightScheduleController.toSeatAllocation()}" value="Seat allocation" update="messages" />
                                 </p:column>
                                 <p:column colspan="2">                                
-                                    <p:commandButton action="#{seatReallocationController.toYieldManagement()}" value="Yield Management" update="messages" />
+                                    <p:commandButton action="#{flightScheduleController.toYieldManagement()}" value="Yield Management" update="messages" />
                                 </p:column>
                                 <p:column colspan="2">             
                                     <p:commandButton action="#{flightScheduleController.toPriceBookingClasses()}" value="Pricing" update="messages" />

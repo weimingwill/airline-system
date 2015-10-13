@@ -36,6 +36,8 @@ import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -575,11 +577,11 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
                     = cabinClassSession.getCabinClassTicketFamilyJoinTables(aircraft.getAircraftId(), cabinClass.getCabinClassId());
             for (CabinClassTicketFamily cctf : cabinClassTicketFamilys) {
                 Long ticketFamilyId = cctf.getTicketFamily().getTicketFamilyId();
-                CabinClassTicketFamily cabinClassTicketFamily = 
-                        getOriginalCabinClassTicketFamily(aircraft.getAircraftId(), cabinClass.getCabinClassId(), ticketFamilyId);
+                CabinClassTicketFamily cabinClassTicketFamily
+                        = getOriginalCabinClassTicketFamily(aircraft.getAircraftId(), cabinClass.getCabinClassId(), ticketFamilyId);
                 double basicPrice = calTicketFamilyPrice(flightScheduleId, ticketFamilyId);
-                cabinClassTicketFamily.setPrice((float)basicPrice);
-                bookingClassSession.setBookingClassDefaultPrice(flightScheduleId, ticketFamilyId, (float)basicPrice);
+                cabinClassTicketFamily.setPrice((float) basicPrice);
+                bookingClassSession.setBookingClassDefaultPrice(flightScheduleId, ticketFamilyId, (float) basicPrice);
                 entityManager.merge(cabinClassTicketFamily);
             }
         }
@@ -587,7 +589,22 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
 
     @Override
     public double calTicketFamilyCostBasedOnRule(Long ticketFamilyId) {
-        return 0;
+        TicketFamily ticketFamily = new TicketFamily();
+        try {
+            ticketFamily = getTicketFamilyById(ticketFamilyId);
+        } catch (NoSuchTicketFamilyException ex) {
+            Logger.getLogger(TicketFamilySession.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        float sum = 0;
+
+        List<TicketFamilyRule> tfrs = ticketFamily.getTicketFamilyRules();
+        for (TicketFamilyRule tfr : tfrs) {
+            if(tfr.getRuleValue()>=0)
+            sum = sum + tfr.getRuleValue();
+        }
+
+        return sum;
     }
 
     @Override
