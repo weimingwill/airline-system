@@ -19,8 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -120,10 +118,12 @@ public class FlightManager implements Serializable {
         flight.setAircraftTypes(selectedModels);
         flight.setSpeedFraction(speedFraction);
         flight.setWeeklyFrequency(weeklyFreq);
+        flight.setNumOfUnscheduled(weeklyFreq);
         flight.setCompleted(Boolean.TRUE);
         flight.getReturnedFlight().setAircraftTypes(selectedModels);
         flight.getReturnedFlight().setSpeedFraction(speedFraction);
         flight.getReturnedFlight().setWeeklyFrequency(weeklyFreq);
+        flight.getReturnedFlight().setNumOfUnscheduled(weeklyFreq);
         flight.getReturnedFlight().setCompleted(Boolean.TRUE);
         return updateFlight(flight);
     }
