@@ -138,14 +138,14 @@ public class FlightScheduleController implements Serializable {
             if (!verifyFlightScheduleBookingClassExistence(flightScheduleId)) {
                 return "";
             }
-            if (!selectedFlightSchedule.getPriced()) {
-                try {
-                    ticketFamilySession.suggestTicketFamilyPrice(flightScheduleId);
-                } catch (NoSuchAircraftException | NoSuchCabinClassException | NoSuchCabinClassTicketFamilyException 
-                        | NoSuchFlightScheduleBookingClassException ex) {
-                    msgController.addErrorMessage("Failed to suggest price: " + ex.getMessage());
-                }
-            }
+//            if (!selectedFlightSchedule.getPriced()) {
+//                try {
+//                    ticketFamilySession.suggestTicketFamilyPrice(flightScheduleId);
+//                } catch (NoSuchAircraftException | NoSuchCabinClassException | NoSuchCabinClassTicketFamilyException 
+//                        | NoSuchFlightScheduleBookingClassException ex) {
+//                    msgController.addErrorMessage("Failed to suggest price: " + ex.getMessage());
+//                }
+//            }
             ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
             Map<String, Object> sessionMap = externalContext.getSessionMap();
             sessionMap.put("flightScheduleId", flightScheduleId);
