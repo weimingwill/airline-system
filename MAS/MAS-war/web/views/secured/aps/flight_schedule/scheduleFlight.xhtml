@@ -49,13 +49,11 @@
                         </p:row>
 
                     </p:panelGrid>
-
-
                 </p:dataGrid>
             </p:fieldset>
-
+            <p:separator/>
             <p:fieldset id="scheduleField" legend="Flight Schedule">
-                <h:panelGrid columnClasses="value">
+                <p:panelGrid>
                     <p:panelGrid columns="2">
                         <p:outputLabel for="aircraft" value="Select aircraft: " />
                         <p:selectOneMenu id="aircraft"  value="#{flightScheduleManager.selectedAircraftTailNo}" effect="fade" style="width:160px">
@@ -80,7 +78,7 @@
                         <p:ajax event="eventMove" listener="#{flightScheduleManager.onEventMove}" update="messages" />
 
                     </p:schedule>
-                </h:panelGrid>
+                </p:panelGrid>
 
                 <p:dialog id="flightDetails" widgetVar="eventDialog" header="Flight Details" showEffect="clip" hideEffect="clip" style="width:300px;">
                     <h:panelGrid id="eventDetails" columns="2">
