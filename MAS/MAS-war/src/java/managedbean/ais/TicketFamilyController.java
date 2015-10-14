@@ -197,7 +197,11 @@ public class TicketFamilyController implements Serializable {
         } catch (NoSuchTicketFamilyRuleException e) {
         }
         return ticketFamilyRule;
-    } 
+    }
+    
+    public float getTicketFamilyRuleValue(Long tfId, Long ruleid) {
+        return getTicketFamilyRuleById(tfId, ruleid).getRuleValue();
+    }
     
     public String createTicketFamily() {
 //        System.out.println("type = " + type);

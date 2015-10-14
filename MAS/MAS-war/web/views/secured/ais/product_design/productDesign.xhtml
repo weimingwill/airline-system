@@ -4,7 +4,8 @@
                 template="./../../../../template/AisTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="title">
         Product Design
@@ -74,13 +75,15 @@
                             <p:outputLabel id="tf#{tf.ticketFamilyId}" value="#{tf.getCabinClass().type} - #{tf.name}" />
                             <!--<p:tooltip for="tf{tf.ticketFamilyId}" value="{tf.getCabinClass().name}" />-->
                         </p:column>
-                        <ui:repeat value="#{ticketFamilyController.allRules}" var="rule">
+                        <c:forEach items="#{ticketFamilyController.allRules}" var="rule">
                             <p:column>
-                                <p:outputLabel value="#{ticketFamilyController.getTicketFamilyRuleById(tf.ticketFamilyId, rule.ruleId)}" >
+                                <p:outputLabel value="#{ticketFamilyController.getTicketFamilyRuleValue(tf.ticketFamilyId, rule.ruleId)}" >
                                     <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                                 </p:outputLabel>
                             </p:column>
-                        </ui:repeat>
+                        </c:forEach>
+
+
                         <ui:remove>
                             <p:subTable value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(tf.ticketFamilyId)}" var="tfRule" class="table-small">
                                 <f:facet name="header">
