@@ -16,13 +16,13 @@
     <ui:define name="content">
         <h:form>
 
-            <c:forEach items="#{userController.userPermissionSystems}" var="system">
+            <c:forEach items="#{userController.permissionHelpers}" var="permission">
                 <p:panel>
                     <f:facet name="header">
-                        <h:outputLabel value="#{system}" style="font-size: larger"/>
+                        <p:link outcome="#{permission.url}" styleClass="permissionLink" value="#{permission.name}" style="font-size: larger; color: white;" />
                     </f:facet>
                     <h:panelGrid columns="5" class="modulePanelTable" styleClass="padding" style="border:transparent; padding-top: 15px">
-                        <c:forEach items="#{permissionController.getSystemModuelsBySystem(system)}" var="module">
+                        <c:forEach items="#{permissionController.getSystemModuelsBySystem(permission.name)}" var="module">
                             <ez:CCSystemModuleTile header="#{module}"/>
                         </c:forEach>
                     </h:panelGrid>

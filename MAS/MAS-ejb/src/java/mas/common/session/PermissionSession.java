@@ -5,8 +5,11 @@
  */
 package mas.common.session;
 
+import ams.aps.entity.Flight;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -79,13 +82,15 @@ public class PermissionSession implements PermissionSessionLocal {
     @Override
     public List<String> getSystemModulesBySystem(String sysetm) {
         List<String> systemModules = new ArrayList<>();
+        Set<String> hs = new HashSet<>();
         try {
             for (Permission permission : getPermissionsBySystem(sysetm)) {
-                systemModules.add(permission.getSystemModule().replace(" Module", ""));
+                hs.add(permission.getSystemModule().replace(" Module", ""));
             }
         } catch (NoSuchPermissionException ex) {
             return null;
         }
+        systemModules.addAll(hs);
         return systemModules;
     }
     

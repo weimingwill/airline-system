@@ -21,6 +21,7 @@ import mas.common.util.exception.NeedResetDigestException;
 import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.exception.UserInUseException;
+import mas.common.util.helper.PermissionHelper;
 import mas.common.util.helper.SystemMsgHelper;
 
 /**
@@ -103,6 +104,8 @@ public interface SystemUserSessionLocal {
     public List<Permission> getUserPermissions(String username);
     
     public List<String> getUserPermissionSystems(String username);
+    
+    public List<PermissionHelper> getPermissionHelpers(String username);
 
     public boolean hasRole(String username, String roleName);
 

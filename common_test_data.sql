@@ -1,3 +1,4 @@
+
 INSERT INTO SYSTEMUSER (USERNAME, PASSWORD, EMAIL, ACTIVATED) VALUES('admin', 'admin','a0119405@u.nus.edu',true);
 INSERT INTO SYSTEMUSER (USERNAME, PASSWORD, EMAIL) VALUES('user1', 'user1','wingalong@gmail.com');
 INSERT INTO SYSTEMUSER (USERNAME, PASSWORD) VALUES('user2', 'user2');
@@ -34,8 +35,7 @@ INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Flight Operation S
 INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Flight Operation System', 'Post-flight Reporting Module');
 INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Flight Operation System', 'Maintenance Management Module');
 INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Inventory System', 'Product Designe Module');
-INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Inventory System', 'Pricing Module');
-INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Inventory System', 'Yield Management Module');
+INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Inventory System', 'Revenue Management Module');
 INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Reservation System', ' Booking Management Module');
 INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Reservation System', ' Payment Module');
 INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Reservation System', ' Direct Distribution System');
@@ -49,6 +49,7 @@ INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Airline Administration Sys
 INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Customer Relationship Management System', 'Profile Management Module');
 INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Customer Relationship Management System', 'Customer Loyalty Management Module');
 INSERT INTO PERMISSION (SYSTEM, SYSTEMMODULE) VALUES('Customer Relationship Management System', 'Customer Relationship Management Analystics Module');
+
 
 
 

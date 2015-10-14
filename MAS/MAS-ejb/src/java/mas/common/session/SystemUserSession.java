@@ -29,6 +29,8 @@ import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.exception.UserInUseException;
 import mas.common.util.helper.CreateToken;
+import mas.common.util.helper.PermissionHelper;
+import mas.common.util.helper.PermissionNamesHelper;
 import mas.common.util.helper.SystemMsgHelper;
 import mas.common.util.helper.UserStatus;
 
@@ -37,6 +39,8 @@ public class SystemUserSession implements SystemUserSessionLocal {
 
     @EJB
     private RoleSessionLocal roleSession;
+    @EJB
+    private PermissionSessionLocal permissionSession;
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
@@ -399,6 +403,33 @@ public class SystemUserSession implements SystemUserSessionLocal {
             return permissionSystems;
         }
         return null;
+    }
+
+    @Override
+    public List<PermissionHelper> getPermissionHelpers(String username) {
+        List<PermissionHelper> permissionHelpers = new ArrayList<>();
+        for (String system : getUserPermissionSystems(username)) {
+            System.out.println("System: " + system);
+            PermissionHelper permissionHelper = new PermissionHelper();
+            permissionHelper.setName(system);
+
+            List<PermissionHelper> moduels = new ArrayList<>();
+            for (String module : permissionSession.getSystemModulesBySystem(system)) {
+            System.out.println("Module: " + module);
+                PermissionHelper m = new PermissionHelper();
+                m.setName(module);
+                if (system.equals(PermissionNamesHelper.APS)) {
+                    permissionHelper.setUrl(PermissionNamesHelper.APS_URL);
+                    m.setUrl(PermissionNamesHelper.APS_URL);
+                } else if (system.equals(PermissionNamesHelper.AIS)) {
+                    permissionHelper.setUrl(PermissionNamesHelper.AIS_URL);
+                    m.setUrl(PermissionNamesHelper.AIS_URL);
+                }
+            }
+            permissionHelper.setPermissions(moduels);
+            permissionHelpers.add(permissionHelper);
+        }
+        return permissionHelpers;
     }
 
     @Override

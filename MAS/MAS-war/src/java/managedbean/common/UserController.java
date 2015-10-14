@@ -35,6 +35,7 @@ import mas.common.util.exception.NeedResetDigestException;
 import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.exception.UserInUseException;
+import mas.common.util.helper.PermissionHelper;
 import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserRolePermission;
 
@@ -246,6 +247,14 @@ public class UserController implements Serializable {
         return systemUserSession.getUserPermissionSystems(username);
     }
 
+    public List<PermissionHelper> getPermissionHelpers(){
+        return systemUserSession.getPermissionHelpers(username);
+    }
+    
+    public boolean canAccessAMS() {
+        return !systemUserSession.getPermissionHelpers(username).isEmpty();
+    }
+    
     public void initializeUser() {
         try {
             System.out.println("Initializae User");

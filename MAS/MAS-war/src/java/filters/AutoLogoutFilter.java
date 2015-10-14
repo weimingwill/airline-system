@@ -24,7 +24,7 @@ import managedbean.common.LoginController;
  *
  * @author winga_000
  */
-//@WebFilter(filterName = "AutoLogoutFilter", urlPatterns = {"/*"})
+@WebFilter(filterName = "AutoLogoutFilter", urlPatterns = {"/*"})
 public class AutoLogoutFilter implements Filter {
 
     @Inject
@@ -44,7 +44,7 @@ public class AutoLogoutFilter implements Filter {
         String contextPath = req.getContextPath(); 
         HttpSession session = req.getSession();
         if (loginController.isLoggedIn()) {
-            session.setMaxInactiveInterval(60 * 30);
+            session.setMaxInactiveInterval(60 * 5);
         }
         if(session == null){
             rsp.sendRedirect(contextPath + loginController.doLogout());

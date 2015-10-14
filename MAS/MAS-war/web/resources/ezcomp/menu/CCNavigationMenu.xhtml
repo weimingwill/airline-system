@@ -5,7 +5,8 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -22,9 +23,10 @@
                 </p:menuitem>
 
                 <p:menuitem value="User Workspace" url="#{navigationController.redirectToWorkspace()}" icon="fa fa-home" styleClass="navMenuItem"></p:menuitem>
-                <p:submenu label="Airline Management Systems" icon="fa fa-database" rendered="#{loginController.loggedIn}">
-                    <p:menuitem value="Airline Planning System" url="#{navigationController.redirectToAPS()}"  icon="ui-icon-pencil"></p:menuitem>
-                    <p:menuitem value="Airline Inventory System" url="#{navigationController.redirectToAIS()}"  icon="ui-icon-clipboard"></p:menuitem>
+                <p:submenu label="Airline Management Systems" icon="fa fa-database" rendered="#{loginController.loggedIn and userController.canAccessAMS()}" >
+                    <c:forEach items="#{userController.permissionHelpers}" var="permission" >
+                        <p:menuitem value="#{permission.name}" url="#{permission.url}"  icon="ui-icon-pencil" />
+                    </c:forEach>
                 </p:submenu>
 
                 <p:submenu label="Setting" icon="fa fa-cog" rendered="#{loginController.loggedIn}">

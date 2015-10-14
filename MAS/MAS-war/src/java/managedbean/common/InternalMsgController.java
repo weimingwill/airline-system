@@ -123,7 +123,6 @@ public class InternalMsgController implements Serializable {
     }
 
     public List<SystemMsgHelper> getSystemMsgHelpers() {
-        System.out.println("systemMsgHelpers = " + systemUserSession.getSystemMsgHelpers(username));
         return systemUserSession.getSystemMsgHelpers(username);
     }
 

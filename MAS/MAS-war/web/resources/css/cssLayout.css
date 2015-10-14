@@ -407,3 +407,7 @@ tr.hide{
     background: rgba(251, 251, 252, 0.66);
     max-width: 330px; 
 }
+
+permissionLink.a:link, permissionLink.a:visited {
+    color: white !important;
+}
