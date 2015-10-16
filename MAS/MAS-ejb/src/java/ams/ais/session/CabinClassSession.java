@@ -48,7 +48,6 @@ public class CabinClassSession implements CabinClassSessionLocal {
         entityManager.persist(cabinClass);
     }
 
-    @Override
     public void verifyCabinClassExistence(String type, String name) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException {
         List<CabinClass> cabinClasses = getAllCabinClass();
         if (cabinClasses != null) {
@@ -130,42 +129,6 @@ public class CabinClassSession implements CabinClassSessionLocal {
         }
         return cabinclass;
     }
-    @Override
-    public List<String> getAllOtherCabinClassByName(String name) {
-        Query query = entityManager.createQuery("SELECT c FROM CabinClass c where c.name <> :name");
-        query.setParameter("name", name);
-        List<CabinClass> cabinclass = query.getResultList();
-        List<String> names = new ArrayList<>();
-        if (cabinclass != null) {
-            for (CabinClass cabin : cabinclass) {
-                names.add(cabin.getName());
-            }
-        }
-        return names;
-
-    }
-
-    @Override
-    public List<String> getAllOtherCabinClassByType(String type) {
-        Query query = entityManager.createQuery("SELECT c FROM CabinClass c where c.name <> :type");
-        query.setParameter("type", type);
-        List<CabinClass> cabinclass = query.getResultList();
-        List<String> types = new ArrayList<>();
-        if (cabinclass != null) {
-            for (CabinClass cabin : cabinclass) {
-                types.add(cabin.getType());
-            }
-        }
-        return types;
-    }
-
-    @Override
-    public List<CabinClass> getAllOtherCabinClass(String name) {
-        Query query = entityManager.createQuery("SELECT c FROM CabinClass c where c.name <> :name AND c.deleted=FALSE");
-        query.setParameter("name", name);
-        return query.getResultList();
-
-    }
     
     private List<CabinClass> getAllOtherCabinClassById (Long cabinClassId){
         Query query = entityManager.createQuery("SELECT c FROM CabinClass c where c.cabinClassId <> :cabinClassId AND c.deleted=FALSE");
@@ -176,19 +139,6 @@ public class CabinClassSession implements CabinClassSessionLocal {
     public List<TicketFamily> getCabinClassTicketFamilys(String type) throws NoSuchTicketFamilyException {
         Query query = entityManager.createQuery("SELECT t FROM CabinClass c, TicketFamily t WHERE c.type = :inType and c.cabinClassId = t.cabinClass.cabinClassId and c.deleted = FALSE and t.deleted = FALSE");
         query.setParameter("inType", type);
-        List<TicketFamily> ticketFamilys = new ArrayList<>();
-        try {
-            ticketFamilys = query.getResultList();
-        } catch (NoResultException e) {
-            throw new NoSuchTicketFamilyException(AisMsg.NO_SUCH_TICKET_FAMILY_ERROR);
-        }
-        return ticketFamilys;
-    }
-
-    @Override
-    public List<TicketFamily> getCabinClassTicketFamilysByName(String name) throws NoSuchTicketFamilyException {
-        Query query = entityManager.createQuery("SELECT t FROM CabinClass c, TicketFamily t WHERE c.name = :inName and c.cabinClassId = t.cabinClass.cabinClassId and c.deleted = FALSE and t.deleted = FALSE");
-        query.setParameter("inName", name);
         List<TicketFamily> ticketFamilys = new ArrayList<>();
         try {
             ticketFamilys = query.getResultList();

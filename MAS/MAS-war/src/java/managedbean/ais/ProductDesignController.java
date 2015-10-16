@@ -58,9 +58,7 @@ public class ProductDesignController implements Serializable {
 
     public void onAircraftChange() {
         try {
-            System.out.println("Selected Aircraft: " + selectedAircraft);
             cabinClassTicketFamilyHelpers = cabinClassSession.getCabinClassTicketFamilyHelpers(selectedAircraft.getAircraftId());
-            System.out.println("CabinClassHelper: " + cabinClassTicketFamilyHelpers);
         } catch (NoSuchCabinClassException | NoSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
@@ -68,8 +66,6 @@ public class ProductDesignController implements Serializable {
 
     public String assignAircraftTicketFamily() {
         try {
-            System.out.println("InController - Selected Aircrafts: " + selectedAircraft);
-            System.out.println("InCnontroller - CabinClassTicketFamily: " + cabinClassTicketFamilyHelpers);
             ticketFamilySession.assignAircraftTicketFamily(selectedAircraft, cabinClassTicketFamilyHelpers);
             cleanAttribute();
             msgController.addMessage("Assign ticket family to aircraft successfully!");
@@ -91,7 +87,6 @@ public class ProductDesignController implements Serializable {
     }
 
     public List<TicketFamily> getAircraftTicketFamilys() {
-        System.out.println("Selected Aircraft: " + selectedAircraft);
         List<TicketFamily> ticketFamilys = new ArrayList<>();
         try {
             if (selectedAircraft != null) {

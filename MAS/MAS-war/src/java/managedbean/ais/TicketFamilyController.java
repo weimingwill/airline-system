@@ -11,22 +11,19 @@ import ams.ais.entity.Rule;
 import ams.ais.entity.TicketFamily;
 import ams.ais.entity.TicketFamilyRule;
 import ams.ais.helper.TicketFamilyRuleHelper;
-import ams.aps.util.exception.EmptyTableException;
 import java.util.ArrayList;
 import ams.ais.session.CabinClassSessionLocal;
+import ams.ais.session.RuleSessionLocal;
 import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.ExistSuchTicketFamilyException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.BookingClassHelper;
-import ams.ais.session.AircraftSessionLocal;
 import ams.ais.util.exception.NoSuchRuleException;
 import ams.ais.util.exception.NoSuchTicketFamilyRuleException;
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -53,6 +50,10 @@ public class TicketFamilyController implements Serializable {
 
     @EJB
     private TicketFamilySessionLocal ticketFamilySession;
+    @EJB
+    private CabinClassSessionLocal cabinClaSession;
+    @EJB
+    private RuleSessionLocal ruleSession;
 
     private String oldtype;
     private String oldCabinClassname;
@@ -109,15 +110,6 @@ public class TicketFamilyController implements Serializable {
 
     }
 
-//    public void deleteTicketFamily() {
-//        try {
-//            ticketFamilySession.deleteTicketFamily(type, cabinclassname);
-//            msgController.addMessage("Delete ticket family successfully");
-//        } catch (NoSuchTicketFamilyException ex) {
-//            msgController.addErrorMessage(ex.getMessage());
-//        }
-//    }
-
     public String updateTicketFamily() {
         try {
             ticketFamilySession.updateTicketFamily(oldtype, oldCabinClassname, type, name, cabinclassname);
@@ -151,25 +143,15 @@ public class TicketFamilyController implements Serializable {
         bookingClassNames = ticketFamilySession.getTicketFamilyBookingClassNames(cabinClassName, ticketFamilyName);
     }
 
-    
     public void getAvailableRules() {
-//       List<TicketFamilyRuleHelper> displayRuleList = new ArrayList();
-        try {
-            setRuleList(ticketFamilySession.getAllRules());
-            for (Rule rule : ruleList) {
-                displayRuleList.add(new TicketFamilyRuleHelper(rule.getRuleId(), rule.getName(),rule.getDescription(), 0));
-            }
-        } catch (NoSuchRuleException ex) {
+        setRuleList(ruleSession.getAllRules());
+        for (Rule rule : ruleList) {
+            displayRuleList.add(new TicketFamilyRuleHelper(rule.getRuleId(), rule.getName(), rule.getDescription(), 0));
         }
-        System.out.println("Number of Rules in database = " + displayRuleList.size());
-
     }
 
     public List<TicketFamilyRule> getTicketFamilyRuleByTicketFamilyId(long ticketFamilyId) {
-
-        System.out.print("ticketFamilyId is " + ticketFamilyId);
         return ticketFamilySession.getTicketFamilyRuleByTicketFamilyId(ticketFamilyId);
-
     }
 
     public List<Rule> getRulesByTicketFmailyId(Long ticketFamilyId) {
@@ -180,16 +162,11 @@ public class TicketFamilyController implements Serializable {
         }
         return rules;
     }
-    
-    public List<Rule> getAllRules(){
-        List<Rule> rules = new ArrayList<>();
-        try {
-            rules = ticketFamilySession.getAllRules();
-        } catch (NoSuchRuleException e) {
-        }
-        return rules;
+
+    public List<Rule> getAllRules() {
+        return ruleSession.getAllRules();
     }
-    
+
     public TicketFamilyRule getTicketFamilyRuleById(Long tfId, Long ruleid) {
         TicketFamilyRule ticketFamilyRule = new TicketFamilyRule();
         try {
@@ -198,20 +175,12 @@ public class TicketFamilyController implements Serializable {
         }
         return ticketFamilyRule;
     }
-    
+
     public float getTicketFamilyRuleValue(Long tfId, Long ruleid) {
         return getTicketFamilyRuleById(tfId, ruleid).getRuleValue();
     }
-    
+
     public String createTicketFamily() {
-//        System.out.println("type = " + type);
-//        System.out.println("name = " + name);
-//        System.out.println("cabin class name = " + cabinclassname);
-//        System.out.println("Display Rulelist size = " + displayRuleList.size());
-//        for (TicketFamilyRuleHelper thisHelper : displayRuleList) {
-//            System.out.println("Rule name = " + thisHelper.getName());
-//            System.out.println("Rule value = " + thisHelper.getRuleValue());
-//        }
         try {
             ticketFamilySession.createTicketFamily(type, name, cabinclassname, displayRuleList);
             msgController.addMessage("Create ticket family successfully!");
@@ -226,14 +195,14 @@ public class TicketFamilyController implements Serializable {
     }
 
     public List<CabinClass> getAllCabinClass() {
-        return ticketFamilySession.getAllCabinClass();
+        return cabinClaSession.getAllCabinClass();
 
     }
 
     public void deleteTicketFamily() {
         try {
             System.out.print("we are in delete ticket Family!");
-            System.out.print("the deleted select ticket family name is: "+selectedTicketFamily);
+            System.out.print("the deleted select ticket family name is: " + selectedTicketFamily);
             ticketFamilySession.deleteTicketFamilyByType(selectedTicketFamily.getType());
             msgController.addMessage("Delete ticket family successfully");
         } catch (NoSuchTicketFamilyException ex) {
@@ -252,9 +221,8 @@ public class TicketFamilyController implements Serializable {
         }
         return navigationController.redirectToViewAllTicketFamily();
     }
-    
-    //Getter and setter
 
+    //Getter and setter
     public String getOldtype() {
         return oldtype;
     }
@@ -372,6 +340,5 @@ public class TicketFamilyController implements Serializable {
     public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
         this.ticketFamilys = ticketFamilys;
     }
-    
-    
+
 }

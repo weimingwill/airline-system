@@ -8,7 +8,6 @@ package ams.ais.session;
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.Rule;
-import ams.ais.entity.TicketFamily;
 import ams.ais.entity.TicketFamilyRule;
 import ams.ais.helper.TicketFamilyRuleHelper;
 import ams.ais.entity.CabinClassTicketFamily;
@@ -23,8 +22,6 @@ import ams.ais.util.exception.NoSuchRuleException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyRuleException;
 import ams.ais.util.helper.AisMsg;
-import ams.aps.util.exception.EmptyTableException;
-import ams.aps.util.helper.Message;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
@@ -78,19 +75,6 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         return ticketFamily;
     }
 
-    @Override
-    public TicketFamily getTicketFamilyByName(String ticketFamilyName) throws NoSuchTicketFamilyException {
-        Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.name = :inticketFamilyName and t.deleted = FALSE");
-        query.setParameter("inticketFamilyName", ticketFamilyName);
-        TicketFamily ticketFamily = null;
-        try {
-            ticketFamily = (TicketFamily) query.getSingleResult();
-        } catch (NoResultException ex) {
-            throw new NoSuchTicketFamilyException(AisMsg.NO_SUCH_TICKET_FAMILY_ERROR);
-        }
-        return ticketFamily;
-    }
-
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @Override
@@ -98,13 +82,7 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.deleted = false");
         return query.getResultList();
     }
-
-    @Override
-    public List<CabinClass> getAllCabinClass() {
-        Query query = entityManager.createQuery("SELECT c FROM CabinClass c WHERE c.deleted = false");
-        return query.getResultList();
-    }
-
+    
     @Override
     public void createTicketFamily(String type, String name, String cabinclassname, List<TicketFamilyRuleHelper> displayRuleList)
             throws ExistSuchTicketFamilyException, NoSuchCabinClassException {
@@ -210,13 +188,6 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     }
 
     @Override
-    public List<TicketFamily> getAllOtherTicketFamily(String name) {
-        Query query = entityManager.createQuery("SELECT c FROM TicketFamily c where c.name <> :name");
-        query.setParameter("name", name);
-        return query.getResultList();
-    }
-
-    @Override
     public TicketFamily getTicketFamilyByTypeAndCabinClass(String ticketFamilyType, String cabinClassName) {
         Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.type = :inticketFamilyType AND t.cabinClass.name = :inCabinClassName");
         query.setParameter("inticketFamilyType", ticketFamilyType);
@@ -266,32 +237,6 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
     }
 
     @Override
-    public List<BookingClass> getTicketFamilyBookingClasses(Long cabinClassId, Long ticketFamilyId) throws NoSuchBookingClassException {
-        Query query = entityManager.createQuery("SELECT b FROM TicketFamily t, BookingClass b WHERE t.cabinClass.cabinClassId = :inCabinClassId and t.ticketFamilyId = :inTicketFamilyId and b.ticketFamily.ticketFamilyId = t.ticketFamilyId and b.deleted = FALSE and t.deleted = FALSE");
-        query.setParameter("inCabinClassId", cabinClassId);
-        query.setParameter("inTicketFamilyId", ticketFamilyId);
-        List<BookingClass> bookingClasses = new ArrayList<>();
-        try {
-            bookingClasses = (List<BookingClass>) query.getResultList();
-        } catch (NoResultException e) {
-            throw new NoSuchBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
-        }
-        return bookingClasses;
-    }
-
-    @Override
-    public List<Rule> getAllRules() throws NoSuchRuleException {
-        Query query = entityManager.createQuery("SELECT c FROM Rule c WHERE c.deleted=False");
-        List<Rule> rules = new ArrayList<>();
-        try {
-            rules = (List<Rule>) query.getResultList();
-        } catch (NoResultException ex) {
-            throw new NoSuchRuleException(AisMsg.NO_SUCH_RULE_ERROR);
-        }
-        return rules;
-    }
-
-    @Override
     public void updateTicketFamilyRuleVlaue(TicketFamilyRule ticketFamilyRule) {
         TicketFamilyRule thisTicketFamilyRule = getTicketFamilyRuleByTwoId(ticketFamilyRule.getTicketFamilyId(), ticketFamilyRule.getRuleId());
         thisTicketFamilyRule.setRuleValue(ticketFamilyRule.getRuleValue());
@@ -327,27 +272,6 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
         return tfr;
     }
 
-//    private boolean addTicketFamilyRule(TicketFamily newTicketFamily, List<TicketFamilyRuleHelper> newAircraftCabinClassHelpers) {
-//        CabinClass thisCabinClass;
-//        List<AircraftCabinClass> aircraftCabinClassList = new ArrayList(); //too be added at aircraft side
-//
-//        for (AircraftCabinClassHelper aircraftCabinClassHelper : newAircraftCabinClassHelpers) {
-//            AircraftCabinClass thisAircraftCabinClass = new AircraftCabinClass();
-//            thisCabinClass = entityManager.find(CabinClass.class, aircraftCabinClassHelper.getId());
-//            // add necessary attributes to aircraftCabinClass object
-//            thisAircraftCabinClass.setAircraft(newAircraft);
-//            thisAircraftCabinClass.setAircraftId(newAircraft.getAircraftId());
-//            thisAircraftCabinClass.setCabinClass(thisCabinClass);
-//            thisAircraftCabinClass.setCabinClassId(thisCabinClass.getCabinClassId());
-//            thisAircraftCabinClass.setSeatQty(aircraftCabinClassHelper.getSeatQty());
-//            entityManager.persist(thisAircraftCabinClass);
-//            aircraftCabinClassList.add(thisAircraftCabinClass);
-//        }
-//        newAircraft.setAircraftCabinClasses(aircraftCabinClassList);
-//        entityManager.merge(newAircraft);
-//        entityManager.flush();
-//        return true;
-//    }
     @Override
     public List<TicketFamilyRule> getTicketFamilyRuleByTicketFamilyId(long ticketFamilyId) {
         Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.ticketFamilyId = :inticketFamilyId AND u.rule.deleted = FALSE");
@@ -370,17 +294,6 @@ public class TicketFamilySession implements TicketFamilySessionLocal {
             throw new NoSuchRuleException(AisMsg.NO_SUCH_RULE_ERROR);
         }
         return rules;
-    }
-
-    @Override
-    public TicketFamilyRule getTicketFamilyRuleByTicketFamilyType(String ticketFamilyType) {
-        Query query = entityManager.createQuery("SELECT u FROM TicketFamilyRule u WHERE u.type = :inticketFamilyType");
-        query.setParameter("inticketFamilyType", ticketFamilyType);
-        TicketFamilyRule ticketFamilyRule = null;
-
-        ticketFamilyRule = (TicketFamilyRule) query.getSingleResult();
-
-        return ticketFamilyRule;
     }
 
     @Override

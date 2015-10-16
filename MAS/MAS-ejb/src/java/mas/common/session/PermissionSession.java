@@ -31,9 +31,9 @@ public class PermissionSession implements PermissionSessionLocal {
     // "Insert Code > Add Business Method")
     @PersistenceContext
     private EntityManager entityManager;
-    
-        @Override
-    public Permission getPermissionById(Long permissionId) throws NoSuchPermissionException{
+
+    @Override
+    public Permission getPermissionById(Long permissionId) throws NoSuchPermissionException {
         Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.permissionId = :inId and p.deleted = FALSE");
         query.setParameter("inId", permissionId);
         Permission permission = null;
@@ -42,30 +42,17 @@ public class PermissionSession implements PermissionSessionLocal {
         } catch (NoResultException ex) {
             throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
         }
-        return permission;        
-    }
-    
-    @Override
-    public List<Permission> getPermissionsBySystem(String system) throws NoSuchPermissionException{
-        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.system = :inSystem and p.deleted = FALSE");
-        query.setParameter("inSystem", system);
-        List<Permission> permissions = null;
-        try {
-            permissions = (List<Permission>) query.getResultList();
-        } catch (NoResultException ex) {
-            throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
-        }
-        return permissions;
+        return permission;
     }
 
     @Override
     public List<Permission> getAllPermissions() {
         Query query = entityManager.createQuery("SELECT p FROM Permission p where p.deleted = FALSE");
-        return query.getResultList();        
+        return query.getResultList();
     }
 
     @Override
-    public Permission getPermission(String system, String systemModule) throws NoSuchPermissionException{
+    public Permission getPermission(String system, String systemModule) throws NoSuchPermissionException {
         Query query = entityManager.createQuery("SELECT p FROM Permission p "
                 + "WHERE p.system = :inSystem AND p.systemModule = :inModule and p.deleted = FALSE");
         query.setParameter("inSystem", system);
@@ -93,13 +80,26 @@ public class PermissionSession implements PermissionSessionLocal {
         systemModules.addAll(hs);
         return systemModules;
     }
-    
+
+    public List<Permission> getPermissionsBySystem(String system) throws NoSuchPermissionException {
+        Query query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.system = :inSystem and p.deleted = FALSE");
+        query.setParameter("inSystem", system);
+        List<Permission> permissions = null;
+        try {
+            permissions = (List<Permission>) query.getResultList();
+        } catch (NoResultException ex) {
+            throw new NoSuchPermissionException(UserMsg.NO_PERMISSION_ERROR);
+        }
+        return permissions;
+    }
+
     @Override
-    public void createPermission(String system, String systemModule) throws ExistSuchPermissionException{
+    public void createPermission(String system, String systemModule) throws ExistSuchPermissionException {
         verifyPermission(system, systemModule);
         Permission permission = new Permission();
         permission.setSystem(system);
         permission.setSystemModule(systemModule);
+        permission.setDeleted(false);
         entityManager.persist(permission);
         entityManager.flush();
     }
@@ -108,7 +108,7 @@ public class PermissionSession implements PermissionSessionLocal {
     public void verifyPermission(String system, String systemModule) throws ExistSuchPermissionException {
         List<Permission> permissions = getAllPermissions();
         for (Permission permission : permissions) {
-            if (permission.getSystemModule().equals(system) && permission.getSystemModule().equals(systemModule)) {
+            if (permission.getSystem().equals(system) && permission.getSystemModule().equals(systemModule)) {
                 throw new ExistSuchPermissionException(UserMsg.EXIST_PERMISSION_ERROR);
             }
         }

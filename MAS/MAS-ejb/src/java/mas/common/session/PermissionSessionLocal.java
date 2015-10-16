@@ -26,8 +26,6 @@ public interface PermissionSessionLocal {
 
     public List<String> getSystemModulesBySystem(String sysetm);
 
-    public List<Permission> getPermissionsBySystem(String system) throws NoSuchPermissionException;
-
     public void createPermission(String system, String systemModule) throws ExistSuchPermissionException;
 
     public void verifyPermission(String system, String systemModule) throws ExistSuchPermissionException;

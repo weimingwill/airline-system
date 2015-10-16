@@ -22,8 +22,6 @@ import mas.common.util.helper.CreateToken;
 import util.helper.CountdownHelper;
 import util.security.CryptographicHelper;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import managedbean.application.MsgController;
@@ -257,7 +255,6 @@ public class UserController implements Serializable {
     
     public void initializeUser() {
         try {
-            System.out.println("Initializae User");
             SystemUser user = getUserByUsername();
             email = user.getEmail();
             name = user.getName();

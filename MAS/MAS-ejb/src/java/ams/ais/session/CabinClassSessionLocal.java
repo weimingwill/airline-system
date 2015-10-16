@@ -26,8 +26,6 @@ public interface CabinClassSessionLocal {
 
     public void createCabinClass(String type, String name) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
 
-    public void verifyCabinClassExistence(String type, String name) throws ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
-
     public void deleteCabinClass(String name) throws NoSuchCabinClassException;
 
     public void updateCabinClass(Long cabinclassId, String type, String name) throws NoSuchCabinClassException, ExistSuchCabinClassNameException, ExistSuchCabinClassTypeException;
@@ -36,15 +34,7 @@ public interface CabinClassSessionLocal {
 
     public CabinClass getCabinClassByName(String name) throws NoSuchCabinClassException;
 
-    public List<String> getAllOtherCabinClassByName(String name);
-
-    public List<String> getAllOtherCabinClassByType(String type);
-
-    public List<CabinClass> getAllOtherCabinClass(String name);
-
     public List<TicketFamily> getCabinClassTicketFamilys(String type) throws NoSuchTicketFamilyException;
-
-    public List<TicketFamily> getCabinClassTicketFamilysByName(String name) throws NoSuchTicketFamilyException;
 
     public List<TicketFamily> getCabinClassTicketFamilysFromJoinTable(Long aircraftId, Long cabinClassId) throws NoSuchTicketFamilyException;
 

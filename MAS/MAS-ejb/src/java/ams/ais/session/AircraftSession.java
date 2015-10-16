@@ -110,17 +110,6 @@ public class AircraftSession implements AircraftSessionLocal {
             throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
         }
         return cabinClasses;
-//        try {
-//            for (AircraftCabinClass aircraftCabinClass : SafeHelper.emptyIfNull(getAircraftById(aircraftId).getAircraftCabinClasses())) {
-//                CabinClass cabinClass = aircraftCabinClass.getCabinClass();
-//                if (!cabinClass.getDeleted()) {
-//                    cabinClasses.add(cabinClass);
-//                }
-//            }
-//            return cabinClasses;
-//        } catch (NoSuchAircraftException ex) {
-//            throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
-//        }
     }
 
     @Override

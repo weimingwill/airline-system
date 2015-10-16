@@ -37,8 +37,6 @@ public class AutoLogoutFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        System.out.println("AutoLogoutFilter:doFilter()");
-
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse rsp = (HttpServletResponse) response;
         String contextPath = req.getContextPath(); 

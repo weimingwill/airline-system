@@ -41,8 +41,6 @@ public interface BookingClassSessionLocal {
 
     public void verifyBookingClassName(String name,TicketFamily ticketFamily) throws ExistSuchBookingClassNameException;
     
-    public List<TicketFamily> getAllTicketFamily();
-    
     public void deleteBookingClass(String name) throws NoSuchBookingClassException;
 
     public BookingClass search(String name) throws NoSuchBookingClassException;
@@ -57,19 +55,9 @@ public interface BookingClassSessionLocal {
     public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers, Map<Long, Float> priceMap)
             throws NoSuchFlightScheduleBookingClassException, DuplicatePriceException;
 
-    public void verifyUniqueBookingClassPrices(Map<Long, Float> priceMap) throws DuplicatePriceException;
-
-    public void verifyBookingClassSeatsSum(Long flightScheduleId, TicketFamilyBookingClassHelper tfbcHelper) 
-            throws WrongSumOfBookingClassSeatQtyException;
-
-    public void verifyTicketFamilySeatsSum(Long flightScheduleId, FlightSchCabinClsTicFamBookingClsHelper flightHelper)
-            throws WrongSumOfTicketFamilySeatQtyException;
-    
     public void setBookingClassDefaultPrice(Long flightScheduleId, Long ticketFamilyId, float ticketFamilyPrice)
             throws NoSuchFlightScheduleBookingClassException;
     
     public void updateBookingClass(Long bookingClassId, String bookingClassName) throws NoSuchBookingClassException, ExistSuchBookingClassNameException;
-    
-    public List<BookingClass> getAllOtherBookingClassById(Long bookingClassId);
 }   
 

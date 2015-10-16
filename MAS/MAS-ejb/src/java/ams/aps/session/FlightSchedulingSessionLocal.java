@@ -17,6 +17,7 @@ import ams.aps.util.exception.NoMoreUnscheduledFlightException;
 import ams.aps.util.exception.NoSelectAircraftException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightException;
+import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchRouteException;
 import ams.aps.util.exception.ObjectDoesNotExistException;
 import ams.aps.util.helper.RouteHelper;
@@ -71,7 +72,8 @@ public interface FlightSchedulingSessionLocal {
     public void createFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrivalDate)
             throws NoSuchFlightException, NoMoreUnscheduledFlightException, NoSelectAircraftException;
 
-    public void updateFlightSchedule(String flightNo, Date deptDate) throws NoMoreUnscheduledFlightException, NoSelectAircraftException, NoSuchFlightException;
+    public void updateFlightSchedule(String flightNo, Date deptDate, Date oldDeptDate)
+            throws NoMoreUnscheduledFlightException, NoSelectAircraftException, NoSuchFlightException, NoSuchFlightSchedulException;
 
     public void verifyUnscheduledFlightNumber(Flight flight) throws NoMoreUnscheduledFlightException;
 

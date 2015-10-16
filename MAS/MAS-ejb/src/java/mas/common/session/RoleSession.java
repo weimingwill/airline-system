@@ -5,11 +5,7 @@
  */
 package mas.common.session;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -18,13 +14,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import mas.common.entity.Permission;
 import mas.common.entity.SystemRole;
-import mas.common.entity.SystemUser;
 import mas.common.util.exception.NoSuchPermissionException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.exception.ExistSuchRoleException;
-import mas.common.util.helper.RolePermission;
 import mas.common.util.helper.UserMsg;
-import mas.util.helper.SafeHelper;
 
 /**
  *
@@ -36,8 +29,6 @@ public class RoleSession implements RoleSessionLocal {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @EJB
-    private SystemUserSessionLocal systemUsersSession;
     @EJB
     private PermissionSessionLocal permissionSession;
 
@@ -70,14 +61,8 @@ public class RoleSession implements RoleSessionLocal {
 
     @Override
     public List<SystemRole> getAllRoles() {
-        Query query = entityManager.createQuery("SELECT r FROM SystemRole r where r.deleted = FALSE");
+        Query query = entityManager.createQuery("SELECT r FROM SystemRole r WHERE r.deleted = FALSE");
         return query.getResultList();
-    }
-
-    @Override
-    public List<String> getRolesNameList() {
-        Query query = entityManager.createQuery("SELECT r.roleName FROM SystemRole r where r.deleted = FALSE");
-        return (List<String>) query.getResultList();
     }
 
     @Override
@@ -85,6 +70,7 @@ public class RoleSession implements RoleSessionLocal {
         verifySystemRole(roleName);
         SystemRole role = new SystemRole();
         role.create(roleName);
+        role.setDeleted(false);
         for (String permission : permissions) {
             String system = permission.split(":")[0];
             String module = permission.split(":")[1];
