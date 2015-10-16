@@ -44,14 +44,14 @@ This repository contains the source code of merlion airline systems developed by
 10. Click "Next"
 11. Do not change anything for "Add Conncetion Pool Properties" and click "Next"
 12. Click "Finish"
-* Note: a file with name "sun-resources.xml" or "glassfish-resources.xml" should appear under folder "Server Resources")###
+* (Note: a file with name "sun-resources.xml" or "glassfish-resources.xml" should appear under folder "Server Resources")
 
 #### Setup JDBC Persistence Unit ####
 1. Go to the enterprise bean project under the "Projects" tab of Netbeans IDE
 2. Right click and choose "New" -> "Other" -> "Persistence" -> "Persistence Unit"
 3. Click "Next"
 4. Choose the "jdbc/mas" under "Data Source" and Click Finish
-(Note: a file with name "persistence.xml" should appear under foler "Configuration Files")
+* (Note: a file with name "persistence.xml" should appear under foler "Configuration Files")
 
 #### Setup JMS Resource ####
 1. In Netbeans IDE, go to the service tab
