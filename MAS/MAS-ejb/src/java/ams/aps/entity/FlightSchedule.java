@@ -18,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -54,7 +55,10 @@ public class FlightSchedule implements Serializable {
     private Leg leg;
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight flight;
-
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private FlightSchedule returnedFlightSchedule;
+    
+    
     public Long getFlightScheduleId() {
         return flightScheduleId;
     }
@@ -224,7 +228,7 @@ public class FlightSchedule implements Serializable {
 
     public void setCompleted(Boolean completed) {
         this.completed = completed;
-    }    
+    }
 
     public Boolean getSeatAllocated() {
         return seatAllocated;
@@ -249,5 +253,12 @@ public class FlightSchedule implements Serializable {
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
     }
-    
+
+    public FlightSchedule getReturnedFlightSchedule() {
+        return returnedFlightSchedule;
+    }
+
+    public void setReturnedFlightSchedule(FlightSchedule returnedFlightSchedule) {
+        this.returnedFlightSchedule = returnedFlightSchedule;
+    }
 }
