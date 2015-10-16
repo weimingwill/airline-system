@@ -5,6 +5,7 @@
  */
 package ams.aps.session;
 
+import ams.ais.util.helper.AisMsg;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftType;
 import ams.aps.entity.Airport;
@@ -18,6 +19,7 @@ import ams.aps.util.exception.NoMoreUnscheduledFlightException;
 import ams.aps.util.exception.NoSelectAircraftException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightException;
+import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchRouteException;
 import ams.aps.util.helper.ApsMsg;
 import ams.aps.util.exception.ObjectDoesNotExistException;
@@ -237,8 +239,8 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         try {
             Flight flight = checkFlightExistence(flightNo);
             Flight returnedFlight = flight.getReturnedFlight();
-            if ((!flight.getCompleted() && !returnedFlight.getCompleted()) || 
-                    (flight.getNumOfUnscheduled().equals(flight.getWeeklyFrequency()) 
+            if ((!flight.getCompleted() && !returnedFlight.getCompleted())
+                    || (flight.getNumOfUnscheduled().equals(flight.getWeeklyFrequency())
                     || returnedFlight.getNumOfUnscheduled().equals(returnedFlight.getWeeklyFrequency()))) {
                 returnedFlight.setDeleted(Boolean.TRUE);
                 flight.setDeleted(Boolean.TRUE);
@@ -433,15 +435,15 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     @Override
-    public void updateFlightSchedule(String flightNo, Date deptDate)
-            throws NoSelectAircraftException, NoSuchFlightException {
+    public void updateFlightSchedule(String flightNo, Date deptDate, Date oldDeptDate)
+            throws NoSelectAircraftException, NoSuchFlightException, NoSuchFlightSchedulException {
         Flight flight = getFlightByFlightNo(flightNo);
-        deptDate = reSetFlightSchedule(flight, deptDate);
-        reSetFlightSchedule(flight.getReturnedFlight(), deptDate);
+        deptDate = reSetFlightSchedule(flight, deptDate, oldDeptDate);
+        reSetFlightSchedule(flight.getReturnedFlight(), deptDate, oldDeptDate);
     }
 
-    public Date reSetFlightSchedule(Flight flight, Date deptDate)
-            throws NoSelectAircraftException {
+    public Date reSetFlightSchedule(Flight flight, Date deptDate, Date oldDeptDate)
+            throws NoSelectAircraftException, NoSuchFlightSchedulException {
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
         calcFlightDuration(getModelWithMinMachNo(flight.getAircraftTypes()), routeHelper, flight.getSpeedFraction());
@@ -450,7 +452,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         Date arrival;
         for (LegHelper legHelper : legHelpers) {
             arrival = addHourToDate(dept, legHelper.getFlyingTime());
-            FlightSchedule flightSchedule = new FlightSchedule();
+            FlightSchedule flightSchedule = em.find(FlightSchedule.class, getFlightScheduleByFlightNoAndDeptDate(flight.getFlightNo(), oldDeptDate).getFlightScheduleId());
             flightSchedule.setDepartDate(dept);
             flightSchedule.setArrivalDate(arrival);
             em.merge(flightSchedule);
@@ -458,6 +460,19 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             dept = addHourToDate(arrival, legHelper.getTurnaroundTime());
         }
         return dept;
+    }
+
+    public FlightSchedule getFlightScheduleByFlightNoAndDeptDate(String flightNo, Date oldDeptDate) throws NoSuchFlightSchedulException {
+        Query query = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightNo = :inFlightNo AND fs.departDate = :inDate AND fs.deleted = FALSE");
+        query.setParameter("inFlightNo", flightNo);
+        query.setParameter("inDate", oldDeptDate);
+        FlightSchedule flightSchedule;
+        try {
+            flightSchedule = (FlightSchedule)query.getSingleResult();
+        } catch (NoResultException e) {
+            throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
+        }
+        return flightSchedule;
     }
 
     @Override

@@ -18,6 +18,7 @@ import ams.aps.util.exception.NoMoreUnscheduledFlightException;
 import ams.aps.util.exception.NoSelectAircraftException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightException;
+import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchRouteException;
 import ams.aps.util.helper.RouteHelper;
 import javax.inject.Named;
@@ -88,9 +89,10 @@ public class FlightScheduleManager implements Serializable {
     private int fixedEndMinute;
     private Date fixedEndDate;
     private double routeDuration;
-
     private List<FlightSchedule> flightSchedules;
-
+    private Date oldDeptDte;
+    
+    
     /**
      * Creates a new instance of FlightScheduleManager
      */
@@ -285,6 +287,7 @@ public class FlightScheduleManager implements Serializable {
     public void onEventSelect(SelectEvent selectEvent) {
         event = (ScheduleEvent) selectEvent.getObject();
         String flightNo = event.getTitle().split("/")[0];
+        oldDeptDte = event.getStartDate();
         System.out.println("FlightNo: " + flightNo);
 
         Flight flight = new Flight();
@@ -318,10 +321,10 @@ public class FlightScheduleManager implements Serializable {
     public void updateFlightSchedule() {
         try {
             String flightNo = event.getTitle().split("/")[0];
-            flightSchedulingSession.updateFlightSchedule(flightNo, event.getStartDate());
-            msgController.addMessage("Add flight schedule succesffuly");
+            flightSchedulingSession.updateFlightSchedule(flightNo, event.getStartDate(), oldDeptDte);
+            msgController.addMessage("Update flight schedule succesffuly");
             setUnscheduledFlights();
-        } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException | NoSuchRouteException e) {
+        } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException | NoSuchRouteException | NoSuchFlightSchedulException e) {
             msgController.addErrorMessage(e.getMessage());
         }
     }
@@ -523,4 +526,14 @@ public class FlightScheduleManager implements Serializable {
     public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
         this.flightSchedules = flightSchedules;
     }
+
+    public Date getOldDeptDte() {
+        return oldDeptDte;
+    }
+
+    public void setOldDeptDte(Date oldDeptDte) {
+        this.oldDeptDte = oldDeptDte;
+    }
+    
+    
 }
