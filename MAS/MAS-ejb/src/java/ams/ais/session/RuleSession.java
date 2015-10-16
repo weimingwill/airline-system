@@ -6,10 +6,10 @@
 package ams.ais.session;
 
 import ams.ais.entity.Rule;
-import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchRuleException;
 import ams.ais.util.exception.NoSuchRuleException;
 import ams.ais.util.helper.AisMsg;
+import java.util.ArrayList;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -29,17 +29,23 @@ public class RuleSession implements RuleSessionLocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    @Override
-    public List<Rule> getAllRule() {
-        Query query = entityManager.createQuery("SELECT r FROM Rule r WHERE r.deleted = false");
-        return query.getResultList();
+        @Override
+    public List<Rule> getAllRules(){
+        Query query = entityManager.createQuery("SELECT c FROM Rule c WHERE c.deleted=False");
+        List<Rule> rules;
+        try {
+            rules = (List<Rule>) query.getResultList();
+        } catch (NoResultException ex) {
+            rules = new ArrayList<>();
+        }
+        return rules;
     }
 
     @Override
     public void createRule(String name, String description) throws ExistSuchRuleException {
         verifyRuleExistence(name);
         Rule rule = new Rule();
-        rule.create(name,description);
+        rule.create(name, description);
         entityManager.persist(rule);
     }
 
@@ -56,7 +62,7 @@ public class RuleSession implements RuleSessionLocal {
 
     @Override
     public void verifyRuleExistence(String name) throws ExistSuchRuleException {
-        List<Rule> rules = getAllRule();
+        List<Rule> rules = getAllRules();
         if (rules != null) {
             for (Rule r : rules) {
 
@@ -69,7 +75,7 @@ public class RuleSession implements RuleSessionLocal {
 
     @Override
     public Rule getRuleByName(String name) {
-        
+
         Query query = entityManager.createQuery("SELECT u FROM Rule u WHERE u.name = :inRuleName AND u.deleted = FALSE");
         query.setParameter("inRuleName", name);
         Rule r = null;
@@ -82,9 +88,9 @@ public class RuleSession implements RuleSessionLocal {
     }
 
     @Override
-    public void updateRule(Long ruleId, String name,String description) throws NoSuchRuleException, ExistSuchRuleException {
+    public void updateRule(Long ruleId, String name, String description) throws NoSuchRuleException, ExistSuchRuleException {
         System.out.print("rule id is" + ruleId);
-        System.out.print("Rule name is" +name);
+        System.out.print("Rule name is" + name);
         Rule rule = getRuleById(ruleId);
         if (rule == null) {
             throw new NoSuchRuleException(AisMsg.NO_SUCH_RULE_ERROR);
@@ -108,13 +114,6 @@ public class RuleSession implements RuleSessionLocal {
     }
 
     @Override
-    public List<Rule> getAllOtherRule(String name) {
-        Query query = entityManager.createQuery("SELECT m FROM Rule m where m.name <> :name AND m.deleted = FALSE");
-        query.setParameter("name", name);
-        return query.getResultList();
-    }
-
-    @Override
     public Rule getRuleById(Long ruleId) {
         Query query = entityManager.createQuery("SELECT u FROM Rule u WHERE u.ruleId = :inRuleId AND u.deleted = FALSE");
         query.setParameter("inRuleId", ruleId);
@@ -129,7 +128,7 @@ public class RuleSession implements RuleSessionLocal {
 
     @Override
     public List<Rule> getAllOtherRuleById(Long ruleId) {
-       Query query = entityManager.createQuery("SELECT m FROM Rule m where m.ruleId <> :ruleId AND m.deleted = FALSE");
+        Query query = entityManager.createQuery("SELECT m FROM Rule m where m.ruleId <> :ruleId AND m.deleted = FALSE");
         query.setParameter("ruleId", ruleId);
         return query.getResultList();
     }

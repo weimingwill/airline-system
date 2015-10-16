@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ActionEvent;
@@ -91,8 +89,7 @@ public class FlightScheduleManager implements Serializable {
     private double routeDuration;
     private List<FlightSchedule> flightSchedules;
     private Date oldDeptDte;
-    
-    
+
     /**
      * Creates a new instance of FlightScheduleManager
      */
@@ -193,10 +190,18 @@ public class FlightScheduleManager implements Serializable {
         calcCalendarMaxDate();
     }
 
+    public void setToStartOfDay(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getMinimum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, calendar.getMinimum(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, calendar.getMinimum(Calendar.SECOND));
+        calendar.set(Calendar.MILLISECOND, calendar.getMinimum(Calendar.MILLISECOND));
+    }
+
     public void calcCalendarMinDate() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(selectedDate);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        setToStartOfDay(calendar);
         calendarMinDate = calendar.getTime();
         System.out.println("Min Date: " + calendarMinDate);
     }
@@ -206,6 +211,7 @@ public class FlightScheduleManager implements Serializable {
         calendar.setTime(selectedDate);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         calendar.add(Calendar.DATE, 7);
+        setToStartOfDay(calendar);
         calendarMaxDate = calendar.getTime();
         System.out.println("Max Date: " + calendarMaxDate);
     }
@@ -245,6 +251,8 @@ public class FlightScheduleManager implements Serializable {
             Flight flight = flightSchedule.getFlight();
             RouteHelper routeHelper = new RouteHelper();
             initializeRouteHelper(flight, routeHelper);
+            System.out.println("RouteHelper: " + routeHelper + " DeptDate: " + flightSchedule.getDepartDate());
+            System.out.println("RouteHelper: is hub" + routeHelper.getOrigin().getIsHub());
             if (routeHelper.getOrigin().getIsHub()) {
                 Date deptDate = flightSchedule.getDepartDate();
                 Date arriveDate = flightSchedulingSession.addHourToDate(deptDate, routeHelper.getTotalDuration());
@@ -426,7 +434,6 @@ public class FlightScheduleManager implements Serializable {
 //    public void setArriveAirport(String arriveAirport) {
 //        this.arriveAirport = arriveAirport;
 //    }
-
     public ScheduleEvent getEvent() {
         return event;
     }
@@ -534,6 +541,5 @@ public class FlightScheduleManager implements Serializable {
     public void setOldDeptDte(Date oldDeptDte) {
         this.oldDeptDte = oldDeptDte;
     }
-    
-    
+
 }

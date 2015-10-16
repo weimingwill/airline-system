@@ -65,12 +65,6 @@ public class BookingClassSession implements BookingClassSessionLocal {
     }
 
     @Override
-    public List<TicketFamily> getAllTicketFamily() {
-        Query query = entityManager.createQuery("SELECT c FROM TicketFamily c WHERE c.deleted = false");
-        return query.getResultList();
-    }
-
-    @Override
     public void deleteBookingClass(String name) throws NoSuchBookingClassException {
         BookingClass bookingClassTemp = search(name);
         bookingClassTemp.setDeleted(true);
@@ -246,7 +240,6 @@ public class BookingClassSession implements BookingClassSessionLocal {
         entityManager.flush();
     }
     
-    @Override
     public List<BookingClass> getAllOtherBookingClassById(Long bookingClassId) {
        Query query = entityManager.createQuery("SELECT m FROM BookingClass m where m.bookingClassId <> :bookingClassId AND m.deleted = FALSE");
         query.setParameter("bookingClassId", bookingClassId);
@@ -261,7 +254,6 @@ public class BookingClassSession implements BookingClassSessionLocal {
         }
     }
 
-    @Override
     public void verifyTicketFamilySeatsSum(Long flightScheduleId, FlightSchCabinClsTicFamBookingClsHelper flightHelper) throws WrongSumOfTicketFamilySeatQtyException {
         int cabinClassSeatQty = flightHelper.getSeatQty();
         int totalTicketFamilySeatQty = 0;
@@ -273,7 +265,6 @@ public class BookingClassSession implements BookingClassSessionLocal {
         }
     }
 
-    @Override
     public void verifyBookingClassSeatsSum(Long flightScheduleId, TicketFamilyBookingClassHelper tfbcHelper) throws WrongSumOfBookingClassSeatQtyException {
         int ticketFamilySeatQty = tfbcHelper.getSeatQty();
         int totalBookingClassSeatQty = 0;

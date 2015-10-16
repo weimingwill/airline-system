@@ -30,8 +30,6 @@ public interface RoleSessionLocal {
 
     public void verifySystemRole(String roleName) throws ExistSuchRoleException;
 
-    public List<String> getRolesNameList();
-
     public void grantRolePermissions(SystemRole role, List<Permission> permissions);
 
     public String deleteRole(String roleName) throws NoSuchRoleException;

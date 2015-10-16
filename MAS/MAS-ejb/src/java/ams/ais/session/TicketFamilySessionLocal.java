@@ -6,7 +6,6 @@
 package ams.ais.session;
 
 import ams.ais.entity.BookingClass;
-import ams.ais.entity.CabinClass;
 import ams.ais.entity.Rule;
 import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.TicketFamily;
@@ -20,7 +19,6 @@ import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchRuleException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyRuleException;
-import ams.aps.util.exception.EmptyTableException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
@@ -57,32 +55,20 @@ public interface TicketFamilySessionLocal {
 
     public List<TicketFamily> getAllTicketFamily();
 
-    public List<CabinClass> getAllCabinClass();
-
-    public List<TicketFamily> getAllOtherTicketFamily(String name);
-
     public List<TicketFamily> getAllOtherTicketFamilyByTypeAndCabinClass(String type, String cabinclassname);
-
-    public List<Rule> getAllRules() throws NoSuchRuleException;
 
     public List<TicketFamilyRule> getTicketFamilyRuleByTicketFamilyId(long ticketFamilyId);
 
     public List<Rule> getRulesByTicketFmailyId(Long ticketFamilyId) throws NoSuchRuleException;
     
-    public TicketFamilyRule getTicketFamilyRuleByTicketFamilyType(String ticketFamilyType);
-
     public TicketFamilyRule getTicketFamilyRuleById(Long ticketFamilyId, Long RuleId) 
             throws NoSuchTicketFamilyRuleException;
     
     public TicketFamily getTicketFamilyById(Long id) throws NoSuchTicketFamilyException;
 
-    public TicketFamily getTicketFamilyByName(String ticketFamilyName) throws NoSuchTicketFamilyException;
-
     public TicketFamily getTicketFamilyByTypeAndCabinClass(String ticketFamilyType, String cabinClassName);
 
     public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) throws NoSuchBookingClassException;
-
-    public List<BookingClass> getTicketFamilyBookingClasses(Long cabinClassId, Long ticketFamilyId) throws NoSuchBookingClassException;
 
     public List<BookingClassHelper> getTicketFamilyBookingClassHelpers(String cabinClassName, String ticketFamilyName);
 

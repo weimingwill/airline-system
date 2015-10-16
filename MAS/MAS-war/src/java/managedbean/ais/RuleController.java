@@ -86,7 +86,7 @@ public class RuleController implements Serializable{
     
     
     public List<Rule> getAllRule() {
-        return ruleSession.getAllRule();
+        return ruleSession.getAllRules();
     }
     
     public void deleteRule() {

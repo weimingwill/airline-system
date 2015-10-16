@@ -6,7 +6,6 @@
 package ams.ais.session;
 
 import ams.ais.entity.Rule;
-import ams.ais.entity.TicketFamily;
 import ams.ais.util.exception.ExistSuchRuleException;
 import ams.ais.util.exception.NoSuchRuleException;
 import java.util.List;
@@ -18,17 +17,21 @@ import javax.ejb.Local;
  */
 @Local
 public interface RuleSessionLocal {
-    
-   public List<Rule> getAllRule();
-   public void createRule (String name,String description) throws ExistSuchRuleException;
-   public void deleteRule (String name) throws NoSuchRuleException; 
-   public void verifyRuleExistence(String name) throws ExistSuchRuleException;
-   
-   public Rule getRuleByName(String name);
-   public void updateRule(Long ruleId, String name,String description) throws NoSuchRuleException, ExistSuchRuleException;
-   public List<Rule> getAllOtherRule(String name);
-   public Rule getRuleById(Long ruleId);
-   public List<Rule> getAllOtherRuleById(Long ruleId);
-   
-   
+
+    public List<Rule> getAllRules();
+
+    public void createRule(String name, String description) throws ExistSuchRuleException;
+
+    public void deleteRule(String name) throws NoSuchRuleException;
+
+    public void verifyRuleExistence(String name) throws ExistSuchRuleException;
+
+    public Rule getRuleByName(String name);
+
+    public void updateRule(Long ruleId, String name, String description) throws NoSuchRuleException, ExistSuchRuleException;
+
+    public Rule getRuleById(Long ruleId);
+
+    public List<Rule> getAllOtherRuleById(Long ruleId);
+
 }

@@ -13,9 +13,9 @@ import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
 import ams.ais.session.FlightScheduleSessionLocal;
 import ams.ais.session.SeatReallocationSessionLocal;
+import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.DuplicatePriceException;
 import ams.ais.util.exception.NeedBookingClassException;
-import ams.ais.util.exception.TimeToReallocateException;
 import ams.ais.util.exception.WrongSumOfBookingClassSeatQtyException;
 import ams.ais.util.exception.WrongSumOfTicketFamilySeatQtyException;
 import ams.ais.util.helper.BookingClassHelper;
@@ -59,9 +59,10 @@ public class BookingClassController implements Serializable {
     private BookingClassSessionLocal bookingClassSession;
     @EJB
     private FlightScheduleSessionLocal flightScheduleSession;
-
     @EJB
     private SeatReallocationSessionLocal seatReallocationSession;
+    @EJB
+    private TicketFamilySessionLocal ticketFamilySession;
 
     private String bookingClassName;
     private Long flightScheduleId;
@@ -92,7 +93,7 @@ public class BookingClassController implements Serializable {
     }
 
     public List<TicketFamily> getAllTicketFamily() {
-        return bookingClassSession.getAllTicketFamily();
+        return ticketFamilySession.getAllTicketFamily();
 
     }
 
@@ -190,15 +191,6 @@ public class BookingClassController implements Serializable {
         priceMap.put(bookingClassId, getCalculatedPrice(priceCoefficient));
     }
 
-//    public void onPriceChange(AjaxBehaviorEvent event) {
-//        System.out.println("On Price Change");
-//        String id = (String) ((UIComponent) event.getComponent()).getId();
-//        float price = (float) ((UIComponent) event.getComponent()).getAttributes().get("value");
-//        System.out.println("ID: " + id + " price: " + price);
-//        Long bookingClassId = Long.parseLong(id.split("price")[1]);
-//        System.out.println("bookingClassId: " + bookingClassId);
-//        priceCoefficientMap.put(bookingClassId, getCalculatedPriceCoefficient(price));
-//    }
     public void initialPrice() {
         if (!flightSchCabinClsTicFamBookingClsHelpers.isEmpty()) {
             for (FlightSchCabinClsTicFamBookingClsHelper helper : flightSchCabinClsTicFamBookingClsHelpers) {
@@ -223,12 +215,6 @@ public class BookingClassController implements Serializable {
         return priceCoefficient * basicPrice;
     }
 
-//    public float getCalculatedPriceCoefficient(float price) {
-//        System.out.println("Price : " + price);
-//        System.out.println("Basic price: " + basicPrice);
-//        System.out.println("Price Coefficient: " + price / basicPrice);
-//        return price / basicPrice;
-//    }
     //Getter and Setter
     public String getBookingClassName() {
         return bookingClassName;

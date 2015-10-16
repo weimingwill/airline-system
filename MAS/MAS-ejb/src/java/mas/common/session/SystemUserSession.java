@@ -409,13 +409,11 @@ public class SystemUserSession implements SystemUserSessionLocal {
     public List<PermissionHelper> getPermissionHelpers(String username) {
         List<PermissionHelper> permissionHelpers = new ArrayList<>();
         for (String system : getUserPermissionSystems(username)) {
-            System.out.println("System: " + system);
             PermissionHelper permissionHelper = new PermissionHelper();
             permissionHelper.setName(system);
 
             List<PermissionHelper> moduels = new ArrayList<>();
             for (String module : permissionSession.getSystemModulesBySystem(system)) {
-            System.out.println("Module: " + module);
                 PermissionHelper m = new PermissionHelper();
                 m.setName(module);
                 if (system.equals(PermissionNamesHelper.APS)) {
