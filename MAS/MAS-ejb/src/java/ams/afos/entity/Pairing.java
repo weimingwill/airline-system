@@ -8,12 +8,14 @@ package ams.afos.entity;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Embedded;
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 
 /**
@@ -22,6 +24,7 @@ import javax.persistence.ManyToMany;
  */
 @Entity
 public class Pairing implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,16 +33,16 @@ public class Pairing implements Serializable {
     private Integer cabinCrewQuota;
     private Integer cockpitCrewQuota;
     private Double layoverTime;
-    
-    @Embedded
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(joinColumns = @JoinColumn(name = "FLIGHTDUTYID"))
     private List<FlightDuty> flightDuties;
-    
+
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<FlightCrew> cabinCrews;
-    
+
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<FlightCrew> cockpitCrews;
-    
 
     public Long getId() {
         return id;
@@ -171,5 +174,5 @@ public class Pairing implements Serializable {
     public void setCockpitCrews(List<FlightCrew> cockpitCrews) {
         this.cockpitCrews = cockpitCrews;
     }
-    
+
 }

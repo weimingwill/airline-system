@@ -9,12 +9,14 @@ import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 /**
  *
  * @author Lewis
  */
 @Embeddable
+@Table(name = "PAIRING_FLIGHTDUTIES")
 public class FlightDuty implements Serializable {
 
     private static final long serialVersionUID = 1L;
