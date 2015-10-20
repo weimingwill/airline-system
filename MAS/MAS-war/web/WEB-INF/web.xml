@@ -34,7 +34,7 @@
         <welcome-file>views/secured/common/users/login.xhtml</welcome-file>
     </welcome-file-list>
     <!--Set SSL Protection-->
-    <security-constraint>
+<!--    <security-constraint>
         <display-name>SSL Protection</display-name>
         <web-resource-collection>
             <web-resource-name>Default Secure Pages</web-resource-name>
@@ -44,7 +44,7 @@
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
-    </security-constraint>
+    </security-constraint>-->
     <ejb-local-ref>
         <ejb-ref-name>systemUserSession</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
