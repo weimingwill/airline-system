@@ -21,6 +21,7 @@ import mas.common.entity.SystemUser;
 public class MaintCrew extends SystemUser implements Serializable {
     private static final long serialVersionUID = 1L;
     
+    private String maintCrewId;
     @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private List<MaintCrewSkill> skills;
 
@@ -36,6 +37,20 @@ public class MaintCrew extends SystemUser implements Serializable {
      */
     public void setSkills(List<MaintCrewSkill> skills) {
         this.skills = skills;
+    }
+
+    /**
+     * @return the maintCrewId
+     */
+    public String getMaintCrewId() {
+        return maintCrewId;
+    }
+
+    /**
+     * @param maintCrewId the maintCrewId to set
+     */
+    public void setMaintCrewId(String maintCrewId) {
+        this.maintCrewId = maintCrewId;
     }
     
 }
