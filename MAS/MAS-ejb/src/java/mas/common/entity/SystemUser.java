@@ -14,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import mas.common.util.helper.UserStatus;
 
@@ -22,11 +24,12 @@ import mas.common.util.helper.UserStatus;
  * @author Lewis
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public class SystemUser implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long systemUserId;
+    protected Long systemUserId;
     private String username;
     private String password;
     private String email;
@@ -215,7 +218,4 @@ public class SystemUser implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
-
-    
-    
 }
