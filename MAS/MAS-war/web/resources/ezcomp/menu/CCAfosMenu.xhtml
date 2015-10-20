@@ -13,26 +13,47 @@
     <cc:implementation id="leftMenu">
         <h:form>
             <p:panelMenu style="width:240px;">
-                <p:submenu label="Message" expanded="true">
-                    <p:menuitem action="#{navigationController.redirectToSendMessages()}" value="send message" />
-                    <p:menuitem action="#{navigationController.redirectToViewMessages()}" value="view message (unread  #{internalMsgController.unreadMessagesNumber})" actionListener="#{internalMsgController.readUnreadMessages}"/>
-                </p:submenu>
-                <p:submenu label="Access Control" rendered="#{userController.hasRole('Admin') or userController.admin}" expanded="true">
-                    <p:submenu label="User management">
-                        <p:menuitem  value="Create user" action="#{navigationController.redirectToCreateUser()}" />
-                        <p:menuitem  value="Assign user roles" action="#{navigationController.redirectToAssignUserRoles()}" />
-                        <p:menuitem value="View all users" action="#{navigationController.redirectToViewAllUsers()}" />
+                <p:submenu label="For Operations Staff" expanded="true">
+                    <p:submenu label="Crew Training Management">
+                        <p:menuitem value="Create Training Schedule" />
+                        <p:menuitem value="View Training Schedule"/>
+                        <p:menuitem value="View Crew Profiles"/>
+                        <p:menuitem value="Assign Crew Trainings"/>
                     </p:submenu>
-                    <p:submenu label="Role management">
-                        <p:menuitem value="Create role" action="#{navigationController.redirectToCreateRole()}"/>
-                        <p:menuitem value="Grant role permissions" action="#{navigationController.redirectToGrantRolePermissions()}"/>
-                        <p:menuitem value="View all roles" action="#{navigationController.redirectToViewAllRoles()}"/>
+                    <p:submenu label="Flight Crew Management">
+                        <p:menuitem value="Generate Crew Pairings"/>
+                        <p:menuitem value="Open Bidding Sessions"/>
+                        <p:menuitem value="View Bidding History"/>
+                        <p:menuitem value="Swap Working Slots"/>
+                        <p:menuitem value="View Crew Attendance"/>
+                        <p:menuitem value="Create Flight Checklists"/>
+                        <p:menuitem value="View Flight Duty Report"/>
+                    </p:submenu>
+                    <p:submenu label="Maintenance Management">
+                        <p:menuitem value="View Crew Profiles"/>
+                        <p:menuitem value="Assign Crew Training Task"/>
+                        <p:menuitem value="Create Maintenance Checklists"/>
+                    </p:submenu>
+                </p:submenu>
 
-                    </p:submenu>                    
-                    <p:submenu label="Permission management">
-                        <p:menuitem value="Create permission" action="#{navigationController.redirectToCreatePermission()}"/>
-                        <p:menuitem value="View all permissions" action="#{navigationController.redirectToViewAllPermission()}"/>
-                    </p:submenu>             
+                <p:submenu label="For Flight Crews" expanded="true">
+                    <p:submenu label="Bidding Management">
+                        <p:menuitem value="Place Standing Bid"/>
+                        <p:menuitem value="Bid for Lines"/>
+                        <p:menuitem value="View Bid Result"/>
+                        <p:menuitem value="Request for Swapping"/>
+                    </p:submenu>
+                    <p:submenu label="Reporting">
+                        <p:menuitem value="Pre-flight Reporting"/>
+                        <p:menuitem value="Post-flight Reporting"/>
+                    </p:submenu>
+                </p:submenu>
+
+                <p:submenu label="For Maintenance Crews" expanded="true">
+                    <p:submenu label="Task Management">
+                        <p:menuitem value="View Tasks"/>
+                        <p:menuitem value="Report Maintenance Tasks"/>
+                    </p:submenu>
                 </p:submenu>
             </p:panelMenu>
         </h:form>    

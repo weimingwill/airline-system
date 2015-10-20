@@ -10,15 +10,16 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <h:outputStylesheet name="./css/default.css"/>
         <h:outputStylesheet name="./css/cssLayout.css"/>
-        <title><ui:insert name="title">Airline Inventory System</ui:insert></title>
+        <title><ui:insert name="title">Airline Flight Operations System</ui:insert></title>
+        <link rel="shortcut icon" type="image/x-icon" href="/MAS-war/resources/images/favicon.ico"/>
     </h:head>
 
     <h:body>
         <me:CCNavigationMenu id="navigation-menu" />
         <p:growl id="messages" showDetail="true"/>
-        <p:layout>
-            <p:layoutUnit position="west" resizable="false" size="220" minSize="100" maxSize="300">
-                <me:CCAisMenu id="aps-navigation-menu"/>
+        <p:layout style="min-height:450px;">
+            <p:layoutUnit position="west" resizable="false" size="250" minSize="100" maxSize="300">
+                <me:CCAfosMenu/>
             </p:layoutUnit>
             
             <p:layoutUnit position="center">
