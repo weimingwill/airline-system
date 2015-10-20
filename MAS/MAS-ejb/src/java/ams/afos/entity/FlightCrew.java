@@ -20,6 +20,7 @@ import mas.common.entity.SystemUser;
 public class FlightCrew extends SystemUser implements Serializable {
     private static final long serialVersionUID = 1L;
     
+    private String flightCrewID;
     private Double totalFlyingTime;
     private Double totalFlyingDist;
     
