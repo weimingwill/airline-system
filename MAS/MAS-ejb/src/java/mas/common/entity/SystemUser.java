@@ -25,11 +25,11 @@ import mas.common.util.helper.UserStatus;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class SystemUser implements Serializable {
+public class SystemUser implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long systemUserId;
+    protected Long systemUserId;
     private String username;
     private String password;
     private String email;
@@ -219,6 +219,4 @@ public abstract class SystemUser implements Serializable {
         this.status = status;
     }
 
-    
-    
 }
