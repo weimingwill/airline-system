@@ -34,7 +34,7 @@ public class SystemRole implements Serializable {
 
     public void create(String roleName){
         this.setRoleName(roleName);
-    }
+    } 
     
     public Long getSystemRoleId() {
         return systemRoleId;
