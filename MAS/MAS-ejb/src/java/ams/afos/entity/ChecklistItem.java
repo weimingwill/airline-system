@@ -8,6 +8,7 @@ package ams.afos.entity;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Embeddable;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -16,6 +17,7 @@ import javax.persistence.TemporalType;
  * @author Lewis
  */
 @Embeddable
+@Table(name = "CHECKLIST_CHECKLISTITEMS")
 public class ChecklistItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
