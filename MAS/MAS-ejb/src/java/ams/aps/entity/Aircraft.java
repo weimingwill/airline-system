@@ -47,7 +47,7 @@ public class Aircraft implements Serializable {
     @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private AircraftType aircraftType;
     
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy = "aircraft")
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraft")
     private List<Checklist> checklists;
 
     public Long getAircraftId() {

@@ -15,7 +15,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -32,7 +32,7 @@ public class Checklist implements Serializable {
     private Boolean deleted;
     private Boolean isTemplate;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Aircraft aircraft;
 
     @Embedded
