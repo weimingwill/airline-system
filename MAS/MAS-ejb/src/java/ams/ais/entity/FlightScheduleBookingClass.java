@@ -67,6 +67,9 @@ public class FlightScheduleBookingClass implements Serializable {
     @Column(name = "DELETED")
     private Boolean deleted;
 
+    @Column(name = "PRICED")
+    private Boolean priced;
+    
     public FlightScheduleBookingClassId getFlightScheduleBookingClassId() {
         return flightScheduleBookingClassId;
     }
@@ -161,5 +164,13 @@ public class FlightScheduleBookingClass implements Serializable {
 
     public void setBasicPrice(Float basicPrice) {
         this.basicPrice = basicPrice;
+    }
+
+    public Boolean getPriced() {
+        return priced;
+    }
+
+    public void setPriced(Boolean priced) {
+        this.priced = priced;
     }
 }

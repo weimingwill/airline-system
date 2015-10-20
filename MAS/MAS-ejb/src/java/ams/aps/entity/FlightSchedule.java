@@ -18,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -33,16 +34,12 @@ public class FlightSchedule implements Serializable {
     private Long flightScheduleId;
     private String departTerminal;
     private String departGate;
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date departDate;
-    @Temporal(value = TemporalType.TIME)
-    private Date departTime;
     private String arrivalTerminal;
     private String arrivalGate;
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date arrivalDate;
-    @Temporal(value = TemporalType.TIME)
-    private Date arrivalTime;
     private Boolean deleted;
     private Boolean completed;
     private Boolean seatAllocated;
@@ -58,7 +55,10 @@ public class FlightSchedule implements Serializable {
     private Leg leg;
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight flight;
-
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private FlightSchedule returnedFlightSchedule;
+    
+    
     public Long getFlightScheduleId() {
         return flightScheduleId;
     }
@@ -254,21 +254,11 @@ public class FlightSchedule implements Serializable {
         this.createdTime = createdTime;
     }
 
-    public Date getDepartTime() {
-        return departTime;
+    public FlightSchedule getReturnedFlightSchedule() {
+        return returnedFlightSchedule;
     }
 
-    public void setDepartTime(Date departTime) {
-        this.departTime = departTime;
+    public void setReturnedFlightSchedule(FlightSchedule returnedFlightSchedule) {
+        this.returnedFlightSchedule = returnedFlightSchedule;
     }
-
-    public Date getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(Date arrivalTime) {
-        this.arrivalTime = arrivalTime;
-    }
-    
-    
 }
