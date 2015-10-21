@@ -5,7 +5,7 @@
  */
 package ams.ais.entity;
 
-import ams.ais.helper.BookingClassChannelId;
+import ams.ais.entity.helper.BookingClassChannelId;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

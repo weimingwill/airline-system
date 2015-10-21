@@ -5,7 +5,7 @@
  */
 package ams.ais.entity;
 
-import ams.ais.helper.CabinClassTicketFamilyId;
+import ams.ais.entity.helper.CabinClassTicketFamilyId;
 import ams.aps.entity.AircraftCabinClass;
 import java.io.Serializable;
 import javax.persistence.CascadeType;

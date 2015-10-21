@@ -5,7 +5,7 @@
  */
 package ams.aps.entity;
 
-import ams.aps.helper.RouteLegId;
+import ams.aps.entity.helper.RouteLegId;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;

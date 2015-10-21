@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.aps.helper;
+package ams.aps.entity.helper;
 
 import java.io.Serializable;
 
