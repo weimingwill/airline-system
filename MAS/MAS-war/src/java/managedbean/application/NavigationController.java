@@ -387,4 +387,8 @@ public class NavigationController implements Serializable {
         return uri + REDIRECT;
     }
 
+    //CRM
+    public String redirectToCRM() {
+        return "/views/secured/crm/crmMain.xhtml" + REDIRECT;
+    }
 }
