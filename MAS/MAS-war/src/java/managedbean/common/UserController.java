@@ -301,7 +301,7 @@ public class UserController implements Serializable {
         }
         return navigationController.redirectToViewAllUsers();
     }
-
+    
 //
 //Getter and Setter
 //

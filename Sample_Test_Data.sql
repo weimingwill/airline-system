@@ -1,7 +1,7 @@
 -- Please name your database "mas"
 
 -- Test Users
-INSERT INTO `mas`.`SYSTEMUSER`(`USERNAME`,`PASSWORD`,`EMAIL`,`ACTIVATED`) VALUES('admin', 'f5e98b4132faecbdb14f171504c3e185','a0119405@u.nus.edu',1);
+INSERT INTO `mas`.`SYSTEMUSER`(`USERNAME`,`PASSWORD`,`EMAIL`,`ACTIVATED`,`DTYPE`,`DEPARTMENT`) VALUES('admin', 'f5e98b4132faecbdb14f171504c3e185','a0119405@u.nus.edu',1,'SystemUser','Administration');
 
 
 -- Test Roles

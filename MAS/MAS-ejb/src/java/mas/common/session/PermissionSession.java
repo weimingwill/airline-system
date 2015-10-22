@@ -47,7 +47,7 @@ public class PermissionSession implements PermissionSessionLocal {
 
     @Override
     public List<Permission> getAllPermissions() {
-        Query query = entityManager.createQuery("SELECT p FROM Permission p where p.deleted = FALSE");
+        Query query = entityManager.createQuery("SELECT p FROM Permission p where p.deleted = FALSE ORDER BY p.system ASC");
         return query.getResultList();
     }
 

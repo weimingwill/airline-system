@@ -20,16 +20,22 @@ import javax.servlet.http.HttpServletRequest;
 public class NavigationController implements Serializable {
 
     private final String REDIRECT = "?faces-redirect=true";
+    private final String COMMON_URL = "/views/secured/common/";
+    private final String APS_URL = "/views/secured/aps/";
+    private final String AIS_URL = "/views/secured/ais/";
+    private final String AFOS_URL = "/views/secured/afos/";
+
+    
 
     public NavigationController() {
     }
 
     public String toLogin() {
-        return "/views/secured/common/users/login.xhtml";
+        return COMMON_URL + "users/login.xhtml";
     }
 
     public String redirectToLogin() {
-        return "/views/secured/common/users/login.xhtml" + REDIRECT;
+        return COMMON_URL + "users/login.xhtml" + REDIRECT;
     }
 
     public String redirectToHome() {
@@ -38,19 +44,19 @@ public class NavigationController implements Serializable {
 
     //Message
     public String toSendMessage() {
-        return "/views/secured/common/messages/sendMessage.xhtml";
+        return COMMON_URL + "messages/sendMessage.xhtml";
     }
 
     public String toViewMessages() {
-        return "/views/secured/common/messages/viewMessages.xhtml";
+        return COMMON_URL + "messages/viewMessages.xhtml";
     }
 
     public String redirectToSendMessages() {
-        return "/views/secured/common/messages/sendMessage.xhtml" + REDIRECT;
+        return COMMON_URL + "messages/sendMessage.xhtml" + REDIRECT;
     }
 
     public String redirectToViewMessages() {
-        return "/views/secured/common/messages/viewMessages.xhtml" + REDIRECT;
+        return COMMON_URL + "messages/viewMessages.xhtml" + REDIRECT;
     }
 
     //Password reset
@@ -72,312 +78,312 @@ public class NavigationController implements Serializable {
 
     //Access control
     public String redirectToWorkspace() {
-        return "/views/secured/common/users/userWorkspace.xhtml" + REDIRECT;
+        return COMMON_URL + "users/userWorkspace.xhtml" + REDIRECT;
     }
 
     public String redirectToAdminWorkspace() {
-        return "/views/secured/common/users/adminWorkspace.xhtml" + REDIRECT;
+        return COMMON_URL + "users/adminWorkspace.xhtml" + REDIRECT;
     }
 
     //User
     public String toCreateUser() {
-        return "/views/secured/common/users/createUser.xhtml";
+        return COMMON_URL + "users/createUser.xhtml";
     }
 
     public String redirectToCreateUser() {
-        return "/views/secured/common/users/createUser.xhtml" + REDIRECT;
+        return COMMON_URL + "users/createUser.xhtml" + REDIRECT;
     }
 
     public String toAssignUserRole() {
-        return "/views/secured/common/users/assignUserRole.xhtml";
+        return COMMON_URL + "users/assignUserRole.xhtml";
     }
 
     public String redirectToAssignUserRoles() {
-        return "/views/secured/common/users/assignUserRoles.xhtml" + REDIRECT;
+        return COMMON_URL + "users/assignUserRoles.xhtml" + REDIRECT;
     }
 
     public String toViewAllUsers() {
-        return "/views/secured/common/users/viewAllUsers.xhtml";
+        return COMMON_URL + "users/viewAllUsers.xhtml";
     }
 
     public String redirectToViewAllUsers() {
-        return "/views/secured/common/users/viewAllUsers.xhtml" + REDIRECT;
+        return COMMON_URL + "users/viewAllUsers.xhtml" + REDIRECT;
     }
 
     public String redirectToViewUserProfile() {
-        return "/views/secured/common/users/viewProfile.xhtml" + REDIRECT;
+        return COMMON_URL + "users/viewProfile.xhtml" + REDIRECT;
     }
 
     public String toEditUserProfile() {
-        return "/views/secured/common/users/editProfile.xhtml";
+        return COMMON_URL + "users/editProfile.xhtml";
     }
 
     public String redirectToEditUserProfile() {
-        return "/views/secured/common/users/editProfile.xhtml" + REDIRECT;
+        return COMMON_URL + "users/editProfile.xhtml" + REDIRECT;
     }
 
     public String toChangePassword() {
-        return "/views/secured/common/users/changePassword.xhtml";
+        return COMMON_URL + "users/changePassword.xhtml";
     }
 
     public String redirectToChangePassword() {
-        return "/views/secured/common/users/changePassword.xhtml" + REDIRECT;
+        return COMMON_URL + "users/changePassword.xhtml" + REDIRECT;
     }
 
     //Role
     public String toCreateRole() {
-        return "/views/secured/common/roles/createRole.xhtml";
+        return COMMON_URL + "roles/createRole.xhtml";
     }
 
     public String redirectToCreateRole() {
-        return "/views/secured/common/roles/createRole.xhtml" + REDIRECT;
+        return COMMON_URL + "roles/createRole.xhtml" + REDIRECT;
     }
 
     public String toViewAllRoles() {
-        return "/views/secured/common/roles/viewAllRoles.xhtml";
+        return COMMON_URL + "roles/viewAllRoles.xhtml";
     }
 
     public String redirectToViewAllRoles() {
-        return "/views/secured/common/roles/viewAllRoles.xhtml" + REDIRECT;
+        return COMMON_URL + "roles/viewAllRoles.xhtml" + REDIRECT;
     }
 
     public String toGrantRolePermissions() {
-        return "/views/secured/common/roles/grantRolePermissions.xhtml";
+        return COMMON_URL + "roles/grantRolePermissions.xhtml";
     }
 
     public String redirectToGrantRolePermissions() {
-        return "/views/secured/common/roles/grantRolePermissions.xhtml" + REDIRECT;
+        return COMMON_URL + "roles/grantRolePermissions.xhtml" + REDIRECT;
     }
 
     //Permission
     public String toCreatePermission() {
-        return "/views/secured/common/permissions/createPermission.xhtml";
+        return COMMON_URL + "permissions/createPermission.xhtml";
     }
 
     public String redirectToCreatePermission() {
-        return "/views/secured/common/permissions/createPermission.xhtml?" + REDIRECT;
+        return COMMON_URL + "permissions/createPermission.xhtml?" + REDIRECT;
     }
 
     public String toViewAllPermissions() {
-        return "/views/secured/common/permissions/viewAllPermissions.xhtml";
+        return COMMON_URL + "permissions/viewAllPermissions.xhtml";
     }
 
     public String redirectToViewAllPermission() {
-        return "/views/secured/common/permissions/viewAllPermissions.xhtml" + REDIRECT;
+        return COMMON_URL + "permissions/viewAllPermissions.xhtml" + REDIRECT;
     }
 
     //AIS
     public String redirectToAIS() {
-        return "/views/secured/ais/aisMain.xhtml" + REDIRECT;
+        return AIS_URL + "aisMain.xhtml" + REDIRECT;
     }
 
     //Product Design
     public String redirectToCreateCabinClass() {
-        return "/views/secured/ais/product_design/createCabinClass.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/createCabinClass.xhtml" + REDIRECT;
     }
 
     public String redirectToViewAllCabinClass() {
-        return "/views/secured/ais/product_design/viewAllCabinClass.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/viewAllCabinClass.xhtml" + REDIRECT;
     }
 
     public String redirectToDeleteCabinClass() {
-        return "/views/secured/ais/product_design/deleteCabinClass.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/deleteCabinClass.xhtml" + REDIRECT;
     }
 
     public String redirectToEditCabinClass() {
-        return "/views/secured/ais/product_design/editCabinClass.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/editCabinClass.xhtml" + REDIRECT;
     }
 
     public String redirectToCreateRule() {
-        return "/views/secured/ais/product_design/createRule.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/createRule.xhtml" + REDIRECT;
     }
 
     public String redirectToViewAllRules() {
-        return "/views/secured/ais/product_design/viewAllRule.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/viewAllRule.xhtml" + REDIRECT;
     }
 
     public String redirectToDeleteRule() {
-        return "/views/secured/ais/product_design/deleteRule.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/deleteRule.xhtml" + REDIRECT;
     }
 
     public String redirectToEditRule() {
-        return "/views/secured/ais/product_design/editRule.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/editRule.xhtml" + REDIRECT;
     }
 
     public String redirectToCreateTicketFamily() {
-        return "/views/secured/ais/product_design/createTicketFamily.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/createTicketFamily.xhtml" + REDIRECT;
     }
 
     public String redirectToViewAllTicketFamily() {
-        return "/views/secured/ais/product_design/viewAllTicketFamily.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/viewAllTicketFamily.xhtml" + REDIRECT;
     }
 
     public String redirectToDeleteTicketFamily() {
-        return "/views/secured/ais/product_design/deleteTicketFamily.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/deleteTicketFamily.xhtml" + REDIRECT;
     }
 
     public String redirectToEditTicketFamily() {
-        return "/views/secured/ais/product_design/editTicketFamily.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/editTicketFamily.xhtml" + REDIRECT;
     }
 
     //Pricing
     public String redirectToCreateBookingClass() {
-        return "/views/secured/ais/booking_class/createBookingClass.xhtml" + REDIRECT;
+        return AIS_URL + "booking_class/createBookingClass.xhtml" + REDIRECT;
     }
     public String redirectToViewAllBookingClass(){
-        return "/views/secured/ais/booking_class/viewBookingClass.xhtml" + REDIRECT;
+        return AIS_URL + "booking_class/viewBookingClass.xhtml" + REDIRECT;
     }
     public String redirectToDeleteBookingClass() {
-        return "/views/secured/ais/booking_class/deleteBookingClass.xhtml" + REDIRECT;
+        return AIS_URL + "booking_class/deleteBookingClass.xhtml" + REDIRECT;
     }
 
     public String redirectToPricing() {
-        return "/views/secured/ais/pricing/pricing.xhtml" + REDIRECT;
+        return AIS_URL + "pricing/pricing.xhtml" + REDIRECT;
     }
 
     public String redirectToAssignFlightScheduleBookingClass() {
-        return "/views/secured/ais/booking_class/assignFlightScheduleBookingClasses.xhtml" + REDIRECT;
+        return AIS_URL + "booking_class/assignFlightScheduleBookingClasses.xhtml" + REDIRECT;
     }
 
     public String redirectToViewFlightSchedule() {
-        return "/views/secured/ais/booking_class/viewFlightSchedule.xhtml" + REDIRECT;
+        return AIS_URL + "booking_class/viewFlightSchedule.xhtml" + REDIRECT;
     }
 
     public String redirectToSeatAllocation() {
-        return "/views/secured/ais/booking_class/seatAllocation.xhtml" + REDIRECT;
+        return AIS_URL + "booking_class/seatAllocation.xhtml" + REDIRECT;
     }
 
     public String redirectToProductDesign() {
-        return "/views/secured/ais/product_design/productDesign.xhtml" + REDIRECT;
+        return AIS_URL + "product_design/productDesign.xhtml" + REDIRECT;
     }
 
     public String redirectToPriceBookingClasses() {
-        return "/views/secured/ais/booking_class/priceBookingClasses.xhtml" + REDIRECT;
+        return AIS_URL + "booking_class/priceBookingClasses.xhtml" + REDIRECT;
     }
 
     //Yield Management 
     public String redirectToYieldManagement() {
-        return "/views/secured/ais/yield_management/yieldManagement.xhtml" + REDIRECT;
+        return AIS_URL + "yield_management/yieldManagement.xhtml" + REDIRECT;
     }
 
     public String redirectToReallocationBookingClassSeats() {
-        return "/views/secured/ais/yield_management/reallocateBookingClassSeats.xhtml" + REDIRECT;
+        return AIS_URL + "yield_management/reallocateBookingClassSeats.xhtml" + REDIRECT;
     }
 
     public String redirectToUpdateYieldManagementModel() {
-        return "/views/secured/ais/yield_management/updateYieldManagementModel.xhtml" + REDIRECT;
+        return AIS_URL + "yield_management/updateYieldManagementModel.xhtml" + REDIRECT;
     }
 
     public String redirectToViewSeatsReallocationHistroy() {
-        return "/views/secured/ais/yield_management/viewSeatsReallocationHistory.xhtml" + REDIRECT;
+        return AIS_URL + "yield_management/viewSeatsReallocationHistory.xhtml" + REDIRECT;
     }
     
     public String redirectToAddCheckPoint(){
-        return "/views/secured/ais/yield_management/addCheckPoint.xhtml" + REDIRECT;
+        return AIS_URL + "yield_management/addCheckPoint.xhtml" + REDIRECT;
     }
 
     //Airline Planning System
     //Fleet Planning Module
     public String redirectToAPS() {
-        return "/views/secured/aps/apsMain.xhtml" + REDIRECT;
+        return APS_URL + "apsMain.xhtml" + REDIRECT;
     }
 
     public String toViewAircraftModel() {
-        return "/views/secured/aps/fleet/viewAircraftModel.xhtml" + REDIRECT;
+        return APS_URL + "fleet/viewAircraftModel.xhtml" + REDIRECT;
     }
 
     public String toAddNewAircraft() {
-        return "/views/secured/aps/fleet/addNewAircraft.xhtml" + REDIRECT;
+        return APS_URL + "fleet/addNewAircraft.xhtml" + REDIRECT;
     }
 
     public String toViewFleet() {
-        return "/views/secured/aps/fleet/viewFleet.xhtml" + REDIRECT;
+        return APS_URL + "fleet/viewFleet.xhtml" + REDIRECT;
     }
 
     public String toRetireAicraft() {
-        return "/views/secured/aps/fleet/retireAircraft.xhtml" + REDIRECT;
+        return APS_URL + "fleet/retireAircraft.xhtml" + REDIRECT;
     }
 
     public String toViewRetiredFleet() {
-        return "/views/secured/aps/fleet/viewRetiredFleet.xhtml" + REDIRECT;
+        return APS_URL + "fleet/viewRetiredFleet.xhtml" + REDIRECT;
     }
 
     // Route Planning Module
     public String toAddHub() {
-        return "/views/secured/aps/route/addHub.xhtml" + REDIRECT;
+        return APS_URL + "route/addHub.xhtml" + REDIRECT;
     }
 
     public String toCancelHub() {
-        return "/views/secured/aps/route/cancelHub.xhtml" + REDIRECT;
+        return APS_URL + "route/cancelHub.xhtml" + REDIRECT;
     }
 
     public String toAddRoute() {
-        return "/views/secured/aps/route/addRoute.xhtml" + REDIRECT;
+        return APS_URL + "route/addRoute.xhtml" + REDIRECT;
     }
 
     public String toCheckRoute() {
-        return "/views/secured/aps/route/checkRouteExistence.xhtml" + REDIRECT;
+        return APS_URL + "route/checkRouteExistence.xhtml" + REDIRECT;
     }
 
     public String toGenerateRoute() {
-        return "/views/secured/aps/route/generateRoute.xhtml" + REDIRECT;
+        return APS_URL + "route/generateRoute.xhtml" + REDIRECT;
     }
 
     public String toCustomizeRoute() {
-        return "/views/secured/aps/route/customizeRoute.xhtml" + REDIRECT;
+        return APS_URL + "route/customizeRoute.xhtml" + REDIRECT;
     }
 
     public String toViewRoutes() {
-        return "/views/secured/aps/route/viewRoutes.xhtml" + REDIRECT;
+        return APS_URL + "route/viewRoutes.xhtml" + REDIRECT;
     }
 
     public String toViewObsoleteRoutes() {
-        return "/views/secured/aps/route/viewObsoleteRoute.xhtml" + REDIRECT;
+        return APS_URL + "route/viewObsoleteRoute.xhtml" + REDIRECT;
     }
 
     public String toAddAirport() {
-        return "/views/secured/aps/route/addAirport.xhtml" + REDIRECT;
+        return APS_URL + "route/addAirport.xhtml" + REDIRECT;
     }
 
     // Flight Scheduling
     public String toCreateFlight() {
-        return "/views/secured/aps/flight_schedule/createFlight.xhtml" + REDIRECT;
+        return APS_URL + "flight_schedule/createFlight.xhtml" + REDIRECT;
     }
 
     public String toFleetAssignment() {
-        return "/views/secured/aps/flight_schedule/fleetAssignment.xhtml";
+        return APS_URL + "flight_schedule/fleetAssignment.xhtml";
     }
 
     public String toFreqPlanning() {
-        return "/views/secured/aps/flight_schedule/freqPlanning.xhtml";
+        return APS_URL + "flight_schedule/freqPlanning.xhtml";
     }
 
     public String toConfirmFlight() {
-        return "/views/secured/aps/flight_schedule/confirmFlight.xhtml";
+        return APS_URL + "flight_schedule/confirmFlight.xhtml";
     }
 
     public String redirectToSelectFlight() {
-        return "/views/secured/aps/flight_schedule/selectFlight.xhtml" + REDIRECT;
+        return APS_URL + "flight_schedule/selectFlight.xhtml" + REDIRECT;
     }
 
     public String toSelectFlight() {
-        return "/views/secured/aps/flight_schedule/selectFlight.xhtml";
+        return APS_URL + "flight_schedule/selectFlight.xhtml";
     }
 
     public String toScheduleFlight() {
-        return "/views/secured/aps/flight_schedule/scheduleFlight.xhtml";
+        return APS_URL + "flight_schedule/scheduleFlight.xhtml";
     }
 
     public String redirectToScheduleFlight() {
-        return "/views/secured/aps/flight_schedule/scheduleFlight.xhtml" + REDIRECT;
+        return APS_URL + "flight_schedule/scheduleFlight.xhtml" + REDIRECT;
     }
 
     public String redirectToConfirmScheduleFlight() {
-        return "/views/secured/aps/flight_schedule/confirmFlightSchedule.xhtml" + REDIRECT;
+        return APS_URL + "flight_schedule/confirmFlightSchedule.xhtml" + REDIRECT;
     }
 
     public String toConfirmScheduleFlight() {
-        return "/views/secured/aps/flight_schedule/confirmFlightSchedule.xhtml";
+        return APS_URL + "flight_schedule/confirmFlightSchedule.xhtml";
     }
 
     public String redirectToCurrentPage() {

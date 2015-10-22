@@ -23,6 +23,7 @@ import managedbean.application.NavigationController;
 import mas.common.entity.Permission;
 import mas.common.util.exception.ExistSuchPermissionException;
 import mas.common.util.exception.NoSuchPermissionException;
+import mas.common.util.helper.PermissionHelper;
 import mas.common.util.helper.UserMsg;
 
 @Named(value = "permissionController")
@@ -33,7 +34,9 @@ public class PermissionController implements Serializable {
     NavigationController navigationController;
     @Inject
     MsgController msgController;
-    
+    @Inject
+    UserController userController;
+
     @EJB
     private SystemUserSessionLocal systemUserSession;
     @EJB
@@ -41,7 +44,7 @@ public class PermissionController implements Serializable {
 
     private List<String> permissionList;
     private String[] selectedPermissions;
-    
+
     /**
      * Creates a new instance of AccessControlManagedBean
      */
@@ -56,7 +59,7 @@ public class PermissionController implements Serializable {
     public List<Permission> getAllPermissions() {
         return permissionSession.getAllPermissions();
     }
-    
+
     public String createPermission(String system, String systemModule) {
         FacesContext context = FacesContext.getCurrentInstance();
         context.getExternalContext().getFlash().setKeepMessages(true);
@@ -69,7 +72,7 @@ public class PermissionController implements Serializable {
         return navigationController.redirectToCreatePermission();
     }
 
-    private void setPermissionList(){
+    private void setPermissionList() {
         List<Permission> permissions = getAllPermissions();
         permissionList = new ArrayList<>();
         for (Permission permission : permissions) {
@@ -77,7 +80,7 @@ public class PermissionController implements Serializable {
             permissionList.add(p);
         }
     }
-    
+
     private List<SelectItem> prepareItems(List<String> itemNames) {
         System.err.println("prepareItem(): before for loop");
         List<SelectItem> resultItems = new ArrayList<>();
@@ -88,11 +91,12 @@ public class PermissionController implements Serializable {
         return resultItems;
     }
 
-    public List<String> getSystemModuelsBySystem(String system){
-        return permissionSession.getSystemModulesBySystem(system);
+    public List<String> getSystemModuelsBySystem(String system) {
+//        return permissionSession.getSystemModulesBySystem(system);
+        return systemUserSession.getUserPermissionModules(userController.getUsername(), system);
     }
 
-    public String deletePermission(String system, String systemModule){
+    public String deletePermission(String system, String systemModule) {
         try {
             String permission = permissionSession.deletePermission(system, systemModule);
             msgController.addMessage("Delete " + permission + " successfully!");
@@ -102,12 +106,14 @@ public class PermissionController implements Serializable {
         return navigationController.redirectToViewAllPermission();
     }
     
+    public String getModuleUrl(PermissionHelper module){
+        return module.getUrl();
+    }
+
     //Getter and Setter
-    
     /**
      * @return the selectedUser
      */
-
     public List<String> getPermissionList() {
         return permissionList;
     }
@@ -124,6 +130,4 @@ public class PermissionController implements Serializable {
         this.selectedPermissions = selectedPermissions;
     }
 
-    
-    
 }
