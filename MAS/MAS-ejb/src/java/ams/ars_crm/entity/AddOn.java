@@ -14,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 
 /**
@@ -21,6 +23,7 @@ import javax.persistence.ManyToMany;
  * @author Bowen
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public class AddOn implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,17 +11,12 @@
         <ui:composition template="./../../../../template/AfosTemplate.xhtml">
 
             <ui:define name="content">
-                <h:form>
+                <h:form id="form">
                     <p:dataTable id="flight-crew-table" widgetVar="flightCrewTable" var="flightCrew" value="#{flightCrewBacking.flightCrews}" rows="15" tableStyleClass="table-small" rowKey="#{flightCrew.systemUserId}"
-                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15,20"
-                                 filteredValue="#{flightCrewBacking.filteredCars}">
+                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15,20">
                         <p:messages autoUpdate="true"/>
                         <f:facet name="header">
                             <p:outputLabel value="Flight Crew Profile"/>
-                            <p:outputPanel>
-                                <h:outputText value="Search Crew:" />
-                                <p:inputText id="globalFilter" onkeyup="PF('flightCrewTable').filter()" style="width:150px" placeholder="Enter keyword"/>
-                            </p:outputPanel>
                         </f:facet>
 
                         <p:column headerText="ID" sortBy="#{flightCrew.flightCrewID}">
@@ -58,14 +53,6 @@
                             </h:outputText>
                         </p:column>
 
-                        <p:column headerText="Total Flying Distance (Km)" sortBy="#{flightCrew.totalFlyingDist}">
-                            <h:outputText value="#{flightCrew.totalFlyingDist}" />
-                        </p:column>
-
-                        <p:column headerText="Total Flying Time (Hrs)" sortBy="#{flightCrew.totalFlyingTime}">
-                            <h:outputText value="#{flightCrew.totalFlyingTime}" />
-                        </p:column>
-
                         <p:column headerText="Phone" sortBy="#{flightCrew.phone}">
                             <h:outputText value="#{flightCrew.phone}" />
                         </p:column>
@@ -78,8 +65,15 @@
                             <h:outputText value="#{flightCrew.status}" />
                         </p:column>
 
+                        <p:column style="width:32px;text-align: center">
+                            <p:commandButton update="form" icon="ui-icon-search" title="View">
+                                <f:setPropertyActionListener value="#{car}" target="#{dtSelectionView.selectedCar}" />
+                            </p:commandButton>
+                        </p:column>
 
-
+                        <f:facet name="footer">
+                            <p:outputLabel/>
+                        </f:facet>
                     </p:dataTable>
                 </h:form>
             </ui:define>
