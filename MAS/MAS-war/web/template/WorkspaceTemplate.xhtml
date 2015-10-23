@@ -16,8 +16,6 @@
     </h:head>
 
     <h:body>
-
-        <me:CCNavigationMenu id="navigation-menu" />
         <p:growl id="messages" showDetail="true"/>
         <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
 
@@ -25,8 +23,11 @@
             <p:graphicImage name="/images/barloader.gif" />
         </p:dialog>
 
-        <p:layout >
-            <p:layoutUnit position="west" size="250" minSize="100" maxSize="400" resizable="false" style="height: 500px;">
+        <p:layout fullPage="true">
+            <p:layoutUnit position="north" size="65">
+                <me:CCNavigationMenu id="navigation-menu" />
+            </p:layoutUnit>
+            <p:layoutUnit position="west" size="250">
                 <me:CCLeftMenu id="left-menu" />
             </p:layoutUnit>
 

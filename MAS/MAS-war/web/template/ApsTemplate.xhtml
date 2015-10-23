@@ -15,10 +15,19 @@
     </h:head>
 
     <h:body>
-        <me:CCNavigationMenu id="navigation-menu" />
         <p:growl id="messages" showDetail="true"/>
-        <p:layout>
-            <p:layoutUnit position="west" resizable="false" size="220" minSize="100" maxSize="300">
+        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <p:graphicImage name="/images/barloader.gif" />
+        </p:dialog>
+        
+        <p:layout fullPage="true">
+            <p:layoutUnit position="north" size="65">
+                <me:CCNavigationMenu id="navigation-menu" />
+            </p:layoutUnit>
+            
+            <p:layoutUnit position="west" size="220">
                 <me:CCApsMenu id="aps-navigation-menu"/>
             </p:layoutUnit>
             
