@@ -42,6 +42,7 @@ public class SystemUser implements Serializable {
     private String department;
     private String phone;
     private String status;
+    private Boolean loggedIn;
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SystemRole> systemRoles = new ArrayList<>();
@@ -217,6 +218,20 @@ public class SystemUser implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    /**
+     * @return the loggedIn
+     */
+    public Boolean getLoggedIn() {
+        return loggedIn;
+    }
+
+    /**
+     * @param loggedIn the loggedIn to set
+     */
+    public void setLoggedIn(Boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 
 }
