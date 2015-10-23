@@ -3,35 +3,36 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.aps.entity;
+package ams.ars_crm.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 
 /**
  *
- * @author ChuningLiu
+ * @author Bowen
  */
 @Entity
-public class Country implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class AddOn implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String isoCode;
-    private String countryName;
-    private String dialingCode;
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="country")
-    private Collection<City> cities = new ArrayList<>();
     
+    private Long id;
+    private String description;
+    private String name;
+    private Double price;
+    
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "addOns")
+    private List<AirTicket> airTickets = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -39,39 +40,40 @@ public class Country implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public String getIsoCode() {
-        return isoCode;
+    
+    public String getDescription() {
+        return description;
     }
 
-    public void setIsoCode(String isoCode) {
-        this.isoCode = isoCode;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<AirTicket> getAirTickets() {
+        return airTickets;
+    }
+
+    public void setAirTickets(List<AirTicket> airTickets) {
+        this.airTickets = airTickets;
+    }    
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
     
-    public String getCountryName() {
-        return countryName;
-    }
     
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-    
-    public Collection<City> getCities() {
-        return cities;
-    }
-
-    public void setCities(Collection<City> cities) {
-        this.cities = cities;
-    }
-
-    public String getDialingCode() {
-        return dialingCode;
-    }
-
-    public void setDialingCode(String dialingCode) {
-        this.dialingCode = dialingCode;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -82,10 +84,10 @@ public class Country implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Country)) {
+        if (!(object instanceof AddOn)) {
             return false;
         }
-        Country other = (Country) object;
+        AddOn other = (AddOn) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -94,7 +96,8 @@ public class Country implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.Country[ id=" + id + " ]";
+        return "ams.ars_crm.entity.AddOn[ id=" + id + " ]";
     }
-
+    
+    
 }

@@ -3,16 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ais.entity;
+package ams.ars_crm.entity;
 
-import ams.ais.helper.BookingClassChannelId;
+import ams.ais.entity.BookingClass;
+import ams.ais.entity.helper.BookingClassChannelId;
+import ams.ars_crm.entity.Channel;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -22,14 +23,11 @@ import javax.persistence.Table;
  * @author winga_000
  */
 @Entity
-@IdClass(BookingClassChannelId.class)
 @Table(name = "BOOKINGCLASS_CHANNEL")
 public class BookingClassChannel implements Serializable {
  
-    @Id
-    private Long bookingClassId;
-    @Id
-    private Long channelId;
+    @EmbeddedId
+    private BookingClassChannelId bookingClassChannelId;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "BOOKINGCLASSID", referencedColumnName = "BOOKINGCLASSID")
@@ -41,22 +39,6 @@ public class BookingClassChannel implements Serializable {
 
     @Column(name = "STATUS")
     private String status;
-
-    public Long getBookingClassId() {
-        return bookingClassId;
-    }
-
-    public void setBookingClassId(Long bookingClassId) {
-        this.bookingClassId = bookingClassId;
-    }
-
-    public Long getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(Long channelId) {
-        this.channelId = channelId;
-    }
 
     public BookingClass getBookingClass() {
         return bookingClass;
@@ -81,6 +63,13 @@ public class BookingClassChannel implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
+    public BookingClassChannelId getBookingClassChannelId() {
+        return bookingClassChannelId;
+    }
+
+    public void setBookingClassChannelId(BookingClassChannelId bookingClassChannelId) {
+        this.bookingClassChannelId = bookingClassChannelId;
+    }
     
 }

@@ -11,7 +11,7 @@ import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.PhaseDemand;
 import ams.ais.entity.TicketFamily;
-import ams.ais.helper.FlightScheduleBookingClassId;
+import ams.ais.entity.helper.FlightScheduleBookingClassId;
 import ams.ais.util.exception.NeedBookingClassException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;

@@ -5,7 +5,7 @@
  */
 package ams.ais.entity;
 
-import ams.ais.helper.TicketFamilyRuleId;
+import ams.ais.entity.helper.TicketFamilyRuleId;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

@@ -6,6 +6,8 @@
 package ams.aps.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
+import ams.ars_crm.entity.Booking;
+import ams.ars_crm.entity.MktCampaign;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -46,6 +49,7 @@ public class FlightSchedule implements Serializable {
     private Boolean priced;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdTime;
+    private String status;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
@@ -57,7 +61,10 @@ public class FlightSchedule implements Serializable {
     private Flight flight;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightSchedule returnedFlightSchedule;
-    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
+    private List<Booking> bookings = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedules")
+    private List<MktCampaign> mktCampaigns = new ArrayList<>();
     
     public Long getFlightScheduleId() {
         return flightScheduleId;
@@ -260,5 +267,29 @@ public class FlightSchedule implements Serializable {
 
     public void setReturnedFlightSchedule(FlightSchedule returnedFlightSchedule) {
         this.returnedFlightSchedule = returnedFlightSchedule;
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(List<Booking> bookings) {
+        this.bookings = bookings;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<MktCampaign> getMktCampaigns() {
+        return mktCampaigns;
+    }
+
+    public void setMktCampaigns(List<MktCampaign> mktCampaigns) {
+        this.mktCampaigns = mktCampaigns;
     }
 }

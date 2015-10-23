@@ -5,7 +5,7 @@
  */
 package ams.ais.entity;
 
-import ams.ais.helper.FlightScheduleBookingClassId;
+import ams.ais.entity.helper.FlightScheduleBookingClassId;
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
 import java.util.ArrayList;

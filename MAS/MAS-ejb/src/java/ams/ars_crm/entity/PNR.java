@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.aps.entity;
+package ams.ars_crm.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,61 +15,32 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
- * @author ChuningLiu
+ * @author weiming
  */
 @Entity
-public class Country implements Serializable {
+public class PNR implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String isoCode;
-    private String countryName;
-    private String dialingCode;
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="country")
-    private Collection<City> cities = new ArrayList<>();
-    
+    private String pnrNo;
+
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Booking booking;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Customer> customers = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getIsoCode() {
-        return isoCode;
-    }
-
-    public void setIsoCode(String isoCode) {
-        this.isoCode = isoCode;
-    }
-    
-    public String getCountryName() {
-        return countryName;
-    }
-    
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-    
-    public Collection<City> getCities() {
-        return cities;
-    }
-
-    public void setCities(Collection<City> cities) {
-        this.cities = cities;
-    }
-
-    public String getDialingCode() {
-        return dialingCode;
-    }
-
-    public void setDialingCode(String dialingCode) {
-        this.dialingCode = dialingCode;
     }
 
     @Override
@@ -82,10 +53,10 @@ public class Country implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Country)) {
+        if (!(object instanceof PNR)) {
             return false;
         }
-        Country other = (Country) object;
+        PNR other = (PNR) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -94,7 +65,30 @@ public class Country implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.aps.entity.Country[ id=" + id + " ]";
+        return "ams.ars_crm.entity.PNR[ id=" + id + " ]";
     }
 
+    public String getPnrNo() {
+        return pnrNo;
+    }
+
+    public void setPnrNo(String pnrNo) {
+        this.pnrNo = pnrNo;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
+
+    public List<Customer> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(List<Customer> customers) {
+        this.customers = customers;
+    }
 }
