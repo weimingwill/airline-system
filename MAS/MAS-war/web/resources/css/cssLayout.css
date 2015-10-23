@@ -403,11 +403,20 @@ tr.hide{
 }
 
 .loginPanel{
-        margin: 4%;
+    margin: 4%;
     background: rgba(251, 251, 252, 0.66);
     max-width: 330px; 
 }
 
 permissionLink.a:link, permissionLink.a:visited {
     color: white !important;
+}
+
+.ui-layout-north {
+    z-index:20 !important;
+    overflow:visible !important;;
+}
+
+.ui-layout-north .ui-layout-unit-content {
+    overflow:visible !important;
 }

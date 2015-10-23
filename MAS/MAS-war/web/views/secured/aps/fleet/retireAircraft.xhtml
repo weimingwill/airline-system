@@ -7,11 +7,11 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:fo="http://xmlns.jcp.org/jsf/composite/ezcomp/form"
                 xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
-                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+                xmlns:ri="http://xmlns.jcp.org/jsf/composite/ezcomp/ribbon">
 
     <ui:define name="content">
         <h:form id="form">
-            <ez:CCRetireAircraftFilterRibbon/>
+            <ri:CCRetireAircraftFilterRibbon/>
             <p:separator/>
             <p:dataTable id="retire-fleet-table" var="aircraft" value="#{fleetTableController.fleetList}" rows="5" selection="#{fleetTableController.selectedAircrafts}" 
                          paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"

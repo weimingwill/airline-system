@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation id="leftMenu">
+        <c:set value="Cabin Crew" var="cabinCrew"/>
+        <c:set value="Cockpit Crew" var="cockpitCrew"/>
+        <c:set value="Maintenance Crew" var="maintCrew"/>
+        <c:set value="Flight Crew Manager" var="flightCrewManager"/>
+        <c:set value="Maintenance Crew Manager" var="maintCrewManager"/>
+        
+        <h:form>
+            <p:panelMenu style="width:240px;">
+                <p:submenu label="Flight Crew Management" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(flightCrewManager)}">
+                    <p:submenu label="Flight Crew Regulation" expanded="true">
+                        <p:menuitem value="Crew Profile" action="#{afosNavController.toViewCrewProfile()}"/>
+                        <p:menuitem value="Crew Checklist"/>
+                        <p:menuitem value="Crew Reporting"/>
+                    </p:submenu>
+                    <p:submenu label="Flight Crew Scheduling" expanded="true">
+                        <p:menuitem value="Manage Bidding"/>
+                        <p:menuitem value="View Bidding History"/>
+                        <p:menuitem value="Swap Slots"/>
+                    </p:submenu>
+                </p:submenu>
+                
+                <p:submenu label="Maintenance Management" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(maintCrewManager)}">
+                    <p:submenu label="Maintenance Crew Regulation" expanded="true">
+                        <p:menuitem value="Crew Profile"/>
+                        <p:menuitem value="Crew Checklist"/>
+                    </p:submenu>
+                    <p:submenu label="Maintenance Crew Scheduling" expanded="true">
+                        <p:menuitem value="Maintenance Schedule"/>
+                    </p:submenu>
+                </p:submenu>
+                
+                
+                <p:submenu label="Bidding Management" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(cabinCrew) or userController.hasRole(cockpitCrew)}">
+                    <p:menuitem value="Place Standing Bid"/>
+                    <p:menuitem value="Bid for Lines"/>
+                    <p:menuitem value="View Bid Result"/>
+                    <p:menuitem value="Request for Swapping"/>
+                </p:submenu>
+
+                <p:submenu label="Reporting" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(cabinCrew) or userController.hasRole(cockpitCrew)}">
+                    <p:menuitem value="Pre-flight Reporting"/>
+                    <p:menuitem value="Post-flight Reporting"/>
+                </p:submenu>
+
+                <p:submenu label="Task Management" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(maintCrew)}">
+                    <p:menuitem value="View Tasks"/>
+                    <p:menuitem value="Report Maintenance Tasks"/>
+                </p:submenu>
+            </p:panelMenu>
+        </h:form>    
+    </cc:implementation>
+</html>

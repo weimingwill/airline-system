@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ais.helper;
+package ams.ais.entity.helper;
 
-import ams.aps.helper.AircraftCabinClassId;
+import ams.aps.entity.helper.AircraftCabinClassId;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

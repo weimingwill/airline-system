@@ -15,7 +15,7 @@
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <h:form id="navigationMenu">
-            <p:menubar style="font-size: larger" styleClass="navigationMenu">
+            <p:menubar style="font-size: 15px" styleClass="navigationMenu">
                 <p:menuitem value="Merline Airline" url="#{navigationController.redirectToHome()}">
                     <p:commandLink action="#{navigationController.redirectToHome()}">
                         <p:graphicImage value="/resources/images/logo.png" height="45px" width="auto"/>
@@ -36,7 +36,7 @@
                     <p:menuitem  value="Change password" url="#{navigationController.redirectToChangePassword()}" />
                 </p:submenu>
                 <f:facet name="options">
-                    <p:outputLabel value="Welcome: #{loginController.username} [From #{userController.department}]! " rendered="#{loginController.loggedIn}"/>
+                    <p:outputLabel value="Welcome: #{loginController.username} [#{userController.department}]! " rendered="#{loginController.loggedIn}"/>
                     <p:commandButton action="#{navigationController.redirectToLogin()}" value="Login" rendered="#{not loginController.loggedIn}" icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>
                     <p:commandButton action="#{loginController.doLogout()}" value="Logout" rendered="#{loginController.loggedIn}" icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>
                 </f:facet>

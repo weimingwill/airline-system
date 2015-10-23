@@ -8,8 +8,6 @@ package managedbean.ais;
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.Rule;
-import static ams.ais.entity.Rule_.name;
-import ams.ais.session.BookingClassSession;
 import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.session.CabinClassSessionLocal;
 import ams.ais.session.RuleSessionLocal;

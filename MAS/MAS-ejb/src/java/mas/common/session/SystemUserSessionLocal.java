@@ -116,4 +116,6 @@ public interface SystemUserSessionLocal {
     public void doLogin(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException;
     
     public void doLogout(String username) throws NoSuchUsernameException;
+    
+    public List<String> getUserPermissionModules(String username, String systemName);
 }

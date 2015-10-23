@@ -28,11 +28,9 @@ public class CabinClass implements Serializable {
     private String type;
     private String name;
     private Boolean deleted;
-
-    
-    
-    
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")
+    private String milePolicy;
+    private Double percentage;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")            
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
     
     public void create(String type, String name) {
@@ -79,6 +77,22 @@ public class CabinClass implements Serializable {
 
     public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
         this.ticketFamilys = ticketFamilys;
+    }
+
+    public String getMilePolicy() {
+        return milePolicy;
+    }
+
+    public void setMilePolicy(String milePolicy) {
+        this.milePolicy = milePolicy;
+    }
+
+    public Double getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Double percentage) {
+        this.percentage = percentage;
     }
 
     @Override

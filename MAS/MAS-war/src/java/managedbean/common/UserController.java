@@ -245,14 +245,14 @@ public class UserController implements Serializable {
         return systemUserSession.getUserPermissionSystems(username);
     }
 
-    public List<PermissionHelper> getPermissionHelpers(){
+    public List<PermissionHelper> getPermissionHelpers() {
         return systemUserSession.getPermissionHelpers(username);
     }
-    
+
     public boolean canAccessAMS() {
         return !systemUserSession.getPermissionHelpers(username).isEmpty();
     }
-    
+
     public void initializeUser() {
         try {
             SystemUser user = getUserByUsername();

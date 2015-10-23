@@ -6,8 +6,8 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ti="http://xmlns.jcp.org/jsf/composite/ezcomp/tile">
 
     <ui:define name="title">
         User Workspace
@@ -22,8 +22,10 @@
                         <p:link outcome="#{permission.url}" styleClass="permissionLink" value="#{permission.name}" style="font-size: larger; color: white;" />
                     </f:facet>
                     <h:panelGrid columns="5" class="modulePanelTable" styleClass="padding" style="border:transparent; padding-top: 15px">
-                        <c:forEach items="#{permissionController.getSystemModuelsBySystem(permission.name)}" var="module">
-                            <ez:CCSystemModuleTile header="#{module}"/>
+                        <c:forEach items="#{permission.permissions}" var="module">
+                            <p:commandLink action="#{permissionController.getModuleUrl(module)}">
+                                <ti:CCSystemModuleTile header="#{module.name}"/>
+                            </p:commandLink>
                         </c:forEach>
                     </h:panelGrid>
                 </p:panel>

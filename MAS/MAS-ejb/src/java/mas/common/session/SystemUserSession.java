@@ -29,6 +29,7 @@ import mas.common.util.exception.NoSuchResetDigestException;
 import mas.common.util.exception.NoSuchRoleException;
 import mas.common.util.exception.UserInUseException;
 import mas.common.util.helper.CreateToken;
+import mas.common.util.helper.NavigationUrlHelper;
 import mas.common.util.helper.PermissionHelper;
 import mas.common.util.helper.PermissionNamesHelper;
 import mas.common.util.helper.SystemMsgHelper;
@@ -411,23 +412,57 @@ public class SystemUserSession implements SystemUserSessionLocal {
         for (String system : getUserPermissionSystems(username)) {
             PermissionHelper permissionHelper = new PermissionHelper();
             permissionHelper.setName(system);
+            setSystemUrl(system, permissionHelper);
 
-            List<PermissionHelper> moduels = new ArrayList<>();
-            for (String module : permissionSession.getSystemModulesBySystem(system)) {
+            List<PermissionHelper> modules = new ArrayList<>();
+            List<String> systemModules = getUserPermissionModules(username, system);
+            for (String module : systemModules) {
                 PermissionHelper m = new PermissionHelper();
                 m.setName(module);
-                if (system.equals(PermissionNamesHelper.APS)) {
-                    permissionHelper.setUrl(PermissionNamesHelper.APS_URL);
-                    m.setUrl(PermissionNamesHelper.APS_URL);
-                } else if (system.equals(PermissionNamesHelper.AIS)) {
-                    permissionHelper.setUrl(PermissionNamesHelper.AIS_URL);
-                    m.setUrl(PermissionNamesHelper.AIS_URL);
-                }
+                setModuleUrl(module, m);
+                modules.add(m);
             }
-            permissionHelper.setPermissions(moduels);
+            permissionHelper.setPermissions(modules);
             permissionHelpers.add(permissionHelper);
         }
         return permissionHelpers;
+    }
+
+    private void setSystemUrl(String system, PermissionHelper permissionHelper) {
+        switch (system) {
+            case PermissionNamesHelper.APS:
+                permissionHelper.setUrl(NavigationUrlHelper.APS_URL);
+                break;
+            case PermissionNamesHelper.AIS:
+                permissionHelper.setUrl(NavigationUrlHelper.AIS_URL);
+                break;
+            case PermissionNamesHelper.AFOS:
+                permissionHelper.setUrl(NavigationUrlHelper.AFOS_URL);
+                break;
+        }
+    }
+
+    private void setModuleUrl(String system, PermissionHelper permissionHelper) {
+        switch (system) {
+            case PermissionNamesHelper.FLEET_PLANNING:
+                permissionHelper.setUrl(NavigationUrlHelper.APS_FP_URL);
+                break;
+            case PermissionNamesHelper.FLIGHT_SCHEDULING:
+                permissionHelper.setUrl(NavigationUrlHelper.APS_FS_URL);
+                break;
+            case PermissionNamesHelper.ROUTE_PLANNING:
+                permissionHelper.setUrl(NavigationUrlHelper.APS_RP_URL);
+                break;
+            case PermissionNamesHelper.PRODUCT_DESIGNE:
+                permissionHelper.setUrl(NavigationUrlHelper.AIS_PD_URL);
+                break;
+            case PermissionNamesHelper.REVENUE_MANAGMENT:
+                permissionHelper.setUrl(NavigationUrlHelper.AIS_RM_URL);
+                break;
+            default:
+                permissionHelper.setUrl(NavigationUrlHelper.AFOS_URL);
+                break;
+        }
     }
 
     @Override
@@ -530,4 +565,18 @@ public class SystemUserSession implements SystemUserSessionLocal {
         entityManager.merge(user);
     }
 
+    @Override
+    public List<String> getUserPermissionModules(String username, String systemName) {
+        Query q = entityManager.createQuery("SELECT DISTINCT(p.systemModule) FROM Permission p, SystemRole r, SystemUser u WHERE u.username = :inUsername AND r MEMBER OF u.systemRoles AND p MEMBER OF r.permissions AND p.system = :inSystemName");
+        q.setParameter("inUsername", username);
+        q.setParameter("inSystemName", systemName);
+        try {
+            List<String> modules;
+            modules = (List<String>) q.getResultList();
+            return modules;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

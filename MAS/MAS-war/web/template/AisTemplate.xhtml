@@ -11,13 +11,23 @@
         <h:outputStylesheet name="./css/default.css"/>
         <h:outputStylesheet name="./css/cssLayout.css"/>
         <title><ui:insert name="title">Airline Inventory System</ui:insert></title>
+        <link rel="shortcut icon" type="image/x-icon" href="/MAS-war/resources/images/favicon.ico"/>
     </h:head>
 
     <h:body>
-        <me:CCNavigationMenu id="navigation-menu" />
         <p:growl id="messages" showDetail="true"/>
-        <p:layout>
-            <p:layoutUnit position="west" resizable="false" size="220" minSize="100" maxSize="300">
+        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <p:graphicImage name="/images/barloader.gif" />
+        </p:dialog>
+        
+        <p:layout fullPage="true">
+            <p:layoutUnit position="north" size="65">
+                <me:CCNavigationMenu id="navigation-menu" />
+            </p:layoutUnit>
+            
+            <p:layoutUnit position="west" size="220">
                 <me:CCAisMenu id="aps-navigation-menu"/>
             </p:layoutUnit>
             
