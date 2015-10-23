@@ -8,32 +8,24 @@ package ams.dcs.entity;
 import ams.ars.entity.AddOn;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  *
  * @author ChuningLiu
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Luggage extends AddOn implements Serializable {
-    private static final long serialVersionUID = 1L;
-    
-    private double weight;
 
-    /**
-     * @return the weight
-     */
-    public double getWeight() {
+    private Double weight;
+
+    public Double getWeight() {
         return weight;
     }
 
-    /**
-     * @param weight the weight to set
-     */
-    public void setWeight(double weight) {
+    public void setWeight(Double weight) {
         this.weight = weight;
     }
-    
 }
