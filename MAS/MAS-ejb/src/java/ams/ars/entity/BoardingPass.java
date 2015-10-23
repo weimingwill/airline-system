@@ -3,25 +3,29 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.ars.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
  * @author Bowen
  */
 @Entity
-public class Seat implements Serializable {
+public class BoardingPass implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer rowNo;
-    private String colNo;
+    private String boardingGate;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date boardingTime;
 
     public Long getId() {
         return id;
@@ -31,20 +35,21 @@ public class Seat implements Serializable {
         this.id = id;
     }
     
-    public Integer getRowNo() {
-        return rowNo;
+    
+    public String getBoardingGate() {
+        return boardingGate;
     }
 
-    public void setRowNo(Integer rowNo) {
-        this.rowNo = rowNo;
+    public void setBoardingGate(String boardingGate) {
+        this.boardingGate = boardingGate;
     }
 
-    public String getColNo() {
-        return colNo;
+    public Date getBoardingTime() {
+        return boardingTime;
     }
 
-    public void setColNo(String colNo) {
-        this.colNo = colNo;
+    public void setBoardingTime(Date boardingTime) {
+        this.boardingTime = boardingTime;
     }
     
     @Override
@@ -57,10 +62,10 @@ public class Seat implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Seat)) {
+        if (!(object instanceof BoardingPass)) {
             return false;
         }
-        Seat other = (Seat) object;
+        BoardingPass other = (BoardingPass) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -69,7 +74,7 @@ public class Seat implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.Seat[ id=" + id + " ]";
+        return "ams.ars_crm.entity.BoardingPass[ id=" + id + " ]";
     }
     
 }

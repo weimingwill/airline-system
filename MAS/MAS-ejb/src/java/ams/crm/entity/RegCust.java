@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.crm.entity;
 
-import ams.ars_crm.entity.helper.Phone;
+import ams.crm.entity.helper.Phone;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

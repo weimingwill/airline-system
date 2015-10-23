@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.ars.entity;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.helper.BookingClassChannelId;
-import ams.ars_crm.entity.Channel;
+import ams.ars.entity.Channel;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

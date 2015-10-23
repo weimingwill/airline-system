@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.crm.entity;
 
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;

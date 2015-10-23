@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.ars.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,25 +14,23 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 
 /**
  *
- * @author Tongtong
+ * @author Bowen
  */
 @Entity
-public class Membership implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class PricingItem implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private double entranceCV;
-
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "membership")
-    private List<PrivilegeValue> privilegeValues = new ArrayList<>();
-
+    private Double itemValue;
+    
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pricingItems")
+    private List<AirTicket> airTickets = new ArrayList<>();
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -43,10 +41,10 @@ public class Membership implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Membership)) {
+        if (!(object instanceof PricingItem)) {
             return false;
         }
-        Membership other = (Membership) object;
+        PricingItem other = (PricingItem) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -55,7 +53,7 @@ public class Membership implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.MembershipClass[ id=" + id + " ]";
+        return "ams.ars_crm.entity.PricingItem[ id=" + id + " ]";
     }
 
     public Long getId() {
@@ -74,21 +72,20 @@ public class Membership implements Serializable {
         this.name = name;
     }
 
-    public double getEntranceCV() {
-        return entranceCV;
+    public List<AirTicket> getAirTickets() {
+        return airTickets;
     }
 
-    public void setEntranceCV(double entranceCV) {
-        this.entranceCV = entranceCV;
+    public void setAirTickets(List<AirTicket> airTickets) {
+        this.airTickets = airTickets;
     }
 
-    public List<PrivilegeValue> getPrivilegeValues() {
-        return privilegeValues;
+    public Double getItemValue() {
+        return itemValue;
     }
 
-    public void setPrivilegeValues(List<PrivilegeValue> privilegeValues) {
-        this.privilegeValues = privilegeValues;
+    public void setItemValue(Double itemValue) {
+        this.itemValue = itemValue;
     }
-
     
 }

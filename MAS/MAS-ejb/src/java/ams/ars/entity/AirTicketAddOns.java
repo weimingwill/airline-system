@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.ars.entity;
 
-import ams.ars_crm.entity.helper.AirTicketAddOnId;
+import ams.crm.entity.helper.AirTicketAddOnId;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

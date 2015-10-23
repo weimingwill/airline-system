@@ -3,32 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.ars.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  *
  * @author Bowen
  */
 @Entity
-public class BookingTrans implements Serializable {
-    
+public class Seat implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date createdTime;
-    private String paymentType;
-    private String paymentInfo;
-   
+    private Integer rowNo;
+    private String colNo;
 
     public Long getId() {
         return id;
@@ -38,28 +31,20 @@ public class BookingTrans implements Serializable {
         this.id = id;
     }
     
-    public Date getCreatedTime() {
-        return createdTime;
+    public Integer getRowNo() {
+        return rowNo;
     }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
+    public void setRowNo(Integer rowNo) {
+        this.rowNo = rowNo;
     }
 
-    public String getPaymentType() {
-        return paymentType;
+    public String getColNo() {
+        return colNo;
     }
 
-    public void setPaymentType(String paymentType) {
-        this.paymentType = paymentType;
-    }
-
-    public String getPaymentInfo() {
-        return paymentInfo;
-    }
-
-    public void setPaymentInfo(String paymentInfo) {
-        this.paymentInfo = paymentInfo;
+    public void setColNo(String colNo) {
+        this.colNo = colNo;
     }
     
     @Override
@@ -72,10 +57,10 @@ public class BookingTrans implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof BookingTrans)) {
+        if (!(object instanceof Seat)) {
             return false;
         }
-        BookingTrans other = (BookingTrans) object;
+        Seat other = (Seat) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -84,7 +69,7 @@ public class BookingTrans implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.Transaction[ id=" + id + " ]";
+        return "ams.ars_crm.entity.Seat[ id=" + id + " ]";
     }
     
 }
