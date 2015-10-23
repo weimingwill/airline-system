@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AisTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Create Booking Class
+    </ui:define>
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Add Booking Class
+        </f:facet>
+        <h:form id="createBookingClassForm">
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Booking class name: "/>
+                <p:inputText value="#{bookingClassController.bookingClassName}"/>
+                <p:outputLabel for="type" value="Ticket Family:" />
+                <p:selectOneMenu id="type" var="bc" value="#{bookingClassController.selectedTicketFamily}" converter="ticketFamilyConverter" style="width:300px" filter="true" filterMatchMode="startsWith">
+                    <f:selectItem itemLabel="Select" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{bookingClassController.allTicketFamily}" var="ticketFamily" itemLabel="#{ticketFamily.type}-#{ticketFamily.name}"/>
+                    <p:column>
+                        <h:outputText value="#{bc.type}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{bc.cabinClass.name}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{bc.name}"/>
+                    </p:column>
+                </p:selectOneMenu>
+            </p:panelGrid>
+
+            <p:separator/>
+            <p:commandButton action="#{bookingClassController.createBookingClass()}" value="Create" update="messages" />
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -5,7 +5,7 @@
  */
 package ams.dcs.entity;
 
-import ams.ars_crm.entity.AddOn;
+import ams.ars.entity.AddOn;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

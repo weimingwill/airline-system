@@ -6,8 +6,8 @@
 package ams.aps.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
-import ams.ars_crm.entity.Booking;
-import ams.ars_crm.entity.MktCampaign;
+import ams.ars.entity.Booking;
+import ams.crm.entity.MktCampaign;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;

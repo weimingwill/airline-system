@@ -23,7 +23,7 @@ import managedbean.common.LoginController;
  *
  * @author winga_000
  */
-//@WebFilter(filterName = "LoginFilter", urlPatterns = {"/views/secured/*"})
+//@WebFilter(filterName = "LoginFilter", urlPatterns = {"/views/internal/secured/*"})
 public class LoginFilter implements Filter{
     
     @Inject

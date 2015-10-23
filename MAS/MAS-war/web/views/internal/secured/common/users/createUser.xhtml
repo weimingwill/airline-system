@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/WorkspaceTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="botDetectFacelets">
+
+    <ui:define name="title">
+        Create new user
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="createUserForm">
+            <p:panel header="Creat User">
+                <p:panelGrid columns="2">
+                    <p:panel header="Basic information">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="username" value="Username"/>
+                            <p:inputText class="userProfileInput" required="true" requiredMessage="Please enter username" id="username" binding="#{newUsername}"/>
+                            
+                            <p:outputLabel for="name" value="Name"/>
+                            <p:inputText class="userProfileInput" required="true" requiredMessage="Please enter name" id="name" binding="#{newName}"/>           
+                            
+                            <p:outputLabel for="email" value="Email"/>
+                            <p:inputText class="userProfileInput" required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" id="email" binding="#{newEmail}">
+                                <p:ajax update="messages" event="blur" />
+                                <f:validateRegex
+                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                            </p:inputText>
+                            
+                            <h:outputText value="Phone"/>
+                            <p:inputMask id="phone" mask="99999999" class="userProfileInput"  binding="#{newPhone}" >
+                                <p:tooltip id="phone_tooltip" for="phone" showEvent="focus" hideEvent="blur" 
+                                           value="Phone number must be 8-digit number"/>
+                            </p:inputMask>                           
+                            
+                            <h:outputText value="Address"/>
+                            <p:inputText class="userProfileInput" binding="#{newAddress}"/>
+                            
+                            <p:outputLabel for="department" value="Department"/>
+                            <p:inputText class="userProfileInput" id="department" required="true" requiredMessage="Please enter department" binding="#{newDepartment}"/>
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:panel header="Select Roles">
+                        <p:selectManyMenu id="advanced" value="#{userController.roleList}" converter="roleConverter"
+                                          var="role" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:100%; min-width: 400px">
+                            <f:selectItems value="#{roleController.roles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}"/>
+                            <p:ajax update="permissionTable"/>
+                            <p:column>
+                                <p:outputLabel value="#{role.roleName}"  />
+                            </p:column>
+                        </p:selectManyMenu>
+                    </p:panel>
+
+                </p:panelGrid>
+                <p:dataTable id="permissionTable" value="#{userController.roleList}" var="role" emptyMessage="No role selected" class="userRoleDataTable" tableStyleClass="table-small-font">
+                    <f:facet name="header">
+                        Role Permissions
+                    </f:facet>
+                    <p:column headerText="Roles">
+                        <h:outputText value="#{role.roleName}" />
+                    </p:column>
+
+                    <p:column headerText="Permisssions">
+                        <p:dataTable value="#{roleController.getRolePermissionsByRoleName(role.roleName)}" var="permission">
+                            <p:column>
+                                <p:outputLabel value="#{permission.permissionName}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:dataTable>                
+
+                <p:commandButton action="#{userController.createUser(newUsername.value, newName.value, 
+                                           newEmail.value, newPhone.value, newAddress.value, newDepartment.value)}" value="Create" update="messages"/>    
+
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

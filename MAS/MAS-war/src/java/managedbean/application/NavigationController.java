@@ -20,9 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 public class NavigationController implements Serializable {
 
     private final String REDIRECT = "?faces-redirect=true";
-    private final String COMMON_URL = "/views/secured/common/";
-    private final String APS_URL = "/views/secured/aps/";
-    private final String AIS_URL = "/views/secured/ais/";
+    private final String COMMON_URL = "/views/internal/secured/common/";
+    private final String APS_URL = "/views/internal/secured/aps/";
+    private final String AIS_URL = "/views/internal/secured/ais/";
     
 
     
@@ -392,8 +392,4 @@ public class NavigationController implements Serializable {
         return uri + REDIRECT;
     }
 
-    //CRM
-    public String redirectToCRM() {
-        return "/views/secured/crm/crmMain.xhtml" + REDIRECT;
-    }
 }
