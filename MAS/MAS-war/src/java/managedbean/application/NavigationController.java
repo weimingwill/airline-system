@@ -23,10 +23,9 @@ public class NavigationController implements Serializable {
     private final String COMMON_URL = "/views/secured/common/";
     private final String APS_URL = "/views/secured/aps/";
     private final String AIS_URL = "/views/secured/ais/";
-    private final String AFOS_URL = "/views/secured/afos/";
-
     
 
+    
     public NavigationController() {
     }
 
@@ -385,7 +384,7 @@ public class NavigationController implements Serializable {
     public String toConfirmScheduleFlight() {
         return APS_URL + "flight_schedule/confirmFlightSchedule.xhtml";
     }
-
+    
     public String redirectToCurrentPage() {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String uri = request.getRequestURI();
