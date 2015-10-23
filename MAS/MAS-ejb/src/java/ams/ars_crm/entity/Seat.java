@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 
 /**
  *
@@ -23,8 +22,6 @@ public class Seat implements Serializable {
     private Long id;
     private Integer rowNo;
     private String colNo;
-    @OneToOne(mappedBy="seat")
-    private AirTicket airTicket;
 
     public Long getId() {
         return id;
@@ -50,13 +47,6 @@ public class Seat implements Serializable {
         this.colNo = colNo;
     }
     
-    public AirTicket getAirTicket() {
-        return airTicket;
-    }
-
-    public void setAirTicket(AirTicket airTicket) {
-        this.airTicket = airTicket;
-    }
     @Override
     public int hashCode() {
         int hash = 0;

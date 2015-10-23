@@ -5,6 +5,8 @@
  */
 package ams.ars_crm.entity;
 
+import ams.ais.entity.FlightScheduleBookingClass;
+import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +16,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -29,15 +31,16 @@ public class AirTicket implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String ticketNo;
+    private String status;
     
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Booking booking;
     
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "airTicket")
-    private List<AirTicketAddOn> airTicketAddOns = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<AddOn> addOns = new ArrayList<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "airTicket")
-    private List<AirTicketPricingItem> airTicketPricingItems = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<PricingItem> pricingItems = new ArrayList<>();
     
     @OneToOne(cascade={CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private Seat seat;
@@ -45,6 +48,12 @@ public class AirTicket implements Serializable {
     @OneToOne(cascade={CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private BoardingPass boardingPass;
 
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Customer customer;
+    
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private FlightScheduleBookingClass flightScheduleBookingClass;
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -69,6 +78,85 @@ public class AirTicket implements Serializable {
     public String toString() {
         return "ams.ars_crm.entity.Airticket[ id=" + id + " ]";
     }
-    
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTicketNo() {
+        return ticketNo;
+    }
+
+    public void setTicketNo(String ticketNo) {
+        this.ticketNo = ticketNo;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
+
+    public List<AddOn> getAddOns() {
+        return addOns;
+    }
+
+    public void setAddOns(List<AddOn> addOns) {
+        this.addOns = addOns;
+    }
+
+    public List<PricingItem> getPricingItems() {
+        return pricingItems;
+    }
+
+    public void setPricingItems(List<PricingItem> pricingItems) {
+        this.pricingItems = pricingItems;
+    }
+
+    public Seat getSeat() {
+        return seat;
+    }
+
+    public void setSeat(Seat seat) {
+        this.seat = seat;
+    }
+
+    public BoardingPass getBoardingPass() {
+        return boardingPass;
+    }
+
+    public void setBoardingPass(BoardingPass boardingPass) {
+        this.boardingPass = boardingPass;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public FlightScheduleBookingClass getFlightScheduleBookingClass() {
+        return flightScheduleBookingClass;
+    }
+
+    public void setFlightScheduleBookingClass(FlightScheduleBookingClass flightScheduleBookingClass) {
+        this.flightScheduleBookingClass = flightScheduleBookingClass;
+    }
     
 }

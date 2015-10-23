@@ -5,7 +5,7 @@
  */
 package ams.ars_crm.entity;
 
-import ams.ars_crm_entity.helper.AirTicketPricingItemId;
+import ams.ars_crm_entity.helper.AirTicketAddOnId;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,27 +20,35 @@ import javax.persistence.PrimaryKeyJoinColumn;
  * @author weiming
  */
 @Entity
-public class AirTicketPricingItem implements Serializable {
+public class AirTicketAddOns implements Serializable {
     @EmbeddedId
-    private AirTicketPricingItemId airTicketPricingItemId;
+    private AirTicketAddOnId airTicketAddOnId;
     
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "AIRTICKETID", referencedColumnName = "ID")
     private AirTicket airTicket;
     
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @PrimaryKeyJoinColumn(name = "PRICINGITEMID", referencedColumnName = "ID")
-    private PricingItem pricingItem;
+    @PrimaryKeyJoinColumn(name = "ADDONID", referencedColumnName = "ID")
+    private AddOn addOn;
     
     @Column(name = "PRICE")
     private Double price;
 
-    public AirTicketPricingItemId getAirTicketPricingItemId() {
-        return airTicketPricingItemId;
+    public AirTicketAddOnId getAirTicketAddOnId() {
+        return airTicketAddOnId;
     }
 
-    public void setAirTicketPricingItemId(AirTicketPricingItemId airTicketPricingItemId) {
-        this.airTicketPricingItemId = airTicketPricingItemId;
+    public void setAirTicketAddOnId(AirTicketAddOnId airTicketAddOnId) {
+        this.airTicketAddOnId = airTicketAddOnId;
+    }
+    
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public AirTicket getAirTicket() {
@@ -51,20 +59,12 @@ public class AirTicketPricingItem implements Serializable {
         this.airTicket = airTicket;
     }
 
-    public PricingItem getPricingItem() {
-        return pricingItem;
+    public AddOn getAddOn() {
+        return addOn;
     }
 
-    public void setPricingItem(PricingItem pricingItem) {
-        this.pricingItem = pricingItem;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
+    public void setAddOn(AddOn addOn) {
+        this.addOn = addOn;
     }
     
 }

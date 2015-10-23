@@ -23,13 +23,11 @@ public class PromotionCode implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String code;
+    private String name;
     private Double percentage;
-    private Double voucherValue;
+    private Double promoValue;
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private MktCampaign mktCampaign;
-
-    
     
 
     public Long getId() {
@@ -38,14 +36,6 @@ public class PromotionCode implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-    
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public Double getPercentage() {
@@ -56,12 +46,20 @@ public class PromotionCode implements Serializable {
         this.percentage = percentage;
     }
 
-    public Double getVoucherValue() {
-        return voucherValue;
+    public String getName() {
+        return name;
     }
 
-    public void setVoucherValue(Double voucherValue) {
-        this.voucherValue = voucherValue;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Double getPromoValue() {
+        return promoValue;
+    }
+
+    public void setPromoValue(Double promoValue) {
+        this.promoValue = promoValue;
     }
     
     public MktCampaign getMktCampaign() {

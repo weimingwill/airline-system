@@ -11,20 +11,23 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
  * @author Tongtong
  */
 @Entity
-public class MileTransaction implements Serializable {
+public class MileTrans implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String type;
-    private Date creationTime;
-    private double amount;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date createdTime;
+    private Double amount;
     private String description;
     
 
@@ -44,22 +47,22 @@ public class MileTransaction implements Serializable {
         this.type = type;
     }
 
-    public Date getCreationTime() {
-        return creationTime;
+    public Date getCreatedTime() {
+        return createdTime;
     }
 
-    public void setCreationTime(Date creationTime) {
-        this.creationTime = creationTime;
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
-
+    
     public String getDescription() {
         return description;
     }
@@ -80,10 +83,10 @@ public class MileTransaction implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof MileTransaction)) {
+        if (!(object instanceof MileTrans)) {
             return false;
         }
-        MileTransaction other = (MileTransaction) object;
+        MileTrans other = (MileTrans) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

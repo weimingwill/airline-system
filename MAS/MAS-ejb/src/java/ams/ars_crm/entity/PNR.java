@@ -14,24 +14,26 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
- * @author Bowen
+ * @author weiming
  */
 @Entity
-public class AddOn implements Serializable {
+public class PNR implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String description;
-    private String name;
-    private Double price;
-    
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "addOns")
-    private List<AirTicket> airTickets = new ArrayList<>();
+    private String pnrNo;
+
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Booking booking;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Customer> customers = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -40,40 +42,7 @@ public class AddOn implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public String getDescription() {
-        return description;
-    }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<AirTicket> getAirTickets() {
-        return airTickets;
-    }
-
-    public void setAirTickets(List<AirTicket> airTickets) {
-        this.airTickets = airTickets;
-    }    
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-    
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -84,10 +53,10 @@ public class AddOn implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof AddOn)) {
+        if (!(object instanceof PNR)) {
             return false;
         }
-        AddOn other = (AddOn) object;
+        PNR other = (PNR) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -96,8 +65,30 @@ public class AddOn implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.AddOn[ id=" + id + " ]";
+        return "ams.ars_crm.entity.PNR[ id=" + id + " ]";
     }
-    
-    
+
+    public String getPnrNo() {
+        return pnrNo;
+    }
+
+    public void setPnrNo(String pnrNo) {
+        this.pnrNo = pnrNo;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
+
+    public List<Customer> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(List<Customer> customers) {
+        this.customers = customers;
+    }
 }

@@ -7,12 +7,10 @@ package ams.ars_crm.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -21,7 +19,7 @@ import javax.persistence.TemporalType;
  * @author Bowen
  */
 @Entity
-public class Transaction implements Serializable {
+public class BookingTrans implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,9 +28,6 @@ public class Transaction implements Serializable {
     private Date createdTime;
     private String paymentType;
     private String paymentInfo;
-    @OneToOne(cascade={CascadeType.PERSIST})
-    private Booking booking;
-
    
 
     public Long getId() {
@@ -67,15 +62,6 @@ public class Transaction implements Serializable {
         this.paymentInfo = paymentInfo;
     }
     
-    
-     public Booking getBooking() {
-        return booking;
-    }
-
-    public void setBooking(Booking booking) {
-        this.booking = booking;
-    }
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -86,10 +72,10 @@ public class Transaction implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Transaction)) {
+        if (!(object instanceof BookingTrans)) {
             return false;
         }
-        Transaction other = (Transaction) object;
+        BookingTrans other = (BookingTrans) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

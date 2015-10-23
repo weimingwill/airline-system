@@ -6,10 +6,15 @@
 package ams.ars_crm.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -23,23 +28,9 @@ public class Privilege implements Serializable {
     private Long id;
     private String name;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "privilege")
+    private List<PrivilegeValue> privilegeValues = new ArrayList<>();
+   
 
     @Override
     public int hashCode() {
@@ -65,5 +56,30 @@ public class Privilege implements Serializable {
     public String toString() {
         return "ams.ars_crm.entity.Privilege[ id=" + id + " ]";
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<PrivilegeValue> getPrivilegeValues() {
+        return privilegeValues;
+    }
+
+    public void setPrivilegeValues(List<PrivilegeValue> privilegeValues) {
+        this.privilegeValues = privilegeValues;
+    }
+    
     
 }

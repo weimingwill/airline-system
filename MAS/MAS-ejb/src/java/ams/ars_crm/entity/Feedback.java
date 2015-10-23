@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -22,9 +24,10 @@ public class Feedback implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date creationTime;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date createdTime;
     private String content;
-    private String Status;
+    private String status;
     private String channel;
     
 
@@ -36,14 +39,14 @@ public class Feedback implements Serializable {
         this.id = id;
     }
 
-    public Date getCreationTime() {
-        return creationTime;
+    public Date getCreatedTime() {
+        return createdTime;
     }
 
-    public void setCreationTime(Date creationTime) {
-        this.creationTime = creationTime;
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
-
+    
     public String getContent() {
         return content;
     }
@@ -53,12 +56,13 @@ public class Feedback implements Serializable {
     }
 
     public String getStatus() {
-        return Status;
+        return status;
     }
 
-    public void setStatus(String Status) {
-        this.Status = Status;
+    public void setStatus(String status) {
+        this.status = status;
     }
+
 
     public String getChannel() {
         return channel;

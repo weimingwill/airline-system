@@ -28,9 +28,9 @@ public class Country implements Serializable {
     private Long id;
     private String isoCode;
     private String countryName;
-    
+    private String dialingCode;
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="country")
-    private Collection<City> cities = new ArrayList<City>();
+    private Collection<City> cities = new ArrayList<>();
     
     public Long getId() {
         return id;
@@ -62,6 +62,14 @@ public class Country implements Serializable {
 
     public void setCities(Collection<City> cities) {
         this.cities = cities;
+    }
+
+    public String getDialingCode() {
+        return dialingCode;
+    }
+
+    public void setDialingCode(String dialingCode) {
+        this.dialingCode = dialingCode;
     }
 
     @Override

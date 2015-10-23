@@ -8,6 +8,7 @@ package ams.aps.entity;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.CabinClassTicketFamily;
 import ams.aps.entity.helper.AircraftCabinClassId;
+import ams.ars_crm.entity.Seat;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,25 +32,35 @@ import javax.persistence.Table;
 @IdClass(AircraftCabinClassId.class)
 @Table(name = "AIRCRAFT_CABINCLASS")
 public class AircraftCabinClass implements Serializable {
+
     @Id
     private Long aircraftId;
-    @Id 
+    @Id
     private Long cabinClassId;
-    
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @PrimaryKeyJoinColumn(name = "AIRCRAFTID", referencedColumnName="AIRCRAFTID")
+    @PrimaryKeyJoinColumn(name = "AIRCRAFTID", referencedColumnName = "AIRCRAFTID")
     private Aircraft aircraft;
-    
+
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @PrimaryKeyJoinColumn(name = "CABINCLASSID", referencedColumnName="CABINCLASSID")
+    @PrimaryKeyJoinColumn(name = "CABINCLASSID", referencedColumnName = "CABINCLASSID")
     private CabinClass cabinClass;
-    
-    @Column(name = "SEATQTY") 
-    private int seatQty;
+
+    @Column(name = "SEATQTY")
+    private Integer seatQty;
+
+    @Column(name = "ROWNo")
+    private Integer rowNo;
+
+    @Column(name = "COLNO")
+    private Integer colNo;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "aircraftCabinClass")
     private List<CabinClassTicketFamily> cabinClassTicketFamilys = new ArrayList<>();
-    
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Seat> seats = new ArrayList<>();
+
     public Long getAircraftId() {
         return aircraftId;
     }
@@ -74,14 +85,6 @@ public class AircraftCabinClass implements Serializable {
         this.aircraft = aircraft;
     }
 
-    public int getSeatQty() {
-        return seatQty;
-    }
-
-    public void setSeatQty(int seatQty) {
-        this.seatQty = seatQty;
-    }
-
     public CabinClass getCabinClass() {
         return cabinClass;
     }
@@ -96,6 +99,37 @@ public class AircraftCabinClass implements Serializable {
 
     public void setCabinClassTicketFamilys(List<CabinClassTicketFamily> cabinClassTicketFamilys) {
         this.cabinClassTicketFamilys = cabinClassTicketFamilys;
-    }    
+    }
 
+    public Integer getRowNo() {
+        return rowNo;
+    }
+
+    public void setRowNo(Integer rowNo) {
+        this.rowNo = rowNo;
+    }
+
+    public Integer getColNo() {
+        return colNo;
+    }
+
+    public void setColNo(Integer colNo) {
+        this.colNo = colNo;
+    }
+
+    public Integer getSeatQty() {
+        return seatQty;
+    }
+
+    public void setSeatQty(Integer seatQty) {
+        this.seatQty = seatQty;
+    }
+
+    public List<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
+    }
 }

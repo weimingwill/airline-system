@@ -14,23 +14,25 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
- * @author Bowen
+ * @author Tongtong
  */
 @Entity
-public class PricingItem implements Serializable {
+public class Membership implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Double itemValue;
-    
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pricingItems")
-    private List<AirTicket> airTickets = new ArrayList<>();
-    
+    private double entranceCV;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "membership")
+    private List<PrivilegeValue> privilegeValues = new ArrayList<>();
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -41,10 +43,10 @@ public class PricingItem implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PricingItem)) {
+        if (!(object instanceof Membership)) {
             return false;
         }
-        PricingItem other = (PricingItem) object;
+        Membership other = (Membership) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -53,7 +55,7 @@ public class PricingItem implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.PricingItem[ id=" + id + " ]";
+        return "ams.ars_crm.entity.MembershipClass[ id=" + id + " ]";
     }
 
     public Long getId() {
@@ -72,20 +74,21 @@ public class PricingItem implements Serializable {
         this.name = name;
     }
 
-    public List<AirTicket> getAirTickets() {
-        return airTickets;
+    public double getEntranceCV() {
+        return entranceCV;
     }
 
-    public void setAirTickets(List<AirTicket> airTickets) {
-        this.airTickets = airTickets;
+    public void setEntranceCV(double entranceCV) {
+        this.entranceCV = entranceCV;
     }
 
-    public Double getItemValue() {
-        return itemValue;
+    public List<PrivilegeValue> getPrivilegeValues() {
+        return privilegeValues;
     }
 
-    public void setItemValue(Double itemValue) {
-        this.itemValue = itemValue;
+    public void setPrivilegeValues(List<PrivilegeValue> privilegeValues) {
+        this.privilegeValues = privilegeValues;
     }
+
     
 }

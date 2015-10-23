@@ -6,11 +6,17 @@
 package ams.ars_crm.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -23,44 +29,16 @@ public class CustomerList implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Date creationDate;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date createdTime;
     private String description;
     
+    @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private List<SelectedCust> selectedCusts;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
-    
-
+    @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy = "customerLists")
+    private List<MktCampaign> mktCampaigns = new ArrayList<>();
+            
     @Override
     public int hashCode() {
         int hash = 0;
@@ -84,6 +62,54 @@ public class CustomerList implements Serializable {
     @Override
     public String toString() {
         return "ams.ars_crm.entity.CustomerList[ id=" + id + " ]";
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<SelectedCust> getSelectedCusts() {
+        return selectedCusts;
+    }
+
+    public void setSelectedCusts(List<SelectedCust> selectedCusts) {
+        this.selectedCusts = selectedCusts;
+    }
+
+    public List<MktCampaign> getMktCampaigns() {
+        return mktCampaigns;
+    }
+
+    public void setMktCampaigns(List<MktCampaign> mktCampaigns) {
+        this.mktCampaigns = mktCampaigns;
     }
     
 }

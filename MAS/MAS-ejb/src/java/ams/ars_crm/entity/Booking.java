@@ -5,6 +5,7 @@
  */
 package ams.ars_crm.entity;
 
+import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +16,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -26,7 +28,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 public class Booking implements Serializable {
-  
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,10 +42,40 @@ public class Booking implements Serializable {
     private Double price;
     private Boolean paid;
     private String channel;
-    @OneToOne(mappedBy="booking")
-    private Transaction transaction;
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="booking")
+
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private BookingTrans bookingTrans;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "booking")
     private List<AirTicket> airTickets = new ArrayList<>();
+
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private FlightSchedule flightSchedule; 
+            
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Booking)) {
+            return false;
+        }
+        Booking other = (Booking) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ams.ars_crm.entity.Booking[ id=" + id + " ]";
+    }
 
     public Long getId() {
         return id;
@@ -52,7 +84,7 @@ public class Booking implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Date getCreatedTime() {
         return createdTime;
     }
@@ -93,19 +125,19 @@ public class Booking implements Serializable {
         this.phoneNo = phoneNo;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public boolean isPaid() {
+    public Boolean getPaid() {
         return paid;
     }
 
-    public void setPaid(boolean paid) {
+    public void setPaid(Boolean paid) {
         this.paid = paid;
     }
 
@@ -116,15 +148,15 @@ public class Booking implements Serializable {
     public void setChannel(String channel) {
         this.channel = channel;
     }
-    
-    public Transaction getTransaction() {
-        return transaction;
+
+    public BookingTrans getBookingTrans() {
+        return bookingTrans;
     }
 
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
+    public void setBookingTrans(BookingTrans bookingTrans) {
+        this.bookingTrans = bookingTrans;
     }
-    
+
     public List<AirTicket> getAirTickets() {
         return airTickets;
     }
@@ -132,30 +164,13 @@ public class Booking implements Serializable {
     public void setAirTickets(List<AirTicket> airTickets) {
         this.airTickets = airTickets;
     }
-    
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+
+    public FlightSchedule getFlightSchedule() {
+        return flightSchedule;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Booking)) {
-            return false;
-        }
-        Booking other = (Booking) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setFlightSchedule(FlightSchedule flightSchedule) {
+        this.flightSchedule = flightSchedule;
     }
 
-    @Override
-    public String toString() {
-        return "ams.ars_crm.entity.Booking[ id=" + id + " ]";
-    }
-    
 }

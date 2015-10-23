@@ -23,10 +23,10 @@ public class FlightCrewPosition implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String type;
     private Integer rank;
     private Double maxMonthlyFlyingHrs;
-    private Integer minNumConsecDaysOff;
-    private Integer minTotalMonthlyDaysOff;
+    private Integer maxTotalMonthlyDaysOff;
     private Double maxDutyPeriodHrs;
 
     public Long getId() {
@@ -105,34 +105,6 @@ public class FlightCrewPosition implements Serializable {
     }
 
     /**
-     * @return the minNumConsecDaysOff
-     */
-    public Integer getMinNumConsecDaysOff() {
-        return minNumConsecDaysOff;
-    }
-
-    /**
-     * @param minNumConsecDaysOff the minNumConsecDaysOff to set
-     */
-    public void setMinNumConsecDaysOff(Integer minNumConsecDaysOff) {
-        this.minNumConsecDaysOff = minNumConsecDaysOff;
-    }
-
-    /**
-     * @return the minTotalMonthlyDaysOff
-     */
-    public Integer getMinTotalMonthlyDaysOff() {
-        return minTotalMonthlyDaysOff;
-    }
-
-    /**
-     * @param minTotalMonthlyDaysOff the minTotalMonthlyDaysOff to set
-     */
-    public void setMinTotalMonthlyDaysOff(Integer minTotalMonthlyDaysOff) {
-        this.minTotalMonthlyDaysOff = minTotalMonthlyDaysOff;
-    }
-
-    /**
      * @return the maxDutyPeriodHrs
      */
     public Double getMaxDutyPeriodHrs() {
@@ -144,6 +116,34 @@ public class FlightCrewPosition implements Serializable {
      */
     public void setMaxDutyPeriodHrs(Double maxDutyPeriodHrs) {
         this.maxDutyPeriodHrs = maxDutyPeriodHrs;
+    }
+
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * @return the maxTotalMonthlyDaysOff
+     */
+    public Integer getMaxTotalMonthlyDaysOff() {
+        return maxTotalMonthlyDaysOff;
+    }
+
+    /**
+     * @param maxTotalMonthlyDaysOff the maxTotalMonthlyDaysOff to set
+     */
+    public void setMaxTotalMonthlyDaysOff(Integer maxTotalMonthlyDaysOff) {
+        this.maxTotalMonthlyDaysOff = maxTotalMonthlyDaysOff;
     }
 
 }

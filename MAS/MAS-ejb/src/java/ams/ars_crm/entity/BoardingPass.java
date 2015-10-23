@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -27,8 +26,6 @@ public class BoardingPass implements Serializable {
     private String boardingGate;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date boardingTime;
-    @OneToOne(mappedBy="boardingPass")
-    private AirTicket airTicket;
 
     public Long getId() {
         return id;
@@ -53,14 +50,6 @@ public class BoardingPass implements Serializable {
 
     public void setBoardingTime(Date boardingTime) {
         this.boardingTime = boardingTime;
-    }
-    
-    public AirTicket getAirTicket() {
-        return airTicket;
-    }
-
-    public void setAirTicket(AirTicket airTicket) {
-        this.airTicket = airTicket;
     }
     
     @Override
