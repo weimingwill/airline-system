@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm_entity.helper;
+package ams.ars_crm.entity.helper;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -13,32 +13,32 @@ import javax.persistence.Embeddable;
  * @author weiming
  */
 @Embeddable
-public class AirTicketPricingItemId {
-    
+public class AirTicketAddOnId {
+        
     @Column(name = "AIRTICKETID")
     private Long airTicketId;
-    @Column(name = "PRICINGITEMID")
-    private Long pricingItemId;
+    @Column(name = "ADDONID")
+    private Long addOnId;
     
         
     @Override
     public int hashCode() {
-        return (int)(airTicketId + pricingItemId);
+        return (int)(airTicketId + addOnId);
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the airTicketId fields are not set
-    if (object instanceof AirTicketPricingItemId) {
-      AirTicketPricingItemId otherId = (AirTicketPricingItemId) object;
-      return (otherId.pricingItemId == this.pricingItemId) && (otherId.airTicketId == this.airTicketId);
+    if (object instanceof AirTicketAddOnId) {
+      AirTicketAddOnId otherId = (AirTicketAddOnId) object;
+      return (otherId.addOnId == this.addOnId) && (otherId.airTicketId == this.airTicketId);
     }
     return false;
     }
 
     @Override
     public String toString() {
-        return "ams.ais.entity.CabinClassTicketFamily[ pricingItemId=" + pricingItemId + " ][ airTicketId=" + airTicketId + " ]";
+        return "ams.ais.entity.CabinClassTicketFamily[ addOnId=" + addOnId + " ][ airTicketId=" + airTicketId + " ]";
     }
 
     public Long getAirTicketId() {
@@ -49,11 +49,13 @@ public class AirTicketPricingItemId {
         this.airTicketId = airTicketId;
     }
 
-    public Long getPricingItemId() {
-        return pricingItemId;
+    public Long getAddOnId() {
+        return addOnId;
     }
 
-    public void setPricingItemId(Long pricingItemId) {
-        this.pricingItemId = pricingItemId;
+    public void setAddOnId(Long addOnId) {
+        this.addOnId = addOnId;
     }
+    
+    
 }

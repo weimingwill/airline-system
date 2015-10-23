@@ -5,7 +5,7 @@
  */
 package ams.ars_crm.entity;
 
-import ams.ars_crm_entity.helper.AirTicketAddOnId;
+import ams.ars_crm.entity.helper.AirTicketAddOnId;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

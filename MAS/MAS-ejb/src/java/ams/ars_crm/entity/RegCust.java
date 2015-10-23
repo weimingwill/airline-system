@@ -5,7 +5,7 @@
  */
 package ams.ars_crm.entity;
 
-import ams.ars_crm_entity.helper.Phone;
+import ams.ars_crm.entity.helper.Phone;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
