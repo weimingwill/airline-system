@@ -5,6 +5,7 @@
  */
 package ams.ars_crm.entity;
 
+import ams.dcs.entity.LuggageTag;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,8 @@ public class PNR implements Serializable {
     private Booking booking;
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<Customer> customers = new ArrayList<>();
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pnr")
+    private List<LuggageTag> luggageTags = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -90,5 +93,19 @@ public class PNR implements Serializable {
 
     public void setCustomers(List<Customer> customers) {
         this.customers = customers;
+    }
+
+    /**
+     * @return the luggageTags
+     */
+    public List<LuggageTag> getLuggageTags() {
+        return luggageTags;
+    }
+
+    /**
+     * @param luggageTags the luggageTags to set
+     */
+    public void setLuggageTags(List<LuggageTag> luggageTags) {
+        this.luggageTags = luggageTags;
     }
 }
