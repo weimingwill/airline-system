@@ -30,8 +30,10 @@
                     <h:outputText value="#{flightCrew.gender}" />
                 </p:column>
 
-                <p:column headerText="Age" sortBy="#{flightCrew.age}">
-                    <h:outputText value="#{flightCrew.age}" />
+                <p:column headerText="Age" sortBy="#{flightCrew.dob}">
+                    <h:outputText value="#{flightCrew.dob}" >
+                        <f:convertDateTime timeZone="GMT+8" pattern="dd/MM/yyyy"/>
+                    </h:outputText>
                 </p:column>
 
                 <p:column headerText="Position" sortBy="#{flightCrew.position.name}">
@@ -94,10 +96,12 @@
                         </p:row>
                         <p:row>
                             <p:column>
-                                <p:outputLabel value="Age"/>
+                                <p:outputLabel value="Date of Birth"/>
                             </p:column>
                             <p:column>
-                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.age}"/>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.dob}">
+                                    <f:convertDateTime timeZone="GMT+8" pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
                             </p:column>
                         </p:row>
                         <p:row>
