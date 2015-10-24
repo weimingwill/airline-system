@@ -67,7 +67,9 @@
                 </p:column>
 
                 <f:facet name="footer">
-                    <p:outputLabel/>
+                    <p:column colspan="2" style="font-size: small; vertical-align: middle">
+                        <p:outputLabel value="Note: Click one row to view individual crew profile"/>
+                    </p:column>
                 </f:facet>
             </p:dataTable>
         </h:form>
@@ -101,7 +103,7 @@
                             <p:column>
                                 <p:outputLabel value="#{flightCrewBacking.selectedCrew.dob}">
                                     <f:convertDateTime timeZone="GMT+8" pattern="dd/MM/yyyy"/>
-                                    </h:outputText>
+                                </p:outputLabel>
                             </p:column>
                         </p:row>
                         <p:row>
@@ -218,11 +220,6 @@
                             </p:column>
                             <p:column>
                                 <p:outputLabel value="#{flightCrewBacking.selectedCrew.totalFlyingTime}"/>
-                            </p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column colspan="2">
-
                             </p:column>
                         </p:row>
                     </p:panelGrid>
