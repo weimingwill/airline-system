@@ -29,6 +29,8 @@
                     </c:forEach>
                 </p:submenu>
 
+                <p:menuitem value="CRM" url="#{crmNavController.redirectToCRM()}" icon="fa fa-home" styleClass="navMenuItem"></p:menuitem>
+
                 <p:submenu label="Setting" icon="fa fa-cog" rendered="#{loginController.loggedIn}">
                     <p:menuitem  value="Profile" url="#{navigationController.redirectToViewUserProfile()}" />
                     <p:menuitem  value="Change password" url="#{navigationController.redirectToChangePassword()}" />

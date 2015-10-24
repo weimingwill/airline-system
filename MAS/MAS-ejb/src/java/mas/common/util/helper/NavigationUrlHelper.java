@@ -12,10 +12,10 @@ package mas.common.util.helper;
  */
 public class NavigationUrlHelper {
     private final static String REDIRECT = "?faces-redirect=true";
-    private final static String COMMON_PATH = "/views/secured/common/";
-    private final static String APS_PATH = "/views/secured/aps/";
-    private final static String AIS_PATH = "/views/secured/ais/";
-    private final static String AFOS_PATH = "/views/secured/afos/";
+    private final static String COMMON_PATH = "/views/internal/secured/common/";
+    private final static String APS_PATH = "/views/internal/secured/aps/";
+    private final static String AIS_PATH = "/views/internal/secured/ais/";
+    private final static String AFOS_PATH = "/views/internal/secured/afos/";
     
     // System & Module Url
     public final static String APS_URL = APS_PATH + "apsMain.xhtml" + REDIRECT;

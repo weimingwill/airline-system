@@ -5,9 +5,10 @@
  */
 package ams.dcs.session;
 
-import ams.ars_crm.entity.AirTicket;
-import ams.ars_crm.entity.Customer;
-import ams.ars_crm.entity.Seat;
+import ams.ars.entity.AirTicket;
+import ams.ars.entity.Seat;
+import ams.crm.entity.Customer;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -21,31 +22,55 @@ import javax.persistence.Query;
 @Stateless
 public class CheckInSession implements CheckInSessionLocal {
 
-    
     @PersistenceContext
     EntityManager em;
-    
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
 
     @Override
     public List<AirTicket> getValidAirTicketsByCustomer(String passportNo) {
         Customer c = em.find(Customer.class, passportNo);
+        Query q = em.createQuery("SELECT at FROM AirTicket at WHERE at.status = paid' AND IN (SELECT c FROM Customer c WHERE c.passportNo =:passport) ");
+        q.setParameter("passport", passportNo);
+        List<AirTicket> airTickets = new ArrayList<>();
+        
+        try {
+            airTickets = q.getResultList();
+            for(AirTicket at :airTickets){
+                
+            }
+        } catch (Exception e) {
+        }
+        
         return c.getAirTickets();
     }
 
-    @Override
-    public Seat selectSeat(AirTicket airTicket) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String selectSeat(String ticketNo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        at.g
     }
 
     @Override
-    public boolean checkInPassenger(AirTicket airTicket) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean checkInPassenger(String ticketNo) {
+        
+        try {
+            AirTicket at = em.find(AirTicket.class, ticketNo);
+            Seat seat = at.getSeat();
+            String seatNo = "";
+
+            if (seat != null) {
+                seatNo = seat.getRowNo().toString() + seat.getColNo();;
+            } else {
+                seatNo = selectSeat(ticketNo);
+            }
+
+            at.setStatus("Checked-in");
+            em.merge(at);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public boolean checkInuggage(AirTicket airTicket) {
+    public boolean checkInuggage(String ticketNo) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -59,4 +84,6 @@ public class CheckInSession implements CheckInSessionLocal {
             return null;
         }
     }
+    
+
 }

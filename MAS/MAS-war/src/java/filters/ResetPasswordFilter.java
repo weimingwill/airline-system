@@ -31,7 +31,7 @@ import mas.common.util.exception.NoSuchEmailException;
  *
  * @author winga_000
  */
-//@WebFilter(filterName = "ResetPasswordFilter", urlPatterns = {"/views/unsecured/common/users/resetPassword.xhtml"})
+//@WebFilter(filterName = "ResetPasswordFilter", urlPatterns = {"/views/internal/unsecured/common/users/resetPassword.xhtml"})
 public class ResetPasswordFilter implements Filter {
 
     @Inject

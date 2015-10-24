@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/SystemTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:botDetect="botDetectFacelets">
+
+    <ui:define name="content">
+        <p:panel header="Login" styleClass="loginPanel">
+            <h:form id="loginForm" prependId="false">    
+
+                <p:panelGrid columnClasses="label, value">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Username"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText required="true" requiredMessage="Please enter your username" id="username" value="#{loginController.username}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Password"/>
+                        </p:column>
+                        <p:column>
+                            <p:password required="true" requiredMessage="Please enter your password" id="password" value="#{loginController.password}"/>
+                        </p:column>
+                    </p:row>
+
+<!--                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel for="loginCaptcha" value="Retype the code from the picture:"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <botDetect:jsfCaptcha id="loginCaptcha" binding="{loginController.captcha}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:inputText id="captchaCodeTextBox" value="{loginController.captchaCode}"/> 
+                        </p:column>
+                    </p:row>-->
+                </p:panelGrid>
+                <p:separator/>
+                <p:commandButton action="#{loginController.doLogin()}" value="Login" update="messages"></p:commandButton>
+            </h:form>
+            <h:form>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Forget password?"/>
+                        <h:commandLink action="#{navigationController.toPasswordResetSendEmail()}" value="Reset password"/>
+                    </p:column>
+                </p:row>
+            </h:form>
+        </p:panel>
+
+    </ui:define>
+
+</ui:composition>

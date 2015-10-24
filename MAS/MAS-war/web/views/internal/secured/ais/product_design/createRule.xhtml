@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AisTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Create New Rule
+    </ui:define>
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Create Rule
+        </f:facet>
+        <h:form id="createCabinClassForm">
+            <p:panelGrid columns="2" columnClasses="label, value">
+                <p:outputLabel value="Rule Name"/>
+                <p:inputText required="true" requiredMessage="Please enter rule name" id="name" value="#{ruleController.name}"/>
+                <p:outputLabel value="Description"/>
+                <p:inputText required="true" requiredMessage="Please enter the description" id="type" value="#{ruleController.description}"/>
+            </p:panelGrid>
+            <p:separator/>
+            <p:commandButton action="#{ruleController.createRule()}" value="Create" update="messages"/>  
+        </h:form>
+    </ui:define>
+
+</ui:composition>

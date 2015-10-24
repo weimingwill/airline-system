@@ -5,9 +5,9 @@
  */
 package ams.dcs.session;
 
-import ams.ars_crm.entity.AirTicket;
-import ams.ars_crm.entity.Customer;
-import ams.ars_crm.entity.Seat;
+import ams.ars.entity.AirTicket;
+import ams.ars.entity.Seat;
+import ams.crm.entity.Customer;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -21,9 +21,9 @@ public interface CheckInSessionLocal {
     
     public List<AirTicket> getValidAirTicketsByCustomer(String passportNo);
     
-    public Seat selectSeat(AirTicket airTicket);
+    public String selectSeat(String ticketNo);
     
-    public boolean checkInPassenger(AirTicket airTicket);
+    public boolean checkInPassenger(String ticketNo);
     
-    public boolean checkInuggage(AirTicket airTicket);
+    public boolean checkInuggage(String ticketNo);
 }
