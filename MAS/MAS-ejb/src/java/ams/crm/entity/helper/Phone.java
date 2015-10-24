@@ -15,6 +15,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Phone implements Serializable{
     private String countryCode;
+    private String areaCode;
     private String number;
 
     public String getCountryCode() {
@@ -23,6 +24,14 @@ public class Phone implements Serializable{
 
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
+    }
+
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
     }
 
     public String getNumber() {
