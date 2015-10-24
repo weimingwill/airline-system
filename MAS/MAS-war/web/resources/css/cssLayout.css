@@ -420,3 +420,10 @@ permissionLink.a:link, permissionLink.a:visited {
 .ui-layout-north .ui-layout-unit-content {
     overflow:visible !important;
 }
+
+.centeredPanel{
+    margin-left: 70%;
+    background: rgba(251, 251, 252, 0.66);
+    width: 100%;
+    max-width: 500px;
+}

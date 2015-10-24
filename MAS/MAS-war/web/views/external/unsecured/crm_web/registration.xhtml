@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/ArsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <ui:define name="content">
+        <h:form id="RegistrationForm" style="width: 500px;text-align: center;" >
+            <p:panel header="Customer Registation Form" styleClass="centeredPanel">
+
+
+
+                <p:panel header="Personal information">
+                    <p:panelGrid columns="2" styleClass="centered">
+                        <p:outputLabel for="nametitle" value="Title"/>
+                        <p:selectOneMenu id="nametitle" required="true" requiredMessage="Please Select Title"  style="width:180px">
+                            <f:selectItem itemLabel="Please Choose" itemValue="" />
+                            <f:selectItem itemLabel="Dr" itemValue="Dr" />
+                            <f:selectItem itemLabel="Mdm" itemValue="Mdm" />
+                            <f:selectItem itemLabel="Miss" itemValue="Miss" />
+                            <f:selectItem itemLabel="Mr" itemValue="Mr" />
+                            <f:selectItem itemLabel="Mrs" itemValue="Mrs" />
+                            <f:selectItem itemLabel="Ms" itemValue="Ms" />
+                            <f:selectItem itemLabel="Mstr" itemValue="Mstr" />
+                            <f:selectItem itemLabel="Prof" itemValue="Prof" />
+                            <f:selectItem itemLabel="Others" itemValue="Others" />
+                        </p:selectOneMenu>
+
+
+                        <p:outputLabel for="firstname" value="First/Given Name" />
+                        <p:inputText id="firstname" class="userProfileInput" required="true" requiredMessage="Please enter First/Given Name:" binding="#{firstname}" placeholder="in full,per passport"/>
+
+                        <p:outputLabel for="lastname" value="Last/Family Name"/>
+                        <p:inputText id="lastname" class="userProfileInput" required="true" requiredMessage="Please enter Last/Family Name:" binding="#{lastname}" placeholder="in full,per passport"/>           
+
+                        <p:outputLabel for="gender" value="Gender"/>
+                        <p:selectOneRadio id="gender" value="#{gender}" required="true" requiredMessage="Please Select Gender" binding="#{gender}">
+                            <f:selectItem itemLabel="Female" itemValue="Female" />
+                            <f:selectItem itemLabel="Male" itemValue="Male" />
+                        </p:selectOneRadio>
+
+                        <p:outputLabel for="dob" value="Date of Birth"/>
+                        <p:calendar id="dob" value="#{dob}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-100:c+0" placeholder="Date of Birth"/>
+
+                        <p:outputLabel for="nationality" value="Nationality"/>
+                        <p:selectOneMenu id="nationality" required="true" requiredMessage="Please enter your Nationality">
+                            <f:selectItem itemLabel="Select" itemValue="" />
+                            <f:selectItems value="#{registrationController.countries}" var="country" itemLabel="#{country.countryName}" itemValue="#{nationality}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="email" value="Email"/>
+                        <p:inputText id="email" class="userProfileInput" required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" binding="#{newEmail}">
+                            <p:ajax update="messages" event="blur" />
+                            <f:validateRegex
+                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                        </p:inputText>
+
+                        <h:outputText value="Phone"/>
+                        <p:inputMask id="phone" mask="99999999" class="userProfileInput"  binding="#{newPhone}" >
+                            <p:tooltip id="phone_tooltip" for="phone" showEvent="focus" hideEvent="blur" 
+                                       value="Phone number must be 8-digit number"/>
+                        </p:inputMask>                           
+
+                        <h:outputText value="Address"/>
+                        <p:inputText class="userProfileInput" binding="#{newAddress}"/>
+
+
+                    </p:panelGrid>
+                </p:panel>
+                <p:panel header="Contact Information">
+
+                </p:panel>
+
+                <p:panel header="Login Detail">
+
+                </p:panel>
+
+                <p:panel header="Communication Preference">
+
+                </p:panel>
+
+            </p:panel>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>
