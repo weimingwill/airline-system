@@ -385,6 +385,10 @@ public class NavigationController implements Serializable {
         return APS_URL + "flight_schedule/confirmFlightSchedule.xhtml";
     }
     
+    public String toViewFlightSchedule() {
+        return APS_URL + "flight_schedule/viewFlightSchedule.xhtml" + REDIRECT;
+    }
+    
     public String redirectToCurrentPage() {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String uri = request.getRequestURI();
