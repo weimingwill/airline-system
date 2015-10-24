@@ -8,7 +8,7 @@ package ams.aps.entity;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.CabinClassTicketFamily;
 import ams.aps.entity.helper.AircraftCabinClassId;
-import ams.ars_crm.entity.Seat;
+import ams.ars.entity.Seat;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

@@ -5,7 +5,7 @@
  */
 package ams.ais.entity;
 
-import ams.ars_crm.entity.BookingClassChannel;
+import ams.ars.entity.BookingClassChannel;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

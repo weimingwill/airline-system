@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/ApsTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table"
+                xmlns:ti="http://xmlns.jcp.org/jsf/composite/ezcomp/tile">
+
+    <ui:define name="content">
+        <h:form id="flightForm">
+            <p:dataGrid var="flight" value="#{flightController.flights}" columns="4" layout="grid"
+                        rows="8" paginator="true" id="inCompleteFlight"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="4, 8" emptyMessage="No outstanding new flights. All flights has been created" style="text-align: center">
+                <f:facet name="header">
+                    Choose one flight to continue
+                </f:facet>
+                <p:panelGrid style="width:100%">
+                    <ti:CCTile header="#{flight.flightNo}/#{flight.returnedFlight.flightNo}" subheader="#{flightController.getOriDestString(flight)}" numericValue="Done" displayNum="true" icon="fa fa-plane" displayDeleteBtn="true" displayEditBtn="true" displayViewBtn="true" rendered="#{flight.completed}"/>
+                    <ti:CCTile header="#{flight.flightNo}/#{flight.returnedFlight.flightNo}" subheader="#{flightController.getOriDestString(flight)}" icon="fa fa-plane" displayContBtn="true" displayDeleteBtn="true" displayEditBtn="true" rendered="#{not flight.completed}"/>
+                </p:panelGrid>
+
+                <f:facet name="footer">
+                    <p:selectManyCheckbox value="#{flightController.selectedType}" style="color: #FFFFFF; font-weight: bold">
+                        <f:selectItem itemLabel="Completed" itemValue="1" />
+                        <f:selectItem itemLabel="Incomplete" itemValue="0" />
+                        <p:ajax listener="#{flightController.onFlightFilterChange}" update="flightForm"/>
+                    </p:selectManyCheckbox>
+                </f:facet>
+            </p:dataGrid>
+            <p:separator/>
+            <p:commandButton value="Create New" icon="ui-icon-plusthick" oncomplete="PF('addNewFlightDlg').show()"/>
+        </h:form>
+
+        <p:dialog header="Create New Flight" appendTo="@(body)" modal="true" id="addNewFlightDlg" widgetVar="addNewFlightDlg">
+            <p:panelGrid columns="2">
+                <h:form>
+                    <ta:CCDisplayRouteTable rows="5" tableStyle="width:auto; font-size:small" footer="false" selection="false"/>
+                </h:form>
+
+                <h:form id="createFligtForm">
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:panel header="Create Flight">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Flight Number"/>
+                            <p:inputMask id="flightNum" mask="MA999" value="#{flightController.flightNo}" required="true">
+                                <p:tooltip for="flightNum" value="Flight number must be a 3-digit odd number" showEvent="focus"/>
+                            </p:inputMask>
+                            <p:outputLabel value="Select Route and Return Route"/>
+
+                            <p:selectOneMenu value="#{flightController.route}" converter="routeConverter" filter="true" var="r" filterMatchMode="contains" style="width: 100%">
+                                <f:selectItems value="#{flightController.availibleRoutes}" var="route" itemLabel="#{route.routeId}-#{route.returnRoute.routeId}"/>
+                                <p:column>
+                                    <p:outputLabel value="#{r.routeId}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{r.returnRoute.routeId}"/>
+                                </p:column>
+                            </p:selectOneMenu>
+
+                        </p:panelGrid>
+                        <p:separator/>
+                        <p:commandButton value="Save &amp; Continue" action="#{flightController.addFlight()}"/>
+                    </p:panel>
+                </h:form>
+            </p:panelGrid>
+        </p:dialog>
+        <p:dialog widgetVar="updateFlightNumDlg" id="updateFlightNumDlg" header="Update Flight Number" modal="true" appendTo="@(body)" resizable="false">
+            <h:form>
+                <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Flight Number"/>
+                    <p:inputMask id="flightNum" mask="MA999" value="#{flightController.selectedFlight.flightNo}" required="true">
+                        <p:tooltip for="flightNum" value="Flight number must be a 3-digit odd number" showEvent="focus"/>
+                        <p:ajax event="change" listener="#{flightController.onFlightNumChange}" update="returnFlightNum"/>
+                    </p:inputMask>
+                    <p:outputLabel value="Return Flight Number"/>
+                    <p:outputLabel id="returnFlightNum" value="#{flightController.selectedFlight.returnedFlight.flightNo}"/>
+                </p:panelGrid>
+                <p:separator/>
+                <p:commandButton value="Update" action="#{flightController.updateFlightNo()}"/>
+            </h:form>
+        </p:dialog>
+        <p:dialog widgetVar="viewFlightInfoDlg" id="viewFlightInfoDlg" header="Flight Details for #{flightController.selectedFlight.flightNo}" modal="true" appendTo="@(body)" resizable="false">
+            
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Flight Number" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.flightNo}"/>
+                <p:outputLabel value="Return Flight Number" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.returnedFlight.flightNo}"/>
+                <p:outputLabel value="From - To" styleClass="label"/><p:outputLabel value="#{flightController.getOriDestString(flightController.selectedFlight)}"/>
+                <p:outputLabel value="Aircraft Models" styleClass="label"/><p:outputLabel value="#{flightController.getAircraftTypeString(flightController.selectedFlight)}"/>
+                <p:outputLabel value="Aircraft Type Family" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.aircraftTypes.get(0).typeFamily}"/>
+                <p:outputLabel value="Speed Fraction (%)" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.speedFraction * 100}"><f:convertNumber maxFractionDigits="2"/></p:outputLabel>
+                <p:outputLabel value="Weekly Frequency" styleClass="label"/><p:outputLabel value="#{flightController.selectedFlight.weeklyFrequency}"/>
+                <p:outputLabel value="Total Distance (km)" styleClass="label"/><p:outputLabel value="#{flightController.getFlightRouteInfo(flightController.selectedFlight).totalDistance * 2}"><f:convertNumber maxFractionDigits="2"/></p:outputLabel>
+                <p:outputLabel value="Total Duration (hrs)" styleClass="label"/><p:outputLabel value="#{flightController.getFlightRouteInfo(flightController.selectedFlight).totalDuration * 2}"><f:convertNumber maxFractionDigits="2"/></p:outputLabel>
+            </p:panelGrid>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
