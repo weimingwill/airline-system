@@ -17,7 +17,7 @@ import javax.enterprise.context.RequestScoped;
 public class AfosNavController {
 
     private final String REDIRECT = "?faces-redirect=true";
-    private final String AFOS_URL = "/views/secured/afos/";
+    private final String AFOS_URL = "/views/internal/secured/afos/";
 
     /**
      * Creates a new instance of AfosNavController
