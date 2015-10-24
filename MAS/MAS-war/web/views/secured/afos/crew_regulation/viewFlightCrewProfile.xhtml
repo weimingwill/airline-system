@@ -1,84 +1,101 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/AfosTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <body>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:dataTable id="flight-crew-table" widgetVar="flightCrewTable" var="flightCrew" value="#{flightCrewBacking.flightCrews}" rows="10" tableStyleClass="table-small" rowKey="#{flightCrew.systemUserId}"
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15,20"
+                         selectionMode="single" selection="#{flightCrewBacking.selectedCrew}">
+                <p:messages autoUpdate="true"/>
+                <f:facet name="header">
+                    <p:outputLabel value="Flight Crew Profile"/>
+                </f:facet>
 
-        <ui:composition template="./../../../../template/AfosTemplate.xhtml">
+                <p:ajax event="rowSelect" listener="#{flightCrewBacking.onCrewTableRowSelect}"/>
 
-            <ui:define name="content">
-                <h:form id="form">
-                    <p:dataTable id="flight-crew-table" widgetVar="flightCrewTable" var="flightCrew" value="#{flightCrewBacking.flightCrews}" rows="15" tableStyleClass="table-small" rowKey="#{flightCrew.systemUserId}"
-                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15,20">
-                        <p:messages autoUpdate="true"/>
-                        <f:facet name="header">
-                            <p:outputLabel value="Flight Crew Profile"/>
-                        </f:facet>
+                <p:column headerText="ID" sortBy="#{flightCrew.flightCrewID}">
+                    <h:outputText value="#{flightCrew.flightCrewID}" />
+                </p:column>
 
-                        <p:column headerText="ID" sortBy="#{flightCrew.flightCrewID}">
-                            <h:outputText value="#{flightCrew.flightCrewID}" />
-                        </p:column>
+                <p:column headerText="Name" sortBy="#{flightCrew.name}">
+                    <h:outputText value="#{flightCrew.name}" />
+                </p:column>
 
-                        <p:column headerText="Name" sortBy="#{flightCrew.name}">
-                            <h:outputText value="#{flightCrew.name}" />
-                        </p:column>
+                <p:column headerText="Gender" sortBy="#{flightCrew.gender}">
+                    <h:outputText value="#{flightCrew.gender}" />
+                </p:column>
 
-                        <p:column headerText="Gender" sortBy="#{flightCrew.gender}">
-                            <h:outputText value="#{flightCrew.gender}" />
-                        </p:column>
+                <p:column headerText="Age" sortBy="#{flightCrew.age}">
+                    <h:outputText value="#{flightCrew.age}" />
+                </p:column>
 
-                        <p:column headerText="Age" sortBy="#{flightCrew.age}">
-                            <h:outputText value="#{flightCrew.age}" />
-                        </p:column>
+                <p:column headerText="Position" sortBy="#{flightCrew.position.name}">
+                    <h:outputText value="#{flightCrew.position.name}" />
+                </p:column>
 
-                        <p:column headerText="Position" sortBy="#{flightCrew.position.name}">
-                            <h:outputText value="#{flightCrew.position.name}" />
-                        </p:column>
+                <p:column headerText="Type" sortBy="#{flightCrew.position.type}">
+                    <h:outputText value="#{flightCrew.position.type == 'FA' ? 'Flight Attendent' : 'Pilot'}" />
+                </p:column>
 
-                        <p:column headerText="Type" sortBy="#{flightCrew.position.type}">
-                            <h:outputText value="#{flightCrew.position.type}" />
-                        </p:column>
+                <p:column headerText="Rank" sortBy="#{flightCrew.position.rank}">
+                    <h:outputText value="#{flightCrew.position.rank}" />
+                </p:column>
 
-                        <p:column headerText="Rank" sortBy="#{flightCrew.position.rank}">
-                            <h:outputText value="#{flightCrew.position.rank}" />
-                        </p:column>
+                <p:column headerText="Date Joined" sortBy="#{flightCrew.dateJoined}">
+                    <h:outputText value="#{flightCrew.dateJoined}" >
+                        <f:convertDateTime timeZone="GMT+8" pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
 
-                        <p:column headerText="Date Joined" sortBy="#{flightCrew.dateJoined}">
-                            <h:outputText value="#{flightCrew.dateJoined}" >
-                                <f:convertDateTime timeZone="GMT+8"/>
-                            </h:outputText>
-                        </p:column>
+                <p:column headerText="Phone" sortBy="#{flightCrew.phone}">
+                    <h:outputText value="#{flightCrew.phone}" />
+                </p:column>
 
-                        <p:column headerText="Phone" sortBy="#{flightCrew.phone}">
-                            <h:outputText value="#{flightCrew.phone}" />
-                        </p:column>
+                <p:column headerText="Email" sortBy="#{flightCrew.email}">
+                    <h:outputText value="#{flightCrew.email}" />
+                </p:column>
 
-                        <p:column headerText="Email" sortBy="#{flightCrew.email}">
-                            <h:outputText value="#{flightCrew.email}" />
-                        </p:column>
+                <p:column headerText="Status" sortBy="#{flightCrew.status}">
+                    <h:outputText value="#{flightCrew.status}" />
+                </p:column>
 
-                        <p:column headerText="Status" sortBy="#{flightCrew.status}">
-                            <h:outputText value="#{flightCrew.status}" />
-                        </p:column>
+                <f:facet name="footer">
+                    <p:outputLabel/>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
 
-                        <p:column style="width:32px;text-align: center">
-                            <p:commandButton update="form" icon="ui-icon-search" title="View">
-                                <f:setPropertyActionListener value="#{car}" target="#{dtSelectionView.selectedCar}" />
-                            </p:commandButton>
-                        </p:column>
+        <p:dialog id="crewProfileDlg" header="Crew Profile for #{flightCrewBacking.selectedCrew.name} (#{flightCrewBacking.selectedCrew.flightCrewID})" widgetVar="crewProfileDlg" modal="true" appendTo="@(body)" resizable="false">
+            <h:form>
+                <p:panel>
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column rowspan="2">
+                                <p:graphicImage value="/resources/images/crews/#{flightCrewBacking.selectedCrew.position.type}-#{flightCrewBacking.selectedCrew.gender}.png" width="100px"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.name}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.position.name}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
 
-                        <f:facet name="footer">
-                            <p:outputLabel/>
-                        </f:facet>
-                    </p:dataTable>
-                </h:form>
-            </ui:define>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
 
-        </ui:composition>
-
-    </body>
-</html>
+</ui:composition>
