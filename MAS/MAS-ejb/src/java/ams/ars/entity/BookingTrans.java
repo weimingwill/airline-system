@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.ars.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -19,13 +19,16 @@ import javax.persistence.TemporalType;
  * @author Bowen
  */
 @Entity
-public class BoardingPass implements Serializable {
+public class BookingTrans implements Serializable {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String boardingGate;
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date boardingTime;
+    private Date createdTime;
+    private String paymentType;
+    private String paymentInfo;
+   
 
     public Long getId() {
         return id;
@@ -35,21 +38,28 @@ public class BoardingPass implements Serializable {
         this.id = id;
     }
     
-    
-    public String getBoardingGate() {
-        return boardingGate;
+    public Date getCreatedTime() {
+        return createdTime;
     }
 
-    public void setBoardingGate(String boardingGate) {
-        this.boardingGate = boardingGate;
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 
-    public Date getBoardingTime() {
-        return boardingTime;
+    public String getPaymentType() {
+        return paymentType;
     }
 
-    public void setBoardingTime(Date boardingTime) {
-        this.boardingTime = boardingTime;
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public String getPaymentInfo() {
+        return paymentInfo;
+    }
+
+    public void setPaymentInfo(String paymentInfo) {
+        this.paymentInfo = paymentInfo;
     }
     
     @Override
@@ -62,10 +72,10 @@ public class BoardingPass implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof BoardingPass)) {
+        if (!(object instanceof BookingTrans)) {
             return false;
         }
-        BoardingPass other = (BoardingPass) object;
+        BookingTrans other = (BookingTrans) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -74,7 +84,7 @@ public class BoardingPass implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.BoardingPass[ id=" + id + " ]";
+        return "ams.ars_crm.entity.Transaction[ id=" + id + " ]";
     }
     
 }

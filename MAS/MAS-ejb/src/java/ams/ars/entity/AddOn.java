@@ -3,32 +3,38 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.ars.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 
 /**
  *
  * @author Bowen
  */
 @Entity
-public class PromotionCode implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public class AddOn implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private Double percentage;
-    private Double promoValue;
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private MktCampaign mktCampaign;
     
+    private Long id;
+    private String description;
+    private String name;
+    private Double price;
+    
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "addOns")
+    private List<AirTicket> airTickets = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -37,13 +43,13 @@ public class PromotionCode implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public Double getPercentage() {
-        return percentage;
+    
+    public String getDescription() {
+        return description;
     }
 
-    public void setPercentage(Double percentage) {
-        this.percentage = percentage;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getName() {
@@ -54,21 +60,22 @@ public class PromotionCode implements Serializable {
         this.name = name;
     }
 
-    public Double getPromoValue() {
-        return promoValue;
+    public List<AirTicket> getAirTickets() {
+        return airTickets;
     }
 
-    public void setPromoValue(Double promoValue) {
-        this.promoValue = promoValue;
+    public void setAirTickets(List<AirTicket> airTickets) {
+        this.airTickets = airTickets;
+    }    
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
     
-    public MktCampaign getMktCampaign() {
-        return mktCampaign;
-    }
-
-    public void setMktCampaign(MktCampaign mktCampaign) {
-        this.mktCampaign = mktCampaign;
-    }
     
     @Override
     public int hashCode() {
@@ -80,10 +87,10 @@ public class PromotionCode implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PromotionCode)) {
+        if (!(object instanceof AddOn)) {
             return false;
         }
-        PromotionCode other = (PromotionCode) object;
+        AddOn other = (AddOn) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -92,7 +99,8 @@ public class PromotionCode implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.Promotion[ id=" + id + " ]";
+        return "ams.ars_crm.entity.AddOn[ id=" + id + " ]";
     }
+    
     
 }

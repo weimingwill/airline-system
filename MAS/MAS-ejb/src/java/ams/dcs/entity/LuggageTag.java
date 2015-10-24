@@ -6,6 +6,7 @@
 package ams.dcs.entity;
 
 import ams.aps.entity.Airport;
+import ams.ars.entity.PNR;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 /**
@@ -36,7 +38,8 @@ public class LuggageTag implements Serializable {
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Airport destination;
     
-    
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private PNR pnr;
 
     public Long getId() {
         return id;

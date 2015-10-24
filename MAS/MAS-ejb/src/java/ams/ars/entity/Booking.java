@@ -3,14 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.ars.entity;
 
 import ams.aps.entity.FlightSchedule;
+import ams.crm.entity.helper.Phone;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -38,7 +40,8 @@ public class Booking implements Serializable {
     private Date updatedTime;
     private String referenceNo;
     private String email;
-    private String phoneNo;
+    @Embedded
+    private Phone phoneNo;
     private Double price;
     private Boolean paid;
     private String channel;
@@ -117,11 +120,11 @@ public class Booking implements Serializable {
         this.email = email;
     }
 
-    public String getPhoneNo() {
+    public Phone getPhoneNo() {
         return phoneNo;
     }
 
-    public void setPhoneNo(String phoneNo) {
+    public void setPhoneNo(Phone phoneNo) {
         this.phoneNo = phoneNo;
     }
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars_crm.entity;
+package ams.crm.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -19,16 +19,16 @@ import javax.persistence.TemporalType;
  * @author Tongtong
  */
 @Entity
-public class Feedback implements Serializable {
+public class MileTrans implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String type;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdTime;
-    private String content;
-    private String status;
-    private String channel;
+    private Double amount;
+    private String description;
     
 
     public Long getId() {
@@ -39,6 +39,14 @@ public class Feedback implements Serializable {
         this.id = id;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Date getCreatedTime() {
         return createdTime;
     }
@@ -46,30 +54,21 @@ public class Feedback implements Serializable {
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
     }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
     
-    public String getContent() {
-        return content;
+    public String getDescription() {
+        return description;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
+    public void setDescription(String description) {
+        this.description = description;
     }
     
     
@@ -84,10 +83,10 @@ public class Feedback implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Feedback)) {
+        if (!(object instanceof MileTrans)) {
             return false;
         }
-        Feedback other = (Feedback) object;
+        MileTrans other = (MileTrans) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -96,7 +95,7 @@ public class Feedback implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.Feedback[ id=" + id + " ]";
+        return "ams.ars_crm.entity.MileTransaction[ id=" + id + " ]";
     }
     
 }
