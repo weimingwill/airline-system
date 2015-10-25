@@ -27,7 +27,9 @@
                     <p:outputLabel value="#{flightSchedule.flight.flightNo}" />
                 </p:column>
                 <p:column headerText="Departure">
-                    <p:outputLabel value="#{flightScheduleController.getDeparture(flightSchedule.flight.route)}" />
+                    <p:outputLabel id="depart" value="#{flightSchedule.leg.departAirport.city.cityName}">
+                        <p:tooltip for="depart" value="#{flightSchedule.leg.departAirport.country.countryName} - #{flightSchedule.leg.departAirport.city.cityName} - #{flightSchedule.leg.departAirport.airportName}" trackMouse="true"/>
+                    </p:outputLabel>
                 </p:column>
                 <p:column headerText="Departure Date">
                     <p:outputLabel value="#{flightSchedule.departDate}">
@@ -40,7 +42,9 @@
                     </p:outputLabel>
                 </p:column>
                 <p:column headerText="Arrival">
-                    <p:outputLabel value="#{flightScheduleController.getArrival(flightSchedule.flight.route)}" />
+                    <p:outputLabel id="arrival" value="#{flightSchedule.leg.arrivalAirport.city.cityName}" >
+                        <p:tooltip for="arrival" value="#{flightSchedule.leg.arrivalAirport.country.countryName} - #{flightSchedule.leg.arrivalAirport.city.cityName} - #{flightSchedule.leg.arrivalAirport.airportName}" trackMouse="true"/>
+                    </p:outputLabel>
                 </p:column>
                 <p:column headerText="Arrival Date">
                     <p:outputLabel value="#{flightSchedule.arrivalDate}">
