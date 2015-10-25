@@ -30,8 +30,10 @@
                     <h:outputText value="#{flightCrew.gender}" />
                 </p:column>
 
-                <p:column headerText="Age" sortBy="#{flightCrew.age}">
-                    <h:outputText value="#{flightCrew.age}" />
+                <p:column headerText="Age" sortBy="#{flightCrew.dob}">
+                    <h:outputText value="#{flightCrew.dob}" >
+                        <f:convertDateTime timeZone="GMT+8" pattern="dd/MM/yyyy"/>
+                    </h:outputText>
                 </p:column>
 
                 <p:column headerText="Position" sortBy="#{flightCrew.position.name}">
@@ -65,7 +67,9 @@
                 </p:column>
 
                 <f:facet name="footer">
-                    <p:outputLabel/>
+                    <p:column colspan="2" style="font-size: small; vertical-align: middle">
+                        <p:outputLabel value="Note: Click one row to view individual crew profile"/>
+                    </p:column>
                 </f:facet>
             </p:dataTable>
         </h:form>
@@ -78,13 +82,13 @@
                             <p:column rowspan="2">
                                 <p:graphicImage value="/resources/images/crews/#{flightCrewBacking.selectedCrew.position.type}-#{flightCrewBacking.selectedCrew.gender}.png" width="100px"/>
                             </p:column>
-                            <p:column>
+                            <p:column style="font-size: large; text-align: center; font-weight: bold; vertical-align: bottom">
                                 <p:outputLabel value="#{flightCrewBacking.selectedCrew.name}"/>
                             </p:column>
                         </p:row>
                         <p:row>
-                            <p:column>
-                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.position.name}"/>
+                            <p:column style="font-size: small; text-align: center; font-weight: bold; vertical-align: top; color: dimgray">
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.department}"/>
                             </p:column>
                         </p:row>
                         <p:row>
@@ -94,10 +98,12 @@
                         </p:row>
                         <p:row>
                             <p:column>
-                                <p:outputLabel value="Age"/>
+                                <p:outputLabel value="Date of Birth"/>
                             </p:column>
                             <p:column>
-                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.age}"/>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.dob}">
+                                    <f:convertDateTime timeZone="GMT+8" pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
                             </p:column>
                         </p:row>
                         <p:row>
@@ -105,7 +111,7 @@
                                 <p:outputLabel value="Gender"/>
                             </p:column>
                             <p:column>
-                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.gender}"/>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.gender == 'M' ? 'Male' : 'Female'}"/>
                             </p:column>
                         </p:row>
                         <p:row>
@@ -124,7 +130,7 @@
                                 <p:outputLabel value="#{flightCrewBacking.selectedCrew.email}"/>
                             </p:column>
                         </p:row>
-                        <p:row>
+                        <p:row rendered="#{not empty flightCrewBacking.selectedCrew.address}">
                             <p:column>
                                 <p:outputLabel value="Address"/>
                             </p:column>
@@ -132,10 +138,88 @@
                                 <p:outputLabel value="#{flightCrewBacking.selectedCrew.address}"/>
                             </p:column>
                         </p:row>
-                        
                         <p:row>
-                            <p:column colspan="2">
-
+                            <p:column colspan="2" class="ui-widget-header">
+                                <p:outputLabel value="Position"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Title"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.position.name}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Type"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.position.type == 'FA' ? 'Flight Attendant' : 'Pilot'}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Rank"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.position.rank}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Max Duty Period (Hrs)"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.position.maxDutyPeriodHrs}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Max Flying Hours (Hrs/Mon)"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.position.maxMonthlyFlyingHrs}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Max Days-off (day/Mon)"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.position.maxTotalMonthlyDaysOff}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" class="ui-widget-header">
+                                <p:outputLabel value="Experience"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Date Joined"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.dateJoined}">
+                                    <f:convertDateTime timeZone="GMT+8"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Total Flying Distance (Km)"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.totalFlyingDist}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Total Flying Time (Hrs)"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{flightCrewBacking.selectedCrew.totalFlyingTime}"/>
                             </p:column>
                         </p:row>
                     </p:panelGrid>

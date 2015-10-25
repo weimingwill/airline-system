@@ -20,6 +20,8 @@ import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.entity.FlightSchedule;
 import ams.ais.session.FlightScheduleSessionLocal;
 import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
+import ams.aps.entity.Route;
+import ams.aps.entity.RouteLeg;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
@@ -51,7 +53,6 @@ public class FlightScheduleController implements Serializable {
     private MsgController msgController;
     @Inject
     private SeatReallocationController seatReallocationController;
-    
 
     @EJB
     private FlightScheduleSessionLocal flightScheduleSession;
@@ -205,6 +206,26 @@ public class FlightScheduleController implements Serializable {
         } else {
             msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
         }
+    }
+
+    public String getDeparture(Route route) {
+        for (RouteLeg routeleg : route.getRouteLegs()) {
+            if (routeleg.getLegSeq() == 0) {
+                return routeleg.getLeg().getDepartAirport().getAirportName();
+            } else {
+            }
+        }
+        return "";
+    }
+
+    public String getArrival(Route route) {
+        for (RouteLeg routeleg : route.getRouteLegs()) {
+            if (routeleg.getLegSeq() == (route.getRouteLegs().size()-1)) {
+                return routeleg.getLeg().getArrivalAirport().getAirportName();
+            } else {
+            }
+        }
+        return "";
     }
 
     public boolean haveBookingClass() {
