@@ -7,8 +7,9 @@ package ams.afos.entity;
 
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Embeddable;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -21,27 +22,14 @@ public class FlightDuty implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToOne
-    private FlightSchedule flightSchedule;
+    @OneToMany
+    private List<FlightSchedule> flightSchedules;
 
     private Double flyingDistInKm;
     private Double flyingTimeInHrs;
     private Double sitTimeInHrs;
-    private Integer dutySeq;
-
-    /**
-     * @return the flightSchedule
-     */
-    public FlightSchedule getFlightSchedule() {
-        return flightSchedule;
-    }
-
-    /**
-     * @param flightSchedule the flightSchedule to set
-     */
-    public void setFlightSchedule(FlightSchedule flightSchedule) {
-        this.flightSchedule = flightSchedule;
-    }
+    private Integer cabinCrewQuota;
+    private Integer cockpitCrewQuota;
 
     /**
      * @return the flyingDistInKm
@@ -86,17 +74,45 @@ public class FlightDuty implements Serializable {
     }
 
     /**
-     * @return the dutySeq
+     * @return the cabinCrewQuota
      */
-    public Integer getDutySeq() {
-        return dutySeq;
+    public Integer getCabinCrewQuota() {
+        return cabinCrewQuota;
     }
 
     /**
-     * @param dutySeq the dutySeq to set
+     * @param cabinCrewQuota the cabinCrewQuota to set
      */
-    public void setDutySeq(Integer dutySeq) {
-        this.dutySeq = dutySeq;
+    public void setCabinCrewQuota(Integer cabinCrewQuota) {
+        this.cabinCrewQuota = cabinCrewQuota;
+    }
+
+    /**
+     * @return the cockpitCrewQuota
+     */
+    public Integer getCockpitCrewQuota() {
+        return cockpitCrewQuota;
+    }
+
+    /**
+     * @param cockpitCrewQuota the cockpitCrewQuota to set
+     */
+    public void setCockpitCrewQuota(Integer cockpitCrewQuota) {
+        this.cockpitCrewQuota = cockpitCrewQuota;
+    }
+
+    /**
+     * @return the flightSchedules
+     */
+    public List<FlightSchedule> getFlightSchedules() {
+        return flightSchedules;
+    }
+
+    /**
+     * @param flightSchedules the flightSchedules to set
+     */
+    public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
+        this.flightSchedules = flightSchedules;
     }
 
 }

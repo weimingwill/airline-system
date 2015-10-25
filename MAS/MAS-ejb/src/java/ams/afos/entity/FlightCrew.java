@@ -34,6 +34,7 @@ public class FlightCrew extends SystemUser implements Serializable {
     private String gender;
     private Double totalFlyingTime;
     private Double totalFlyingDist;
+    private String base;
     @Temporal(value = TemporalType.DATE)
     private Date dateJoined;
 
@@ -154,6 +155,20 @@ public class FlightCrew extends SystemUser implements Serializable {
      */
     public void setLanguages(List<Languages> languages) {
         this.languages = languages;
+    }
+
+    /**
+     * @return the base
+     */
+    public String getBase() {
+        return base;
+    }
+
+    /**
+     * @param base the base to set
+     */
+    public void setBase(String base) {
+        this.base = base;
     }
 
 }
