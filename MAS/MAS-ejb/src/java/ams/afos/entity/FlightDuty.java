@@ -8,20 +8,23 @@ package ams.afos.entity;
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  *
  * @author Lewis
  */
-@Embeddable
-@Table(name = "PAIRING_FLIGHTDUTIES")
+@Entity
 public class FlightDuty implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     @OneToMany
     private List<FlightSchedule> flightSchedules;
 
@@ -30,6 +33,53 @@ public class FlightDuty implements Serializable {
     private Double sitTimeInHrs;
     private Integer cabinCrewQuota;
     private Integer cockpitCrewQuota;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof FlightDuty)) {
+            return false;
+        }
+        FlightDuty other = (FlightDuty) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ams.afos.entity.FlightDuty[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the flightSchedules
+     */
+    public List<FlightSchedule> getFlightSchedules() {
+        return flightSchedules;
+    }
+
+    /**
+     * @param flightSchedules the flightSchedules to set
+     */
+    public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
+        this.flightSchedules = flightSchedules;
+    }
 
     /**
      * @return the flyingDistInKm
@@ -99,20 +149,6 @@ public class FlightDuty implements Serializable {
      */
     public void setCockpitCrewQuota(Integer cockpitCrewQuota) {
         this.cockpitCrewQuota = cockpitCrewQuota;
-    }
-
-    /**
-     * @return the flightSchedules
-     */
-    public List<FlightSchedule> getFlightSchedules() {
-        return flightSchedules;
-    }
-
-    /**
-     * @param flightSchedules the flightSchedules to set
-     */
-    public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
-        this.flightSchedules = flightSchedules;
     }
 
 }
