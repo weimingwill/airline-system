@@ -60,8 +60,12 @@ public class FlightSchedule implements Serializable {
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight flight;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private FlightSchedule returnedFlightSchedule;
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
+    private FlightSchedule returnedFlightSched;
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private FlightSchedule preFlightSched;
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private FlightSchedule nextFlightSched;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedules")
     private List<Booking> bookings = new ArrayList<>();
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedules")
     private List<MktCampaign> mktCampaigns = new ArrayList<>();
@@ -261,14 +265,30 @@ public class FlightSchedule implements Serializable {
         this.createdTime = createdTime;
     }
 
-    public FlightSchedule getReturnedFlightSchedule() {
-        return returnedFlightSchedule;
+    public FlightSchedule getReturnedFlightSched() {
+        return returnedFlightSched;
     }
 
-    public void setReturnedFlightSchedule(FlightSchedule returnedFlightSchedule) {
-        this.returnedFlightSchedule = returnedFlightSchedule;
+    public void setReturnedFlightSched(FlightSchedule returnedFlightSched) {
+        this.returnedFlightSched = returnedFlightSched;
     }
 
+    public FlightSchedule getPreFlightSched() {
+        return preFlightSched;
+    }
+
+    public void setPreFlightSched(FlightSchedule preFlightSched) {
+        this.preFlightSched = preFlightSched;
+    }
+
+    public FlightSchedule getNextFlightSched() {
+        return nextFlightSched;
+    }
+
+    public void setNextFlightSched(FlightSchedule nextFlightSched) {
+        this.nextFlightSched = nextFlightSched;
+    }
+    
     public List<Booking> getBookings() {
         return bookings;
     }
