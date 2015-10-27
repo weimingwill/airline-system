@@ -13,6 +13,7 @@ import ams.aps.entity.FlightSchedule;
 import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.exception.ExistSuchFlightScheduleException;
 import ams.aps.util.exception.NoMoreUnscheduledFlightException;
 import ams.aps.util.exception.NoSelectAircraftException;
 import ams.aps.util.exception.NoSuchAircraftException;
@@ -69,11 +70,12 @@ public interface FlightSchedulingSessionLocal {
 
     public void updateFlight(Flight flight) throws ObjectDoesNotExistException;
 
-    public void createFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrivalDate)
-            throws NoSuchFlightException, NoMoreUnscheduledFlightException, NoSelectAircraftException;
+    public void createFlightSchedule(Flight flight, Aircraft aircraft, Date deptDate, Date arrDate)
+            throws NoSuchFlightException, NoMoreUnscheduledFlightException, NoSelectAircraftException, ExistSuchFlightScheduleException;
 
-    public void updateFlightSchedule(String flightNo, Date deptDate, Date oldDeptDate)
-            throws NoMoreUnscheduledFlightException, NoSelectAircraftException, NoSuchFlightException, NoSuchFlightSchedulException;
+    public void updateFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrDate, FlightSchedule oldFlightSched)
+            throws NoMoreUnscheduledFlightException, NoSelectAircraftException, NoSuchFlightException, 
+            NoSuchFlightSchedulException, ExistSuchFlightScheduleException;
 
     public void verifyUnscheduledFlightNumber(Flight flight) throws NoMoreUnscheduledFlightException;
 

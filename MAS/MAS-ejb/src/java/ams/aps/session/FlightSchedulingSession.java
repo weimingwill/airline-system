@@ -14,6 +14,7 @@ import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
 import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.exception.ExistSuchFlightScheduleException;
 import ams.aps.util.exception.NoMoreUnscheduledFlightException;
 import ams.aps.util.exception.NoSelectAircraftException;
 import ams.aps.util.exception.NoSuchAircraftException;
@@ -373,20 +374,44 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
     }
 
-    @Override
-    public void createFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrivalDate)
-            throws NoSuchFlightException, NoMoreUnscheduledFlightException, NoSelectAircraftException {
-        System.out.println("create flight in process");
-        Flight flight = getFlightByFlightNo(flightNo);
-        FlightSchedule flightSchedule = new FlightSchedule();
-        FlightSchedule returnFlightSchedule = new FlightSchedule();
-        deptDate = setFlightSchedule(flight, aircraft, deptDate, flightSchedule);
-        verifyUnscheduledFlightNumber(flight.getReturnedFlight());
-        setFlightSchedule(flight.getReturnedFlight(), aircraft, deptDate, returnFlightSchedule);
-        bindReturnFlightSchedule(flightSchedule, returnFlightSchedule);
+    public void verifyScheduleCollision(Aircraft aircraft, Date deptDate, Date arrDate, FlightSchedule currentFlightSched) throws ExistSuchFlightScheduleException {
+        List<FlightSchedule> flightSchedules = aircraft.getFlightSchedules();
+        flightSchedules.remove(currentFlightSched);
+        while ((currentFlightSched = currentFlightSched.getNextFlightSched()) != null) {
+            flightSchedules.remove(currentFlightSched);
+        }
+        for (FlightSchedule flightSchedule : flightSchedules) {
+            if (arrDate.after(flightSchedule.getDepartDate()) && flightSchedule.getArrivalDate().after(deptDate)) {
+                throw new ExistSuchFlightScheduleException(ApsMsg.EXIST_SUCH_FLIGHTSCHEDULE_ERROR);
+            }
+        }
     }
 
-    public Date setFlightSchedule(Flight flight, Aircraft selectedAircraft, Date deptDate, FlightSchedule flightSchedule)
+    @Override
+    public void createFlightSchedule(Flight flight, Aircraft aircraft, Date deptDate, Date arrDate)
+            throws NoSuchFlightException, NoMoreUnscheduledFlightException, NoSelectAircraftException, ExistSuchFlightScheduleException {
+        System.out.println("create flight in process");
+
+        verifyScheduleCollision(aircraft, deptDate, arrDate, new FlightSchedule());
+        List<FlightSchedule> flightSchedules = new ArrayList<>();
+        deptDate = setFlightSchedule(flight, aircraft, deptDate, flightSchedules);
+
+        verifyUnscheduledFlightNumber(flight.getReturnedFlight());
+        List<FlightSchedule> reFlightSchedules = new ArrayList<>();
+        setFlightSchedule(flight.getReturnedFlight(), aircraft, deptDate, reFlightSchedules);
+
+        FlightSchedule firstFlightSched = em.find(FlightSchedule.class, flightSchedules.get(0).getFlightScheduleId());
+        FlightSchedule lastFlightSched = em.find(FlightSchedule.class, flightSchedules.get(1).getFlightScheduleId());
+        FlightSchedule reFirstFlightSched = em.find(FlightSchedule.class, reFlightSchedules.get(0).getFlightScheduleId());
+        FlightSchedule reLastFlightSched = em.find(FlightSchedule.class, reFlightSchedules.get(1).getFlightScheduleId());
+
+        lastFlightSched.setNextFlightSched(reFirstFlightSched);
+        reFirstFlightSched.setPreFlightSched(lastFlightSched);
+        em.merge(lastFlightSched);
+        bindReturnFlightSchedule(firstFlightSched, reLastFlightSched);
+    }
+
+    public Date setFlightSchedule(Flight flight, Aircraft selectedAircraft, Date deptDate, List<FlightSchedule> flightSchedules)
             throws NoMoreUnscheduledFlightException, NoSelectAircraftException {
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
@@ -399,25 +424,51 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         if (aircraft == null) {
             throw new NoSelectAircraftException(ApsMsg.NO_SELECT_AIRCRAFT_ERROR);
         }
+        FlightSchedule flightSched = new FlightSchedule();
+        int i = 0;
         for (LegHelper legHelper : legHelpers) {
+
             arrival = addHourToDate(dept, legHelper.getFlyingTime());
             Leg leg = em.find(Leg.class, legHelper.getLegId());
-            flightSchedule.setCreatedTime(new Date());
-            flightSchedule.setDepartDate(dept);
-            flightSchedule.setArrivalDate(arrival);
-            flightSchedule.setFlight(f);
-            flightSchedule.setAircraft(aircraft);
-            flightSchedule.setLeg(leg);
-            flightSchedule.setDepartTerminal("");
-            flightSchedule.setDepartGate("");
-            flightSchedule.setArrivalTerminal("");
-            flightSchedule.setArrivalGate("");
-            flightSchedule.setPriced(false);
-            flightSchedule.setSeatAllocated(false);
-            flightSchedule.setDeleted(false);
-            flightSchedule.setCompleted(false);
-            em.persist(flightSchedule);
-//            em.flush();
+            flightSched.setCreatedTime(new Date());
+            flightSched.setDepartDate(dept);
+            flightSched.setArrivalDate(arrival);
+            flightSched.setFlight(f);
+            flightSched.setAircraft(aircraft);
+            flightSched.setLeg(leg);
+            flightSched.setDepartTerminal("");
+            flightSched.setDepartGate("");
+            flightSched.setArrivalTerminal("");
+            flightSched.setArrivalGate("");
+            flightSched.setPriced(false);
+            flightSched.setSeatAllocated(false);
+            flightSched.setDeleted(false);
+            flightSched.setCompleted(false);
+
+            em.persist(flightSched);
+            em.flush();
+
+            if (i == 0) {
+                flightSchedules.add(flightSched);
+            }
+            FlightSchedule nextFlightSched = new FlightSchedule();
+
+            if (i == legHelpers.size() - 1) {
+                flightSched.setNextFlightSched(null);
+                em.merge(flightSched);
+                em.flush();
+                flightSchedules.add(flightSched);
+            } else {
+                flightSched.setNextFlightSched(nextFlightSched);
+                nextFlightSched.setPreFlightSched(flightSched);
+                nextFlightSched.setNextFlightSched(null);
+                em.persist(nextFlightSched);
+                em.merge(flightSched);
+                em.flush();
+            }
+            flightSched = nextFlightSched;
+
+            i++;
             dept = addHourToDate(arrival, legHelper.getTurnaroundTime());
         }
         completeOneFlightSchedule(flight);
@@ -435,17 +486,41 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     @Override
-    public void updateFlightSchedule(String flightNo, Date deptDate, Date oldDeptDate)
-            throws NoSelectAircraftException, NoSuchFlightException, NoSuchFlightSchedulException {
+    public void updateFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrDate, FlightSchedule oldFlightSched)
+            throws NoSelectAircraftException, NoSuchFlightException, NoSuchFlightSchedulException, ExistSuchFlightScheduleException {
+        verifyScheduleCollision(aircraft, deptDate, arrDate, oldFlightSched);
         Flight flight = getFlightByFlightNo(flightNo);
-        FlightSchedule flightSchedule = em.find(FlightSchedule.class, getFlightScheduleByFlightNoAndDeptDate(flight.getFlightNo(), oldDeptDate).getFlightScheduleId());
-        FlightSchedule returnFlightSchedule = flightSchedule.getReturnedFlightSchedule();
-        deptDate = reSetFlightSchedule(flight, deptDate, flightSchedule);
-        reSetFlightSchedule(flight.getReturnedFlight(), deptDate, returnFlightSchedule);
-        bindReturnFlightSchedule(flightSchedule, returnFlightSchedule);
+//        FlightSchedule firstFlightSched = em.find(FlightSchedule.class, getFlightScheduleByFlightNoAndDeptDate(flight.getFlightNo(), oldDeptDate).getFlightScheduleId());
+
+        FlightSchedule firstFlightSched = em.find(FlightSchedule.class, oldFlightSched.getFlightScheduleId());
+        FlightSchedule lastFlightSched = new FlightSchedule();
+        List<FlightSchedule> flightSchedules = new ArrayList<>();
+        flightSchedules.add(firstFlightSched);
+        flightSchedules.add(lastFlightSched);
+
+        deptDate = reSetFlightSchedule(flight, deptDate, flightSchedules);
+
+        FlightSchedule reFirstFlightSched = flightSchedules.get(1).getNextFlightSched();
+        FlightSchedule reLastFlightSched = new FlightSchedule();
+
+        List<FlightSchedule> reFlightSchedules = new ArrayList<>();
+        reFlightSchedules.add(reFirstFlightSched);
+        reFlightSchedules.add(reLastFlightSched);
+
+        reSetFlightSchedule(flight.getReturnedFlight(), deptDate, reFlightSchedules);
+
+        firstFlightSched = em.find(FlightSchedule.class, flightSchedules.get(0).getFlightScheduleId());
+        lastFlightSched = em.find(FlightSchedule.class, flightSchedules.get(1).getFlightScheduleId());
+        reFirstFlightSched = em.find(FlightSchedule.class, reFlightSchedules.get(0).getFlightScheduleId());
+        reLastFlightSched = em.find(FlightSchedule.class, reFlightSchedules.get(1).getFlightScheduleId());
+
+        lastFlightSched.setNextFlightSched(reFirstFlightSched);
+        reFirstFlightSched.setPreFlightSched(lastFlightSched);
+        em.merge(lastFlightSched);
+        bindReturnFlightSchedule(firstFlightSched, reLastFlightSched);
     }
 
-    public Date reSetFlightSchedule(Flight flight, Date deptDate, FlightSchedule flightSchedule)
+    public Date reSetFlightSchedule(Flight flight, Date deptDate, List<FlightSchedule> flightSchedules)
             throws NoSelectAircraftException, NoSuchFlightSchedulException {
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
@@ -453,12 +528,29 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         List<LegHelper> legHelpers = routeHelper.getLegs();
         Date dept = deptDate;
         Date arrival;
+        int i = 0;
+
+        FlightSchedule flightSched = em.find(FlightSchedule.class, flightSchedules.get(0).getFlightScheduleId());
+
         for (LegHelper legHelper : legHelpers) {
             arrival = addHourToDate(dept, legHelper.getFlyingTime());
-            flightSchedule.setDepartDate(dept);
-            flightSchedule.setArrivalDate(arrival);
-            em.merge(flightSchedule);
+            flightSched.setDepartDate(dept);
+            flightSched.setArrivalDate(arrival);
+
+            if (i == 0) {
+                flightSchedules.set(0, flightSched);
+            }
+
+            if (i == legHelpers.size() - 1) {
+                flightSchedules.set(1, flightSched);
+            }
+
+            em.merge(flightSched);
             em.flush();
+            i++;
+            if (flightSched.getNextFlightSched() != null) {
+                flightSched = em.find(FlightSchedule.class, flightSched.getNextFlightSched().getFlightScheduleId());
+            }
             dept = addHourToDate(arrival, legHelper.getTurnaroundTime());
         }
         return dept;
@@ -478,8 +570,8 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     }
 
     public void bindReturnFlightSchedule(FlightSchedule flightSchedule, FlightSchedule returnFlightSchedule) {
-        flightSchedule.setReturnedFlightSchedule(returnFlightSchedule);
-        returnFlightSchedule.setReturnedFlightSchedule(flightSchedule);
+        flightSchedule.setReturnedFlightSched(returnFlightSchedule);
+        returnFlightSchedule.setReturnedFlightSched(flightSchedule);
         em.merge(flightSchedule);
         em.merge(returnFlightSchedule);
     }
