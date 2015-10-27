@@ -50,7 +50,8 @@ public class FlightSchedule implements Serializable {
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdTime;
     private String status;
-
+    private Double turnoverTime;
+    
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
@@ -59,8 +60,6 @@ public class FlightSchedule implements Serializable {
     private Leg leg;
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight flight;
-    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private FlightSchedule returnedFlightSched;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightSchedule preFlightSched;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
@@ -265,12 +264,12 @@ public class FlightSchedule implements Serializable {
         this.createdTime = createdTime;
     }
 
-    public FlightSchedule getReturnedFlightSched() {
-        return returnedFlightSched;
+    public Double getTurnoverTime() {
+        return turnoverTime;
     }
 
-    public void setReturnedFlightSched(FlightSchedule returnedFlightSched) {
-        this.returnedFlightSched = returnedFlightSched;
+    public void setTurnoverTime(Double turnoverTime) {
+        this.turnoverTime = turnoverTime;
     }
 
     public FlightSchedule getPreFlightSched() {
