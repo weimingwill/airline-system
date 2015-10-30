@@ -18,7 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -52,8 +52,8 @@ public class Booking implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "booking")
     private List<AirTicket> airTickets = new ArrayList<>();
 
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private FlightSchedule flightSchedule; 
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<FlightSchedule> flightSchedules = new ArrayList<>(); 
             
     @Override
     public int hashCode() {
@@ -168,12 +168,11 @@ public class Booking implements Serializable {
         this.airTickets = airTickets;
     }
 
-    public FlightSchedule getFlightSchedule() {
-        return flightSchedule;
+    public List<FlightSchedule> getFlightSchedules() {
+        return flightSchedules;
     }
 
-    public void setFlightSchedule(FlightSchedule flightSchedule) {
-        this.flightSchedule = flightSchedule;
+    public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
+        this.flightSchedules = flightSchedules;
     }
-
 }

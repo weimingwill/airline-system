@@ -6,7 +6,6 @@
 package ams.ars.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
-import ams.aps.entity.FlightSchedule;
 import ams.crm.entity.Customer;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,8 +51,8 @@ public class AirTicket implements Serializable {
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Customer customer;
     
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private FlightScheduleBookingClass flightScheduleBookingClass;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<FlightScheduleBookingClass> flightSchedBookingClasses = new ArrayList<>();
     
     @Override
     public int hashCode() {
@@ -152,12 +151,13 @@ public class AirTicket implements Serializable {
         this.status = status;
     }
 
-    public FlightScheduleBookingClass getFlightScheduleBookingClass() {
-        return flightScheduleBookingClass;
+    public List<FlightScheduleBookingClass> getFlightSchedBookingClasses() {
+        return flightSchedBookingClasses;
     }
 
-    public void setFlightScheduleBookingClass(FlightScheduleBookingClass flightScheduleBookingClass) {
-        this.flightScheduleBookingClass = flightScheduleBookingClass;
+    public void setFlightSchedBookingClasses(List<FlightScheduleBookingClass> flightSchedBookingClasses) {
+        this.flightSchedBookingClasses = flightSchedBookingClasses;
     }
-    
+
+
 }
