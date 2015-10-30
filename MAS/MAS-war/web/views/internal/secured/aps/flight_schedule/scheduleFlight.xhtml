@@ -73,14 +73,14 @@
                     <p:row>
                         <p:column>From: </p:column>
                         <p:column>
-                            <p:calendar value="#{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
+                            <p:calendar value="#{flightScheduleManager.schedStartDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
                                 <p:ajax event="dateSelect" listener="#{flightScheduleManager.onCalendarDateChange()}" update="messages,form" />
                             </p:calendar>
                         </p:column>
 
                         <p:column>To: </p:column>
                         <p:column>
-                            <p:calendar value="#{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
+                            <p:calendar value="#{flightScheduleManager.schedEndDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
                                 <p:ajax event="dateSelect" update="messages" />
                             </p:calendar>
                         </p:column>

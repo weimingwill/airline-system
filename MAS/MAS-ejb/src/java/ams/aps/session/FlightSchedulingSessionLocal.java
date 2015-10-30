@@ -92,5 +92,6 @@ public interface FlightSchedulingSessionLocal {
     public List<FlightSchedule> verifyApplyFlightSchedCollision(List<Aircraft> aircrafts, Date startDate, Date endDate);
 
     public void setRouteFlightSchedule(FlightSchedule flightSchedule, Flight flight);
-    
+
+    public void applyFlightSchedulesToPeriod(List<Aircraft> aircrafts, Date startDate, Date endDate);
 }

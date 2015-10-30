@@ -724,6 +724,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return collidedFlightScheds;
     }
 
+    @Override
     public void applyFlightSchedulesToPeriod(List<Aircraft> aircrafts, Date startDate, Date endDate) {
         List<Date> dates = new ArrayList<>();
         dates.add(startDate);
@@ -801,26 +802,32 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         startCalendar.setTime(startDate);
         startCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         setToStartOfDay(startCalendar);
-        startCalendar.add(Calendar.DATE, 7);
+//        startCalendar.add(Calendar.DATE, 7);
         startDate = startCalendar.getTime();
 
         //initialze departure date and arrival date
+        startCalendar.add(Calendar.DATE, 7);
+        Date deptDate = startCalendar.getTime();
         startCalendar.add(Calendar.DATE, 6);
-        Date deptDate = startDate;
         Date arrDate = startCalendar.getTime();
 
         //set end date to the next week saturday of the selected date
         Calendar endCalendar = Calendar.getInstance();
         endCalendar.setTime(endDate);
-        endCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-        setToStartOfDay(startCalendar);
-        startCalendar.add(Calendar.DATE, 7);
+        setToStartOfDay(endCalendar);
+        if (endCalendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
+            endCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+            endCalendar.add(Calendar.DATE, -1);
+        }
         endDate = endCalendar.getTime();
-
         dates.set(0, startDate);
         dates.set(1, endDate);
         dates.add(deptDate);
         dates.add(arrDate);
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End Date: " + endDate);
+        System.out.println("Dept Date: " + deptDate);
+        System.out.println("Arrival Date: " + arrDate);
     }
 
     public void setToStartOfDay(Calendar calendar) {
