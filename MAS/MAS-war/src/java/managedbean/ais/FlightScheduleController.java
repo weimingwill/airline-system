@@ -38,6 +38,7 @@ import javax.inject.Named;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -200,9 +201,9 @@ public class FlightScheduleController implements Serializable {
         System.out.println("FlightScheduleId : " + selectedFlightSchedule);
         if (selectedFlightSchedule != null) {
             flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(selectedFlightSchedule.getFlightScheduleId());
-//            RequestContext context = RequestContext.getCurrentInstance();
-//            context.update(":viewBookingClassForm:viewBookingClass");
-//            context.execute("PF('flightScheduleBookingClassDialog').show()");
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.update(":viewBookingClassForm:viewBookingClass");
+            context.execute("PF('flightScheduleBookingClassDialog').show()");
         } else {
             msgController.addErrorMessage(ApsMessage.HAVE_NOT_SELECT_FLIGHTSCHEDULE_WARNING);
         }
