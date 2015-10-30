@@ -391,5 +391,6 @@ public class NavigationController implements Serializable {
         uri = uri.substring(uri.indexOf('/', 1));
         return uri + REDIRECT;
     }
+    
 
 }

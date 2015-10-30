@@ -53,7 +53,9 @@ public class RegCust extends Customer implements Serializable {
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Membership membership;
-
+    
+    
+  
     public String getEmail() {
         return email;
     }

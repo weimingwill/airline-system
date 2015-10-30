@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/ArsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Feedback Form
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="RegistrationForm" style="width: 500px;text-align: center;" >
+            <p:panel header="Customer Feedback Form" styleClass="centeredPanel">
+
+                <p:panel header="Personal information">
+                    <p:panelGrid columns="2" styleClass="centered">
+
+
+                        <p:outputLabel for="firstname" value="First/Given Name" />
+                        <p:inputText id="firstname" class="userProfileInput" required="true" requiredMessage="Please enter First/Given Name:" value="#{registrationController.newRegCust.firstName}" placeholder="in full,per passport"/>
+
+                        <p:outputLabel for="lastname" value="Last/Family Name"/>
+                        <p:inputText id="lastname" class="userProfileInput" required="true" requiredMessage="Please enter Last/Family Name:" value="#{registrationController.newRegCust.lastName}" placeholder="in full,per passport"/>           
+                        
+                        <p:outputLabel for="email" value="Email"/>
+                        <p:inputText value="#{userController.email}" required="true" requiredMessage="Please enter email" 
+                                 validatorMessage="Invalid email format" id="email" class="userProfileInput">
+                        <p:ajax update="messages" event="blur" />
+                        <f:validateRegex
+                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                        </p:inputText>
+                        
+                        
+                    </p:panelGrid>
+
+                </p:panel>
+                <p:panel header="Feedback Session" >
+                    <h:form>           
+                        <p:editor id="editor" widgetVar="editorWidget" value="#{feedbackController.newFeedback.content}" width="440" />
+
+                        <h:panelGrid columns="2" style="margin-top: 10px">
+                            <p:commandButton value="Submit"  action="#{feedbackController.createrFeedback()}" update="messages" icon="ui-icon-disk" />
+
+                            <p:commandButton value="Clear" type="button" onclick="PF('editorWidget').clear();" icon="ui-icon-close" />
+                        </h:panelGrid>
+
+                       
+                    </h:form> 
+                </p:panel>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

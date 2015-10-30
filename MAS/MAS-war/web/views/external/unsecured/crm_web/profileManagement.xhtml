@@ -4,9 +4,11 @@
                 template="./../../../../template/ArsTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:botDetect="botDetectFacelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+    <ui:define name="title">
+        Profile Management
+    </ui:define>
 
     <ui:define name="content">
         <h:form id="RegistrationForm" style="width: 500px;text-align: center;" >
@@ -16,19 +18,8 @@
 
                 <p:panel header="Personal information">
                     <p:panelGrid columns="2" styleClass="centered">
-                        <p:outputLabel for="nametitle" value="Title"/>
-                        <p:selectOneMenu id="nametitle" required="true" requiredMessage="Please Select Title"  style="width:180px" value="#{registrationController.newRegCust.title}" >
-                            <f:selectItem itemLabel="Please Choose" itemValue="" />
-                            <f:selectItem itemLabel="Dr"  itemValue="Dr" />
-                            <f:selectItem itemLabel="Mdm" itemValue="Mdm"/>
-                            <f:selectItem itemLabel="Miss"  itemValue="Miss" />
-                            <f:selectItem itemLabel="Mr"  itemValue="Mr" />
-                            <f:selectItem itemLabel="Mrs"  itemValue="Mrs" />
-                            <f:selectItem itemLabel="Ms" itemValue="Ms" />
-                            <f:selectItem itemLabel="Mstr"  itemValue="Mstr"/>
-                            <f:selectItem itemLabel="Prof"  itemValue="Prof" />
-                            <f:selectItem itemLabel="Others" itemValue="Others" />
-                        </p:selectOneMenu>
+                        <p:outputLabel value="Title"/>
+                        <p:outputLabel value="#{registrationController.newRegCust.title}"/>
                         
                         <p:outputLabel for="passportNo" value="Passport No" />
                         <p:inputText id="passportNo" class="userProfileInput" required="true" requiredMessage="Please enter Passport Number" value="#{registrationController.newRegCust.passportNo}"  placeholder="passport"/>
