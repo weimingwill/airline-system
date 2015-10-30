@@ -65,8 +65,7 @@
 
                 <f:facet name="footer">
                     <p:commandButton icon="ui-icon-search" value="View booking classes" 
-                                     update=":viewBookingClassForm:viewBookingClass"
-                                     oncomplete="PF('flightScheduleBookingClassDialog').show()"
+                                     update=":viewBookingClassForm:viewBookingClass,messages"
                                      actionListener="#{flightScheduleController.onViewBookingClassClick()}" />
                     <p:commandButton action="#{flightScheduleController.toAssignFlightScheduleBookingClass()}" value="Add booking classes" update="messages"/>
                     <p:commandButton action="#{flightScheduleController.toSeatAllocation()}" value="Seat allocation" update="messages" />
