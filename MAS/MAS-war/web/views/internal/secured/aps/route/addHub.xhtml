@@ -8,11 +8,11 @@
 
     <ui:define name="content">
 
-        <f:facet name="header">
-            Add an airport as hub
-        </f:facet>
-
         <h:form>
+            <f:facet name="header">
+                Add an airport as hub
+            </f:facet>
+            
             <p:panelGrid columns="2" style="margin-bottom:10px">
                 <p:outputLabel for="country" value="Country:" />
                 <p:selectOneMenu id="country" value="#{routeController.country}" converter="countryConverter"  style="width:200px" filter="true" filterMatchMode="contains">

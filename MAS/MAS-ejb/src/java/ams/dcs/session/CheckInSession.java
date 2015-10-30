@@ -5,10 +5,14 @@
  */
 package ams.dcs.session;
 
+import ams.aps.entity.FlightSchedule;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.Seat;
 import ams.crm.entity.Customer;
+import com.sun.xml.wss.util.DateUtils;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -27,20 +31,32 @@ public class CheckInSession implements CheckInSessionLocal {
 
     @Override
     public List<AirTicket> getValidAirTicketsByCustomer(String passportNo) {
+        Calendar cal = Calendar.getInstance(); 
+        cal.setTime(new Date());
+        cal.add(Calendar.HOUR_OF_DAY, 48); // adds 48 hour
+        Date checkInAlloweddate = cal.getTime(); // returns new date object, one hour in the future
+        Date currentDate = new Date();
+        
+
         Customer c = em.find(Customer.class, passportNo);
-        Query q = em.createQuery("SELECT at FROM AirTicket at WHERE at.status = paid' AND IN (SELECT c FROM Customer c WHERE c.passportNo =:passport) ");
+        Query q = em.createQuery("SELECT Object(at) FROM AirTicket at WHERE at.customer.passportNo =:passport AND at.status LIKE 'Booking confirmed'");
         q.setParameter("passport", passportNo);
         List<AirTicket> airTickets = new ArrayList<>();
-        
+
         try {
             airTickets = q.getResultList();
-            for(AirTicket at :airTickets){
+            for (AirTicket at : c.getAirTickets()) {
+                List<FlightSchedule> fsList = at.getBooking().getFlightSchedules();
                 
+                //if (checkInAlloweddate.compareTo(d) * d.compareTo(currentDate) > 0) {
+                //    airTickets.add(at);
+                //}
             }
         } catch (Exception e) {
+            return null;
         }
-        
-        return c.getAirTickets();
+
+        return airTickets;
     }
 
     public String selectSeat(String ticketNo) {
@@ -49,7 +65,7 @@ public class CheckInSession implements CheckInSessionLocal {
 
     @Override
     public boolean checkInPassenger(String ticketNo) {
-        
+
         try {
             AirTicket at = em.find(AirTicket.class, ticketNo);
             Seat seat = at.getSeat();
@@ -84,6 +100,5 @@ public class CheckInSession implements CheckInSessionLocal {
             return null;
         }
     }
-    
 
 }
