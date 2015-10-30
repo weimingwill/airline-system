@@ -74,7 +74,7 @@ public interface FlightSchedulingSessionLocal {
             throws NoSuchFlightException, NoMoreUnscheduledFlightException, NoSelectAircraftException, ExistSuchFlightScheduleException;
 
     public void updateFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrDate, FlightSchedule oldFlightSched)
-            throws NoMoreUnscheduledFlightException, NoSelectAircraftException, NoSuchFlightException, 
+            throws NoMoreUnscheduledFlightException, NoSelectAircraftException, NoSuchFlightException,
             NoSuchFlightSchedulException, ExistSuchFlightScheduleException;
 
     public void verifyUnscheduledFlightNumber(Flight flight) throws NoMoreUnscheduledFlightException;
@@ -83,9 +83,14 @@ public interface FlightSchedulingSessionLocal {
 
     public Aircraft getAircraftByTailNo(String tailNo) throws NoSuchAircraftException;
 
-    public List<FlightSchedule> getFlightSchedulesByTailNoAndTime(String aircraftTailNo, Date startDate, Date endDate);
+    public List<FlightSchedule> getFlightSchedulesByTailNoAndTime(String aircraftTailNo, Date startDate, Date endDate, String method);
 
     public List<FlightSchedule> getFlightSchedulesByTailNo(String aircraftTailNo);
 
     public Flight getFlightByFlightNo(String fligthNo) throws NoSuchFlightException;
+
+    public List<FlightSchedule> verifyApplyFlightSchedCollision(List<Aircraft> aircrafts, Date startDate, Date endDate);
+
+    public void setRouteFlightSchedule(FlightSchedule flightSchedule, Flight flight);
+    
 }

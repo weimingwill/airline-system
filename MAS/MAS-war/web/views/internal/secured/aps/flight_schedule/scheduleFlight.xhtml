@@ -8,8 +8,8 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
-                xmlns:ti="http://xmlns.jcp.org/jsf/composite/ezcomp/tile"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
 
     <ui:define name="content">
         <me:CCScheduleFlightMenu activeIndex="1"/>
@@ -56,10 +56,43 @@
             <p:separator/>
 
             <p:fieldset id="scheduleField">
-                <p:outputLabel for="date" value="Select schedule week: " />
-                <p:calendar id="date" value="#{flightScheduleManager.selectedDate}" placeholder="Select any date of week" timeZone="GMT+8"  pattern="dd/MM/yyyy">
-                    <p:ajax event="dateSelect" listener="#{flightScheduleManager.onCalendarDateChange()}" update="messages,form" />
-                </p:calendar>
+
+                <p:panelGrid>
+                    <p:row >
+                        <p:column colspan="3">Apply the this week flight schedule for </p:column>
+                        <p:column colspan="2">
+                            <p:selectOneMenu value="#{flightScheduleManager.schedPeriod}" 
+                                             effect="fade" required="true" style="width:100px;">
+                                <p:ajax listener="#{flightScheduleManager.onCalendarDateChange()}" update="messages,form" />
+                                <c:forEach begin="1" end="12" varStatus="index">
+                                    <f:selectItem itemLabel="#{index.index} months" itemValue="#{index.index}" />
+                                </c:forEach>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>From: </p:column>
+                        <p:column>
+                            <p:calendar value="#{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
+                                <p:ajax event="dateSelect" listener="#{flightScheduleManager.onCalendarDateChange()}" update="messages,form" />
+                            </p:calendar>
+                        </p:column>
+
+                        <p:column>To: </p:column>
+                        <p:column>
+                            <p:calendar value="#{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
+                                <p:ajax event="dateSelect" update="messages" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="Apply to " />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <!--                <p:outputLabel for="date" value="Select schedule week: " />
+                                <p:calendar id="date" value="{flightScheduleManager.selectedDate}" placeholder="Select any date of week" timeZone="GMT+8"  pattern="dd/MM/yyyy">
+                                    <p:ajax event="dateSelect" listener="{flightScheduleManager.onCalendarDateChange()}" update="messages,form" />
+                                </p:calendar>-->
                 <p:separator/>
 
                 <pe:timeline id="timeline" value="#{flightScheduleManager.model}" var="flightSchedule" varGroup="aircraft" 
@@ -156,6 +189,14 @@
             </script>
         </h:form>
 
+        <p:dialog header="Collided Flight Schedules" widgetVar="collidedFlightSchedDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form id="collidedFlightSchedForm">
+                <ta:CCViewFlightScheduleTable id="collidedFlightSchedTable" flightSchedules="#{flightScheduleManager.collidedFlightScheds}" />
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,timeline" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </h:form>
+        </p:dialog>
+
         <p:separator/>
         <h:form>
             <p:panelGrid>
@@ -169,34 +210,25 @@
                             </c:forEach>
                         </p:selectOneMenu>
                     </p:column>
-                    <p:column>Start from: </p:column>
-                    <p:column>
-                        <p:calendar value="#{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
-                            <p:ajax event="dateSelect"  update="messages" />
-                        </p:calendar>
-                    </p:column>
-                    <p:column>
-                        <p:commandButton value="apply" />
-                    </p:column>
                 </p:row>
-<!--                <p:row>
+                <p:row>
                     <p:column>From: </p:column>
                     <p:column>
-                        <p:calendar value="{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
+                        <p:calendar value="#{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
                             <p:ajax event="dateSelect"  update="messages" />
                         </p:calendar>
                     </p:column>
 
                     <p:column>To: </p:column>
                     <p:column>
-                        <p:calendar value="{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
+                        <p:calendar value="#{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
                             <p:ajax event="dateSelect" update="messages" />
                         </p:calendar>
                     </p:column>
                     <p:column>
                         <p:commandButton value="apply" />
                     </p:column>
-                </p:row>-->
+                </p:row>
             </p:panelGrid>
         </h:form>
         <p:separator/>
