@@ -5,6 +5,8 @@
  */
 package ams.afos.session;
 
+import ams.afos.entity.FlightDuty;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +15,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface FlightCrewMgmtSessionLocal {
-    
+    public List<FlightDuty> generateFlightDuties();
 }
