@@ -8,15 +8,13 @@ package ams.afos.entity;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -34,8 +32,7 @@ public class Pairing implements Serializable {
     private Integer cockpitCrewQuota;
     private Double layoverTime;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(joinColumns = @JoinColumn(name = "FLIGHTDUTYID"))
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<FlightDuty> flightDuties;
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)

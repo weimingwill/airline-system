@@ -50,7 +50,8 @@ public class FlightSchedule implements Serializable {
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdTime;
     private String status;
-
+    private Double turnoverTime;
+    
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
@@ -60,8 +61,10 @@ public class FlightSchedule implements Serializable {
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight flight;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private FlightSchedule returnedFlightSchedule;
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
+    private FlightSchedule preFlightSched;
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private FlightSchedule nextFlightSched;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedules")
     private List<Booking> bookings = new ArrayList<>();
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedules")
     private List<MktCampaign> mktCampaigns = new ArrayList<>();
@@ -261,14 +264,30 @@ public class FlightSchedule implements Serializable {
         this.createdTime = createdTime;
     }
 
-    public FlightSchedule getReturnedFlightSchedule() {
-        return returnedFlightSchedule;
+    public Double getTurnoverTime() {
+        return turnoverTime;
     }
 
-    public void setReturnedFlightSchedule(FlightSchedule returnedFlightSchedule) {
-        this.returnedFlightSchedule = returnedFlightSchedule;
+    public void setTurnoverTime(Double turnoverTime) {
+        this.turnoverTime = turnoverTime;
     }
 
+    public FlightSchedule getPreFlightSched() {
+        return preFlightSched;
+    }
+
+    public void setPreFlightSched(FlightSchedule preFlightSched) {
+        this.preFlightSched = preFlightSched;
+    }
+
+    public FlightSchedule getNextFlightSched() {
+        return nextFlightSched;
+    }
+
+    public void setNextFlightSched(FlightSchedule nextFlightSched) {
+        this.nextFlightSched = nextFlightSched;
+    }
+    
     public List<Booking> getBookings() {
         return bookings;
     }

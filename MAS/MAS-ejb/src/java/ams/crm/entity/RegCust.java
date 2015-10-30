@@ -26,9 +26,7 @@ public class RegCust extends Customer implements Serializable {
     private String email;
     private String pwd;
     @Embedded
-    private Phone telephone;
-    @Embedded
-    private Phone mobilephone;
+    private Phone phone;
     private String addr1;
     private String addr2;
     private String zipCode;
@@ -72,20 +70,12 @@ public class RegCust extends Customer implements Serializable {
         this.pwd = pwd;
     }
 
-    public Phone getTelephone() {
-        return telephone;
+    public Phone getPhone() {
+        return phone;
     }
 
-    public void setTelephone(Phone telephone) {
-        this.telephone = telephone;
-    }
-
-    public Phone getMobilephone() {
-        return mobilephone;
-    }
-
-    public void setMobilephone(Phone mobilephone) {
-        this.mobilephone = mobilephone;
+    public void setPhone(Phone phone) {
+        this.phone = phone;
     }
     
     public String getAddr1() {
