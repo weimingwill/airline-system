@@ -6,7 +6,7 @@
 package ams.dcs.entity;
 
 import ams.aps.entity.Airport;
-import ams.ars.entity.PNR;
+import ams.ars.entity.AirTicket;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -23,23 +23,24 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class LuggageTag implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String luggageNo;
-    private double weight;
     private String status;
-    private String notes;
-    
+
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private CheckInLuggage luggage;
+
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Airport origin;
-    
+
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Airport destination;
-    
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private PNR pnr;
+    private AirTicket airTicket;
 
     public Long getId() {
         return id;
@@ -75,34 +76,6 @@ public class LuggageTag implements Serializable {
     }
 
     /**
-     * @return the luggageNo
-     */
-    public String getLuggageNo() {
-        return luggageNo;
-    }
-
-    /**
-     * @param luggageNo the luggageNo to set
-     */
-    public void setLuggageNo(String luggageNo) {
-        this.luggageNo = luggageNo;
-    }
-
-    /**
-     * @return the weight
-     */
-    public double getWeight() {
-        return weight;
-    }
-
-    /**
-     * @param weight the weight to set
-     */
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    /**
      * @return the status
      */
     public String getStatus() {
@@ -114,20 +87,6 @@ public class LuggageTag implements Serializable {
      */
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    /**
-     * @return the notes
-     */
-    public String getNotes() {
-        return notes;
-    }
-
-    /**
-     * @param notes the notes to set
-     */
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 
     /**
@@ -157,5 +116,34 @@ public class LuggageTag implements Serializable {
     public void setDestination(Airport destination) {
         this.destination = destination;
     }
-    
+
+    /**
+     * @return the luggage
+     */
+    public CheckInLuggage getLuggage() {
+        return luggage;
+    }
+
+    /**
+     * @param luggage the luggage to set
+     */
+    public void setLuggage(CheckInLuggage luggage) {
+        this.luggage = luggage;
+    }
+
+    /**
+     * @return the airTicket
+     */
+    public AirTicket getAirTicket() {
+        return airTicket;
+    }
+
+    /**
+     * @param airTicket the airTicket to set
+     */
+    public void setAirTicket(AirTicket airTicket) {
+        this.airTicket = airTicket;
+    }
+
+
 }
