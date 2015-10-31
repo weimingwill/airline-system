@@ -187,7 +187,7 @@ public class TicketFamilyController implements Serializable {
         } catch (ExistSuchTicketFamilyException | NoSuchCabinClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
-        return navigationController.redirectToCreateTicketFamily();
+        return navigationController.redirectToCurrentPage();
     }
 
     public List<TicketFamily> getAllTicketFamily() {

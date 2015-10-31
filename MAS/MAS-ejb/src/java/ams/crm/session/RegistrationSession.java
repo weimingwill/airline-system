@@ -5,15 +5,20 @@
  */
 package ams.crm.session;
 
+
+import ams.crm.entity.Membership;
 import ams.crm.entity.RegCust;
-import ams.crm.entity.helper.Phone;
 import ams.crm.util.exception.ExistSuchRegCustException;
+import ams.crm.util.exception.NoSuchMembershipException;
 import ams.crm.util.helper.CrmMsg;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -37,9 +42,15 @@ public class RegistrationSession implements RegistrationLocal {
         
         Random r = new Random( System.currentTimeMillis() );
         verifyRegCustExistence(regCust.getPassportNo());
+        verifyEmailExistence(regCust.getEmail());
         regCust.setAccMiles(0.0);
         regCust.setCustValue(0.0);
         regCust.setNumOfFlights(0);
+        try {
+            regCust.setMembership(entityManager.find(Membership.class,getMembershipByName("Elite Bronze").getId()));
+        } catch (NoSuchMembershipException ex) {
+            Logger.getLogger(RegistrationSession.class.getName()).log(Level.SEVERE, null, ex);
+        }
         regCust.setMemberShipId("MA"+ 10000 + r.nextInt(20000));
         entityManager.persist(regCust);
     }
@@ -91,4 +102,31 @@ public class RegistrationSession implements RegistrationLocal {
         Query query = entityManager.createQuery("SELECT r FROM RegCust r");
         return query.getResultList();
     }
-}
+    
+    @Override
+    public Membership getMembershipByName(String membershipClassName) throws NoSuchMembershipException{
+        Query query = entityManager.createQuery("SELECT c FROM Membership c WHERE c.name = :inMembershipName");
+        query.setParameter("inMembershipName", membershipClassName);
+        Membership selectMembership = null;
+        try {
+            selectMembership = (Membership) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new NoSuchMembershipException(CrmMsg.NO_SUCH_MEMBERSHIP_NAME_ERROR);
+        }catch(NonUniqueResultException e){
+            
+        }
+        return selectMembership;
+    }
+    
+    @Override
+    public void verifyEmailExistence(String email) throws ExistSuchRegCustException {
+        List<RegCust> regCusts = getAllRegCusts();
+        if (regCusts != null) {
+            for (RegCust rc : regCusts) {
+                if (email.equals(rc.getEmail())) {
+                    throw new ExistSuchRegCustException(CrmMsg.EXIST_SUCH_Reg_Cust_ERROR);
+                }
+            }
+        }
+    } 
+}   

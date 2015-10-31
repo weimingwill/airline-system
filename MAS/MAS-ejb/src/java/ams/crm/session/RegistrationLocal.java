@@ -5,10 +5,10 @@
  */
 package ams.crm.session;
 
+import ams.crm.entity.Membership;
 import ams.crm.entity.RegCust;
-import ams.crm.entity.helper.Phone;
 import ams.crm.util.exception.ExistSuchRegCustException;
-import java.util.Date;
+import ams.crm.util.exception.NoSuchMembershipException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -22,4 +22,6 @@ public interface RegistrationLocal {
     public void verifyRegCustExistence(String passportNo) throws ExistSuchRegCustException;
     public List<RegCust> getAllRegCusts();
     public void createRegCust(RegCust regCust)throws ExistSuchRegCustException;
+    public Membership getMembershipByName(String membershipClassName) throws NoSuchMembershipException;
+    public void verifyEmailExistence(String email) throws ExistSuchRegCustException;
 }

@@ -79,41 +79,23 @@
                     <p:panelGrid>
                         <p:row>
                             <p:column>
-                                <h:outputLabel  value="Mobile"/>
+                                <h:outputLabel  value="Phone"/>
                             </p:column>
                             <p:column>
-                                <p:selectOneMenu class="userProfileInput" required="true" style="width:120px" requiredMessage="Please select mobilephone dial Code" value ="#{registrationController.newRegCust.mobilephone.countryCode}">
+                                <p:selectOneMenu class="userProfileInput" required="true" style="width:120px" requiredMessage="Please select phone dial Code" value ="#{registrationController.newRegCust.phone.countryCode}">
                                     <f:selectItem itemLabel="Country Code" itemValue="" />
                                     <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.dialingCode}" itemValue="#{country.dialingCode}" />
                                 </p:selectOneMenu>
 
                             </p:column>
                             <p:column>
-                                <p:inputText style="width:50px" class="userProfileInput" required="true" value="#{registrationController.newRegCust.mobilephone.areaCode}" requiredMessage="Please input mibilephone area code" placeholder="#area"/> 
+                                <p:inputText style="width:50px" class="userProfileInput" required="true" value="#{registrationController.newRegCust.phone.areaCode}" requiredMessage="Please input phone area code" placeholder="#area"/> 
                             </p:column>
                             <p:column>
-                                <p:inputText style="width:100px" class="userProfileInput" required="true" value="#{registrationController.newRegCust.mobilephone.number}" requiredMessage="Please Input mobile phone number" /> 
+                                <p:inputText style="width:100px" class="userProfileInput" required="true" value="#{registrationController.newRegCust.phone.number}" requiredMessage="Please Input phone number" /> 
                             </p:column>
                         </p:row>
 
-                        <p:row>
-                            <p:column>
-                                <h:outputLabel  value="Telephone"/>
-                            </p:column>
-                            <p:column>
-                                <p:selectOneMenu class="userProfileInput" required="true" style="width:120px"  requiredMessage="Please select telephone dial Code" value ="#{registrationController.newRegCust.telephone.countryCode}">
-                                    <f:selectItem class="userProfileInput" itemLabel="Country Code" itemValue="" />
-                                    <f:selectItems class="userProfileInput"  value="#{routeController.countries}" var="country" itemLabel="#{country.dialingCode}" itemValue="#{country.dialingCode}" />
-                                </p:selectOneMenu>
-
-                            </p:column>
-                            <p:column>
-                                <p:inputText style="width:50px" required="true" requiredMessage="Please input telephone area code" value="#{registrationController.newRegCust.telephone.areaCode}" placeholder="#area"/> 
-                            </p:column>
-                            <p:column>
-                                <p:inputText style="width:100px" required="true" requiredMessage="Please Input telephone number" value="#{registrationController.newRegCust.telephone.number}" /> 
-                            </p:column>
-                        </p:row>
                     </p:panelGrid>
                 </p:panel>
 

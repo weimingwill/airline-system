@@ -41,8 +41,7 @@ public class RegistrationController implements Serializable{
     @PostConstruct
     public void init(){
         newRegCust = new RegCust();
-        newRegCust.setMobilephone(new Phone());
-        newRegCust.setTelephone(new Phone());
+        newRegCust.setPhone(new Phone());
     }
     public String createrRegCust(){
         try {
