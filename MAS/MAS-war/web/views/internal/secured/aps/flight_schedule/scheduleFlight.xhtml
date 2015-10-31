@@ -63,7 +63,7 @@
                         <p:column colspan="2">
                             <p:selectOneMenu value="#{flightScheduleManager.schedPeriod}" 
                                              effect="fade" required="true" style="width:100px;">
-                                <p:ajax listener="#{flightScheduleManager.onCalendarDateChange()}" update="messages,form" />
+                                <p:ajax listener="#{flightScheduleManager.onCalendarDateChange()}" update="form" />
                                 <c:forEach begin="1" end="12" varStatus="index">
                                     <f:selectItem itemLabel="#{index.index} months" itemValue="#{index.index}" />
                                 </c:forEach>
@@ -74,21 +74,27 @@
                         <p:column>From: </p:column>
                         <p:column>
                             <p:calendar value="#{flightScheduleManager.schedStartDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
-                                <p:ajax event="dateSelect" listener="#{flightScheduleManager.onCalendarDateChange()}" update="messages,form" />
+                                <p:ajax event="dateSelect" listener="#{flightScheduleManager.onCalendarDateChange()}" update="form" />
                             </p:calendar>
                         </p:column>
 
                         <p:column>To: </p:column>
                         <p:column>
-                            <p:calendar value="#{flightScheduleManager.schedEndDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
-                                <p:ajax event="dateSelect" update="messages" />
-                            </p:calendar>
+                            <p:calendar value="#{flightScheduleManager.schedEndDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy" />
                         </p:column>
                         <p:column>
-                            <p:commandButton value="Apply to " />
+                            <p:commandButton value="Apply" actionListener="#{flightScheduleManager.verifyApplyFlightSchedCollision()}" update="messages">
+                                <p:confirm header="Confirmation"  icon="ui-icon-alert" 
+                                           message="Are you sure to apply flight schedule of the week to #{flightScheduleManager.convertDateTime(flightScheduleManager.schedStartDate)} - #{flightScheduleManager.convertDateTime(flightScheduleManager.schedEndDate)} ?"/>
+                            </p:commandButton>
                         </p:column>
+
                     </p:row>
                 </p:panelGrid>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
                 <!--                <p:outputLabel for="date" value="Select schedule week: " />
                                 <p:calendar id="date" value="{flightScheduleManager.selectedDate}" placeholder="Select any date of week" timeZone="GMT+8"  pattern="dd/MM/yyyy">
                                     <p:ajax event="dateSelect" listener="{flightScheduleManager.onCalendarDateChange()}" update="messages,form" />
@@ -135,6 +141,7 @@
                 </pe:timeline>  
 
                 <p:dialog id="flightDetails" widgetVar="eventDialog" header="Flight Details" showEffect="clip" hideEffect="clip" width="500px;">
+                    <p:ajax event="close" listener="#{flightScheduleManager.clearDialogVariables()}" />
                     <h:panelGrid id="eventDetails" columns="2" style="width: 100%">
 
                         <p:outputLabel for="aircraft" value="Aircraft: " />

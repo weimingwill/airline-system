@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+            <p:ribbon id="flightScheduleFilter">
+                <p:tab title="Flight Schedule Filter">
+                    <p:ribbonGroup label="Select aircrafts" style="width:175px;">
+                        <p:selectCheckboxMenu id="aircraft" label="Select aircrafts" value="#{fligtScheduleBacking.selectedAircrafts}"
+                                              filter="true" filterMatchMode="startsWith" panelStyle="width:250px" converter="aircraftConverter">
+                            <f:selectItems value="#{fligtScheduleBacking.aircrafts}" var="aircraft"/>
+                            <p:column>
+                                <p:outputLabel value="#{aircraft.tailNo}" />
+                            </p:column>
+                        </p:selectCheckboxMenu>
+                    </p:ribbonGroup>
+
+                    <p:ribbonGroup label="From: " style="width:175px">
+                        <p:calendar value="#{flightScheduleBacking.startDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy" />
+                    </p:ribbonGroup>
+
+                    <p:ribbonGroup label="To: " style="width:175px">
+                        <p:calendar value="#{flightScheduleBacking.endDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy" />
+                    </p:ribbonGroup>
+
+                    <p:ribbonGroup label="Actions">
+                        <p:panelGrid>
+                            <p:commandButton value="Apply" update="form" actionListener="#{flightScheduleBacking.applyFilters()}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
+                            <p:commandButton value="Reset" update="form" actionListener="#{flightScheduleBacking.resetFilters()}" icon="fa fa-refresh" styleClass="filterBtn"/>
+                        </p:panelGrid>
+                    </p:ribbonGroup>
+                </p:tab>
+            </p:ribbon>
+
+    </cc:implementation>
+</html>

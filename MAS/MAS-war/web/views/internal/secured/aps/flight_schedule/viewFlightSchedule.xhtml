@@ -3,14 +3,59 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../../template/ApsTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ri="http://xmlns.jcp.org/jsf/composite/ezcomp/ribbon"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:define name="title">
         APS - View Flight Schedules
     </ui:define>
 
     <ui:define name="content">
-        <h:form>
+        <h:form id="form"> 
+
+            <ri:CCFlightScheduleFilterRibbon />
+            <pe:timeline id="timeline" value="#{flightScheduleBacking.model}" var="flightSchedule" varGroup="aircraft" 
+                         browserTimeZone="GMT+8" editable="true" eventMargin="10" eventMarginAxis="0"  widgetVar="timeline"
+                         zoomMin="#{flightScheduleBacking.zoomMin}"
+                         start="#{flightScheduleBacking.startDate}" 
+                         end="#{flightScheduleBacking.endDate}" 
+                         axisOnTop="true" stackEvents="false">
+
+                <p:ajax event="edit" listener="#{flightScheduleManager.onFlightSchedSelect}" />  
+                <f:facet name="group"> 
+                    <h:graphicImage value="./../../../../../resources/images/aircraft.png" style="vertical-align:middle;width:50px" alt="Airplane"/> 
+                    <h:outputText value=" #{aircraft.tailNo}" style="font-weight: bold"/> 
+                </f:facet> 
+
+
+                <h:panelGrid columns="2" style="font-size: small">
+                    <p:outputLabel value="FlightNo: " />
+                    <p:outputLabel value="#{flightSchedule.flight.flightNo}/#{flightSchedule.flight.returnedFlight.flightNo}" />
+
+                    <p:outputLabel value="Time: " />
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{flightSchedule.departDate}">
+                                <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
+                            </p:outputLabel>
+                            <p:outputLabel value=" - " />
+                            <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                                <f:convertDateTime pattern="HH:mm"  timeZone="GMT+8"/>
+                            </p:outputLabel>
+                        </p:column>
+                    </p:row>
+
+                    <p:outputLabel value="Route: " />
+                    <p:outputLabel id="route" value="#{flightSchedule.leg.departAirport.iataCode} - #{flightSchedule.leg.arrivalAirport.iataCode}" />
+                </h:panelGrid>
+
+            </pe:timeline>  
+
             <ta:CCViewFlightScheduleTable flightSchedules="#{flightScheduleController.allFlightSchedule}" />
+
+
         </h:form>
     </ui:define>
 
