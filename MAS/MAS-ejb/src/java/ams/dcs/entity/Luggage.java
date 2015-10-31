@@ -11,18 +11,27 @@ import javax.persistence.Entity;
 
 /**
  *
- * @author ChuningLiu
+ * @author Lewis
  */
 @Entity
 public class Luggage extends AddOn implements Serializable {
 
-    private Double weight;
+    private static final long serialVersionUID = 1L;
 
-    public Double getWeight() {
-        return weight;
+    private Double maxWeight;
+
+    /**
+     * @return the maxWeight
+     */
+    public Double getMaxWeight() {
+        return maxWeight;
     }
 
-    public void setWeight(Double weight) {
-        this.weight = weight;
+    /**
+     * @param maxWeight the maxWeight to set
+     */
+    public void setMaxWeight(Double maxWeight) {
+        this.maxWeight = maxWeight;
     }
+
 }

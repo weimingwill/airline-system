@@ -5,7 +5,6 @@
  */
 package ams.ars.entity;
 
-import ams.aps.entity.FlightSchedule;
 import ams.crm.entity.helper.Phone;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -40,6 +38,7 @@ public class Booking implements Serializable {
     private Date updatedTime;
     private String referenceNo;
     private String email;
+    private String eTicketNo;
     @Embedded
     private Phone phoneNo;
     private Double price;
@@ -52,9 +51,6 @@ public class Booking implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "booking")
     private List<AirTicket> airTickets = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<FlightSchedule> flightSchedules = new ArrayList<>(); 
-            
     @Override
     public int hashCode() {
         int hash = 0;
@@ -168,11 +164,17 @@ public class Booking implements Serializable {
         this.airTickets = airTickets;
     }
 
-    public List<FlightSchedule> getFlightSchedules() {
-        return flightSchedules;
+    /**
+     * @return the eTicketNo
+     */
+    public String geteTicketNo() {
+        return eTicketNo;
     }
 
-    public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
-        this.flightSchedules = flightSchedules;
+    /**
+     * @param eTicketNo the eTicketNo to set
+     */
+    public void seteTicketNo(String eTicketNo) {
+        this.eTicketNo = eTicketNo;
     }
 }
