@@ -6,7 +6,6 @@
 package ams.aps.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
-import ams.ars.entity.Booking;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,7 +16,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -63,8 +61,6 @@ public class FlightSchedule implements Serializable {
     private FlightSchedule preFlightSched;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightSchedule nextFlightSched;
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedules")
-    private List<Booking> bookings = new ArrayList<>();
 
     public Long getFlightScheduleId() {
         return flightScheduleId;
@@ -283,14 +279,6 @@ public class FlightSchedule implements Serializable {
 
     public void setNextFlightSched(FlightSchedule nextFlightSched) {
         this.nextFlightSched = nextFlightSched;
-    }
-
-    public List<Booking> getBookings() {
-        return bookings;
-    }
-
-    public void setBookings(List<Booking> bookings) {
-        this.bookings = bookings;
     }
 
     public String getStatus() {
