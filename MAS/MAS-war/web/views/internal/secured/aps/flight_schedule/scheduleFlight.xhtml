@@ -83,7 +83,7 @@
                             <p:calendar value="#{flightScheduleManager.schedEndDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy" />
                         </p:column>
                         <p:column>
-                            <p:commandButton value="Apply" actionListener="#{flightScheduleManager.verifyApplyFlightSchedCollision()}" update="messages">
+                            <p:commandButton value="Apply" actionListener="#{flightScheduleManager.verifyApplyFlightSchedCollision()}" update="messages,collidedFlightSchedForm">
                                 <p:confirm header="Confirmation"  icon="ui-icon-alert" 
                                            message="Are you sure to apply flight schedule of the week to #{flightScheduleManager.convertDateTime(flightScheduleManager.schedStartDate)} - #{flightScheduleManager.convertDateTime(flightScheduleManager.schedEndDate)} ?"/>
                             </p:commandButton>
@@ -146,7 +146,7 @@
 
                         <p:outputLabel for="aircraft" value="Aircraft: " />
                         <p:selectOneMenu id="aircraft"  value="#{flightScheduleManager.selectedAircraftTailNo}" 
-                                         effect="fade" required="true" style="width:100%">
+                                         effect="fade" style="width:100%">
                             <f:selectItem itemLabel="Select aircraft" itemValue="" />
                             <f:selectItems value="#{flightScheduleManager.availableAircraftGroup}" />
                         </p:selectOneMenu>
@@ -155,13 +155,13 @@
                         <p:inputText id="flightNo" value="#{flightScheduleManager.flightNo}" required="true" readonly="true" class="flightDetail" />
 
                         <p:outputLabel for="from" value="From:" />
-                        <p:calendar id="from" value="#{flightScheduleManager.deptDate}" timeZone="GMT+8" pattern="dd/MM/yyyy HH:mm" required="true"
+                        <p:calendar id="from" value="#{flightScheduleManager.deptDate}" timeZone="GMT+8" pattern="dd/MM/yyyy HH:mm"
                                     mindate="#{flightScheduleManager.calendarMinDate}" maxdate="#{flightScheduleManager.calendarMaxDate}" styleClass="flightDetail">
                             <p:ajax event="dateSelect" listener="#{flightScheduleManager.onStartTimeChange()}" update="to" />
                         </p:calendar>
 
                         <p:outputLabel for="to" value="To:" />
-                        <p:calendar id="to" value="#{flightScheduleManager.arrDate}" timeZone="GMT+8" pattern="dd/MM/yyyy HH:mm" required="true"
+                        <p:calendar id="to" value="#{flightScheduleManager.arrDate}" timeZone="GMT+8" pattern="dd/MM/yyyy HH:mm"
                                     mindate="#{flightScheduleManager.fixedEndDate}" maxdate="#{flightScheduleManager.fixedEndDate}"
                                     minHour="#{flightScheduleManager.fixedEndHour}" maxHour="#{flightScheduleManager.fixedEndHour}"
                                     minMinute="#{flightScheduleManager.fixedEndMinute}" maxMinute="#{flightScheduleManager.fixedEndMinute}"
@@ -199,45 +199,11 @@
         <p:dialog header="Collided Flight Schedules" widgetVar="collidedFlightSchedDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form id="collidedFlightSchedForm">
                 <ta:CCViewFlightScheduleTable id="collidedFlightSchedTable" flightSchedules="#{flightScheduleManager.collidedFlightScheds}" />
-                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,timeline" />
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,timeline" actionListener="#{flightScheduleManager.applyFlightSchedulesToPeriod()}" />
                 <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
             </h:form>
         </p:dialog>
 
-        <p:separator/>
-        <h:form>
-            <p:panelGrid>
-                <p:row >
-                    <p:column colspan="3">Apply the this week flight schedule for </p:column>
-                    <p:column colspan="2">
-                        <p:selectOneMenu value="#{flightScheduleManager.selectedAircraftTailNo}" 
-                                         effect="fade" required="true" style="width:100px;">
-                            <c:forEach begin="1" end="12" varStatus="index">
-                                <f:selectItem itemLabel="#{index.index} months" itemValue="#{index.index}" />
-                            </c:forEach>
-                        </p:selectOneMenu>
-                    </p:column>
-                </p:row>
-                <p:row>
-                    <p:column>From: </p:column>
-                    <p:column>
-                        <p:calendar value="#{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
-                            <p:ajax event="dateSelect"  update="messages" />
-                        </p:calendar>
-                    </p:column>
-
-                    <p:column>To: </p:column>
-                    <p:column>
-                        <p:calendar value="#{flightScheduleManager.selectedDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy">
-                            <p:ajax event="dateSelect" update="messages" />
-                        </p:calendar>
-                    </p:column>
-                    <p:column>
-                        <p:commandButton value="apply" />
-                    </p:column>
-                </p:row>
-            </p:panelGrid>
-        </h:form>
         <p:separator/>
         <h:form>
             <p:panelGrid>

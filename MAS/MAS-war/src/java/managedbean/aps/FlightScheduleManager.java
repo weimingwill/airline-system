@@ -21,7 +21,7 @@ import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchRouteException;
-import ams.aps.util.helper.GetFlightSchedMethod;
+import ams.aps.util.helper.FlightSchedMethod;
 import ams.aps.util.helper.RouteHelper;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -147,6 +147,7 @@ public class FlightScheduleManager implements Serializable {
         setSelectedAircraft(null);
         setSelectedAircraftTailNo(null);
         setUnscheduledFlights(new ArrayList<>());
+        model = new TimelineModel();
 //        setEventModel(null);
     }
 
@@ -226,7 +227,7 @@ public class FlightScheduleManager implements Serializable {
             TimelineGroup timelineGroup = new TimelineGroup(aircraft.getTailNo(), aircraft);
             model.addGroup(timelineGroup);
 
-            flightSchedules = flightSchedulingSession.getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), calendarMinDate, calendarMaxDate, GetFlightSchedMethod.DISPLAY);
+            flightSchedules = flightSchedulingSession.getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), calendarMinDate, calendarMaxDate, FlightSchedMethod.DISPLAY);
             if (flightSchedules.isEmpty()) {
                 model.add(new TimelineEvent(null, new Date(), new Date(), true, aircraft.getTailNo()));
             }
@@ -302,7 +303,7 @@ public class FlightScheduleManager implements Serializable {
     public void createFligthSchedule() {
         try {
             selectedAircraft = flightSchedulingSession.getAircraftByTailNo(selectedAircraftTailNo);
-            FlightSchedule newFlightSched = flightSchedulingSession.createFlightSchedule(droppedFlight, selectedAircraft, deptDate, arrDate, timelineMinDate, timelineMaxDate);
+            FlightSchedule newFlightSched = flightSchedulingSession.createFlightSchedule(droppedFlight, selectedAircraft, deptDate, arrDate, timelineMinDate, timelineMaxDate, FlightSchedMethod.CREATE);
             //Create flightSchedule to be displayed on new timelineEvent object.
             flightSchedulingSession.setRouteFlightSchedule(newFlightSched);
             model.add(new TimelineEvent(newFlightSched, deptDate, arrDate, true, selectedAircraft.getTailNo()));

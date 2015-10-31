@@ -14,12 +14,10 @@
             <p:ribbon id="flightScheduleFilter">
                 <p:tab title="Flight Schedule Filter">
                     <p:ribbonGroup label="Select aircrafts" style="width:175px;">
-                        <p:selectCheckboxMenu id="aircraft" label="Select aircrafts" value="#{fligtScheduleBacking.selectedAircrafts}"
+                        <p:selectCheckboxMenu id="aircraft" label="Select aircrafts" value="#{flightScheduleBacking.selectedAircrafts}" 
                                               filter="true" filterMatchMode="startsWith" panelStyle="width:250px" converter="aircraftConverter">
-                            <f:selectItems value="#{fligtScheduleBacking.aircrafts}" var="aircraft"/>
-                            <p:column>
-                                <p:outputLabel value="#{aircraft.tailNo}" />
-                            </p:column>
+                            <f:selectItems value="#{flightScheduleBacking.aircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}"/>
+                            
                         </p:selectCheckboxMenu>
                     </p:ribbonGroup>
 

@@ -8,7 +8,7 @@ package managedbean.aps;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.FlightSchedulingSessionLocal;
-import ams.aps.util.helper.GetFlightSchedMethod;
+import ams.aps.util.helper.FlightSchedMethod;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,12 +29,12 @@ import org.primefaces.extensions.model.timeline.TimelineModel;
  */
 @Named(value = "flightScheduleBacking")
 @ViewScoped
-public class FlightScheduleBacking implements Serializable{
+public class FlightScheduleBacking implements Serializable {
 
     @EJB
     private FlightSchedulingSessionLocal flightSchedulingSession;
 
-    private List<Aircraft> aircrafts;
+    private List<Aircraft> aircrafts = new ArrayList<>();
     private List<Aircraft> selectedAircrafts;
     private List<FlightSchedule> flightSchedules = new ArrayList<>();
     private Date startDate;
@@ -61,7 +61,7 @@ public class FlightScheduleBacking implements Serializable{
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         startDate = calendar.getTime();
-        calendar.add(Calendar.YEAR, 1);
+        calendar.add(Calendar.YEAR, 2);
         endDate = calendar.getTime();
         setZoomMin(1000L * 60 * 60 * 12); //Visible interval is limited to a minimum of 8 hours
     }
@@ -69,17 +69,18 @@ public class FlightScheduleBacking implements Serializable{
     public void initializeFlightSchedule() {
         Set<FlightSchedule> flightSchedHs = new HashSet<>();
         for (Aircraft aircraft : flightSchedulingSession.getAllAircrafts()) {
-            flightSchedHs.addAll(flightSchedulingSession.getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), startDate, endDate, GetFlightSchedMethod.DISPLAY));
+            flightSchedHs.addAll(flightSchedulingSession.getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), startDate, endDate, FlightSchedMethod.DISPLAY));
+            aircrafts.add(aircraft);
         }
         flightSchedules.addAll(flightSchedHs);
     }
 
     public void applyFilters() {
-        Set<FlightSchedule> flightSchedHs = new HashSet<>();
+//        Set<FlightSchedule> flightSchedHs = new HashSet<>();
         for (Aircraft aircraft : selectedAircrafts) {
-            flightSchedHs.addAll(flightSchedulingSession.getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), startDate, endDate, GetFlightSchedMethod.DISPLAY));
+            flightSchedules.addAll(flightSchedulingSession.getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), startDate, endDate, FlightSchedMethod.DISPLAY));
         }
-        flightSchedules.addAll(flightSchedHs);
+//        flightSchedules.addAll(flightSchedHs);
     }
 
     public void resetFilters() {
@@ -88,12 +89,13 @@ public class FlightScheduleBacking implements Serializable{
 
     public void display() {
         model = new TimelineModel();
+        System.out.println("FlightSchedules: " + flightSchedules);
         for (FlightSchedule flightSchedule : flightSchedules) {
             if (flightSchedules.isEmpty()) {
                 model.add(new TimelineEvent(null, new Date(), new Date(), true, flightSchedule.getAircraft().getTailNo()));
             }
             if (flightSchedule.getPreFlightSched() == null) {
-                System.out.println("Flight Schedule: " + flightSchedule);
+                System.out.println("Flight Schedule: " + flightSchedule.getDepartDate() + " - " + flightSchedule.getArrivalDate());
                 flightSchedulingSession.setRouteFlightSchedule(flightSchedule);
                 model.add(new TimelineEvent(flightSchedule, flightSchedule.getDepartDate(), flightSchedule.getArrivalDate(), true, flightSchedule.getAircraft().getTailNo()));
             }

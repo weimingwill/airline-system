@@ -7,6 +7,7 @@ package ams.ais.entity;
 
 import ams.ais.entity.helper.FlightScheduleBookingClassId;
 import ams.aps.entity.FlightSchedule;
+import ams.crm.entity.MktCampaign;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -45,6 +47,9 @@ public class FlightScheduleBookingClass implements Serializable {
     
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<PhaseDemand> phaseDemands = new ArrayList<>();    
+    
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<MktCampaign> marketCampaigns = new ArrayList<>(); 
     
     @Column(name = "SEATQTY")
     private Integer seatQty;
@@ -172,5 +177,19 @@ public class FlightScheduleBookingClass implements Serializable {
 
     public void setPriced(Boolean priced) {
         this.priced = priced;
+    }
+
+    /**
+     * @return the marketCampaigns
+     */
+    public List<MktCampaign> getMarketCampaigns() {
+        return marketCampaigns;
+    }
+
+    /**
+     * @param marketCampaigns the marketCampaigns to set
+     */
+    public void setMarketCampaigns(List<MktCampaign> marketCampaigns) {
+        this.marketCampaigns = marketCampaigns;
     }
 }

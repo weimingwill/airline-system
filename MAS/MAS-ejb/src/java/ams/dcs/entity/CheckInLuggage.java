@@ -3,38 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars.entity;
+package ams.dcs.entity;
 
-import ams.crm.entity.Customer;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 /**
  *
- * @author weiming
+ * @author Lewis
  */
 @Entity
-public class PNR implements Serializable {
+public class CheckInLuggage implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String pnrNo;
-
-    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private Booking booking;
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<Customer> customers = new ArrayList<>();
+    private Double realWeight;
+    private String remark;
 
     public Long getId() {
         return id;
@@ -54,10 +43,10 @@ public class PNR implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PNR)) {
+        if (!(object instanceof CheckInLuggage)) {
             return false;
         }
-        PNR other = (PNR) object;
+        CheckInLuggage other = (CheckInLuggage) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -66,31 +55,35 @@ public class PNR implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.PNR[ id=" + id + " ]";
+        return "ams.dcs.entity.Luggage[ id=" + id + " ]";
     }
 
-    public String getPnrNo() {
-        return pnrNo;
+    /**
+     * @return the realWeight
+     */
+    public Double getRealWeight() {
+        return realWeight;
     }
 
-    public void setPnrNo(String pnrNo) {
-        this.pnrNo = pnrNo;
+    /**
+     * @param realWeight the realWeight to set
+     */
+    public void setRealWeight(Double realWeight) {
+        this.realWeight = realWeight;
     }
 
-    public Booking getBooking() {
-        return booking;
+    /**
+     * @return the remark
+     */
+    public String getRemark() {
+        return remark;
     }
 
-    public void setBooking(Booking booking) {
-        this.booking = booking;
-    }
-
-    public List<Customer> getCustomers() {
-        return customers;
-    }
-
-    public void setCustomers(List<Customer> customers) {
-        this.customers = customers;
+    /**
+     * @param remark the remark to set
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
 }
