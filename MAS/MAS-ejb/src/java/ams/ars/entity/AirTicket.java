@@ -7,6 +7,7 @@ package ams.ars.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.crm.entity.Customer;
+import ams.dcs.entity.CheckInLuggage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,6 @@ public class AirTicket implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String ticketNo;
     private String status;
     
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
@@ -38,6 +38,9 @@ public class AirTicket implements Serializable {
     
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<AddOn> addOns = new ArrayList<>();
+    
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<CheckInLuggage> luggages = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<PricingItem> pricingItems = new ArrayList<>();
@@ -51,8 +54,8 @@ public class AirTicket implements Serializable {
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Customer customer;
     
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<FlightScheduleBookingClass> flightSchedBookingClasses = new ArrayList<>();
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private FlightScheduleBookingClass flightSchedBookingClass;
     
     @Override
     public int hashCode() {
@@ -87,13 +90,6 @@ public class AirTicket implements Serializable {
         this.id = id;
     }
 
-    public String getTicketNo() {
-        return ticketNo;
-    }
-
-    public void setTicketNo(String ticketNo) {
-        this.ticketNo = ticketNo;
-    }
 
     public Booking getBooking() {
         return booking;
@@ -151,13 +147,34 @@ public class AirTicket implements Serializable {
         this.status = status;
     }
 
-    public List<FlightScheduleBookingClass> getFlightSchedBookingClasses() {
-        return flightSchedBookingClasses;
+    /**
+     * @return the luggages
+     */
+    public List<CheckInLuggage> getLuggages() {
+        return luggages;
     }
 
-    public void setFlightSchedBookingClasses(List<FlightScheduleBookingClass> flightSchedBookingClasses) {
-        this.flightSchedBookingClasses = flightSchedBookingClasses;
+    /**
+     * @param luggages the luggages to set
+     */
+    public void setLuggages(List<CheckInLuggage> luggages) {
+        this.luggages = luggages;
     }
+
+    /**
+     * @return the flightSchedBookingClass
+     */
+    public FlightScheduleBookingClass getFlightSchedBookingClass() {
+        return flightSchedBookingClass;
+    }
+
+    /**
+     * @param flightSchedBookingClass the flightSchedBookingClass to set
+     */
+    public void setFlightSchedBookingClass(FlightScheduleBookingClass flightSchedBookingClass) {
+        this.flightSchedBookingClass = flightSchedBookingClass;
+    }
+
 
 
 }

@@ -42,6 +42,7 @@ public class RegCust extends Customer implements Serializable {
     private Double custValue;
     private Integer numOfFlights;
     private String memberShipId;
+    private Boolean activated;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<MileTrans> mileTranses = new ArrayList<>();
@@ -220,6 +221,20 @@ public class RegCust extends Customer implements Serializable {
 
     public void setMembership(Membership membership) {
         this.membership = membership;
+    }
+
+    /**
+     * @return the activated
+     */
+    public Boolean getActivated() {
+        return activated;
+    }
+
+    /**
+     * @param activated the activated to set
+     */
+    public void setActivated(Boolean activated) {
+        this.activated = activated;
     }
 
 }
