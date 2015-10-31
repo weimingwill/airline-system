@@ -8,15 +8,12 @@ package ams.dcs.entity;
 import ams.ars.entity.AddOn;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 
 /**
  *
  * @author ChuningLiu
  */
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
 public class Luggage extends AddOn implements Serializable {
 
     private Double weight;

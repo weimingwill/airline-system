@@ -5,11 +5,12 @@
  */
 package managedbean.dcs;
 
+import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.ars.entity.AirTicket;
 import ams.crm.entity.Customer;
-import ams.dcs.entity.helper.AirTicketDisplayHelper;
-import ams.dcs.entity.helper.PassengerDisplayHelper;
+import ams.dcs.util.helper.AirTicketDisplayHelper;
+import ams.dcs.util.helper.PassengerDisplayHelper;
 import ams.dcs.session.CheckInSessionLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -44,7 +45,7 @@ public class PassengerManager implements Serializable {
     private Customer passenger;
     private List<PassengerDisplayHelper> passengerShowList = new ArrayList<>();
 
-    private List<AirTicket> airTickets = new ArrayList<>();
+    private List<FlightSchedule> flightSchedules = new ArrayList<>();
     private List<Customer> passengerList = new ArrayList<>();
     private List<AirTicketDisplayHelper> airTicketShowList = new ArrayList<>();
 
@@ -61,16 +62,25 @@ public class PassengerManager implements Serializable {
             System.err.println("No Passenger Found");
             return "";
         } else {
-            airTickets = checkInSession.getValidAirTicketsByCustomer(passportNo);
-            if (!airTickets.isEmpty()) {
+            setFlightSchedules(checkInSession.getFSforCheckinByPassport(passportNo));
+            if (!flightSchedules.isEmpty()) {
                 passengerList.add(passenger);
-                for(AirTicket at: airTickets){
-                   
+                for (FlightSchedule fs: flightSchedules){
+                    AirTicketDisplayHelper ah = new AirTicketDisplayHelper();
+                    ah.setFlightNo(fs.getFlight().getFlightNo());
+                    ah.setOriITAT(fs.getLeg().getDepartAirport().getIataCode());
+                    ah.setDestITAT(fs.getLeg().getArrivalAirport().getIataCode());
+                    ah.setOriName(fs.getLeg().getDepartAirport().getAirportName());
+                    ah.setDestName(fs.getLeg().getArrivalAirport().getAirportName());
+                    fs.ge
                 }
 
-            }
-            return dcsNavController.toCheckInPassenger();
+                return dcsNavController.toCheckInPassenger();
 
+            } else {
+                msgController.addErrorMessage("Passenger do not have trips available for check-in!");
+                return "";
+            }
         }
     }
 
@@ -122,20 +132,6 @@ public class PassengerManager implements Serializable {
     }
 
     /**
-     * @return the airTickets
-     */
-    public List<AirTicket> getAirTickets() {
-        return airTickets;
-    }
-
-    /**
-     * @param airTickets the airTickets to set
-     */
-    public void setAirTickets(List<AirTicket> airTickets) {
-        this.airTickets = airTickets;
-    }
-
-    /**
      * @return the passengerList
      */
     public List<Customer> getPassengerList() {
@@ -147,6 +143,48 @@ public class PassengerManager implements Serializable {
      */
     public void setPassengerList(List<Customer> passengerList) {
         this.passengerList = passengerList;
+    }
+
+    /**
+     * @return the passengerShowList
+     */
+    public List<PassengerDisplayHelper> getPassengerShowList() {
+        return passengerShowList;
+    }
+
+    /**
+     * @param passengerShowList the passengerShowList to set
+     */
+    public void setPassengerShowList(List<PassengerDisplayHelper> passengerShowList) {
+        this.passengerShowList = passengerShowList;
+    }
+
+    /**
+     * @return the flightSchedules
+     */
+    public List<FlightSchedule> getFlightSchedules() {
+        return flightSchedules;
+    }
+
+    /**
+     * @param flightSchedules the flightSchedules to set
+     */
+    public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
+        this.flightSchedules = flightSchedules;
+    }
+
+    /**
+     * @return the airTicketShowList
+     */
+    public List<AirTicketDisplayHelper> getAirTicketShowList() {
+        return airTicketShowList;
+    }
+
+    /**
+     * @param airTicketShowList the airTicketShowList to set
+     */
+    public void setAirTicketShowList(List<AirTicketDisplayHelper> airTicketShowList) {
+        this.airTicketShowList = airTicketShowList;
     }
 
 }
