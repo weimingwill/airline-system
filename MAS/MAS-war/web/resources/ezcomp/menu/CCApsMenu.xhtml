@@ -31,8 +31,8 @@
                 </p:submenu>
                 <p:submenu label="Flight Scheduling">
                     <p:menuitem action ="#{navigationController.toCreateFlight()}" value ="Create Flight"/>
-                    <p:menuitem action ="#{navigationController.redirectToSelectFlight()}" value ="Schedule Flights"/>
-                    <p:menuitem  action="#{navigationController.redirectToViewFlightSchedule()}" value="View Flight Schedule"/>
+                    <p:menuitem action ="#{flightScheduleManager.toSelectFlight()}" value ="Schedule Flights"/>
+                    <p:menuitem  action="#{navigationController.toViewFlightSchedule()}" value="View Flight Schedule"/>
                 </p:submenu>
             </p:menu>
         </h:form>

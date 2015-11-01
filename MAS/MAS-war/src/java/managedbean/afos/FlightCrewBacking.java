@@ -16,6 +16,8 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -23,29 +25,37 @@ import managedbean.application.MsgController;
  */
 @Named(value = "flightCrewBacking")
 @ViewScoped
-public class FlightCrewBacking implements Serializable{
+public class FlightCrewBacking implements Serializable {
+
     @EJB
     private FlightCrewSessionLocal flightCrewSession;
-    
+
     @Inject
     private MsgController msgController;
-    
+
     private List<FlightCrew> flightCrews;
-    private List<FlightCrew> filteredCrews;
     private FlightCrew selectedCrew;
-    
+
     /**
      * Creates a new instance of FlightCrewBacking
      */
     public FlightCrewBacking() {
     }
-    
+
     @PostConstruct
-    public void init(){
+    public void init() {
         getAllFlightCrew();
     }
-    
-    public void getAllFlightCrew(){
+
+    public void onCrewTableRowSelect(SelectEvent event) {
+        if(selectedCrew != null){
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.execute("PF('crewProfileDlg').show();");
+            context.update("crewProfileDlg");
+        }
+    }
+
+    public void getAllFlightCrew() {
         try {
             setFlightCrews(flightCrewSession.getAllFlightCrew());
         } catch (EmptyTableException ex) {
@@ -68,20 +78,6 @@ public class FlightCrewBacking implements Serializable{
     }
 
     /**
-     * @return the filteredCrews
-     */
-    public List<FlightCrew> getFilteredCrews() {
-        return filteredCrews;
-    }
-
-    /**
-     * @param filteredCrews the filteredCrews to set
-     */
-    public void setFilteredCrews(List<FlightCrew> filteredCrews) {
-        this.filteredCrews = filteredCrews;
-    }
-
-    /**
      * @return the selectedCrew
      */
     public FlightCrew getSelectedCrew() {
@@ -95,6 +91,4 @@ public class FlightCrewBacking implements Serializable{
         this.selectedCrew = selectedCrew;
     }
 
-
-    
 }

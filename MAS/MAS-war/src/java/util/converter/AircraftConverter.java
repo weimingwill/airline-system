@@ -8,8 +8,6 @@ package util.converter;
 import ams.aps.entity.Aircraft;
 import ams.ais.session.AircraftSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
