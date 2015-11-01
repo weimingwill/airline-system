@@ -321,15 +321,15 @@ public class NavigationController implements Serializable {
     }
 
     public String toCheckRoute() {
-        return APS_URL + "route/checkRouteExistence.xhtml" + REDIRECT;
+        return APS_URL + "route/planRoute.xhtml" + REDIRECT;
     }
 
     public String toGenerateRoute() {
-        return APS_URL + "route/generateRoute.xhtml" + REDIRECT;
+        return APS_URL + "route/generateRoute.xhtml";
     }
 
     public String toCustomizeRoute() {
-        return APS_URL + "route/customizeRoute.xhtml" + REDIRECT;
+        return APS_URL + "route/customizeRoute.xhtml";
     }
 
     public String toViewRoutes() {

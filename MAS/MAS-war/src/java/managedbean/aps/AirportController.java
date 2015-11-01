@@ -131,7 +131,7 @@ public class AirportController implements Serializable {
 
     }
 
-    public String capitalize(String source) {
+    private String capitalize(String source) {
         StringBuilder res = new StringBuilder();
         String[] strArr = source.split(" ");
         for (String str : strArr) {
