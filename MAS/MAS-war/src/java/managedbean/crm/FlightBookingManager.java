@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package managedbean.ars;
+package managedbean.crm;
 
 import ams.aps.entity.Airport;
 import ams.aps.session.RoutePlanningSessionLocal;
@@ -19,7 +19,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import managedbean.application.ArsNavController;
+import managedbean.application.CrmExNavController;
 
 /**
  *
@@ -30,7 +30,7 @@ import managedbean.application.ArsNavController;
 public class FlightBookingManager implements Serializable {
 
     @Inject
-    ArsNavController arsNavController;
+    CrmExNavController crmExNavController;
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
@@ -98,7 +98,7 @@ public class FlightBookingManager implements Serializable {
     }
 
     public String searchFlight() {
-        return arsNavController.redirectToSearchFlightResult();
+        return crmExNavController.redirectToSearchFlightResult();
     }
 
     //Getter and Setter    
