@@ -7,9 +7,13 @@ package ams.afos.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,18 +25,25 @@ import mas.common.entity.SystemUser;
  */
 @Entity
 public class FlightCrew extends SystemUser implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     private String flightCrewID;
-    private Integer age;
+    @Temporal(value = TemporalType.DATE)
+    private Date dob;
     private String gender;
     private Double totalFlyingTime;
     private Double totalFlyingDist;
+    private String base;
     @Temporal(value = TemporalType.DATE)
     private Date dateJoined;
-    
-    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightCrewPosition position;
+    
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(joinColumns = @JoinColumn(name = "LANGUAGESID"))
+    private List<Languages> languages;
 
     /**
      * @return the totalFlyingTime
@@ -105,20 +116,6 @@ public class FlightCrew extends SystemUser implements Serializable {
     }
 
     /**
-     * @return the age
-     */
-    public Integer getAge() {
-        return age;
-    }
-
-    /**
-     * @param age the age to set
-     */
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    /**
      * @return the dateJoined
      */
     public Date getDateJoined() {
@@ -130,6 +127,48 @@ public class FlightCrew extends SystemUser implements Serializable {
      */
     public void setDateJoined(Date dateJoined) {
         this.dateJoined = dateJoined;
+    }
+
+    /**
+     * @return the dob
+     */
+    public Date getDob() {
+        return dob;
+    }
+
+    /**
+     * @param dob the dob to set
+     */
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    /**
+     * @return the languages
+     */
+    public List<Languages> getLanguages() {
+        return languages;
+    }
+
+    /**
+     * @param languages the languages to set
+     */
+    public void setLanguages(List<Languages> languages) {
+        this.languages = languages;
+    }
+
+    /**
+     * @return the base
+     */
+    public String getBase() {
+        return base;
+    }
+
+    /**
+     * @param base the base to set
+     */
+    public void setBase(String base) {
+        this.base = base;
     }
 
 }

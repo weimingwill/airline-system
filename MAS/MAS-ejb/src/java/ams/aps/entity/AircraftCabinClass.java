@@ -50,10 +50,10 @@ public class AircraftCabinClass implements Serializable {
     private Integer seatQty;
 
     @Column(name = "ROWNo")
-    private Integer rowNo;
+    private Integer numRows;
 
     @Column(name = "COLNO")
-    private Integer colNo;
+    private Integer numCols;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "aircraftCabinClass")
     private List<CabinClassTicketFamily> cabinClassTicketFamilys = new ArrayList<>();
@@ -101,20 +101,20 @@ public class AircraftCabinClass implements Serializable {
         this.cabinClassTicketFamilys = cabinClassTicketFamilys;
     }
 
-    public Integer getRowNo() {
-        return rowNo;
+    public Integer getNumRows() {
+        return numRows;
     }
 
-    public void setRowNo(Integer rowNo) {
-        this.rowNo = rowNo;
+    public void setNumRows(Integer numRows) {
+        this.numRows = numRows;
     }
 
-    public Integer getColNo() {
-        return colNo;
+    public Integer getNumCols() {
+        return numCols;
     }
 
-    public void setColNo(Integer colNo) {
-        this.colNo = colNo;
+    public void setNumCols(Integer numCols) {
+        this.numCols = numCols;
     }
 
     public Integer getSeatQty() {

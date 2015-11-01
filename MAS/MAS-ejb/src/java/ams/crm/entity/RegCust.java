@@ -26,9 +26,7 @@ public class RegCust extends Customer implements Serializable {
     private String email;
     private String pwd;
     @Embedded
-    private Phone telephone;
-    @Embedded
-    private Phone mobilephone;
+    private Phone phone;
     private String addr1;
     private String addr2;
     private String zipCode;
@@ -44,6 +42,7 @@ public class RegCust extends Customer implements Serializable {
     private Double custValue;
     private Integer numOfFlights;
     private String memberShipId;
+    private Boolean activated;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<MileTrans> mileTranses = new ArrayList<>();
@@ -70,20 +69,12 @@ public class RegCust extends Customer implements Serializable {
         this.pwd = pwd;
     }
 
-    public Phone getTelephone() {
-        return telephone;
+    public Phone getPhone() {
+        return phone;
     }
 
-    public void setTelephone(Phone telephone) {
-        this.telephone = telephone;
-    }
-
-    public Phone getMobilephone() {
-        return mobilephone;
-    }
-
-    public void setMobilephone(Phone mobilephone) {
-        this.mobilephone = mobilephone;
+    public void setPhone(Phone phone) {
+        this.phone = phone;
     }
     
     public String getAddr1() {
@@ -228,6 +219,20 @@ public class RegCust extends Customer implements Serializable {
 
     public void setMembership(Membership membership) {
         this.membership = membership;
+    }
+
+    /**
+     * @return the activated
+     */
+    public Boolean getActivated() {
+        return activated;
+    }
+
+    /**
+     * @param activated the activated to set
+     */
+    public void setActivated(Boolean activated) {
+        this.activated = activated;
     }
 
 }
