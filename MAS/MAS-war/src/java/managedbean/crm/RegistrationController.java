@@ -7,7 +7,7 @@ package managedbean.crm;
 
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
-import ams.crm.session.RegistrationLocal;
+import ams.crm.session.CustomerSessionLocal;
 import ams.crm.util.exception.ExistSuchRegCustException;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
@@ -17,6 +17,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
+import managedbean.common.EmailController;
 
 /**
  *
@@ -29,8 +30,10 @@ public class RegistrationController implements Serializable{
     private MsgController msgController;
     @Inject
     private NavigationController navigationController;
+    @Inject
+    private EmailController emailController;
     @EJB
-    private RegistrationLocal registrationSession;
+    private CustomerSessionLocal registrationSession;
     /**
      * Creates a new instance of RegistrationController
      */
@@ -48,8 +51,14 @@ public class RegistrationController implements Serializable{
            
             
             registrationSession.createRegCust(newRegCust);
+            String subject = "Welcome to Merlion Air";
+            String mailContent = "Dear Customer: \n Please activate your account using the following link: \n" + navigationController.redirectToCustomerLogin() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + "&email=" + newRegCust.getEmail();
+            String receiver = newRegCust.getEmail();
+            emailController.sendEmail(subject, mailContent, receiver);
+           
 //            registrationSession.createRegCust(newRegCust.getTitle(),newRegCust.getFirstName(),newRegCust.getLastName(),newRegCust.getPassportNo(),newRegCust.getNationality(),newRegCust.getGender(),newRegCust.getDob(),newRegCust.getEmail(),newRegCust.getAddr1(),newRegCust.getAddr2(),newRegCust.getCity(),newRegCust.getProvince(),newRegCust.getCountry(),newRegCust.getZipCode(),newRegCust.getMobilephone(),newRegCust.getTelephone(),newRegCust.getPwd(),newRegCust.getSecurQuest(),newRegCust.getSecurAns(),newRegCust.getNewsLetterPref(),newRegCust.getPromoPref(),membershipClass,accMiles,custValue,numOfFlights, memberShipId);
             msgController.addMessage("Registrated successfully!");
+            
         } catch (ExistSuchRegCustException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }

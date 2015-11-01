@@ -23,6 +23,7 @@ public class NavigationController implements Serializable {
     private final String COMMON_URL = "/views/internal/secured/common/";
     private final String APS_URL = "/views/internal/secured/aps/";
     private final String AIS_URL = "/views/internal/secured/ais/";
+    private final String CRM_WEB_URL = "views/external/unsecured/crm_web/";
     
 
     
@@ -396,5 +397,8 @@ public class NavigationController implements Serializable {
         return uri + REDIRECT;
     }
     
-
+    // External CRM
+    public String redirectToCustomerLogin(){
+        return CRM_WEB_URL + "customerLogin.xhtml" +REDIRECT;
+    }
 }

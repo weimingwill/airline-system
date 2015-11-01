@@ -9,7 +9,9 @@ package ams.crm.session;
 import ams.crm.entity.Membership;
 import ams.crm.entity.RegCust;
 import ams.crm.util.exception.ExistSuchRegCustException;
+import ams.crm.util.exception.InvalidPasswordException;
 import ams.crm.util.exception.NoSuchMembershipException;
+import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.CrmMsg;
 import java.util.List;
 import java.util.Random;
@@ -28,12 +30,13 @@ import javax.persistence.Query;
  */
 @Stateless
 
-public class RegistrationSession implements RegistrationLocal {
+public class CustomerSession implements CustomerSessionLocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @PersistenceContext
     private EntityManager entityManager;
+    private Object emailController;
     
     
     
@@ -46,10 +49,11 @@ public class RegistrationSession implements RegistrationLocal {
         regCust.setAccMiles(0.0);
         regCust.setCustValue(0.0);
         regCust.setNumOfFlights(0);
+        regCust.setActivated(true);
         try {
             regCust.setMembership(entityManager.find(Membership.class,getMembershipByName("Elite Bronze").getId()));
         } catch (NoSuchMembershipException ex) {
-            Logger.getLogger(RegistrationSession.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CustomerSession.class.getName()).log(Level.SEVERE, null, ex);
         }
         regCust.setMemberShipId("MA"+ 10000 + r.nextInt(20000));
         entityManager.persist(regCust);
@@ -86,7 +90,26 @@ public class RegistrationSession implements RegistrationLocal {
 //    }
 
     @Override
-    public void verifyRegCustExistence(String passportNo) throws ExistSuchRegCustException {
+    public void doLogin(String email, String inputPassword) throws NoSuchRegCustException, InvalidPasswordException {
+        verifyRegCustPassword(email, inputPassword);
+        
+    }
+    
+    private void verifyRegCustPassword (String email, String inputPassword) throws NoSuchRegCustException, InvalidPasswordException{
+        
+        try {
+            RegCust regCust = getRegCustByEmail(email);
+            String userPassword = regCust.getPwd();
+            if (!userPassword.equals(inputPassword)) {
+                throw new InvalidPasswordException(CrmMsg.INVALID_PASSWORD_ERROR);
+            }
+        } catch (NoSuchRegCustException ex) {
+            throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
+        }
+    }
+    
+
+    private void verifyRegCustExistence(String passportNo) throws ExistSuchRegCustException {
         List<RegCust> regCusts = getAllRegCusts();
         if (regCusts != null) {
             for (RegCust rc : regCusts) {
@@ -118,8 +141,23 @@ public class RegistrationSession implements RegistrationLocal {
         return selectMembership;
     }
     
+    
     @Override
-    public void verifyEmailExistence(String email) throws ExistSuchRegCustException {
+    public RegCust getRegCustByEmail (String email) throws NoSuchRegCustException{
+        Query query = entityManager.createQuery("SELECT r FROM RegCust r WHERE r.email = :inEmail");
+        query.setParameter("inEmail", email);
+        RegCust selectRegCust = null;
+        try {
+            selectRegCust = (RegCust) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
+        }catch(NonUniqueResultException e){
+            
+        }
+        return selectRegCust;
+    }
+    
+    private void verifyEmailExistence(String email) throws ExistSuchRegCustException {
         List<RegCust> regCusts = getAllRegCusts();
         if (regCusts != null) {
             for (RegCust rc : regCusts) {
