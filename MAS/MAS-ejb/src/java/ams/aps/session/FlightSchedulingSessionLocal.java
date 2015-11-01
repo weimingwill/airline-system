@@ -70,10 +70,10 @@ public interface FlightSchedulingSessionLocal {
 
     public void updateFlight(Flight flight) throws ObjectDoesNotExistException;
 
-    public void createFlightSchedule(Flight flight, Aircraft aircraft, Date deptDate, Date arrDate)
+    public FlightSchedule createFlightSchedule(Flight flight, Aircraft aircraft, Date deptDate, Date arrDate, Date startDate, Date endDate, String method)
             throws NoSuchFlightException, NoMoreUnscheduledFlightException, NoSelectAircraftException, ExistSuchFlightScheduleException;
 
-    public void updateFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrDate, FlightSchedule oldFlightSched)
+    public FlightSchedule updateFlightSchedule(String flightNo, Aircraft aircraft, Date deptDate, Date arrDate, Date startDate, Date endDate, FlightSchedule oldFlightSched)
             throws NoMoreUnscheduledFlightException, NoSelectAircraftException, NoSuchFlightException,
             NoSuchFlightSchedulException, ExistSuchFlightScheduleException;
 
@@ -89,8 +89,11 @@ public interface FlightSchedulingSessionLocal {
 
     public Flight getFlightByFlightNo(String fligthNo) throws NoSuchFlightException;
 
-    public List<FlightSchedule> verifyApplyFlightSchedCollision(List<Aircraft> aircrafts, Date startDate, Date endDate);
+    public List<FlightSchedule> verifyApplyFlightSchedCollision(List<Aircraft> aircrafts, Date startDate, Date endDate, Date weekStartDate, Date weekEndDate);
 
-    public void setRouteFlightSchedule(FlightSchedule flightSchedule, Flight flight);
+    public void setRouteFlightSchedule(FlightSchedule flightSchedule);
+
+    public void applyFlightSchedulesToPeriod(List<Aircraft> aircrafts, Date startDate, Date endDate, Date weekStartDate, Date weekEndDate);
     
+    public List<Aircraft> getAllAircrafts();
 }
