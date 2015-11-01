@@ -8,6 +8,7 @@ package ams.ars.entity;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.crm.entity.Customer;
 import ams.dcs.entity.CheckInLuggage;
+import ams.dcs.entity.Luggage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,9 @@ public class AirTicket implements Serializable {
     
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<AddOn> addOns = new ArrayList<>();
+    
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Luggage purchasedLuggage;
     
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<CheckInLuggage> luggages = new ArrayList<>();
@@ -173,6 +177,20 @@ public class AirTicket implements Serializable {
      */
     public void setFlightSchedBookingClass(FlightScheduleBookingClass flightSchedBookingClass) {
         this.flightSchedBookingClass = flightSchedBookingClass;
+    }
+
+    /**
+     * @return the purchasedLuggage
+     */
+    public Luggage getPurchasedLuggage() {
+        return purchasedLuggage;
+    }
+
+    /**
+     * @param purchasedLuggage the purchasedLuggage to set
+     */
+    public void setPurchasedLuggage(Luggage purchasedLuggage) {
+        this.purchasedLuggage = purchasedLuggage;
     }
 
 
