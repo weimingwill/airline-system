@@ -16,6 +16,8 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.event.ActionEvent;
@@ -47,6 +49,7 @@ public class PassengerManager implements Serializable {
 
     private List<FlightSchedule> flightSchedules = new ArrayList<>();
     private List<Customer> passengerList = new ArrayList<>();
+    private List<AirTicket> airtickets = new ArrayList<>();
     private List<AirTicketDisplayHelper> airTicketShowList = new ArrayList<>();
 
     /**
@@ -62,17 +65,18 @@ public class PassengerManager implements Serializable {
             System.err.println("No Passenger Found");
             return "";
         } else {
-            setFlightSchedules(checkInSession.getFSforCheckinByPassport(passportNo));
-            if (!flightSchedules.isEmpty()) {
+            setAirtickets(checkInSession.getFSforCheckin(passportNo));
+            if (!airtickets.isEmpty()) {
+                
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.HOUR_OF_DAY, 48); // adds 48 hour
+                Date checkInAlloweddate = cal.getTime(); // returns new date object, one hour in the future
+                Date currentDate = new Date();
+                
                 passengerList.add(passenger);
-                for (FlightSchedule fs: flightSchedules){
-                    AirTicketDisplayHelper ah = new AirTicketDisplayHelper();
-                    ah.setFlightNo(fs.getFlight().getFlightNo());
-                    ah.setOriITAT(fs.getLeg().getDepartAirport().getIataCode());
-                    ah.setDestITAT(fs.getLeg().getArrivalAirport().getIataCode());
-                    ah.setOriName(fs.getLeg().getDepartAirport().getAirportName());
-                    ah.setDestName(fs.getLeg().getArrivalAirport().getAirportName());
-                    fs.ge
+                for (AirTicket a : airtickets) {
+                    AirTicketDisplayHelper atShow = displayAirTicket(a);
                 }
 
                 return dcsNavController.toCheckInPassenger();
@@ -84,21 +88,9 @@ public class PassengerManager implements Serializable {
         }
     }
 
-    public List<List> organisePassengers(List<AirTicket> airTicketList) {
-
-        List<AirTicketDisplayHelper> fsList = new ArrayList<>();
-
-        return null; //change
+    private AirTicketDisplayHelper displayAirTicket(AirTicket at){
+        
     }
-
-    public List<AirTicketDisplayHelper> organiseAnAirTicket(AirTicket airTicket) {
-        AirTicketDisplayHelper atHelper = new AirTicketDisplayHelper();
-        List<FlightSchedule> fsList = new ArrayList<>();
-
-        fsList = airTicket.getBooking().getFlightSchedules();
-        return null; //change
-    }
-
     public void onPassportChange(AjaxBehaviorEvent event) {
         System.out.println("passport = " + passportNo);
     }
@@ -185,6 +177,20 @@ public class PassengerManager implements Serializable {
      */
     public void setAirTicketShowList(List<AirTicketDisplayHelper> airTicketShowList) {
         this.airTicketShowList = airTicketShowList;
+    }
+
+    /**
+     * @return the airtickets
+     */
+    public List<AirTicket> getAirtickets() {
+        return airtickets;
+    }
+
+    /**
+     * @param airtickets the airtickets to set
+     */
+    public void setAirtickets(List<AirTicket> airtickets) {
+        this.airtickets = airtickets;
     }
 
 }

@@ -6,6 +6,7 @@
 package ams.dcs.session;
 
 import ams.aps.entity.FlightSchedule;
+import ams.ars.entity.AirTicket;
 import ams.crm.entity.Customer;
 import ams.dcs.entity.Luggage;
 import java.util.List;
@@ -19,7 +20,7 @@ import javax.ejb.Local;
 public interface CheckInSessionLocal {
     public Customer getCustomerByPassport(String passportNo);
     public List<Luggage> getCustomerLuggages(Customer cust, FlightSchedule schedule);
-    public List<FlightSchedule> getFSforCheckinByPassport(String passportNo);
+    public List<AirTicket> getFSforCheckin(String passport);
     
     public String selectSeat(String ticketNo);
     

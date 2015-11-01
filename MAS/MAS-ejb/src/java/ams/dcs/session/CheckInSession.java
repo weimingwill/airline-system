@@ -31,28 +31,27 @@ public class CheckInSession implements CheckInSessionLocal {
     EntityManager em;
 
     @Override
-    public List<FlightSchedule> getFSforCheckinByPassport(String passportNo) {
+    public List<AirTicket> getFSforCheckin(String passport) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.HOUR_OF_DAY, 48); // adds 48 hour
         Date checkInAlloweddate = cal.getTime(); // returns new date object, one hour in the future
         Date currentDate = new Date();
-        List<FlightSchedule> flightSchedules = new ArrayList<>();
+        List<AirTicket> airTickets = new ArrayList<>();
 
-        Customer c = em.find(Customer.class, passportNo);
-        Query q = em.createQuery("SELECT f FROM FlightSchedule f ORDER BY f.departDate ASC WHERE f.departDate BETWEEN :start AND :end AND f IN (SELECT b.flightSchedules FROM Booking b WHERE b IN (SELECT a.booking FROM Airticket a AND a.customer.passportNo =:pass))");
-        q.setParameter("pass", passportNo);
+        Query q = em.createQuery("SELECT a FROM Airticket a WHERE a.customer.passportNo =:pass AND a.status =:ready))");
+        q.setParameter("pass", passport);
+        q.setParameter("ready", "Booking confirmed");
         q.setParameter("start", currentDate);
         q.setParameter("end", checkInAlloweddate);
         try {
-            flightSchedules = q.getResultList();
+            airTickets = q.getResultList();
         } catch (Exception e) {
             return null;
         }
-        return flightSchedules;
+        return airTickets;
     }
 
-    
     public String selectSeat(String ticketNo) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        at.g
     }
