@@ -7,10 +7,11 @@ package managedbean.dcs;
 
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
+import ams.ars.entity.AddOn;
 import ams.ars.entity.AirTicket;
+import ams.ars.entity.Seat;
 import ams.crm.entity.Customer;
 import ams.dcs.util.helper.AirTicketDisplayHelper;
-import ams.dcs.util.helper.PassengerDisplayHelper;
 import ams.dcs.session.CheckInSessionLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -45,7 +46,6 @@ public class PassengerManager implements Serializable {
 
     private String passportNo;
     private Customer passenger;
-    private List<PassengerDisplayHelper> passengerShowList = new ArrayList<>();
 
     private List<FlightSchedule> flightSchedules = new ArrayList<>();
     private List<Customer> passengerList = new ArrayList<>();
@@ -59,6 +59,7 @@ public class PassengerManager implements Serializable {
     }
 
     public String checkPassenger() {
+
         passenger = checkInSession.getCustomerByPassport(getPassportNo());
         if (passenger == null) {
             msgController.addErrorMessage("Passenger not found!");
@@ -67,20 +68,27 @@ public class PassengerManager implements Serializable {
         } else {
             setAirtickets(checkInSession.getFSforCheckin(passportNo));
             if (!airtickets.isEmpty()) {
-                
+
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
                 cal.add(Calendar.HOUR_OF_DAY, 48); // adds 48 hour
                 Date checkInAlloweddate = cal.getTime(); // returns new date object, one hour in the future
                 Date currentDate = new Date();
-                
-                passengerList.add(passenger);
+
                 for (AirTicket a : airtickets) {
-                    AirTicketDisplayHelper atShow = displayAirTicket(a);
+                    FlightSchedule fs = a.getFlightSchedBookingClass().getFlightSchedule();
+                    if (fs.getDepartDate().before(checkInAlloweddate) && fs.getDepartDate().after(currentDate)) {
+                        AirTicketDisplayHelper atHelper = displayAirTicket(a);
+                        airTicketShowList.add(atHelper);
+                    }
+                }
+
+                if (airTicketShowList.isEmpty()) {
+                    msgController.addErrorMessage("Passenger do not have trips available for check-in!");
+                    return "";
                 }
 
                 return dcsNavController.toCheckInPassenger();
-
             } else {
                 msgController.addErrorMessage("Passenger do not have trips available for check-in!");
                 return "";
@@ -88,9 +96,27 @@ public class PassengerManager implements Serializable {
         }
     }
 
-    private AirTicketDisplayHelper displayAirTicket(AirTicket at){
+    private AirTicketDisplayHelper displayAirTicket(AirTicket at) {
+        FlightSchedule fs = at.getFlightSchedBookingClass().getFlightSchedule();
+        AirTicketDisplayHelper atdh = new AirTicketDisplayHelper();
+        Seat seat = at.getSeat();
+
+        atdh.setFlightNo(fs.getFlight().getFlightNo());
+        atdh.setCabinClass(at.getFlightSchedBookingClass().getBookingClass().getTicketFamily().getCabinClass().getType());
+        atdh.setOriITAT(fs.getLeg().getDepartAirport().getIataCode());
+        atdh.setOriName(fs.getLeg().getDepartAirport().getAirportName());
+        atdh.setDestITAT(fs.getLeg().getArrivalAirport().getIataCode());
+        atdh.setDestName(fs.getLeg().getArrivalAirport().getAirportName());
+        if (seat != null) {
+            atdh.setSeat(seat.getRowNo().toString() + seat.getColNo());
+        } else {
+            atdh.setSeat("To be selected");
+        }
         
+        atdh.setStatus(at.getStatus());
+        return atdh;
     }
+
     public void onPassportChange(AjaxBehaviorEvent event) {
         System.out.println("passport = " + passportNo);
     }
@@ -135,20 +161,6 @@ public class PassengerManager implements Serializable {
      */
     public void setPassengerList(List<Customer> passengerList) {
         this.passengerList = passengerList;
-    }
-
-    /**
-     * @return the passengerShowList
-     */
-    public List<PassengerDisplayHelper> getPassengerShowList() {
-        return passengerShowList;
-    }
-
-    /**
-     * @param passengerShowList the passengerShowList to set
-     */
-    public void setPassengerShowList(List<PassengerDisplayHelper> passengerShowList) {
-        this.passengerShowList = passengerShowList;
     }
 
     /**

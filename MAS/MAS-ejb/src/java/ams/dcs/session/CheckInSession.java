@@ -32,18 +32,11 @@ public class CheckInSession implements CheckInSessionLocal {
 
     @Override
     public List<AirTicket> getFSforCheckin(String passport) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.HOUR_OF_DAY, 48); // adds 48 hour
-        Date checkInAlloweddate = cal.getTime(); // returns new date object, one hour in the future
-        Date currentDate = new Date();
         List<AirTicket> airTickets = new ArrayList<>();
 
         Query q = em.createQuery("SELECT a FROM Airticket a WHERE a.customer.passportNo =:pass AND a.status =:ready))");
         q.setParameter("pass", passport);
         q.setParameter("ready", "Booking confirmed");
-        q.setParameter("start", currentDate);
-        q.setParameter("end", checkInAlloweddate);
         try {
             airTickets = q.getResultList();
         } catch (Exception e) {

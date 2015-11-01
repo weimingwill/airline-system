@@ -18,6 +18,7 @@ public class AirTicketDisplayHelper {
     private String destName;
     private String cabinClass;
     private String seat;
+    private String luggagePurchased;
     private String status;
     
     public AirTicketDisplayHelper(){
@@ -134,6 +135,20 @@ public class AirTicketDisplayHelper {
      */
     public void setDestName(String destName) {
         this.destName = destName;
+    }
+
+    /**
+     * @return the luggageWeight
+     */
+    public Double getLuggageWeight() {
+        return luggageWeight;
+    }
+
+    /**
+     * @param luggageWeight the luggageWeight to set
+     */
+    public void setLuggageWeight(Double luggageWeight) {
+        this.luggageWeight = luggageWeight;
     }
     
 }
