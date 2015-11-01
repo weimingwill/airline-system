@@ -9,9 +9,10 @@ package ams.aps.util.helper;
  *
  * @author weiming
  */
-public class GetFlightSchedMethod {
+public class FlightSchedMethod {
 
     public static final String DISPLAY = "display";
     public static final String CREATE = "create";
-
+    public static final String APPLY = "apply";
+    
 }
