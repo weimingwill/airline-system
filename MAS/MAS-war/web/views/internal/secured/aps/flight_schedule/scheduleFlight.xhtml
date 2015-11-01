@@ -9,7 +9,8 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table"
+                xmlns:ti="http://xmlns.jcp.org/jsf/composite/ezcomp/tile">
 
     <ui:define name="content">
         <me:CCScheduleFlightMenu activeIndex="1"/>
@@ -102,7 +103,8 @@
                 <p:separator/>
 
                 <pe:timeline id="timeline" value="#{flightScheduleManager.model}" var="flightSchedule" varGroup="aircraft" 
-                             browserTimeZone="GMT+8" editable="true" eventMargin="10" eventMarginAxis="0"  widgetVar="timeline"
+                             browserTimeZone="GMT+8" editable="true" eventMargin="10" eventMarginAxis="0"  widgetVar="timeline" 
+                             moveable="false" selectable="true"
                              min="#{flightScheduleManager.timelineMinDate}" max="#{flightScheduleManager.timelineMaxDate}"
                              zoomMin="#{flightScheduleManager.zoomMin}"
                              start="#{flightScheduleManager.calendarMinDate}" 
@@ -111,32 +113,14 @@
 
                     <p:ajax event="edit" update="eventDetails" listener="#{flightScheduleManager.onFlightSchedSelect}"  
                             oncomplete="PF('eventDialog').show()"/>  
+
                     <f:facet name="group"> 
                         <h:graphicImage value="./../../../../../resources/images/aircraft.png" style="vertical-align:middle;width:50px" alt="Airplane"/> 
                         <h:outputText value=" #{aircraft.tailNo}" style="font-weight: bold"/> 
                     </f:facet> 
 
+                    <ti:CCFlightSchedDetail flightSchedule="#{flightSchedule}" />
 
-                    <h:panelGrid columns="2" style="font-size: small">
-                        <p:outputLabel value="FlightNo: " />
-                        <p:outputLabel value="#{flightSchedule.flight.flightNo}/#{flightSchedule.flight.returnedFlight.flightNo}" />
-
-                        <p:outputLabel value="Time: " />
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="#{flightSchedule.departDate}">
-                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
-                                </p:outputLabel>
-                                <p:outputLabel value=" - " />
-                                <p:outputLabel value="#{flightSchedule.arrivalDate}">
-                                    <f:convertDateTime pattern="HH:mm"  timeZone="GMT+8"/>
-                                </p:outputLabel>
-                            </p:column>
-                        </p:row>
-
-                        <p:outputLabel value="Route: " />
-                        <p:outputLabel id="route" value="#{flightSchedule.leg.departAirport.iataCode} - #{flightSchedule.leg.arrivalAirport.iataCode}" />
-                    </h:panelGrid>
 
                 </pe:timeline>  
 
@@ -199,8 +183,8 @@
         <p:dialog header="Collided Flight Schedules" widgetVar="collidedFlightSchedDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form id="collidedFlightSchedForm">
                 <ta:CCViewFlightScheduleTable id="collidedFlightSchedTable" flightSchedules="#{flightScheduleManager.collidedFlightScheds}" />
-                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,timeline" actionListener="#{flightScheduleManager.applyFlightSchedulesToPeriod()}" />
-                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,:form:timeline" actionListener="#{flightScheduleManager.applyFlightSchedulesToPeriod()}" oncomplete="PF('collidedFlightSchedDialog').hide();" />
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" oncomplete="PF('collidedFlightSchedDialog').hide();" />
             </h:form>
         </p:dialog>
 

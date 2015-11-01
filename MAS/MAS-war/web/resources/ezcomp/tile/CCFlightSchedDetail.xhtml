@@ -9,20 +9,12 @@
 
     <!-- INTERFACE -->
     <cc:interface>
-        <cc:attribute name="aircraft" required="true" />
         <cc:attribute name="flightSchedule" required="true" />
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <c:set var="aircraft" value="#{cc.attrs.aircraft}" />
         <c:set var="flightSchedule" value="#{cc.attrs.flightSchedule}" />
-        
-        <f:facet name="group"> 
-            <h:graphicImage value="./../../../../../resources/images/aircraft.png" style="vertical-align:middle;width:50px" alt="Airplane"/> 
-            <h:outputText value=" #{aircraft.tailNo}" style="font-weight: bold"/> 
-        </f:facet> 
-
 
         <h:panelGrid columns="2" style="font-size: small">
             <p:outputLabel value="FlightNo: " />

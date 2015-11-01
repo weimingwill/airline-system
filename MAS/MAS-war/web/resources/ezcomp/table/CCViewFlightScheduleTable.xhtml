@@ -14,7 +14,7 @@
     <cc:implementation>
         <p:dataTable id="flight-schedule" var="flightSchedule" value="#{cc.attrs.flightSchedules}" rows="10"
                      rowKey="#{flightSchedule.flightScheduleId}" tableStyleClass="table-small"
-                     paginator="false" rowsPerPageTemplate="10,15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                     paginator="true" rowsPerPageTemplate="10,15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
             <f:facet name="header">
                 Flight schedule
