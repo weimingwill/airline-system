@@ -77,6 +77,8 @@ public interface FlightSchedulingSessionLocal {
             throws NoMoreUnscheduledFlightException, NoSelectAircraftException, NoSuchFlightException,
             NoSuchFlightSchedulException, ExistSuchFlightScheduleException;
 
+    public void deleteFlightSchedule(FlightSchedule flightSchedule, String method) throws NoSuchFlightSchedulException;
+
     public void verifyUnscheduledFlightNumber(Flight flight) throws NoMoreUnscheduledFlightException;
 
     public Date addHourToDate(Date start, double hours);
@@ -94,6 +96,8 @@ public interface FlightSchedulingSessionLocal {
     public void setRouteFlightSchedule(FlightSchedule flightSchedule);
 
     public void applyFlightSchedulesToPeriod(List<Aircraft> aircrafts, Date startDate, Date endDate, Date weekStartDate, Date weekEndDate);
-    
+
     public List<Aircraft> getAllAircrafts();
+
+    public List<Aircraft> getAircraftsByAircraftType(String aircraftType);
 }
