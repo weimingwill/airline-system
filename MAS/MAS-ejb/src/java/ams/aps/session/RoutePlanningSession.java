@@ -53,11 +53,11 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     @Override
     public List<Airport> getAllAirports() {
         Query query = em.createQuery("SELECT a FROM Airport a");
-        List<Airport> airports = null;
+        List<Airport> airports;
         try {
             airports = (List<Airport>) query.getResultList();
         } catch (NoResultException e) {
-            e.printStackTrace();
+            airports = new ArrayList<>();
         }
         return airports;
     }
