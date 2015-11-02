@@ -9,7 +9,7 @@ import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.FlightScheduleBookingClass;
-//import ams.ais.entity.PhaseDemand;
+import ams.ais.entity.PhaseDemand;
 import ams.ais.entity.SeatAllocationHistory;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.BookingClassSessionLocal;
@@ -105,11 +105,11 @@ public class SeatReallocationController implements Serializable {
     private List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers;
     private List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers;
     private List<BookingClassHelper> bookingClassHelpers;
-//    private PhaseDemand phaseDemand;
-//    private float daysBeforeDeparture;
-//    private List<SeatAllocationHistory> allSeatReAllocationHistorys;
-//    private PhaseDemand selectedPhaseDemand;
-//    private List<PhaseDemand> phaseDemands;
+    private PhaseDemand phaseDemand;
+    private float daysBeforeDeparture;
+    private List<SeatAllocationHistory> allSeatReAllocationHistorys;
+    private PhaseDemand selectedPhaseDemand;
+    private List<PhaseDemand> phaseDemands;
 
     /**
      * Creates a new instance of SeatReallocationController
@@ -140,41 +140,41 @@ public class SeatReallocationController implements Serializable {
         return navigationController.redirectToViewFlightSchedule();
     }
 
-//    public List<SeatAllocationHistory> getAllSeatAllocationHistroy() throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
-//        allSeatReAllocationHistorys = seatReallocationSession.getBookingClassSeatAllocationHistory(flightScheduleBookingClass);
-//
-//        return allSeatReAllocationHistorys;
-//    }
-//
-////    public List<PhaseDemand> getAllPhaseDemands() throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
-////        return seatReallocationSession.getPhaseDemands(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
-////
-////    }
-//
-//    public String addPhaseDemand() throws ExistSuchCheckPointException, NoSuchFlightScheduleBookingClassException {
-//        try {
-//            seatReallocationSession.addPhaseDemand(flightScheduleBookingClass, daysBeforeDeparture, newDemandMean, newDemandDev);
-//            msgController.addMessage("Yield management model is updated successfully!");
-//
-//        } catch (ExistSuchCheckPointException e) {
-//            msgController.addErrorMessage(e.getMessage());
-//        }
-//
-//        return navigationController.redirectToYieldManagement();
-//    }
-//
-////    public PhaseDemand getPhaseDemandbyId(long id) {
-////        return seatReallocationSession.getPhaseDemandbyId(id);
-////    }
-//
-//    public String deletePhaseDemand() throws NoSuchPhaseDemandException, NoSuchFlightScheduleBookingClassException {
-//        System.out.println("selected phase demand is:" + selectedPhaseDemand.getDaysBeforeDeparture());
-//        seatReallocationSession.deletePhaseDemand(flightScheduleBookingClass, selectedPhaseDemand);
-//        msgController.addMessage("Yield management model is updated successfully");
-//
-//        return navigationController.redirectToYieldManagement();
-//
-//    }
+    public List<SeatAllocationHistory> getAllSeatAllocationHistroy() throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
+        allSeatReAllocationHistorys = seatReallocationSession.getBookingClassSeatAllocationHistory(flightScheduleBookingClass);
+
+        return allSeatReAllocationHistorys;
+    }
+
+    public List<PhaseDemand> getAllPhaseDemands() throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
+        return seatReallocationSession.getPhaseDemands(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+
+    }
+
+    public String addPhaseDemand() throws ExistSuchCheckPointException, NoSuchFlightScheduleBookingClassException {
+        try {
+            seatReallocationSession.addPhaseDemand(flightScheduleBookingClass, daysBeforeDeparture, newDemandMean, newDemandDev);
+            msgController.addMessage("Yield management model is updated successfully!");
+
+        } catch (ExistSuchCheckPointException e) {
+            msgController.addErrorMessage(e.getMessage());
+        }
+
+        return navigationController.redirectToYieldManagement();
+    }
+
+    public PhaseDemand getPhaseDemandbyId(long id) {
+        return seatReallocationSession.getPhaseDemandbyId(id);
+    }
+
+    public String deletePhaseDemand() throws NoSuchPhaseDemandException, NoSuchFlightScheduleBookingClassException {
+        System.out.println("selected phase demand is:" + selectedPhaseDemand.getDaysBeforeDeparture());
+        seatReallocationSession.deletePhaseDemand(flightScheduleBookingClass, selectedPhaseDemand);
+        msgController.addMessage("Yield management model is updated successfully");
+
+        return navigationController.redirectToYieldManagement();
+
+    }
 
     public List<FlightSchedule> getAllFlightSchedule() {
         List<FlightSchedule> flightSchedules = new ArrayList<>();
@@ -466,44 +466,44 @@ public class SeatReallocationController implements Serializable {
         this.bookingClassHelpers = bookingClassHelpers;
     }
 
-//    public PhaseDemand getPhaseDemand() {
-//        return phaseDemand;
-//    }
-//
-//    public void setPhaseDemand(PhaseDemand phaseDemand) {
-//        this.phaseDemand = phaseDemand;
-//    }
-//
-//    public List<SeatAllocationHistory> getAllSeatReAllocationHistorys() {
-//        return allSeatReAllocationHistorys;
-//    }
-//
-//    public void setAllSeatReAllocationHistorys(List<SeatAllocationHistory> allSeatReAllocationHistorys) {
-//        this.allSeatReAllocationHistorys = allSeatReAllocationHistorys;
-//    }
-//
-//    public PhaseDemand getSelectedPhaseDemand() {
-//        return selectedPhaseDemand;
-//    }
-//
-//    public void setSelectedPhaseDemand(PhaseDemand selectedPhaseDemand) {
-//        this.selectedPhaseDemand = selectedPhaseDemand;
-//    }
-//
-//    public List<PhaseDemand> getPhaseDemands() {
-//        return phaseDemands;
-//    }
-//
-//    public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
-//        this.phaseDemands = phaseDemands;
-//    }
-//
-//    public float getDaysBeforeDeparture() {
-//        return daysBeforeDeparture;
-//    }
-//
-//    public void setDaysBeforeDeparture(float daysBeforeDeparture) {
-//        this.daysBeforeDeparture = daysBeforeDeparture;
-//    }
+    public PhaseDemand getPhaseDemand() {
+        return phaseDemand;
+    }
+
+    public void setPhaseDemand(PhaseDemand phaseDemand) {
+        this.phaseDemand = phaseDemand;
+    }
+
+    public List<SeatAllocationHistory> getAllSeatReAllocationHistorys() {
+        return allSeatReAllocationHistorys;
+    }
+
+    public void setAllSeatReAllocationHistorys(List<SeatAllocationHistory> allSeatReAllocationHistorys) {
+        this.allSeatReAllocationHistorys = allSeatReAllocationHistorys;
+    }
+
+    public PhaseDemand getSelectedPhaseDemand() {
+        return selectedPhaseDemand;
+    }
+
+    public void setSelectedPhaseDemand(PhaseDemand selectedPhaseDemand) {
+        this.selectedPhaseDemand = selectedPhaseDemand;
+    }
+
+    public List<PhaseDemand> getPhaseDemands() {
+        return phaseDemands;
+    }
+
+    public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
+        this.phaseDemands = phaseDemands;
+    }
+
+    public float getDaysBeforeDeparture() {
+        return daysBeforeDeparture;
+    }
+
+    public void setDaysBeforeDeparture(float daysBeforeDeparture) {
+        this.daysBeforeDeparture = daysBeforeDeparture;
+    }
 
 }
