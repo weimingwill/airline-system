@@ -14,6 +14,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,7 +41,13 @@ public class FlightCrew extends SystemUser implements Serializable {
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightCrewPosition position;
+
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<BiddingSession> biddingSessions;
     
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Pairing> pairings;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(joinColumns = @JoinColumn(name = "LANGUAGESID"))
     private List<Languages> languages;
@@ -169,6 +176,34 @@ public class FlightCrew extends SystemUser implements Serializable {
      */
     public void setBase(String base) {
         this.base = base;
+    }
+
+    /**
+     * @return the biddingSessions
+     */
+    public List<BiddingSession> getBiddingSessions() {
+        return biddingSessions;
+    }
+
+    /**
+     * @param biddingSessions the biddingSessions to set
+     */
+    public void setBiddingSessions(List<BiddingSession> biddingSessions) {
+        this.biddingSessions = biddingSessions;
+    }
+
+    /**
+     * @return the pairings
+     */
+    public List<Pairing> getPairings() {
+        return pairings;
+    }
+
+    /**
+     * @param pairings the pairings to set
+     */
+    public void setPairings(List<Pairing> pairings) {
+        this.pairings = pairings;
     }
 
 }

@@ -22,6 +22,7 @@ public class Seat implements Serializable {
     private Long id;
     private Integer rowNo;
     private String colNo;
+    private Boolean reserved;
 
     public Long getId() {
         return id;
@@ -45,6 +46,14 @@ public class Seat implements Serializable {
 
     public void setColNo(String colNo) {
         this.colNo = colNo;
+    }
+
+    public Boolean getReserved() {
+        return reserved;
+    }
+
+    public void setReserved(Boolean reserved) {
+        this.reserved = reserved;
     }
     
     @Override

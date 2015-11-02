@@ -41,7 +41,7 @@ public class RegCust extends Customer implements Serializable {
     private Double accMiles;
     private Double custValue;
     private Integer numOfFlights;
-    private String memberShipId;
+    private String membershipId;
     private Boolean activated;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
@@ -191,12 +191,12 @@ public class RegCust extends Customer implements Serializable {
         this.numOfFlights = numOfFlights;
     }
 
-    public String getMemberShipId() {
-        return memberShipId;
+    public String getMembershipId() {
+        return membershipId;
     }
 
-    public void setMemberShipId(String memberShipId) {
-        this.memberShipId = memberShipId;
+    public void setMembershipId(String membershipId) {
+        this.membershipId = membershipId;
     }
 
     public List<MileTrans> getMileTranses() {

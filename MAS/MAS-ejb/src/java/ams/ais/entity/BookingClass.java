@@ -15,7 +15,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -31,6 +30,7 @@ public class BookingClass implements Serializable {
     private Long bookingClassId;
     private String name;
     private Boolean deleted;
+    private String channel;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "bookingClass")
     private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
@@ -108,6 +108,20 @@ public class BookingClass implements Serializable {
     @Override
     public String toString() {
         return "ams.ais.entity.BookingClass[ bookingClassId=" + bookingClassId + " ]";
+    }
+
+    /**
+     * @return the channel
+     */
+    public String getChannel() {
+        return channel;
+    }
+
+    /**
+     * @param channel the channel to set
+     */
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 
 }

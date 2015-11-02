@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -35,11 +36,14 @@ public class Pairing implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<FlightDuty> flightDuties;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pairings")
     private List<FlightCrew> cabinCrews;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pairings")
     private List<FlightCrew> cockpitCrews;
+
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private BiddingSession biddingSession;
 
     public Long getId() {
         return id;
@@ -170,6 +174,20 @@ public class Pairing implements Serializable {
      */
     public void setCockpitCrews(List<FlightCrew> cockpitCrews) {
         this.cockpitCrews = cockpitCrews;
+    }
+
+    /**
+     * @return the biddingSession
+     */
+    public BiddingSession getBiddingSession() {
+        return biddingSession;
+    }
+
+    /**
+     * @param biddingSession the biddingSession to set
+     */
+    public void setBiddingSession(BiddingSession biddingSession) {
+        this.biddingSession = biddingSession;
     }
 
 }
