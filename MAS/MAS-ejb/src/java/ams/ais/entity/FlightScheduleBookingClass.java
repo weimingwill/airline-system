@@ -53,6 +53,9 @@ public class FlightScheduleBookingClass implements Serializable {
 
     @Column(name = "SEATQTY")
     private Integer seatQty;
+    
+    @Column(name = "SOLDSEATQTY")
+    private Integer soldSeatQty;
 
     @Column(name = "PRICE")
     private Float price;
@@ -105,6 +108,14 @@ public class FlightScheduleBookingClass implements Serializable {
 
     public void setSeatQty(Integer seatQty) {
         this.seatQty = seatQty;
+    }
+
+    public Integer getSoldSeatQty() {
+        return soldSeatQty;
+    }
+
+    public void setSoldSeatQty(Integer soldSeatQty) {
+        this.soldSeatQty = soldSeatQty;
     }
 
     public Float getPrice() {
