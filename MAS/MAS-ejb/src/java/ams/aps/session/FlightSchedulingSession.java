@@ -385,7 +385,6 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         while ((currentFlightSched = currentFlightSched.getNextFlightSched()) != null) {
             flightSchedules.remove(currentFlightSched);
         }
-        System.out.println("FlightScheudles: " + flightSchedules);
         for (FlightSchedule flightSchedule : flightSchedules) {
             Date arrDateWithTurnOver = addHourToDate(flightSchedule.getArrivalDate(), flightSchedule.getTurnoverTime());
             if (arrDate.after(flightSchedule.getDepartDate()) && arrDateWithTurnOver.after(deptDate)) {
@@ -480,8 +479,8 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             dept = addHourToDate(arrival, legHelper.getTurnaroundTime());
         }
         if (method.equals(FlightSchedMethod.CREATE)) {
-             completeOneFlightSchedule(flight);
-       }
+            completeOneFlightSchedule(flight);
+        }
         return dept;
     }
 
@@ -509,7 +508,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         flightSchedules.add(firstFlightSched);
         flightSchedules.add(lastFlightSched);
 
-        deptDate = reSetFlightSchedule(flight, deptDate, flightSchedules);
+        deptDate = reSetFlightSchedule(flight, aircraft, deptDate, flightSchedules);
 
         FlightSchedule reFirstFlightSched = flightSchedules.get(1).getNextFlightSched();
         FlightSchedule reLastFlightSched = new FlightSchedule();
@@ -518,7 +517,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         reFlightSchedules.add(reFirstFlightSched);
         reFlightSchedules.add(reLastFlightSched);
 
-        reSetFlightSchedule(flight.getReturnedFlight(), deptDate, reFlightSchedules);
+        reSetFlightSchedule(flight.getReturnedFlight(), aircraft, deptDate, reFlightSchedules);
 
         firstFlightSched = em.find(FlightSchedule.class, flightSchedules.get(0).getFlightScheduleId());
         lastFlightSched = em.find(FlightSchedule.class, flightSchedules.get(1).getFlightScheduleId());
@@ -531,7 +530,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return firstFlightSched;
     }
 
-    public Date reSetFlightSchedule(Flight flight, Date deptDate, List<FlightSchedule> flightSchedules)
+    public Date reSetFlightSchedule(Flight flight, Aircraft aircraft, Date deptDate, List<FlightSchedule> flightSchedules)
             throws NoSelectAircraftException, NoSuchFlightSchedulException {
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
@@ -547,6 +546,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             arrival = addHourToDate(dept, legHelper.getFlyingTime());
             flightSched.setDepartDate(dept);
             flightSched.setArrivalDate(arrival);
+            flightSched.setAircraft(aircraft);
 
             if (i == 0) {
                 flightSchedules.set(0, flightSched);
@@ -568,18 +568,6 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return dept;
     }
 
-//    public FlightSchedule getFlightScheduleByFlightNoAndDeptDate(String flightNo, Date oldDeptDate) throws NoSuchFlightSchedulException {
-//        Query query = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightNo = :inFlightNo AND fs.departDate = :inDate AND fs.deleted = FALSE");
-//        query.setParameter("inFlightNo", flightNo);
-//        query.setParameter("inDate", oldDeptDate);
-//        FlightSchedule flightSchedule;
-//        try {
-//            flightSchedule = (FlightSchedule) query.getSingleResult();
-//        } catch (NoResultException e) {
-//            throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
-//        }
-//        return flightSchedule;
-//    }
     @Override
     public Date addHourToDate(Date start, double hours) {
         long time = start.getTime();
@@ -661,10 +649,12 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return flightSchedules;
     }
 
-    public void deleteFlightSchedule(FlightSchedule flightSchedule) throws NoSuchFlightSchedulException {
+    @Override
+    public void deleteFlightSchedule(FlightSchedule flightSchedule, String method) throws NoSuchFlightSchedulException {
         if (flightSchedule.getPreFlightSched() != null) {
             throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
         } else {
+            FlightSchedule deletedFlightSched = flightSchedule;
             while (flightSchedule != null) {
                 flightSchedule = em.find(FlightSchedule.class, flightSchedule.getFlightScheduleId());
                 flightSchedule.setDeleted(true);
@@ -672,18 +662,24 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                 em.flush();
                 flightSchedule = flightSchedule.getNextFlightSched();
             }
+            if (method.equals(FlightSchedMethod.DELETE)) {
+                deleteOneFlightSchedule(deletedFlightSched.getFlight());
+                deleteOneFlightSchedule(deletedFlightSched.getFlight().getReturnedFlight());
+            }
+        }
+    }
+
+    public void deleteOneFlightSchedule(Flight flight) {
+        if (flight.getNumOfUnscheduled() < flight.getWeeklyFrequency()) {
+            flight = em.find(Flight.class, flight.getId());
+            flight.setNumOfUnscheduled(flight.getNumOfUnscheduled() + 1);
+            em.merge(flight);
         }
     }
 
     public List<FlightSchedule> getCollisionFlightSched(Aircraft aircraft, Date startDate, Date endDate, Date weekStartDate, Date weekEndDate, List<FlightSchedule> weekFlightScheds) {
         List<FlightSchedule> collidedFlightScheds = new ArrayList<>();
         List<FlightSchedule> flightSchedules = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), startDate, endDate, FlightSchedMethod.DISPLAY));
-
-        //remove all Flightschedules starting from current flight schedule
-//        flightSchedules.remove(currentFlightSched);
-//        while ((currentFlightSched = currentFlightSched.getNextFlightSched()) != null) {
-//            flightSchedules.remove(currentFlightSched);
-//        }
 
         for (FlightSchedule flightSchedule : flightSchedules) {
             for (FlightSchedule weekFlightSched : weekFlightScheds) {
@@ -692,11 +688,11 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                 Date deptDate = dates.get(0);
                 Date arrDate = dates.get(1);
                 if (deptDate.equals(flightSchedule.getDepartDate()) && arrDate.equals(flightSchedule.getArrivalDate())) {
-                    
+
                 } else if (arrDate.after(flightSchedule.getDepartDate()) && flightSchedule.getArrivalDate().after(deptDate)) {
                     collidedFlightScheds.addAll(setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), deptDate, arrDate, FlightSchedMethod.DISPLAY)));
                 }
-                
+
             }
         }
         return collidedFlightScheds;
@@ -733,7 +729,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         flightSchedule.setArrivalDate(addHourToDate(flightSchedule.getDepartDate(), routeHelper.getTotalDuration() * 2));
         flightSchedule.setLeg(leg);
     }
-    
+
     public List<FlightSchedule> setRouteFlightSchedules(List<FlightSchedule> inFlightScheds) {
         List<FlightSchedule> outFlightScheds = new ArrayList<>();
         for (FlightSchedule flightSchedule : inFlightScheds) {
@@ -782,7 +778,6 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
 
     @Override
     public void applyFlightSchedulesToPeriod(List<Aircraft> aircrafts, Date startDate, Date endDate, Date weekStartDate, Date weekEndDate) {
-        System.out.println("\nApply FlightSchedule\n");
         List<Date> dates = new ArrayList<>();
         dates.add(startDate);
         dates.add(endDate);
@@ -798,42 +793,53 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         for (Aircraft aircraft : aircrafts) {
             System.out.println("Aircraft: " + aircraft.getTailNo());
             while (arrDate.before(endDate) || arrDate.equals(endDate)) {
-                System.out.println("deptDate: " + deptDate);
-                System.out.println("arrDate: " + arrDate);
                 List<FlightSchedule> weekFlightScheds = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), weekStartDate, weekEndDate, FlightSchedMethod.DISPLAY));
+                List<FlightSchedule> changedWeekFlightScheds = new ArrayList<>();
+                changedWeekFlightScheds.addAll(weekFlightScheds);
                 List<FlightSchedule> fligthSchedules = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), deptDate, arrDate, FlightSchedMethod.DISPLAY));
                 if (!fligthSchedules.isEmpty()) {
                     for (FlightSchedule flightSchedule : fligthSchedules) {
-                        System.out.println("FlightScheudle: " + flightSchedule);
-                        System.out.println("Week FlightSchedule Size: " + weekFlightScheds.size());
+                        //Identify the flight schedules that is not changed, remove them from the week flight schedule List
                         for (FlightSchedule weekFlightSched : weekFlightScheds) {
-                            System.out.println("Week FlightScheudle: " + weekFlightSched);
                             //Get departure date and arrive date of the specific flightSchedule on specifc week.
                             List<Date> newDates = setDeptDateArrDate(deptDate, weekStartDate, weekFlightSched);
                             Date newDeptDate = newDates.get(0);
                             Date newArrDate = newDates.get(1);
+                            System.out.println("newDeptDate: " + newDeptDate + ". newArrDate: " + newArrDate);
+                            System.out.println("DeptDate: " + flightSchedule.getDepartDate() + ". ArrDate: " + flightSchedule.getArrivalDate());
                             if (newDeptDate.equals(flightSchedule.getDepartDate()) && newArrDate.equals(flightSchedule.getArrivalDate())) {
-                            } else if (newArrDate.after(flightSchedule.getDepartDate()) && flightSchedule.getArrivalDate().after(newDeptDate)) {
+                                changedWeekFlightScheds.remove(weekFlightSched);
+                                System.out.println("Apply: same database result, continue");
+                            }
+                        }
+                    }
+                    
+                    for (FlightSchedule flightSchedule : fligthSchedules) {
+                        for (FlightSchedule weekFlightSched : changedWeekFlightScheds) {
+                            List<Date> newDates = setDeptDateArrDate(deptDate, weekStartDate, weekFlightSched);
+                            Date newDeptDate = newDates.get(0);
+                            Date newArrDate = newDates.get(1);
+                            if (newArrDate.after(flightSchedule.getDepartDate()) && flightSchedule.getArrivalDate().after(newDeptDate)) {
                                 List<FlightSchedule> collidedFlightScheds = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), newDeptDate, newArrDate, FlightSchedMethod.DISPLAY));
                                 FlightSchedule updatedFlightSched = collidedFlightScheds.get(0);
                                 FlightSchedule oldFlightSched = updatedFlightSched;
                                 try {
-                                    System.out.println("Apply: Collide Update");
-//                                    setRouteFlightSchedule(updatedFlightSched);
+                                    System.out.println("Apply: Collide Update to " + aircraft.getTailNo() + " " + newDeptDate + " - " + newArrDate);
                                     updateFlightSchedule(updatedFlightSched.getFlight().getFlightNo(), aircraft, newDeptDate, newArrDate, deptDate, arrDate, oldFlightSched);
                                 } catch (Exception e) {
                                     System.out.println("Update flight error");
                                 }
                                 for (int i = 1; i < collidedFlightScheds.size(); i++) {
                                     try {
-                                        deleteFlightSchedule(collidedFlightScheds.get(i));
+                                        System.out.println("Apply: Delete to " + aircraft.getTailNo() + " " + newDeptDate + " - " + newArrDate);
+                                        deleteFlightSchedule(collidedFlightScheds.get(i), FlightSchedMethod.APPLY);
                                     } catch (Exception e) {
                                         System.out.println("Apply delete flight schedule");
                                     }
                                 }
                             } else {
                                 try {
-                                    System.out.println("Apply internal: Create");
+                                    System.out.println("Apply internal: Create to " + aircraft.getTailNo() + " " + newDeptDate + " - " + newArrDate);
                                     createFlightSchedule(weekFlightSched.getFlight(), aircraft, newDeptDate, newArrDate, deptDate, arrDate, FlightSchedMethod.APPLY);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
@@ -846,10 +852,9 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                         List<Date> newDates = setDeptDateArrDate(deptDate, weekStartDate, weekFlightSched);
                         Date newDeptDate = newDates.get(0);
                         Date newArrDate = newDates.get(1);
-                        System.out.println("New dept date: " + newDeptDate);
-                        System.out.println("New arr date: " + newArrDate);
+                        System.out.println("Apply external: Create to " + aircraft.getTailNo() + " " + newDeptDate + " - " + newArrDate);
                         try {
-                            System.out.println("Apply external: Create");
+
                             createFlightSchedule(weekFlightSched.getFlight(), aircraft, newDeptDate, newArrDate, deptDate, arrDate, FlightSchedMethod.APPLY);
                         } catch (Exception e) {
                             System.out.println("Apply create flight schedule error");
@@ -861,12 +866,10 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                 calendar.add(Calendar.DATE, 6);
                 arrDate = calendar.getTime();
             }
-            startDate = dates.get(0);
-            endDate = dates.get(1);
             deptDate = dates.get(2);
             arrDate = dates.get(3);
+            calendar.setTime(arrDate);
         }
-        calendar.add(Calendar.DATE, 7);
     }
 
     public void initializeApplyDate(List<Date> dates) {
@@ -918,6 +921,20 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         Query query = em.createQuery("SELECT a FROM Aircraft a WHERE a.status <> :retired AND a.status <> :crashed");
         query.setParameter("retired", AircraftStatus.RETIRED);
         query.setParameter("crashed", AircraftStatus.CRASHED);
+        List<Aircraft> aircrafts = new ArrayList<>();
+        try {
+            aircrafts = (List<Aircraft>) query.getResultList();
+        } catch (NoResultException e) {
+        }
+        return aircrafts;
+    }
+
+    @Override
+    public List<Aircraft> getAircraftsByAircraftType(String aircraftType) {
+        Query query = em.createQuery("SELECT a FROM Aircraft a WHERE a.status <> :retired AND a.status <> :crashed AND a.aircraftType.typeCode = :aircraftType");
+        query.setParameter("retired", AircraftStatus.RETIRED);
+        query.setParameter("crashed", AircraftStatus.CRASHED);
+        query.setParameter("aircraftType", aircraftType);
         List<Aircraft> aircrafts = new ArrayList<>();
         try {
             aircrafts = (List<Aircraft>) query.getResultList();

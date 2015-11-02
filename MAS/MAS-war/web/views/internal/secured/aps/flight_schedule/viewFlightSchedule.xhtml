@@ -13,18 +13,23 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form id="form"> 
-
+        <h:form id="form">
             <ri:CCFlightScheduleFilterRibbon />
             <pe:timeline id="timeline" value="#{flightScheduleBacking.model}" var="flightSchedule" varGroup="aircraft" 
-                         browserTimeZone="GMT+8" editable="false" eventMargin="10" eventMarginAxis="0"  widgetVar="timeline"
-                         zoomMin="#{flightScheduleBacking.zoomMin}" selectable="false" 
+                         browserTimeZone="GMT+8" eventMargin="10" eventMarginAxis="0" editable="true" widgetVar="timeline"
+                         zoomMin="#{flightScheduleBacking.zoomMin}"
                          start="#{flightScheduleBacking.startDate}" 
                          end="#{flightScheduleBacking.endDate}" 
                          axisOnTop="true" stackEvents="false">
 
-                <p:ajax event="edit" listener="#{flightScheduleManager.onFlightSchedSelect}" />
-                
+                <p:ajax event="add" update="@none" onstart="PF('timeline').cancelAdd()"/>
+                <p:ajax event="changed" listener="#{flightScheduleBacking.onFlightSchedChange}" /> 
+                <p:ajax event="edit" update="eventDetails" listener="#{flightScheduleBacking.onFlightSchedSelect}"  
+                        oncomplete="PF('eventDialog').show()"/>  
+                <p:ajax event="delete" oncomplete="PF('deleteFlightSchedDialog').show()"
+                        onstart="PF('timeline').cancelDelete()" listener="#{flightScheduleBacking.onFlightScheduleDelete}"/>  
+
+
                 <f:facet name="group"> 
                     <h:graphicImage value="./../../../../../resources/images/aircraft.png" style="vertical-align:middle;width:50px" alt="Airplane"/> 
                     <h:outputText value=" #{aircraft.tailNo}" style="font-weight: bold"/> 
@@ -32,6 +37,59 @@
 
                 <ti:CCFlightSchedDetail flightSchedule="#{flightSchedule}" />
             </pe:timeline>  
+
+            <p:dialog id="flightDetails" widgetVar="eventDialog" header="Flight Details" showEffect="clip" hideEffect="clip" width="500px;">
+                <h:panelGrid id="eventDetails" columns="2" style="width: 100%">
+
+                    <p:outputLabel for="aircraft" value="Aircraft: " />
+                    <p:selectOneMenu id="aircraft"  value="#{flightScheduleBacking.selectedAircraft}" label="Select aircraft" 
+                                     var="aircraft" converter="aircraftConverter" effect="fade" style="width:100%">
+                        <f:selectItems value="#{flightScheduleBacking.selectedAircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}" itemValue="#{aircraft}" />
+                        <p:column>
+                            <p:outputLabel value="#{aircraft.aircraftType.typeCode}" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{aircraft.tailNo}" />
+                        </p:column>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="flightNo" value="Flight Number: " />
+                    <p:inputText id="flightNo" value="#{flightScheduleBacking.flightNo}" required="true" readonly="true" class="flightDetail" />
+
+                    <p:outputLabel for="from" value="From:" />
+                    <p:calendar id="from" value="#{flightScheduleBacking.deptDate}" timeZone="GMT+8" pattern="dd/MM/yyyy HH:mm" styleClass="flightDetail" >
+                        <p:ajax event="dateSelect" listener="#{flightScheduleBacking.onStartTimeChange()}" update="to" />
+                    </p:calendar>
+
+                    <p:outputLabel for="to" value="To:" />
+                    <p:calendar id="to" value="#{flightScheduleBacking.arrDate}" timeZone="GMT+8" pattern="dd/MM/yyyy HH:mm"
+                                mindate="#{flightScheduleBacking.fixedEndDate}" maxdate="#{flightScheduleBacking.fixedEndDate}"
+                                minHour="#{flightScheduleBacking.fixedEndHour}" maxHour="#{flightScheduleBacking.fixedEndHour}"
+                                minMinute="#{flightScheduleBacking.fixedEndMinute}" maxMinute="#{flightScheduleBacking.fixedEndMinute}"
+                                styleClass="flightDetail" />
+
+                    <p:outputLabel for="deptAirport" value="Departure:" />
+                    <p:inputText id="deptAirport" value="#{flightScheduleBacking.deptAirport}" required="true" readonly="true" class="flightDetail" />
+                    <p:outputLabel for="arrAirport" value="Arrival:" />
+                    <p:inputText id="arrAirport" value="#{flightScheduleBacking.arriveAirport}" required="true" readonly="true" class="flightDetail" />
+
+                    <p:outputLabel value="" />
+                    <p:row>
+                        <p:column colspan="2" style="text-align: center;">
+                            <p:commandButton id="addButton" value="Save" update="messages,timeline" actionListener="#{flightScheduleBacking.updateFlightSchedule()}" oncomplete="PF('eventDialog').hide();" />
+                            <p:commandButton value="Cancel"  oncomplete="PF('eventDialog').hide();" />
+                        </p:column>
+                    </p:row>
+
+                </h:panelGrid>
+            </p:dialog>
+
+            <p:dialog widgetVar="deleteFlightSchedDialog"  showEffect="clip" hideEffect="clip" resizable="false">
+                <p:outputLabel value="Are you sure to delete this flight schedule?"/>
+                <p:separator />
+                <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" actionListener="#{flightScheduleBacking.deleteFlightSchedule()}" oncomplete="PF('deleteFlightSchedDialog').hide();" />
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" oncomplete="PF('deleteFlightSchedDialog').hide();" />
+            </p:dialog>
 
         </h:form>
     </ui:define>
