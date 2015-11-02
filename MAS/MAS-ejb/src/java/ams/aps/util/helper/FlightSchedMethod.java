@@ -14,5 +14,6 @@ public class FlightSchedMethod {
     public static final String DISPLAY = "display";
     public static final String CREATE = "create";
     public static final String APPLY = "apply";
+    public static final String DELETE = "delete";
     
 }

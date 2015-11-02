@@ -64,7 +64,7 @@
                         <p:column colspan="2">
                             <p:selectOneMenu value="#{flightScheduleManager.schedPeriod}" 
                                              effect="fade" required="true" style="width:100px;">
-                                <p:ajax listener="#{flightScheduleManager.onCalendarDateChange()}" update="form" />
+                                <p:ajax listener="#{flightScheduleManager.onCalendarMonthChange()}" update="form" />
                                 <c:forEach begin="1" end="12" varStatus="index">
                                     <f:selectItem itemLabel="#{index.index} months" itemValue="#{index.index}" />
                                 </c:forEach>
@@ -86,7 +86,7 @@
                         <p:column>
                             <p:commandButton value="Apply" actionListener="#{flightScheduleManager.verifyApplyFlightSchedCollision()}" update="messages,collidedFlightSchedForm">
                                 <p:confirm header="Confirmation"  icon="ui-icon-alert" 
-                                           message="Are you sure to apply flight schedule of the week to #{flightScheduleManager.convertDateTime(flightScheduleManager.schedStartDate)} - #{flightScheduleManager.convertDateTime(flightScheduleManager.schedEndDate)} ?"/>
+                                           message="Are you sure to apply flight schedule?"/>
                             </p:commandButton>
                         </p:column>
 
@@ -96,23 +96,22 @@
                     <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                 </p:confirmDialog>
-                <!--                <p:outputLabel for="date" value="Select schedule week: " />
-                                <p:calendar id="date" value="{flightScheduleManager.selectedDate}" placeholder="Select any date of week" timeZone="GMT+8"  pattern="dd/MM/yyyy">
-                                    <p:ajax event="dateSelect" listener="{flightScheduleManager.onCalendarDateChange()}" update="messages,form" />
-                                </p:calendar>-->
+
                 <p:separator/>
 
                 <pe:timeline id="timeline" value="#{flightScheduleManager.model}" var="flightSchedule" varGroup="aircraft" 
                              browserTimeZone="GMT+8" editable="true" eventMargin="10" eventMarginAxis="0"  widgetVar="timeline" 
-                             moveable="false" selectable="true"
                              min="#{flightScheduleManager.timelineMinDate}" max="#{flightScheduleManager.timelineMaxDate}"
-                             zoomMin="#{flightScheduleManager.zoomMin}"
+                             zoomMin="#{flightScheduleManager.zoomMin}" 
                              start="#{flightScheduleManager.calendarMinDate}" 
                              end="#{flightScheduleManager.calendarMaxDate}" 
                              axisOnTop="true" stackEvents="false">
-
+                    <p:ajax event="add" update="@none" onstart="PF('timeline').cancelAdd()"/>
+                    <p:ajax event="changed" listener="#{flightScheduleManager.onFlightSchedChange}" /> 
                     <p:ajax event="edit" update="eventDetails" listener="#{flightScheduleManager.onFlightSchedSelect}"  
                             oncomplete="PF('eventDialog').show()"/>  
+                    <p:ajax event="delete" oncomplete="PF('deleteFlightSchedDialog').show()"
+                            onstart="PF('timeline').cancelDelete()" listener="#{flightScheduleManager.onFlightScheduleDelete}"/>  
 
                     <f:facet name="group"> 
                         <h:graphicImage value="./../../../../../resources/images/aircraft.png" style="vertical-align:middle;width:50px" alt="Airplane"/> 
@@ -121,7 +120,6 @@
 
                     <ti:CCFlightSchedDetail flightSchedule="#{flightSchedule}" />
 
-
                 </pe:timeline>  
 
                 <p:dialog id="flightDetails" widgetVar="eventDialog" header="Flight Details" showEffect="clip" hideEffect="clip" width="500px;">
@@ -129,10 +127,15 @@
                     <h:panelGrid id="eventDetails" columns="2" style="width: 100%">
 
                         <p:outputLabel for="aircraft" value="Aircraft: " />
-                        <p:selectOneMenu id="aircraft"  value="#{flightScheduleManager.selectedAircraftTailNo}" 
-                                         effect="fade" style="width:100%">
-                            <f:selectItem itemLabel="Select aircraft" itemValue="" />
-                            <f:selectItems value="#{flightScheduleManager.availableAircraftGroup}" />
+                        <p:selectOneMenu id="aircraft"  value="#{flightScheduleManager.selectedAircraft}" label="Select aircraft" 
+                                         var="aircraft" converter="aircraftConverter" effect="fade" style="width:100%">
+                            <f:selectItems value="#{flightScheduleManager.availableAircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}" itemValue="#{aircraft}" />
+                            <p:column>
+                                <p:outputLabel value="#{aircraft.aircraftType.typeCode}" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{aircraft.tailNo}" />
+                            </p:column>
                         </p:selectOneMenu>
 
                         <p:outputLabel for="flightNo" value="Flight Number: " />
@@ -165,7 +168,15 @@
                         </p:row>
 
                     </h:panelGrid>
-                </p:dialog>    
+                </p:dialog>
+
+                <p:dialog widgetVar="deleteFlightSchedDialog"  showEffect="clip" hideEffect="clip" resizable="false">
+                        <p:outputLabel value="Are you sure to delete this flight schedule?"/>
+                        <p:separator />
+                        <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,unscheduledFlights" actionListener="#{flightScheduleManager.deleteFlightSchedule()}" oncomplete="PF('deleteFlightSchedDialog').hide();" />
+                        <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" oncomplete="PF('deleteFlightSchedDialog').hide();" />
+                </p:dialog>
+
             </p:fieldset>
 
             <p:droppable for="scheduleField" tolerance="touch" activeStyleClass="ui-state-highlight" datasource="unscheduledFlights" onDrop="handleDrop">

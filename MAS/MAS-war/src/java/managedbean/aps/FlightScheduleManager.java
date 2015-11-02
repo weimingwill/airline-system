@@ -11,7 +11,6 @@ import ams.aps.entity.Airport;
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.entity.Route;
-import ams.aps.session.FleetPlanningSessionLocal;
 import ams.aps.session.FlightSchedulingSessionLocal;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.ExistSuchFlightScheduleException;
@@ -26,7 +25,6 @@ import ams.aps.util.helper.RouteHelper;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,8 +34,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
@@ -66,22 +62,19 @@ public class FlightScheduleManager implements Serializable {
     private FlightSchedulingSessionLocal flightSchedulingSession;
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
-    @EJB
-    private FleetPlanningSessionLocal fleetPlanningSession;
 
     //select flight
     private List<String> aircraftTypeFamilys;
     private List<String> aircraftTypeCodes;
     private String selectedAircraftTypeFamily;
     private Airport selectedAirport;
-    private String selectedAircraftTailNo;
-    private List<SelectItem> availableAircraftGroup = new ArrayList<>();
     private List<Aircraft> availableAircrafts = new ArrayList<>();
     private List<String> selectedAircraftTypeCodes = new ArrayList<>();
 
     //schedule flight
     private TimelineModel model;
     private Aircraft selectedAircraft;
+    
     private Date selectedDate;
     private Flight droppedFlight;
     private List<Airport> deptAirports = new ArrayList<>();
@@ -93,8 +86,6 @@ public class FlightScheduleManager implements Serializable {
     private Date deptDate;
     private Date arrDate;
     private TimelineEvent event = new TimelineEvent();
-//    private ScheduleModel eventModel;
-//    private ScheduleEvent event = new DefaultScheduleEvent();
     private Date calendarMinDate;
     private Date calendarMaxDate;
     private int fixedEndHour;
@@ -102,7 +93,6 @@ public class FlightScheduleManager implements Serializable {
     private Date fixedEndDate;
     private double routeDuration;
     private List<FlightSchedule> flightSchedules;
-//    private Date oldDeptDate;
     private FlightSchedule oldFlightSched;
 
     //timeline
@@ -113,9 +103,15 @@ public class FlightScheduleManager implements Serializable {
     private String schedPeriod;
     private Date schedStartDate;
     private Date schedEndDate;
-
     private List<FlightSchedule> collidedFlightScheds;
 
+    //View flight schedule
+    private List<Aircraft> aircrafts = new ArrayList<>();
+    private List<Aircraft> selectedAircrafts = new ArrayList<>();
+    private Date startDate;
+    private Date endDate;
+    private List<FlightSchedule> viewFlightScheds;
+    
     /**
      * Creates a new instance of FlightScheduleManager
      */
@@ -125,8 +121,6 @@ public class FlightScheduleManager implements Serializable {
         initializeDeptAirports();
         initializeAircraftTypeFamilys();
         initializeTimeline();
-//        eventModel = new DefaultScheduleModel();
-//        eventModel.addEvent(new DefaultScheduleEvent("Champions League Match", previousDay8Pm(), previousDay11Pm()));
     }
 
     public FlightScheduleManager() {
@@ -145,7 +139,7 @@ public class FlightScheduleManager implements Serializable {
         setDeptAirports(new ArrayList<>());
         setAircraftTypeFamilys(new ArrayList<>());
         setSelectedAircraft(null);
-        setSelectedAircraftTailNo(null);
+//        setSelectedAircraftTailNo(null);
         setUnscheduledFlights(new ArrayList<>());
         model = new TimelineModel();
 //        setEventModel(null);
@@ -189,28 +183,14 @@ public class FlightScheduleManager implements Serializable {
     public void applyFilters() {
         try {
             setUnscheduledFlights();
-            model = new TimelineModel();
-
             availableAircrafts = new ArrayList<>();
             Set<Aircraft> hs = new HashSet<>();
-            Set<SelectItem> hsAircraftType = new HashSet<>();
+//            Set<SelectItem> hsAircraftType = new HashSet<>();
             for (String aircraftTypeCode : selectedAircraftTypeCodes) {
-                AircraftType aircraftType = fleetPlanningSession.getAircraftTypeByCode(aircraftTypeCode);
-                SelectItemGroup group = new SelectItemGroup(aircraftType.getTypeFamily());
-                SelectItem[] selectItems = new SelectItem[aircraftType.getAircrafts().size()];
-                int i = 0;
-
-                for (Aircraft aircraft : aircraftType.getAircrafts()) {
-                    hs.add(aircraft);
-
-                    selectItems[i] = new SelectItem(aircraft.getTailNo(), aircraft.getTailNo());
-                    i++;
-                }
-                group.setSelectItems(selectItems);
-                hsAircraftType.add(group);
+                hs.addAll(flightSchedulingSession.getAircraftsByAircraftType(aircraftTypeCode));
             }
             availableAircrafts.addAll(hs);
-            availableAircraftGroup.addAll(hsAircraftType);
+//            availableAircraftGroup.addAll(hsAircraftType);
             setTimelineGroup();
             if (unscheduledFlights.isEmpty()) {
                 msgController.warn("There is no such unscheduled flight");
@@ -222,6 +202,7 @@ public class FlightScheduleManager implements Serializable {
 
     //Initiate the timeline with all the flight schedules under each aircraft
     public void setTimelineGroup() {
+        model = new TimelineModel();
         for (Aircraft aircraft : availableAircrafts) {
             System.out.println("Aircraft Tail No: " + aircraft.getTailNo());
             TimelineGroup timelineGroup = new TimelineGroup(aircraft.getTailNo(), aircraft);
@@ -256,10 +237,17 @@ public class FlightScheduleManager implements Serializable {
     }
 
     //Schedule flight
+    public void onCalendarMonthChange() {
+        calcCalendarMinDate();
+        calcCalendarMaxDate();
+        calcSchedEndTime();
+    }
+
     public void onCalendarDateChange() {
         calcCalendarMinDate();
         calcCalendarMaxDate();
         calcSchedEndTime();
+        setTimelineGroup();
     }
 
     public void onStartTimeChange() {
@@ -302,38 +290,55 @@ public class FlightScheduleManager implements Serializable {
 
     public void createFligthSchedule() {
         try {
-            selectedAircraft = flightSchedulingSession.getAircraftByTailNo(selectedAircraftTailNo);
+//            selectedAircraft = flightSchedulingSession.getAircraftByTailNo(selectedAircraftTailNo);
             FlightSchedule newFlightSched = flightSchedulingSession.createFlightSchedule(droppedFlight, selectedAircraft, deptDate, arrDate, calendarMinDate, calendarMaxDate, FlightSchedMethod.CREATE);
             //Create flightSchedule to be displayed on new timelineEvent object.
             flightSchedulingSession.setRouteFlightSchedule(newFlightSched);
             model.add(new TimelineEvent(newFlightSched, deptDate, arrDate, true, selectedAircraft.getTailNo()));
             msgController.addMessage("Add flight schedule succesffuly");
             setUnscheduledFlights();
-        } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException | NoSuchAircraftException | NoSuchRouteException | ExistSuchFlightScheduleException e) {
+        } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException | NoSuchRouteException | ExistSuchFlightScheduleException e) {
             msgController.addErrorMessage(e.getMessage());
         }
+    }
+
+    public void onFlightSchedChange(TimelineModificationEvent e) {
+        event = e.getTimelineEvent();
+        oldFlightSched = (FlightSchedule) event.getData();
+        deptDate = event.getStartDate();
+        arrDate = event.getEndDate();
+        Flight flight = oldFlightSched.getFlight();
+        flightNo = flight.getFlightNo() + "/" + flight.getReturnedFlight().getFlightNo();
+        try {
+            selectedAircraft = flightSchedulingSession.getAircraftByTailNo(event.getGroup());
+        } catch (NoSuchAircraftException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
+        
+        updateFlightSchedule();
     }
 
     public void onFlightSchedSelect(TimelineModificationEvent e) {
         event = e.getTimelineEvent();
         oldFlightSched = (FlightSchedule) event.getData();
-        System.out.println("oldFlightSched : " + oldFlightSched);
         Flight flight = oldFlightSched.getFlight();
         RouteHelper routeHelper = new RouteHelper();
         initializeRouteHelper(flight, routeHelper);
         deptAirport = routeHelper.getOrigin().getAirportName();
         arriveAirport = routeHelper.getDestination().getAirportName();
-        System.out.println("Flight: " + flight.getFlightNo());
         setRouteDuration(routeHelper);
         flightNo = flight.getFlightNo() + "/" + flight.getReturnedFlight().getFlightNo();
         deptDate = oldFlightSched.getDepartDate();
         arrDate = flightSchedulingSession.addHourToDate(deptDate, routeDuration);
-        selectedAircraftTailNo = oldFlightSched.getAircraft().getTailNo();
+    }
+
+    public void onFlightScheduleDelete(TimelineModificationEvent e) {
+        event = e.getTimelineEvent();
+        oldFlightSched = (FlightSchedule) event.getData();
     }
 
     public void updateFlightSchedule() {
         try {
-            selectedAircraft = flightSchedulingSession.getAircraftByTailNo(selectedAircraftTailNo);
             FlightSchedule newFlightSched = flightSchedulingSession.updateFlightSchedule(flightNo.split("/")[0], selectedAircraft, deptDate, arrDate, calendarMinDate, calendarMaxDate, oldFlightSched);
             flightSchedulingSession.setRouteFlightSchedule(newFlightSched);
             TimelineUpdater timelineUpdater = TimelineUpdater.getCurrentInstance(":form:timeline");
@@ -344,7 +349,25 @@ public class FlightScheduleManager implements Serializable {
 
             msgController.addMessage("Update flight schedule succesffuly");
             setUnscheduledFlights();
-        } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException | NoSuchRouteException | NoSuchFlightSchedulException | ExistSuchFlightScheduleException | NoSuchAircraftException e) {
+        } catch (NoSuchFlightException | NoMoreUnscheduledFlightException | NoSelectAircraftException 
+                | NoSuchRouteException | NoSuchFlightSchedulException | ExistSuchFlightScheduleException e) {
+            msgController.addErrorMessage(e.getMessage());
+        }
+    }
+
+    public void deleteFlightSchedule() {
+        try {
+            flightSchedulingSession.deleteFlightSchedule(oldFlightSched, FlightSchedMethod.DELETE);
+            flightSchedulingSession.setRouteFlightSchedule(oldFlightSched);
+            TimelineUpdater timelineUpdater = TimelineUpdater.getCurrentInstance(":form:timeline");
+            event = new TimelineEvent(oldFlightSched, oldFlightSched.getDepartDate(), oldFlightSched.getArrivalDate(), true, oldFlightSched.getAircraft().getTailNo());
+            model.delete(event, timelineUpdater);
+            clearDialogVariables();
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.execute("PF('deleteFlightSchedDialog').hide()");
+            msgController.addMessage("Delete fligth schedule succesffully");
+            setUnscheduledFlights();
+        } catch (NoSuchFlightSchedulException | NoSuchFlightException | NoSuchRouteException e) {
             msgController.addErrorMessage(e.getMessage());
         }
     }
@@ -361,11 +384,10 @@ public class FlightScheduleManager implements Serializable {
     }
 
     public void applyFlightSchedulesToPeriod() {
-        System.out.println("Apply Flight Schedule");
         flightSchedulingSession.applyFlightSchedulesToPeriod(availableAircrafts, schedStartDate, schedEndDate, calendarMinDate, calendarMaxDate);
         msgController.addMessage("Apply flight schedule successfuly!");
     }
-
+    
     // 
     //Helper classes
     //
@@ -441,36 +463,13 @@ public class FlightScheduleManager implements Serializable {
     public void clearDialogVariables() {
         event = new TimelineEvent();
         oldFlightSched = null;
-        selectedAircraftTailNo = null;
+        selectedAircraft = null;
+//        selectedAircraftTailNo = null;
     }
 
-    public String convertDateTime(Date date) {
-        return new SimpleDateFormat("dd/MM/yyyy").format(date);
-    }
-
-    //    public void onAircraftChange() {
-//        System.out.println("calendarMinDate: " + calendarMinDate);
-//        System.out.println("calendarMaxDate: " + calendarMaxDate);
-//        flightSchedules = flightSchedulingSession.getFlightSchedulesByTailNoAndTime(selectedAircraftTailNo, calendarMinDate, calendarMaxDate);
-//        System.out.println("Flight Schedules: " + flightSchedules);
-//        for (FlightSchedule flightSchedule : flightSchedules) {
-//            Flight flight = flightSchedule.getFlight();
-//            RouteHelper routeHelper = new RouteHelper();
-//            initializeRouteHelper(flight, routeHelper);
-//            System.out.println("RouteHelper: " + routeHelper + " DeptDate: " + flightSchedule.getDepartDate());
-//            System.out.println("RouteHelper: is hub" + routeHelper.getOrigin().getIsHub());
-//            if (routeHelper.getOrigin().getIsHub()) {
-//                Date deptDate = flightSchedule.getDepartDate();
-//                Date arriveDate = flightSchedulingSession.addHourToDate(deptDate, routeHelper.getTotalDuration());
-//                eventModel.clear();
-//                eventModel.addEvent(new DefaultScheduleEvent(flight.getFlightNo() + "/" + flight.getReturnedFlight().getFlightNo(), deptDate, arriveDate));
-//            }
-//        }
-//    }
     //
     //Getter and Setter
     //
-
     public List<String> getAircraftTypeFamilys() {
         return aircraftTypeFamilys;
     }
@@ -559,14 +558,6 @@ public class FlightScheduleManager implements Serializable {
         this.availableAircrafts = availableAircrafts;
     }
 
-    public String getSelectedAircraftTailNo() {
-        return selectedAircraftTailNo;
-    }
-
-    public void setSelectedAircraftTailNo(String selectedAircraftTailNo) {
-        this.selectedAircraftTailNo = selectedAircraftTailNo;
-    }
-
     public Date getCalendarMinDate() {
         return calendarMinDate;
     }
@@ -621,14 +612,6 @@ public class FlightScheduleManager implements Serializable {
 
     public void setModel(TimelineModel model) {
         this.model = model;
-    }
-
-    public List<SelectItem> getAvailableAircraftGroup() {
-        return availableAircraftGroup;
-    }
-
-    public void setAvailableAircraftGroup(List<SelectItem> availableAircraftGroup) {
-        this.availableAircraftGroup = availableAircraftGroup;
     }
 
     public String getDeptAirport() {
@@ -742,5 +725,5 @@ public class FlightScheduleManager implements Serializable {
     public void setCollidedFlightScheds(List<FlightSchedule> collidedFlightScheds) {
         this.collidedFlightScheds = collidedFlightScheds;
     }
-
+    
 }
