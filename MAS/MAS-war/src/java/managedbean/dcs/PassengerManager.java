@@ -7,7 +7,6 @@ package managedbean.dcs;
 
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
-import ams.ars.entity.AddOn;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.Seat;
 import ams.crm.entity.Customer;
@@ -50,6 +49,8 @@ public class PassengerManager implements Serializable {
     private List<FlightSchedule> flightSchedules = new ArrayList<>();
     private List<Customer> passengerList = new ArrayList<>();
     private List<AirTicket> airtickets = new ArrayList<>();
+    private List<AirTicket> airticketsUpdated = new ArrayList<>();
+    private List<AirTicket> airTicketsToCheckIn = new ArrayList<>();
     private List<AirTicketDisplayHelper> airTicketShowList = new ArrayList<>();
 
     /**
@@ -78,16 +79,13 @@ public class PassengerManager implements Serializable {
                 for (AirTicket a : airtickets) {
                     FlightSchedule fs = a.getFlightSchedBookingClass().getFlightSchedule();
                     if (fs.getDepartDate().before(checkInAlloweddate) && fs.getDepartDate().after(currentDate)) {
-                        AirTicketDisplayHelper atHelper = displayAirTicket(a);
-                        airTicketShowList.add(atHelper);
+                        getAirticketsUpdated().add(a);
                     }
                 }
-
-                if (airTicketShowList.isEmpty()) {
+                if (getAirticketsUpdated().isEmpty()) {
                     msgController.addErrorMessage("Passenger do not have trips available for check-in!");
                     return "";
                 }
-
                 return dcsNavController.toCheckInPassenger();
             } else {
                 msgController.addErrorMessage("Passenger do not have trips available for check-in!");
@@ -96,27 +94,10 @@ public class PassengerManager implements Serializable {
         }
     }
 
-    private AirTicketDisplayHelper displayAirTicket(AirTicket at) {
-        FlightSchedule fs = at.getFlightSchedBookingClass().getFlightSchedule();
-        AirTicketDisplayHelper atdh = new AirTicketDisplayHelper();
-        Seat seat = at.getSeat();
-
-        atdh.setFlightNo(fs.getFlight().getFlightNo());
-        atdh.setCabinClass(at.getFlightSchedBookingClass().getBookingClass().getTicketFamily().getCabinClass().getType());
-        atdh.setOriITAT(fs.getLeg().getDepartAirport().getIataCode());
-        atdh.setOriName(fs.getLeg().getDepartAirport().getAirportName());
-        atdh.setDestITAT(fs.getLeg().getArrivalAirport().getIataCode());
-        atdh.setDestName(fs.getLeg().getArrivalAirport().getAirportName());
-        if (seat != null) {
-            atdh.setSeat(seat.getRowNo().toString() + seat.getColNo());
-        } else {
-            atdh.setSeat("To be selected");
-        }
-        
-        atdh.setStatus(at.getStatus());
-        return atdh;
+    public void checkInPassenger(AjaxBehaviorEvent event) {
+        System.out.println("passport = " + passportNo);
     }
-
+    
     public void onPassportChange(AjaxBehaviorEvent event) {
         System.out.println("passport = " + passportNo);
     }
@@ -203,6 +184,34 @@ public class PassengerManager implements Serializable {
      */
     public void setAirtickets(List<AirTicket> airtickets) {
         this.airtickets = airtickets;
+    }
+
+    /**
+     * @return the airTicketsToCheckIn
+     */
+    public List<AirTicket> getAirTicketsToCheckIn() {
+        return airTicketsToCheckIn;
+    }
+
+    /**
+     * @param airTicketsToCheckIn the airTicketsToCheckIn to set
+     */
+    public void setAirTicketsToCheckIn(List<AirTicket> airTicketsToCheckIn) {
+        this.airTicketsToCheckIn = airTicketsToCheckIn;
+    }
+
+    /**
+     * @return the airticketsUpdated
+     */
+    public List<AirTicket> getAirticketsUpdated() {
+        return airticketsUpdated;
+    }
+
+    /**
+     * @param airticketsUpdated the airticketsUpdated to set
+     */
+    public void setAirticketsUpdated(List<AirTicket> airticketsUpdated) {
+        this.airticketsUpdated = airticketsUpdated;
     }
 
 }

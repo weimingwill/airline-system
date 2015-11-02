@@ -18,13 +18,16 @@ import javax.ejb.Local;
  */
 @Local
 public interface CheckInSessionLocal {
+
     public Customer getCustomerByPassport(String passportNo);
+
     public List<Luggage> getCustomerLuggages(Customer cust, FlightSchedule schedule);
+
     public List<AirTicket> getFSforCheckin(String passport);
-    
+
     public String selectSeat(String ticketNo);
-    
+
     public boolean checkInPassenger(String ticketNo);
-    
+
     public boolean checkInuggage(String ticketNo);
 }

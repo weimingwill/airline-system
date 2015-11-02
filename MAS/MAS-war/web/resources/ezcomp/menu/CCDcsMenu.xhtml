@@ -17,12 +17,13 @@
         
         <h:form>
             <p:panelMenu style="width:240px;">
-                <p:submenu label="Check In" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(checkinStaff)}">
-                        <p:menuitem action="#{DcsNavController.toSearchPassenger()}" value="Passenger Check In"/>
-                        <p:menuitem value="Luggage Check In"/>
+                <p:submenu label="Check In" expanded="true">
+                    <p:menuitem action="#{dcsNavController.toSearchPassenger()}" value="Passenger Check In"/>
+                    <p:menuitem value="Upgarde ticket"/>
+                    <p:menuitem value="View &amp; Update Luggage Status"/>
                 </p:submenu>
-                <p:submenu label="Check In" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(boardingStaff)}">
-                        <p:menuitem value="Passenger Board"/>
+                <p:submenu label="Board" expanded="true">
+                        <p:menuitem value="Passenger Boarding"/>
                 </p:submenu>
             </p:panelMenu>
         </h:form>

@@ -8,43 +8,71 @@
 
     <ui:define name="content">
         <h:form>
-            <p:dataTable var="team" value="">
+            <p:panelGrid columns="4">
                 <f:facet name="header">
-                    Passenger Check-in
+                    Check in Information (PNR)
+                </f:facet>
+                <p:outputLabel value="Passenger Name: " />
+                <p:outputLabel value="#{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}" />
+
+                <p:outputLabel value="Passport Number: " />
+                <p:outputLabel value="#{passengerManager.passportNo}" />
+            </p:panelGrid>
+
+            <p:dataTable id="ticketInfo" var="ticket" value="#{passengerManager.airticketsUpdated}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
+                         selection="#{passengerManager.airTicketsToCheckIn}" rowKey="#{ticket.id}" paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                <f:facet name="header">
+                    Ticket Information
                 </f:facet>
 
-                <p:columnGroup type="header">
-                    <p:row>
-                        <p:column headerText="Passenger" />
-                        <p:column headerText="" />
-                        <p:column headerText="Bkg Tkt Cabin" />
-                        <p:column headerText="Seat" />
-                        <p:column headerText="Baggage" />
-                    </p:row>
-                </p:columnGroup>
+                <p:column headerText="Flight No.">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.flight.flightNo}" />
+                </p:column>
 
-                <p:subTable var="stats" value="#{team.stats}">
-                    <f:facet name="header">
-                        <h:outputText value="#{team.name}" />
-                    </f:facet>
-                    <p:column>
-                        <h:outputText value="#{stats.season}" />
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{stats.win}" />
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{stats.loss}" />
-                    </p:column>
-                    <p:columnGroup type="footer">
-                        <p:row>
-                            <p:column footerText="Totals: " style="text-align:right"/>
-                            <p:column footerText="#{team.allWins}" />
-                            <p:column footerText="#{team.allLosses}" />
-                        </p:row>
-                    </p:columnGroup>
-                </p:subTable>
-            </p:dataTable>
+                <p:column headerText="Cabin Class">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.bookingClass.ticketFamily.cabinClass.type}" />
+                </p:column>
+
+                <p:column headerText="Origin">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.leg.departAirport.iataCode}" />
+                </p:column>
+
+                <p:column headerText="Departure Date" sortBy="#{ticket.flightSchedBookingClass.flightSchedule.departDate}">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.departDate}" />
+                </p:column>
+
+                <p:column headerText="Destination">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.leg.arrivalAirport.iataCode}" />
+                </p:column>
+
+                <p:column headerText="Arrival Date">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.arrivalDate}" />
+                </p:column>
+
+                <p:column headerText="Seat">
+                    <h:outputText value="#{ticket.seat.rowNo.toString} #{ticket.seat.colNo}" />
+                </p:column>
+
+                <p:column headerText="Luggage Plan (Max Kg)">
+                    <h:outputText value="#{ticket.purchasedLuggage.maxWeight.toString}" />
+                </p:column>
+
+                <p:column headerText="Seat Selection" style="width:16px;text-align:center" rendered="#{empty ticket.seat}">
+                    <p:commandButton action="#{dcsNavController.toSelectSeat}" icon="ui-icon-check" title="Select seat" />
+                </p:column>
+
+                <p:column headerText="Check In" style="width:16px;text-align:center" rendered="#{ticket.status.equals('Booking confirmed')}">
+                    <p:commandButton icon="ui-icon-check" title="Check in passenger and print boarding pass" oncomplete="PF('checkInPassDlg').show()"/>
+                </p:column>
+
+                <p:dialog id="checkInPassDlg" header="Passeger Check In" widgetVar="editAircraftDlg" resizable="false">
+                    <p:outputLabel id="confirmCheckinMsg" value="Confirm checking in the passenger?"/>
+                    <p:separator/>
+                    <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" onclick="PF('checkInPassDlg').hide()" actionListener="#{passengerManager.checkInPassenger}"/>
+                    <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('checkInPassDlg').hide()"/>
+                </p:dialog>
+                
         </h:form>
     </ui:define>
 

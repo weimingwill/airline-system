@@ -5,6 +5,8 @@
  */
 package ams.dcs.util.helper;
 
+import java.util.Date;
+
 /**
  *
  * @author ChuningLiu
@@ -13,7 +15,9 @@ package ams.dcs.util.helper;
 public class AirTicketDisplayHelper {
     private String flightNo;
     private String oriITAT;
+    private Date departDate;
     private String destITAT;
+    private Date arrivalDate;
     private String oriName;
     private String destName;
     private String cabinClass;
@@ -138,17 +142,45 @@ public class AirTicketDisplayHelper {
     }
 
     /**
-     * @return the luggageWeight
+     * @return the luggagePurchased
      */
-    public Double getLuggageWeight() {
-        return luggageWeight;
+    public String getLuggagePurchased() {
+        return luggagePurchased;
     }
 
     /**
-     * @param luggageWeight the luggageWeight to set
+     * @param luggagePurchased the luggagePurchased to set
      */
-    public void setLuggageWeight(Double luggageWeight) {
-        this.luggageWeight = luggageWeight;
+    public void setLuggagePurchased(String luggagePurchased) {
+        this.luggagePurchased = luggagePurchased;
+    }
+
+    /**
+     * @return the departDate
+     */
+    public Date getDepartDate() {
+        return departDate;
+    }
+
+    /**
+     * @param departDate the departDate to set
+     */
+    public void setDepartDate(Date departDate) {
+        this.departDate = departDate;
+    }
+
+    /**
+     * @return the arrivalDate
+     */
+    public Date getArrivalDate() {
+        return arrivalDate;
+    }
+
+    /**
+     * @param arrivalDate the arrivalDate to set
+     */
+    public void setArrivalDate(Date arrivalDate) {
+        this.arrivalDate = arrivalDate;
     }
     
 }

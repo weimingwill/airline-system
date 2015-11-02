@@ -34,7 +34,7 @@ public class CheckInSession implements CheckInSessionLocal {
     public List<AirTicket> getFSforCheckin(String passport) {
         List<AirTicket> airTickets = new ArrayList<>();
 
-        Query q = em.createQuery("SELECT a FROM Airticket a WHERE a.customer.passportNo =:pass AND a.status =:ready))");
+        Query q = em.createQuery("SELECT a FROM Airticket a SORT BY a.flightSchedBookingClass.flightSchedule.departureDate ACS WHERE a.customer.passportNo =:pass AND a.status =:ready))");
         q.setParameter("pass", passport);
         q.setParameter("ready", "Booking confirmed");
         try {

@@ -31,4 +31,12 @@ public class DcsNavController {
     public String toCheckInPassenger() {
         return DCS_URL + "checkInPasseger.xhtml" + REDIRECT;
     }
+    
+    public String toSelectSeat() {
+        return DCS_URL + "selectSeat.xhtml" + REDIRECT;
+    }
+    
+    public String toCheckInLuggage() {
+        return DCS_URL + "checkInLuggage.xhtml" + REDIRECT;
+    }
 }
