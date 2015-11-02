@@ -91,8 +91,10 @@ public class CustomerSession implements CustomerSessionLocal {
 
     @Override
     public void doLogin(String email, String inputPassword) throws NoSuchRegCustException, InvalidPasswordException {
-        verifyRegCustPassword(email, inputPassword);
-        
+        System.out.print("sessionbean email is" +email);
+        System.out.print("sessionbean password is"+inputPassword);
+        getRegCustByEmail(email);
+        verifyRegCustPassword(email, inputPassword);   
     }
     
     private void verifyRegCustPassword (String email, String inputPassword) throws NoSuchRegCustException, InvalidPasswordException{
@@ -144,16 +146,20 @@ public class CustomerSession implements CustomerSessionLocal {
     
     @Override
     public RegCust getRegCustByEmail (String email) throws NoSuchRegCustException{
+        System.out.print("test email"+email);
         Query query = entityManager.createQuery("SELECT r FROM RegCust r WHERE r.email = :inEmail");
         query.setParameter("inEmail", email);
         RegCust selectRegCust = null;
+        System.out.printf("selectRegCustrtyjrytr "+selectRegCust);
         try {
             selectRegCust = (RegCust) query.getSingleResult();
+            System.out.printf("selectRegCust "+selectRegCust);
         } catch (NoResultException ex) {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
         }catch(NonUniqueResultException e){
             
         }
+        System.out.printf("selectRegCust "+selectRegCust);
         return selectRegCust;
     }
     

@@ -25,7 +25,8 @@ import managedbean.common.EmailController;
  */
 @Named(value = "registrationController")
 @RequestScoped
-public class RegistrationController implements Serializable{
+public class RegistrationController implements Serializable {
+
     @Inject
     private MsgController msgController;
     @Inject
@@ -37,36 +38,33 @@ public class RegistrationController implements Serializable{
     /**
      * Creates a new instance of RegistrationController
      */
-    
+
     private RegCust newRegCust;
-   
-  
+
     @PostConstruct
-    public void init(){
+    public void init() {
         newRegCust = new RegCust();
         newRegCust.setPhone(new Phone());
     }
-    public String createrRegCust(){
+
+    public String createrRegCust() {
         try {
-           
-            
+
             registrationSession.createRegCust(newRegCust);
+            msgController.addMessage("Registrated successfully!");
+
             String subject = "Welcome to Merlion Air";
             String mailContent = "Dear Customer: \n Please activate your account using the following link: \n" + navigationController.redirectToCustomerLogin() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + "&email=" + newRegCust.getEmail();
             String receiver = newRegCust.getEmail();
             emailController.sendEmail(subject, mailContent, receiver);
-           
+
 //            registrationSession.createRegCust(newRegCust.getTitle(),newRegCust.getFirstName(),newRegCust.getLastName(),newRegCust.getPassportNo(),newRegCust.getNationality(),newRegCust.getGender(),newRegCust.getDob(),newRegCust.getEmail(),newRegCust.getAddr1(),newRegCust.getAddr2(),newRegCust.getCity(),newRegCust.getProvince(),newRegCust.getCountry(),newRegCust.getZipCode(),newRegCust.getMobilephone(),newRegCust.getTelephone(),newRegCust.getPwd(),newRegCust.getSecurQuest(),newRegCust.getSecurAns(),newRegCust.getNewsLetterPref(),newRegCust.getPromoPref(),membershipClass,accMiles,custValue,numOfFlights, memberShipId);
-            msgController.addMessage("Registrated successfully!");
-            
         } catch (ExistSuchRegCustException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToCurrentPage();
     }
 
-    
-    
     public RegCust getNewRegCust() {
         return newRegCust;
     }
@@ -74,10 +72,8 @@ public class RegistrationController implements Serializable{
     public void setNewRegCust(RegCust newRegCust) {
         this.newRegCust = newRegCust;
     }
-    
-   
-    
+
     public RegistrationController() {
     }
-    
+
 }

@@ -29,9 +29,10 @@ import util.security.CryptographicHelper;
  *
  * @author Bowen
  */
-@Named(value = "loginManager")
+@Named(value = "customerLoginManager")
 @SessionScoped
 public class CustomerLoginManager implements Serializable {
+
     @Inject
     private NavigationController navigationController;
     @Inject
@@ -39,42 +40,72 @@ public class CustomerLoginManager implements Serializable {
 
     @EJB
     private CustomerSessionLocal customerSession;
-    
-    
-    
+
     private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
     private String password;
-    private boolean loggedIn;
+    private boolean loggedIn=false;
 //    private int countTrial = 0;
 //    private JsfCaptcha captcha;
 //    private String captchaCode;
+
     /**
      * Creates a new instance of LoginManager
      */
     public CustomerLoginManager() {
     }
-    
+
     public String doLogin() throws NoSuchRegCustException, InvalidPasswordException, InterruptedException {
 //        CountdownHelper countdownHelper = new CountdownHelper(registrationSession);
 //     
         FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext(); 
+        ExternalContext externalContext = context.getExternalContext();
         try {
-           
-            if (!customerSession.getRegCustByEmail(email).getActivated()) {
-                msgController.addErrorMessage(CrmMsg.NEED_ACTIVATION_ERROR);
-                return navigationController.redirectToLogin();
-            }
-        } catch (NoSuchRegCustException ex) {
+
+            customerSession.doLogin(email, password);
+            loggedIn = true;
+            msgController.addMessage(CrmMsg.LOGIN_SUCCESS_MSG);
+
+        } catch (NoSuchRegCustException | InvalidPasswordException ex) {
             msgController.addErrorMessage(ex.getMessage());
-            return navigationController.redirectToLogin();
         }
+        
+        Map<String, Object> sessionMap = externalContext.getSessionMap();
+        sessionMap.put("email", email);
+        externalContext.getFlash().setKeepMessages(true);
+        return navigationController.redirectToCurrentPage();
+//        try {
+//
+//            if (!customerSession.getRegCustByEmail(email).getActivated()) {
+//                msgController.addErrorMessage(CrmMsg.NEED_ACTIVATION_ERROR);
+//                return navigationController.redirectToCurrentPage();
+//            }
+//        } catch (NoSuchRegCustException ex) {
+//            msgController.addErrorMessage(ex.getMessage());
+//            return navigationController.redirectToCurrentPage();
+//        }
 
 //       
 //        CryptographicHelper cryptographicHelper = new CryptographicHelper();
-        try {
-            customerSession.doLogin(email, password);
-        } catch (NoSuchRegCustException | InvalidPasswordException ex) {
+//        try {
+//            customerSession.doLogin(email, password);
+//        } catch (NoSuchRegCustException | InvalidPasswordException ex) {
 //            msgController.addErrorMessage(ex.getMessage());
 //            countTrial++;
 //            if (countTrial > 2) {
@@ -86,18 +117,10 @@ public class CustomerLoginManager implements Serializable {
 //                countdownHelper.unlockUserCountDown(1800 * 1000, username); //Unlock user after 30mins
 //                countTrial = 0;
 //            }
-
-            
-            return navigationController.redirectToLogin();
-        }
-        loggedIn = true;
-       
-        Map<String, Object> sessionMap = externalContext.getSessionMap();
-        sessionMap.put("username", username);
-        externalContext.getFlash().setKeepMessages(true);
-        msgController.addMessage(UserMsg.LOGIN_SUCCESS_MSG);
-//        captchaCode = null;
-        return navigationController.redirectToWorkspace();
+//            return navigationController.redirectToCurrentPage();
+//        }
+        
+////        captchaCode = null;
     }
-    
+
 }
