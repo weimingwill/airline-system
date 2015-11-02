@@ -44,6 +44,9 @@ public class FlightCrew extends SystemUser implements Serializable {
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<BiddingSession> biddingSessions;
+    
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Pairing> pairings;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(joinColumns = @JoinColumn(name = "LANGUAGESID"))
@@ -187,6 +190,20 @@ public class FlightCrew extends SystemUser implements Serializable {
      */
     public void setBiddingSessions(List<BiddingSession> biddingSessions) {
         this.biddingSessions = biddingSessions;
+    }
+
+    /**
+     * @return the pairings
+     */
+    public List<Pairing> getPairings() {
+        return pairings;
+    }
+
+    /**
+     * @param pairings the pairings to set
+     */
+    public void setPairings(List<Pairing> pairings) {
+        this.pairings = pairings;
     }
 
 }
