@@ -483,3 +483,7 @@ div.timeline-event-selected {
 .flightDetail>.ui-inputfield {
     width: 300px;
 }
+
+.bookingAirport>.ui-inputfield {
+    width: 200px;
+}

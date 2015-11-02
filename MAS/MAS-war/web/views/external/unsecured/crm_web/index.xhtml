@@ -18,17 +18,13 @@
                 <p:tab title="Book A Flight">
                     <p:panelGrid>
 
-                        <p:row>
-                            <p:column colspan="3"><p:outputLabel for="deptLoc" value="From"/></p:column>
-                            <p:column colspan="3"><p:outputLabel for="arriveLoc" value="To"/></p:column>
-                        </p:row>
-                        
                         <!--Departure Airport-->
                         <p:row> 
-                            <p:column colspan="3">
-                                <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" 
-                                                value="#{flightBookingManager.deptAirport}" completeMethod="#{flightBookingManager.completeDeptAirport}"
-                                                var="airport" itemLabel="#{airport.iataCode}" itemValue="#{airport}">
+                            <p:column colspan="1"><p:outputLabel for="deptLoc" value="From"/></p:column>
+                            <p:column colspan="5">
+                                <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                                value="#{bookingManager.deptAirport}" completeMethod="#{bookingManager.completeDeptAirport}"
+                                                var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
                                     <p:column>
                                         <p:outputLabel value="#{airport.city.cityName}" />
                                     </p:column>
@@ -46,14 +42,16 @@
                                     </p:column>
                                 </p:autoComplete>
                             </p:column>
-                            
+                        </p:row>
+                        <p:row>
                             <!--Arrival Airport-->
-                            <p:column colspan="3">
-                                <p:autoComplete id="arriveLoc" converter="airportConverter" forceSelection="true" required="true" 
-                                                value="#{flightBookingManager.arrAirport}" completeMethod="#{flightBookingManager.completeArrAirport}"
-                                                var="airport" itemLabel="#{airport.iataCode}" itemValue="#{airport}">
+                            <p:column colspan="1"><p:outputLabel for="arriveLoc" value="To"/></p:column>
+                            <p:column colspan="5">
+                                <p:autoComplete id="arriveLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                                value="#{bookingManager.arrAirport}" completeMethod="#{bookingManager.completeArrAirport}"
+                                                var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
                                     <p:column>
-                                        <p:outputLabel value="#{airport.city}" />
+                                        <p:outputLabel value="#{airport.city.cityName}" />
                                     </p:column>
 
                                     <p:column>
@@ -65,7 +63,7 @@
                                     </p:column>
 
                                     <p:column>
-                                        <p:outputLabel value="#{airport.country}" />
+                                        <p:outputLabel value="#{airport.country.countryName}" />
                                     </p:column>
                                 </p:autoComplete>
                             </p:column>
@@ -74,7 +72,7 @@
                         
                         <p:row>
                             <p:column colspan="3">
-                                <p:selectOneRadio id="console">
+                                <p:selectOneRadio id="console" value="#{bookingManager.choice}">
                                     <f:selectItem itemLabel="Return" itemValue="return" />
                                     <f:selectItem itemLabel="One-Way" itemValue="oneway" />
                                 </p:selectOneRadio>
@@ -90,13 +88,13 @@
                         <p:row>
                             <p:column colspan="3">
                                 <p:calendar id="deptDate" pages="3" pattern="dd-MMM-yyyy" timeZone="GMT+8"
-                                            value="#{flightBookingManager.deptDate}" mindate="#{flightBookingManager.deptDate}" >
-                                    <p:ajax event="dateSelect" update="arriveDate" listener="#{flightBookingManager.onDeptDateChange()}" />
+                                            value="#{bookingManager.deptDate}" mindate="#{bookingManager.deptDate}" >
+                                    <p:ajax event="dateSelect" update="arriveDate" listener="#{bookingManager.onDeptDateChange()}" />
                                 </p:calendar>
                             </p:column>
                             <p:column colspan="3">
                                 <p:calendar id="arriveDate" pages="3" pattern="dd-MMM-yyyy" timeZone="GMT+8"
-                                            value="#{flightBookingManager.arrDate}" mindate="#{flightBookingManager.deptDate}" />
+                                            value="#{bookingManager.arrDate}" mindate="#{bookingManager.deptDate}" />
                             </p:column>
                         </p:row>
                         <p:row>
@@ -119,7 +117,7 @@
                         <p:row>
                             <!--Number of adult-->
                             <p:column colspan="2">
-                                <p:selectOneMenu value="#{flightBookingManager.adultNo}">
+                                <p:selectOneMenu value="#{bookingManager.adultNo}">
                                     <c:forEach begin="1" end="10" varStatus="index">
                                         <f:selectItem itemLabel="#{index.index}" itemValue="#{index.index}" />
                                     </c:forEach>
@@ -128,7 +126,7 @@
 
                             <!--Number of children-->
                             <p:column colspan="2">
-                                <p:selectOneMenu value="#{flightBookingManager.childrenNo}">
+                                <p:selectOneMenu value="#{bookingManager.childrenNo}">
                                     <c:forEach begin="0" end="9" varStatus="index">
                                         <f:selectItem itemLabel="#{index.index}" itemValue="#{index.index}" />
                                     </c:forEach>
@@ -137,7 +135,7 @@
 
                             <!--Number of infant-->
                             <p:column colspan="2">
-                                <p:selectOneMenu value="#{flightBookingManager.infantNo}">
+                                <p:selectOneMenu value="#{bookingManager.infantNo}">
                                     <c:forEach begin="0" end="2" varStatus="index">
                                         <f:selectItem itemLabel="#{index.index}" itemValue="#{index.index}" />
                                     </c:forEach>
@@ -163,7 +161,7 @@
                         </p:row>
                         <p:row>
                             <p:column colspan="6">
-                                <p:commandButton value="Search" action="#{flightBookingManager.searchFlight()}" />
+                                <p:commandButton value="Search" action="#{bookingManager.searchFlight()}" />
                             </p:column>
                         </p:row>
                     </p:panelGrid>

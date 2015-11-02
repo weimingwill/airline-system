@@ -25,9 +25,9 @@ import managedbean.application.CrmExNavController;
  *
  * @author weiming
  */
-@Named(value = "flightBookingManager")
+@Named(value = "bookingManager")
 @SessionScoped
-public class FlightBookingManager implements Serializable {
+public class BookingManager implements Serializable {
 
     @Inject
     CrmExNavController crmExNavController;
@@ -45,29 +45,34 @@ public class FlightBookingManager implements Serializable {
     private Date arrDate;
     private boolean showPremium;
     private String promoCode;
+    private String choice;
 
     /**
-     * Creates a new instance of FlightBookingManager
+     * Creates a new instance of bookingManager
      */
     @PostConstruct
     public void init() {
         allAirports = routePlanningSession.getAllAirports();
-        initialDeptDate();
+        initialDate();
     }
 
-    public FlightBookingManager() {
+    public BookingManager() {
     }
 
-    public void initialDeptDate() {
+    public void initialDate() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, 1);
         deptDate = calendar.getTime();
+        calendar.add(Calendar.DATE, 3);
+        arrDate = calendar.getTime();
     }
 
     public void onDeptDateChange() {
         arrDate = deptDate;
     }
-    
+
+    //Auto complete departure airport when typing in.
     public List<Airport> completeDeptAirport(String query) {
         List<Airport> deptAirports = allAirports;
         deptAirports.remove(arrAirport);
@@ -75,12 +80,14 @@ public class FlightBookingManager implements Serializable {
         return completeAirport(deptAirports, query);
     }
 
+    //Auto complete arrive airport when typing in.
     public List<Airport> completeArrAirport(String query) {
         List<Airport> arrAirports = allAirports;
         arrAirports.remove(deptAirport);
         return completeAirport(arrAirports, query);
     }
 
+    //Auto complete airport.
     public List<Airport> completeAirport(List<Airport> allAirports, String query) {
         List<Airport> filteredAirports = new ArrayList<>();
         Set<Airport> hs = new HashSet<>();
@@ -100,8 +107,11 @@ public class FlightBookingManager implements Serializable {
     public String searchFlight() {
         return crmExNavController.redirectToSearchFlightResult();
     }
-
+    
+    
+    //
     //Getter and Setter    
+    //
     public int getAdultNo() {
         return adultNo;
     }
@@ -174,5 +184,11 @@ public class FlightBookingManager implements Serializable {
         this.promoCode = promoCode;
     }
 
-    
+    public String getChoice() {
+        return choice;
+    }
+
+    public void setChoice(String choice) {
+        this.choice = choice;
+    }
 }
