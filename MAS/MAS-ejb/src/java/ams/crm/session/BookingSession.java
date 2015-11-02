@@ -6,10 +6,14 @@
 package ams.crm.session;
 
 import ams.aps.entity.Airport;
+import ams.aps.entity.FlightSchedule;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -21,7 +25,11 @@ public class BookingSession implements BookingSessionLocal {
     private EntityManager em;
     
     @Override
-    public void searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, boolean showPremium, int numOfPassenger) {
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, boolean showPremium, int numOfPassenger) {
+        Query query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName");
+        List<FlightSchedule> flightScheds = new ArrayList<>();
+        
+        return flightScheds;
     }
 
 }

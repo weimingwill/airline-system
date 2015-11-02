@@ -6,7 +6,9 @@
 package ams.crm.session;
 
 import ams.aps.entity.Airport;
+import ams.aps.entity.FlightSchedule;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -15,5 +17,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface BookingSessionLocal {
-    public void searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, boolean showPremium, int numOfPassenger);
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, boolean showPremium, int numOfPassenger);
 }

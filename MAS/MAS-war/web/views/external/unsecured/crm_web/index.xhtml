@@ -14,9 +14,9 @@
     <ui:define name="content">
         <h:form>
             <!--            <me:CCWebFunNavMenu /> -->
-            <p:tabView>
-                <p:tab title="Book A Flight">
-                    <p:panelGrid>
+            <p:tabView style="width: 490px; opacity: 0.95">
+                <p:tab title="Book A Flight" >
+                    <p:panelGrid style="width: 445px;">
 
                         <!--Departure Airport-->
                         <p:row> 
@@ -87,13 +87,13 @@
                         <!--Departure Date & Arrival Date-->
                         <p:row>
                             <p:column colspan="3">
-                                <p:calendar id="deptDate" pages="3" pattern="dd-MMM-yyyy" timeZone="GMT+8"
+                                <p:calendar id="deptDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
                                             value="#{bookingManager.deptDate}" mindate="#{bookingManager.deptDate}" >
                                     <p:ajax event="dateSelect" update="arriveDate" listener="#{bookingManager.onDeptDateChange()}" />
                                 </p:calendar>
                             </p:column>
                             <p:column colspan="3">
-                                <p:calendar id="arriveDate" pages="3" pattern="dd-MMM-yyyy" timeZone="GMT+8"
+                                <p:calendar id="arriveDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
                                             value="#{bookingManager.arrDate}" mindate="#{bookingManager.deptDate}" />
                             </p:column>
                         </p:row>
@@ -156,8 +156,8 @@
                         </p:row>
 
                         <p:row>
-                            <p:column colspan="3"><p:outputLabel for="promoCode" value="Promo Code"/></p:column>
-                            <p:column colspan="3"><p:inputText id="promoCode" /></p:column>
+                            <p:column colspan="1"><p:outputLabel for="promoCode" value="Promo Code"/></p:column>
+                            <p:column colspan="5"><p:inputText id="promoCode" /></p:column>
                         </p:row>
                         <p:row>
                             <p:column colspan="6">
@@ -172,7 +172,7 @@
                         <h:outputText value="Francis Ford Coppola's legendary..." />
                     </h:panelGrid>
                 </p:tab>
-                <p:tab title="Check-in Online">
+                <p:tab title="Check-in">
                     <h:panelGrid columns="2" cellpadding="10">
                         <h:outputText value="After a break of more than 15 years..." />
                     </h:panelGrid>
