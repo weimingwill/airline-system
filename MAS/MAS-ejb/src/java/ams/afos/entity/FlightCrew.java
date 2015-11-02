@@ -16,6 +16,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import mas.common.entity.SystemUser;
@@ -44,13 +45,16 @@ public class FlightCrew extends SystemUser implements Serializable {
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<BiddingSession> biddingSessions;
-    
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<Pairing> pairings;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(joinColumns = @JoinColumn(name = "LANGUAGESID"))
     private List<Languages> languages;
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "sender")
+    private List<SwappingRequest> sentRequests;
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "receiver")
+    private List<SwappingRequest> receivedRequests;
 
     /**
      * @return the totalFlyingTime
@@ -193,17 +197,31 @@ public class FlightCrew extends SystemUser implements Serializable {
     }
 
     /**
-     * @return the pairings
+     * @return the sentRequests
      */
-    public List<Pairing> getPairings() {
-        return pairings;
+    public List<SwappingRequest> getSentRequests() {
+        return sentRequests;
     }
 
     /**
-     * @param pairings the pairings to set
+     * @param sentRequests the sentRequests to set
      */
-    public void setPairings(List<Pairing> pairings) {
-        this.pairings = pairings;
+    public void setSentRequests(List<SwappingRequest> sentRequests) {
+        this.sentRequests = sentRequests;
+    }
+
+    /**
+     * @return the receivedRequests
+     */
+    public List<SwappingRequest> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+    /**
+     * @param receivedRequests the receivedRequests to set
+     */
+    public void setReceivedRequests(List<SwappingRequest> receivedRequests) {
+        this.receivedRequests = receivedRequests;
     }
 
 }
