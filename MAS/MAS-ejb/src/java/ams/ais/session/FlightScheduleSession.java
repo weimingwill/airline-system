@@ -9,7 +9,6 @@ import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.FlightScheduleBookingClass;
-import ams.ais.entity.PhaseDemand;
 import ams.ais.entity.TicketFamily;
 import ams.ais.entity.helper.FlightScheduleBookingClassId;
 import ams.ais.util.exception.NeedBookingClassException;
@@ -56,8 +55,8 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
     private AircraftSessionLocal aircraftSession;
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
-    
-    @EJB 
+
+    @EJB
     private SeatReallocationSessionLocal seatReallocationSession;
 
     @Override
@@ -288,11 +287,7 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
                 flightScheduleBookingClass.setPriceCoefficient((float) 0);
                 flightScheduleBookingClass.setDemandDev((float) 0);
                 flightScheduleBookingClass.setDemandMean((float) 0);
-                
-                //create default check points (phase demand) 
-                List<PhaseDemand> pds = seatReallocationSession.getAllPhaseDemands();
-                flightScheduleBookingClass.setPhaseDemands(pds);
-                
+
                 entityManager.persist(flightScheduleBookingClass);
             }
 

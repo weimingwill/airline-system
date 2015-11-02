@@ -7,7 +7,6 @@ package ams.ais.session;
 
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.NormalDistribution;
-import ams.ais.entity.PhaseDemand;
 import ams.ais.entity.SeatAllocationHistory;
 import ams.ais.util.exception.ExistSuchCheckPointException;
 import ams.ais.util.exception.NeedBookingClassException;
@@ -36,7 +35,7 @@ public interface SeatReallocationSessionLocal {
 
     public void addPhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, float daysBeforeDeparture, float demandMean, float demandDev) throws ExistSuchCheckPointException;
 
-    public void deletePhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, PhaseDemand phaseDemand) throws NoSuchPhaseDemandException;
+//    public void deletePhaseDemand(FlightScheduleBookingClass flightScheduleBookingClass, PhaseDemand phaseDemand) throws NoSuchPhaseDemandException;
 
     public void validatePhaseDemand(int daysBeforeDeparture, FlightScheduleBookingClass f) throws ExistSuchCheckPointException;
 
@@ -47,11 +46,11 @@ public interface SeatReallocationSessionLocal {
 
     public List<SeatAllocationHistory> getBookingClassSeatAllocationHistory(FlightScheduleBookingClass flightScheduleBookingClass);
 
-    public List<PhaseDemand> getPhaseDemands(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers)
-            throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException;
-
-    public PhaseDemand getPhaseDemandbyId(Long id);
-    
-    public List<PhaseDemand> getAllPhaseDemands();
+//    public List<PhaseDemand> getPhaseDemands(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers)
+//            throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException;
+//
+//    public PhaseDemand getPhaseDemandbyId(Long id);
+//    
+//    public List<PhaseDemand> getAllPhaseDemands();
 
 }

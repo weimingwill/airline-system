@@ -9,7 +9,7 @@ import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.CabinClassTicketFamily;
 import ams.ais.entity.FlightScheduleBookingClass;
-import ams.ais.entity.PhaseDemand;
+//import ams.ais.entity.PhaseDemand;
 import ams.ais.entity.SeatAllocationHistory;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.BookingClassSessionLocal;
@@ -99,11 +99,11 @@ public class YieldManagementController implements Serializable{
     private List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers;
     private List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers;
     private List<BookingClassHelper> bookingClassHelpers;
-    private PhaseDemand phaseDemand;
+//    private PhaseDemand phaseDemand;
     private float daysBeforeDeparture;
     private List<SeatAllocationHistory> allSeatReAllocationHistorys;
-    private PhaseDemand selectedPhaseDemand;
-    private List<PhaseDemand> phaseDemands;
+//    private PhaseDemand selectedPhaseDemand;
+//    private List<PhaseDemand> phaseDemands;
 
     /**
      * Creates a new instance of YieldManagementController
@@ -149,7 +149,7 @@ public class YieldManagementController implements Serializable{
         flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
         if (flightSchCabinClsTicFamBookingClsHelpers != null && flightScheduleBookingClass != null) {
             allSeatReAllocationHistorys = seatReallocationSession.getBookingClassSeatAllocationHistory(flightScheduleBookingClass);
-            seatReallocationController.setAllSeatReAllocationHistorys(allSeatReAllocationHistorys);
+//            seatReallocationController.setAllSeatReAllocationHistorys(allSeatReAllocationHistorys);
             return navigationController.redirectToViewSeatsReallocationHistroy();
         }
 
@@ -160,9 +160,9 @@ public class YieldManagementController implements Serializable{
     public String toUpdateYieldManagementModel() throws NoSuchFlightScheduleBookingClassException {
         flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
         flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
-        phaseDemands = flightScheduleBookingClass.getPhaseDemands();
+//        phaseDemands = flightScheduleBookingClass.getPhaseDemands();
         
-        seatReallocationController.setPhaseDemands(phaseDemands);
+//        seatReallocationController.setPhaseDemands(phaseDemands);
         seatReallocationController.setFlightScheduleBookingClass(flightScheduleBookingClass);
 
         if (flightSchCabinClsTicFamBookingClsHelpers != null) {
@@ -462,14 +462,14 @@ public class YieldManagementController implements Serializable{
     public void setBookingClassHelpers(List<BookingClassHelper> bookingClassHelpers) {
         this.bookingClassHelpers = bookingClassHelpers;
     }
-
-    public PhaseDemand getPhaseDemand() {
-        return phaseDemand;
-    }
-
-    public void setPhaseDemand(PhaseDemand phaseDemand) {
-        this.phaseDemand = phaseDemand;
-    }
+//
+//    public PhaseDemand getPhaseDemand() {
+//        return phaseDemand;
+//    }
+//
+//    public void setPhaseDemand(PhaseDemand phaseDemand) {
+//        this.phaseDemand = phaseDemand;
+//    }
 
     public float getDaysBeforeDeparture() {
         return daysBeforeDeparture;
@@ -487,21 +487,21 @@ public class YieldManagementController implements Serializable{
         this.allSeatReAllocationHistorys = allSeatReAllocationHistorys;
     }
 
-    public PhaseDemand getSelectedPhaseDemand() {
-        return selectedPhaseDemand;
-    }
-
-    public void setSelectedPhaseDemand(PhaseDemand selectedPhaseDemand) {
-        this.selectedPhaseDemand = selectedPhaseDemand;
-    }
-
-    public List<PhaseDemand> getPhaseDemands() {
-        return phaseDemands;
-    }
-
-    public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
-        this.phaseDemands = phaseDemands;
-    }
+//    public PhaseDemand getSelectedPhaseDemand() {
+//        return selectedPhaseDemand;
+//    }
+//
+//    public void setSelectedPhaseDemand(PhaseDemand selectedPhaseDemand) {
+//        this.selectedPhaseDemand = selectedPhaseDemand;
+//    }
+//
+//    public List<PhaseDemand> getPhaseDemands() {
+//        return phaseDemands;
+//    }
+//
+//    public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
+//        this.phaseDemands = phaseDemands;
+//    }
     
     
 
