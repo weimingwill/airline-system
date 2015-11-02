@@ -41,22 +41,25 @@ public class FlightScheduleBookingClass implements Serializable {
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "BOOKINGCLASSID", referencedColumnName = "BOOKINGCLASSID")
     private BookingClass bookingClass;
-    
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SeatAllocationHistory> seatAllocationHistory = new ArrayList<>();
-    
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<PhaseDemand> phaseDemands = new ArrayList<>();
+
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<MktCampaign> marketCampaigns = new ArrayList<>(); 
-    
+    private List<MktCampaign> marketCampaigns = new ArrayList<>();
+
     @Column(name = "SEATQTY")
     private Integer seatQty;
-    
+
     @Column(name = "PRICE")
     private Float price;
-    
+
     @Column(name = "BASICPRICE")
     private Float basicPrice;
-    
+
     @Column(name = "PRICECOEFFICIENT")
     private Float priceCoefficient;
 
@@ -71,7 +74,7 @@ public class FlightScheduleBookingClass implements Serializable {
 
     @Column(name = "PRICED")
     private Boolean priced;
-    
+
     public FlightScheduleBookingClassId getFlightScheduleBookingClassId() {
         return flightScheduleBookingClassId;
     }
@@ -134,6 +137,14 @@ public class FlightScheduleBookingClass implements Serializable {
 
     public void setSeatAllocationHistory(List<SeatAllocationHistory> seatAllocationHistory) {
         this.seatAllocationHistory = seatAllocationHistory;
+    }
+
+    public List<PhaseDemand> getPhaseDemands() {
+        return phaseDemands;
+    }
+
+    public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
+        this.phaseDemands = phaseDemands;
     }
 
     public Float getDemandMean() {
