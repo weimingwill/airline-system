@@ -32,6 +32,7 @@ public class TicketFamily implements Serializable {
     private Long ticketFamilyId;
     private String type;
     private String name;
+    private Integer rank;
     private Boolean deleted;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "ticketFamily")
@@ -118,6 +119,20 @@ public class TicketFamily implements Serializable {
     @Override
     public String toString() {
         return "ams.ais.entity.TicketFamily[ ticketFamilyId=" + ticketFamilyId + " ]";
+    }
+
+    /**
+     * @return the rank
+     */
+    public Integer getRank() {
+        return rank;
+    }
+
+    /**
+     * @param rank the rank to set
+     */
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
 }
