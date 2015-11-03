@@ -8,6 +8,7 @@ package managedbean.dcs;
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.ars.entity.AirTicket;
+import ams.ars.entity.BoardingPass;
 import ams.ars.entity.Seat;
 import ams.crm.entity.Customer;
 import ams.dcs.util.helper.AirTicketDisplayHelper;
@@ -15,6 +16,8 @@ import ams.dcs.session.CheckInSessionLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.time.Clock;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,10 +51,9 @@ public class PassengerManager implements Serializable {
 
     private List<FlightSchedule> flightSchedules = new ArrayList<>();
     private List<Customer> passengerList = new ArrayList<>();
-    private List<AirTicket> airtickets = new ArrayList<>();
-    private List<AirTicket> airticketsUpdated = new ArrayList<>();
-    private List<AirTicket> airTicketsToCheckIn = new ArrayList<>();
-    private List<AirTicketDisplayHelper> airTicketShowList = new ArrayList<>();
+    private List<AirTicket> airtickets = new ArrayList<>();//available tickets
+    private List<AirTicket> airticketsUpdated = new ArrayList<>();//within 48h tickets
+    private List<AirTicket> airTicketsSelected = new ArrayList<>();
 
     /**
      * Creates a new instance of PassengerController
@@ -94,10 +96,27 @@ public class PassengerManager implements Serializable {
         }
     }
 
-    public void checkInPassenger(AjaxBehaviorEvent event) {
+    public void SelectSeat(AjaxBehaviorEvent event) {
         System.out.println("passport = " + passportNo);
     }
-    
+
+    public String checkInPassenger() {
+        String toLuggageCheckIn = dcsNavController.toCheckInPassenger();
+        
+        if(airTicketsSelected.isEmpty()){
+            msgController.addMessage("No airticket selected!");
+            toLuggageCheckIn = "";
+        }else{
+            for (AirTicket a : airTicketsSelected) {
+                boolean success = checkInSession.checkInPassenger(a);
+                if (!success) {
+                    msgController.addErrorMessage("Ticket " + a.getId() + " check-in error!");
+                }
+            }
+            
+        }
+    }
+
     public void onPassportChange(AjaxBehaviorEvent event) {
         System.out.println("passport = " + passportNo);
     }
@@ -159,20 +178,6 @@ public class PassengerManager implements Serializable {
     }
 
     /**
-     * @return the airTicketShowList
-     */
-    public List<AirTicketDisplayHelper> getAirTicketShowList() {
-        return airTicketShowList;
-    }
-
-    /**
-     * @param airTicketShowList the airTicketShowList to set
-     */
-    public void setAirTicketShowList(List<AirTicketDisplayHelper> airTicketShowList) {
-        this.airTicketShowList = airTicketShowList;
-    }
-
-    /**
      * @return the airtickets
      */
     public List<AirTicket> getAirtickets() {
@@ -185,21 +190,7 @@ public class PassengerManager implements Serializable {
     public void setAirtickets(List<AirTicket> airtickets) {
         this.airtickets = airtickets;
     }
-
-    /**
-     * @return the airTicketsToCheckIn
-     */
-    public List<AirTicket> getAirTicketsToCheckIn() {
-        return airTicketsToCheckIn;
-    }
-
-    /**
-     * @param airTicketsToCheckIn the airTicketsToCheckIn to set
-     */
-    public void setAirTicketsToCheckIn(List<AirTicket> airTicketsToCheckIn) {
-        this.airTicketsToCheckIn = airTicketsToCheckIn;
-    }
-
+    
     /**
      * @return the airticketsUpdated
      */
@@ -212,6 +203,20 @@ public class PassengerManager implements Serializable {
      */
     public void setAirticketsUpdated(List<AirTicket> airticketsUpdated) {
         this.airticketsUpdated = airticketsUpdated;
+    }
+
+    /**
+     * @return the airTicketsSelected
+     */
+    public List<AirTicket> getAirTicketsSelected() {
+        return airTicketsSelected;
+    }
+
+    /**
+     * @param airTicketsSelected the airTicketsSelected to set
+     */
+    public void setAirTicketsSelected(List<AirTicket> airTicketsSelected) {
+        this.airTicketsSelected = airTicketsSelected;
     }
 
 }

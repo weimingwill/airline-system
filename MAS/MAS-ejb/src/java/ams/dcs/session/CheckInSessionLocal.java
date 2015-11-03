@@ -27,7 +27,7 @@ public interface CheckInSessionLocal {
 
     public String selectSeat(String ticketNo);
 
-    public boolean checkInPassenger(String ticketNo);
+    public boolean checkInPassenger(AirTicket ticket);
 
     public boolean checkInuggage(String ticketNo);
 }
