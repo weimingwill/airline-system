@@ -25,6 +25,9 @@ public class MaintCrew extends SystemUser implements Serializable {
     @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private List<MaintCrewSkill> skills;
 
+    @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy = "maintCrews")
+    private List<MaintSchedule> maintSchedules;
+    
     /**
      * @return the skills
      */
@@ -51,6 +54,20 @@ public class MaintCrew extends SystemUser implements Serializable {
      */
     public void setMaintCrewId(String maintCrewId) {
         this.maintCrewId = maintCrewId;
+    }
+
+    /**
+     * @return the maintSchedules
+     */
+    public List<MaintSchedule> getMaintSchedules() {
+        return maintSchedules;
+    }
+
+    /**
+     * @param maintSchedules the maintSchedules to set
+     */
+    public void setMaintSchedules(List<MaintSchedule> maintSchedules) {
+        this.maintSchedules = maintSchedules;
     }
     
 }

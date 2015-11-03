@@ -6,6 +6,7 @@
 package ams.aps.entity;
 
 import ams.afos.entity.Checklist;
+import ams.afos.entity.MaintSchedule;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ public class Aircraft implements Serializable {
     
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraft")
     private List<Checklist> checklists;
+    
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="aircraft")
+    private List<MaintSchedule> maintSchedules = new ArrayList<>();
 
     public Long getAircraftId() {
         return aircraftId;
@@ -232,5 +236,19 @@ public class Aircraft implements Serializable {
      */
     public void setChecklists(List<Checklist> checklists) {
         this.checklists = checklists;
+    }
+
+    /**
+     * @return the maintSchedules
+     */
+    public List<MaintSchedule> getMaintSchedules() {
+        return maintSchedules;
+    }
+
+    /**
+     * @param maintSchedules the maintSchedules to set
+     */
+    public void setMaintSchedules(List<MaintSchedule> maintSchedules) {
+        this.maintSchedules = maintSchedules;
     }
 }
