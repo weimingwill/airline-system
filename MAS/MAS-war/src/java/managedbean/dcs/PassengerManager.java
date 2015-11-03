@@ -54,7 +54,8 @@ public class PassengerManager implements Serializable {
     private List<AirTicket> airtickets = new ArrayList<>();//available tickets
     private List<AirTicket> airticketsUpdated = new ArrayList<>();//within 48h tickets
     private List<AirTicket> airTicketsSelected = new ArrayList<>();
-
+    private List<AirTicket> airTicketsForLuggage = new ArrayList<>();
+    
     /**
      * Creates a new instance of PassengerController
      */
@@ -96,7 +97,7 @@ public class PassengerManager implements Serializable {
         }
     }
 
-    public void SelectSeat(AjaxBehaviorEvent event) {
+    public void selectSeat(AjaxBehaviorEvent event) {
         System.out.println("passport = " + passportNo);
     }
 
@@ -121,7 +122,7 @@ public class PassengerManager implements Serializable {
         return toLuggageCheckIn;
     }
 
-    public void onPassportChange(AjaxBehaviorEvent event) {
+    public void checkInLuggage() {
         System.out.println("passport = " + passportNo);
     }
 
@@ -221,6 +222,20 @@ public class PassengerManager implements Serializable {
      */
     public void setAirTicketsSelected(List<AirTicket> airTicketsSelected) {
         this.airTicketsSelected = airTicketsSelected;
+    }
+
+    /**
+     * @return the airTicketsForLuggage
+     */
+    public List<AirTicket> getAirTicketsForLuggage() {
+        return airTicketsForLuggage;
+    }
+
+    /**
+     * @param airTicketsForLuggage the airTicketsForLuggage to set
+     */
+    public void setAirTicketsForLuggage(List<AirTicket> airTicketsForLuggage) {
+        this.airTicketsForLuggage = airTicketsForLuggage;
     }
 
 }

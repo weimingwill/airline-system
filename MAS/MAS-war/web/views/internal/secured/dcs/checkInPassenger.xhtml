@@ -7,11 +7,12 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
+        <f:facet name="header">
+            Check in Information (PNR)
+        </f:facet>
+
         <h:form>
             <p:panelGrid columns="4">
-                <f:facet name="header">
-                    Check in Information (PNR)
-                </f:facet>
                 <p:outputLabel value="Passenger Name: " />
                 <p:outputLabel value="#{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}" />
 
@@ -19,7 +20,7 @@
                 <p:outputLabel value="#{passengerManager.passportNo}" />
             </p:panelGrid>
 
-            <p:dataTable id="ticketInfo" var="ticket" value="#{passengerManager.airticketsUpdated}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
+            <p:dataTable id="ticket" var="ticket" value="#{passengerManager.airticketsUpdated}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
                          selection="#{passengerManager.airTicketsSelected}" rowKey="#{ticket.id}" paginator="true"
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
                 <f:facet name="header">
@@ -86,15 +87,15 @@
                         <p:column headerText="To" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
                             <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.leg.arrivalAirport.airportName}" />
                         </p:column>
-                        
+
                         <p:column headerText="Gate" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
                             <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.departGate}" />
                         </p:column>
-                        
+
                         <p:column headerText="Seat" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
                             <p:outputLabel value="#{tick.seat.rowNo}#{tick.seat.colNo}" />
                         </p:column>
-                        
+
                     </p:dataTable>
                     <p:separator/>
                     <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" onclick="PF('checkInPassDlg').hide()" action="#{passengerManager.checkInPassenger}"/>
