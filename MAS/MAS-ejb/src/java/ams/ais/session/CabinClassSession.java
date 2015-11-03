@@ -169,7 +169,7 @@ public class CabinClassSession implements CabinClassSessionLocal {
                 + "AND ct.aircraftCabinClass.cabinClassId = :inCabinClassId AND ct.aircraftCabinClass.cabinClass.deleted = FALSE "
                 + "AND ct.ticketFamily.ticketFamilyId = t.ticketFamilyId AND t.deleted = FALSE "
                 + "AND ct.deleted = FALSE"
-                + "ORDER BY ct.aircraftCabinClass.cabinClass.rank ASC, t.rank ASC");
+                + "ORDER BY ct.aircraftCabinClass.cabinClass.rank DESC, t.rank DESC");
         query.setParameter("inAircraftId", aircraftId);
         query.setParameter("inCabinClassId", cabinClassId);
         query.setParameter("inRetired", AircraftStatus.RETIRED);
