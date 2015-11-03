@@ -5,6 +5,11 @@
  */
 package ams.crm.session;
 
+import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
+import ams.ais.session.CabinClassSessionLocal;
+import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.util.helper.FlightSchedStatus;
@@ -12,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -29,6 +35,11 @@ public class BookingSession implements BookingSessionLocal {
     @PersistenceContext(unitName = "MAS-ejbPU")
     private EntityManager em;
 
+    @EJB
+    private FlightScheduleSessionLocal flightSchedSession;
+    @EJB
+    private CabinClassSessionLocal cabinClassSession;
+    
     @Override
     public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, boolean showPremium, int numOfPassenger) {
         Calendar calendar = Calendar.getInstance();
@@ -86,5 +97,23 @@ public class BookingSession implements BookingSessionLocal {
         }
         return flightScheds;
     }
+
+    public List<TicketFamily> getFlightSchedLowesetTixFams(FlightSchedule flightSched, boolean premimum) {
+        List<TicketFamily> tixFams = new ArrayList<>();
+        try {
+            for (CabinClass cabinClass : flightSchedSession.getFlightScheduleCabinCalsses(flightSched.getFlightScheduleId())) {
+                if ("E".equals(cabinClass.getType())) {
+                    
+                }
+            }
+        } catch (NoSuchCabinClassException e) {
+        }
+        return tixFams;
+    }
     
+    private List<TicketFamily> addTixFams(List<TicketFamily> tixFams, CabinClass cabinClass) {
+        
+        return tixFams;
+    }
+
 }

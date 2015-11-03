@@ -12,10 +12,13 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form>
-            <!--            <me:CCWebFunNavMenu /> -->
-            <p:tabView style="width: 490px; opacity: 0.95">
-                <p:tab title="Book A Flight" >
+        <!--            <me:CCWebFunNavMenu /> -->
+
+
+        <p:tabView style="width: 490px; opacity: 0.95">
+
+            <p:tab title="Book A Flight" >
+                <h:form>
                     <p:panelGrid style="width: 445px;">
 
                         <!--Departure Airport-->
@@ -23,7 +26,7 @@
                             <p:column colspan="1"><p:outputLabel for="deptLoc" value="From"/></p:column>
                             <p:column colspan="5">
                                 <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
-                                                value="#{bookingManager.searchFlightHelper.deptAirport}" completeMethod="#{bookingManager.completeDeptAirport}"
+                                                value="#{bookingManager.deptAirport}" completeMethod="#{bookingManager.completeDeptAirport}"
                                                 var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
                                     <p:column>
                                         <p:outputLabel value="#{airport.city.cityName}" />
@@ -43,12 +46,13 @@
                                 </p:autoComplete>
                             </p:column>
                         </p:row>
+
+                        <!--Arrival Airport-->
                         <p:row>
-                            <!--Arrival Airport-->
                             <p:column colspan="1"><p:outputLabel for="arriveLoc" value="To"/></p:column>
                             <p:column colspan="5">
                                 <p:autoComplete id="arriveLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
-                                                value="#{bookingManager.searchFlightHelper.arrAirport}" completeMethod="#{bookingManager.completeArrAirport}"
+                                                value="#{bookingManager.arrAirport}" completeMethod="#{bookingManager.completeArrAirport}"
                                                 var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
                                     <p:column>
                                         <p:outputLabel value="#{airport.city.cityName}" />
@@ -68,8 +72,8 @@
                                 </p:autoComplete>
                             </p:column>
                         </p:row>
-                        
-                        
+
+
                         <p:row>
                             <p:column colspan="3">
                                 <p:selectOneRadio id="console" value="#{bookingManager.choice}">
@@ -83,18 +87,18 @@
                             <p:column colspan="3"><p:outputLabel for="deptDate" value="Departure Date"/></p:column>
                             <p:column colspan="3"><p:outputLabel for="arriveDate" value="Arrival Date"/></p:column>
                         </p:row>
-                        
+
                         <!--Departure Date & Arrival Date-->
                         <p:row>
                             <p:column colspan="3">
                                 <p:calendar id="deptDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
-                                            value="#{bookingManager.searchFlightHelper.deptDate}" mindate="#{bookingManager.searchFlightHelper.deptDate}" >
+                                            value="#{bookingManager.deptDate}" mindate="#{bookingManager.deptDate}" >
                                     <p:ajax event="dateSelect" update="arriveDate" listener="#{bookingManager.onDeptDateChange()}" />
                                 </p:calendar>
                             </p:column>
                             <p:column colspan="3">
                                 <p:calendar id="arriveDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
-                                            value="#{bookingManager.searchFlightHelper.arrDate}" mindate="#{bookingManager.searchFlightHelper.deptDate}" />
+                                            value="#{bookingManager.arrDate}" mindate="#{bookingManager.deptDate}" />
                             </p:column>
                         </p:row>
                         <p:row>
@@ -161,29 +165,31 @@
                         </p:row>
                         <p:row>
                             <p:column colspan="6">
-                                <p:commandButton value="Search" action="#{bookingManager.searchFlight()}" />
+                                <p:commandButton value="Search" action="#{bookingManager.searchFlights()}" update="messages" />
                             </p:column>
                         </p:row>
                     </p:panelGrid>
+                </h:form>
 
-                </p:tab>
-                <p:tab title="Manage Booking">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="Francis Ford Coppola's legendary..." />
-                    </h:panelGrid>
-                </p:tab>
-                <p:tab title="Check-in">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="After a break of more than 15 years..." />
-                    </h:panelGrid>
-                </p:tab>
-                <p:tab title="Flight Status">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="After a break of more than 15 years..." />
-                    </h:panelGrid>
-                </p:tab>
-            </p:tabView>
-        </h:form>
+            </p:tab>
+
+
+            <p:tab title="Manage Booking">
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText value="Francis Ford Coppola's legendary..." />
+                </h:panelGrid>
+            </p:tab>
+            <p:tab title="Check-in">
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText value="After a break of more than 15 years..." />
+                </h:panelGrid>
+            </p:tab>
+            <p:tab title="Flight Status">
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText value="After a break of more than 15 years..." />
+                </h:panelGrid>
+            </p:tab>
+        </p:tabView>
     </ui:define>
 
 </ui:composition>

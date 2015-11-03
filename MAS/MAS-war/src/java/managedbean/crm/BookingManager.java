@@ -9,7 +9,6 @@ import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.crm.session.BookingSessionLocal;
-import ams.crm.util.helper.SearchFlightHelper;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -23,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import managedbean.application.CrmExNavController;
+import mas.util.helper.DateHelper;
 
 /**
  *
@@ -41,8 +41,6 @@ public class BookingManager implements Serializable {
     private BookingSessionLocal bookingSession;
     
     //Search conditions
-    private SearchFlightHelper searchFlightHelper = new SearchFlightHelper();
-    
     private int adultNo;
     private int childrenNo;
     private int infantNo;
@@ -55,9 +53,11 @@ public class BookingManager implements Serializable {
     private String promoCode;
     private String choice;
     
-    //Search for flights
+    //Search Results
     private List<FlightSchedule> directFlightScheds;
     private List<FlightSchedule> inDirectFlightScheds;
+    private String searchDeptDate;
+    private String searchArrDate;
     
     
     /**
@@ -76,10 +76,8 @@ public class BookingManager implements Serializable {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.DATE, 1);
-        searchFlightHelper.setDeptDate(calendar.getTime());
         deptDate = calendar.getTime();
         calendar.add(Calendar.DATE, 3);
-        searchFlightHelper.setArrDate(calendar.getTime());
         arrDate = calendar.getTime();
     }
 
@@ -90,8 +88,7 @@ public class BookingManager implements Serializable {
     //Auto complete departure airport when typing in.
     public List<Airport> completeDeptAirport(String query) {
         List<Airport> deptAirports = allAirports;
-
-        deptAirports.remove(searchFlightHelper.getArrAirport());
+        deptAirports.remove(arrAirport);
         query = query.toLowerCase();
         return completeAirport(deptAirports, query);
     }
@@ -99,9 +96,7 @@ public class BookingManager implements Serializable {
     //Auto complete arrive airport when typing in.
     public List<Airport> completeArrAirport(String query) {
         List<Airport> arrAirports = allAirports;
-//        arrAirports.remove(deptAirport);
-        System.out.println("Departure airport: " + searchFlightHelper.getDeptAirport());
-        arrAirports.remove(searchFlightHelper.getDeptAirport());
+        arrAirports.remove(deptAirport);
         query = query.toLowerCase();
         return completeAirport(arrAirports, query);
     }
@@ -112,7 +107,6 @@ public class BookingManager implements Serializable {
         Set<Airport> hs = new HashSet<>();
 
         for (Airport airport : allAirports) {
-            System.out.println("Airport: " + airport.getId());
             if (airport.getAirportName().toLowerCase().startsWith(query)
                     || airport.getCity().getCityName().toLowerCase().startsWith(query)
                     || airport.getCountry().getCountryName().toLowerCase().startsWith(query)) {
@@ -123,7 +117,9 @@ public class BookingManager implements Serializable {
         return filteredAirports;
     }
 
-    public String searchFlight() {
+    public String searchFlights() {
+        searchDeptDate = DateHelper.convertDateTime(deptDate);
+        searchArrDate = DateHelper.convertDateTime(arrDate);
         return crmExNavController.redirectToSearchFlightResult();
     }
     
@@ -225,13 +221,21 @@ public class BookingManager implements Serializable {
         this.directFlightScheds = directFlightScheds;
     }
 
-    public SearchFlightHelper getSearchFlightHelper() {
-        return searchFlightHelper;
+    public String getSearchDeptDate() {
+        return searchDeptDate;
     }
 
-    public void setSearchFlightHelper(SearchFlightHelper searchFlightHelper) {
-        this.searchFlightHelper = searchFlightHelper;
+    public void setSearchDeptDate(String searchDeptDate) {
+        this.searchDeptDate = searchDeptDate;
     }
-    
+
+    public String getSearchArrDate() {
+        return searchArrDate;
+    }
+
+    public void setSearchArrDate(String searchArrDate) {
+        this.searchArrDate = searchArrDate;
+    }
+
     
 }
