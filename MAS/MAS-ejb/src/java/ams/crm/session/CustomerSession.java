@@ -8,11 +8,14 @@ package ams.crm.session;
 
 import ams.crm.entity.Membership;
 import ams.crm.entity.RegCust;
+import static ams.crm.entity.RegCust_.email;
+import ams.crm.entity.helper.Phone;
 import ams.crm.util.exception.ExistSuchRegCustException;
 import ams.crm.util.exception.InvalidPasswordException;
 import ams.crm.util.exception.NoSuchMembershipException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.CrmMsg;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -55,7 +58,7 @@ public class CustomerSession implements CustomerSessionLocal {
         } catch (NoSuchMembershipException ex) {
             Logger.getLogger(CustomerSession.class.getName()).log(Level.SEVERE, null, ex);
         }
-        regCust.setMemberShipId("MA"+ 10000 + r.nextInt(20000));
+        regCust.setMembershipId("MA"+ 10000 + r.nextInt(20000));
         entityManager.persist(regCust);
     }
 //    public void createRegCust(String title, String firstname,String lastname, String passportNo, String nationality, String gender,Date dob, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone mobilephone, Phone telephone, String pwd,String securQuest,String securAns, Boolean newsLetterPref, Boolean promoPref, String membershipClass, Double accMiles,Double custValue, Integer numOfFlights, String memberShipId) throws ExistSuchRegCustException {
@@ -173,4 +176,63 @@ public class CustomerSession implements CustomerSessionLocal {
             }
         }
     } 
+
+    @Override
+    public void updateProfile(Long customerId,String passportNo, Date passportIssueDate, Date passportExpDate, String nationality, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone phone, String securQuest, String securAns,Boolean newsLetterPref, Boolean promoPref) throws ExistSuchRegCustException,NoSuchRegCustException {
+        RegCust r=getRegCustById(customerId);
+        if(r==null){
+            throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
+        }else{
+            List<RegCust> regCusts=getAllOtherRegCustById(customerId);
+            if(regCusts!=null){
+                for(RegCust rc: regCusts){
+                    if(email.equals(rc.getEmail())){
+                       throw new ExistSuchRegCustException(CrmMsg.EXIST_SUCH_Reg_Cust_ERROR);
+                    }
+                }
+            }
+        }
+        r.setPassportNo(passportNo);
+        r.setPassportIssueDate(passportIssueDate);
+        r.setPassportExpDate(passportExpDate);
+        r.setNationality(nationality);
+        r.setEmail(email);
+        r.setAddr1(addr1);
+        r.setAddr2(addr2);
+        r.setCity(city);
+        r.setProvince(state);
+        r.setCountry(country);
+        r.setZipCode(zipCode);
+        r.setPhone(phone);
+        r.setSecurQuest(securQuest);
+        r.setSecurQuest(securQuest);
+        r.setNewsLetterPref(newsLetterPref);
+        r.setPromoPref(promoPref);
+        entityManager.merge(r);
+        entityManager.flush();
+        
+    }
+    
+    private RegCust getRegCustById(Long customerId) throws NoSuchRegCustException{
+       Query query = entityManager.createQuery("SELECT r FROM RegCust r WHERE r.id = :customerId");
+        query.setParameter("customerId", customerId);
+        RegCust selectRegCust = null;
+        System.out.printf("selectRegCustrtyjrytr "+selectRegCust);
+        try {
+            selectRegCust = (RegCust) query.getSingleResult();
+            System.out.printf("selectRegCust "+selectRegCust);
+        } catch (NoResultException ex) {
+            throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
+        }catch(NonUniqueResultException e){
+            
+        }
+        System.out.printf("selectRegCust "+selectRegCust);
+        return selectRegCust; 
+    }
+    
+    private List<RegCust> getAllOtherRegCustById(Long customerId){
+        Query query = entityManager.createQuery("SELECT c FROM RegCust c where c.id <> :customerId");
+        query.setParameter("customerId", customerId);
+        return query.getResultList();
+    }
 }   

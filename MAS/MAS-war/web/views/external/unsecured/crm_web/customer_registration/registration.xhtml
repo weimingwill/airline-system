@@ -49,7 +49,7 @@
                         <p:calendar id="dob" value="#{registrationController.newRegCust.dob}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-100:c+0" placeholder="Date of Birth"/>
 
                         <p:outputLabel for="nationality" value="Nationality"/>
-                        <p:selectOneMenu style="width:180px" id="nationality" required="true" requiredMessage="Please enter your Nationality" value="#{registrationController.newRegCust.nationality}">
+                        <p:selectOneMenu style="width:180px" id="nationality"  required="true" requiredMessage="Please enter your Nationality" value="#{registrationController.newRegCust.nationality}">
                             <f:selectItem itemLabel="Select Country" itemValue="" />
                             <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.countryName}" itemValue="#{country.countryName}" />
                         </p:selectOneMenu>
@@ -91,7 +91,7 @@
                                 <h:outputLabel  value="Phone Number"/>
                             </p:column>
                             <p:column>
-                                <p:selectOneMenu class="userProfileInput" required="true" style="width:120px" requiredMessage="Please select phone dial Code" value ="#{registrationController.newRegCust.phone.countryCode}">
+                                <p:selectOneMenu class="userProfileInput" converter="countryConverter" required="true" style="width:120px" requiredMessage="Please select phone dial Code" value ="#{registrationController.newRegCust.phone.countryCode}">
                                     <f:selectItem itemLabel="Country Code" itemValue="" />
                                     <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.dialingCode}" itemValue="#{country.dialingCode}" />
                                 </p:selectOneMenu>

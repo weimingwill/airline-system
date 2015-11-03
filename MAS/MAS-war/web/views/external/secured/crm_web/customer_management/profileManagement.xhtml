@@ -25,22 +25,26 @@
                         <p:outputLabel id="firstname" class="userProfileInput"  value="#{customerController.firstname}" />
 
                         <p:outputLabel for="lastname" value="Last/Family Name"/>
-                        <p:outputLabel id="lastname" class="userProfileInput" value="#{registrationController.newRegCust.lastName}"/>           
+                        <p:outputLabel id="lastname" class="userProfileInput" value="#{customerController.lastname}"/>           
                         
                         <p:outputLabel for="passportNo" value="Passport No" />
-                        <p:inputText id="passportNo" class="userProfileInput" required="true" requiredMessage="Please enter Passport Number" value="#{customerController.passportNo}"  placeholder="passport"/>
+                        <p:inputText id="passportNo" class="userProfileInput"  value="#{customerController.passportNo}"  placeholder="passport"/>
 
                         <p:outputLabel for="gender" value="Gender"/>
-                        <p:selectOneRadio id="gender" required="true" requiredMessage="Please Select Gender" value="#{registrationController.newRegCust.gender}">
-                            <f:selectItem itemLabel="Female" itemValue="Female" />
-                            <f:selectItem itemLabel="Male" itemValue="Male" />
-                        </p:selectOneRadio>
+                        <p:outputLabel id="gender" value="#{customerController.gender}"/>
 
                         <p:outputLabel for="dob" value="Date of Birth"/>
-                        <p:calendar id="dob" value="#{registrationController.newRegCust.dob}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-100:c+0" placeholder="Date of Birth"/>
-
+                        <p:outputLabel  id="dob" value="#{customerController.dob}">
+                            <f:convertDateTime timeZone="GMT+8" pattern="yyyy-MMM-dd" />
+                        </p:outputLabel>
+                        
+                        <p:outputLabel for="passportIssueDate" value="Passport Issue Date"/>
+                        <p:calendar id="passportIssueDate" value="#{customerController.passportIssueDate}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-50:c+50" placeholder="Issue Date"/>
+                        
+                        <p:outputLabel for="passportExpireDate" value="Date of Birth"/>
+                        <p:calendar id="passportExpireDate" value="#{customerController.passportExpDate}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-50:c+50" placeholder="Expire Date"/>
                         <p:outputLabel for="nationality" value="Nationality"/>
-                        <p:selectOneMenu style="width:180px" id="nationality" required="true" requiredMessage="Please enter your Nationality" value="#{registrationController.newRegCust.nationality}">
+                        <p:selectOneMenu style="width:180px" id="nationality" required="true" requiredMessage="Please enter your Nationality" value="#{customerController.nationality}">
                             <f:selectItem itemLabel="Select Country" itemValue="" />
                             <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.countryName}" itemValue="#{country.countryName}" />
                         </p:selectOneMenu>
@@ -51,30 +55,33 @@
                 <p:panel header="Contact Information">
                     <p:panelGrid columns="2" styleClass="centered">
                         <p:outputLabel for="email" value="Email"/>
-                        <p:inputText id="email" class="userProfileInput" required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" value="#{registrationController.newRegCust.email}">
+                        <p:inputText id="email" class="userProfileInput" required="true" requiredMessage="Please enter email" validatorMessage="Invalid email format" value="#{customerController.email}">
                             <p:ajax update="messages" event="blur" />
                             <f:validateRegex
                                 pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
                         </p:inputText>
-
+                        
+                        <p:outputLabel for="membershipId" value="Membership ID"/>
+                        <p:outputLabel id="membershipId" value="#{customerController.membershipId}"/>
+                        
                         <h:outputLabel class="userProfileInput" for="address1" value="Address1" />
-                        <p:inputText id="address1" class="userProfileInput"  required="true" requiredMessage="Please enter address" value="#{registrationController.newRegCust.addr1}" placeholder="block, street"/>
+                        <p:inputText id="address1" class="userProfileInput"  required="true" requiredMessage="Please enter address" value="#{customerController.addr1}" placeholder="block, street"/>
 
                         <h:outputLabel for="address2" value="Address2"/>
-                        <p:inputText id="address2" class="userProfileInput" required="true" requiredMessage="Please enter address" value="#{registrationController.newRegCust.addr2}" placeholder="street"/>
+                        <p:inputText id="address2" class="userProfileInput" required="true" requiredMessage="Please enter address" value="#{customerController.addr2}" placeholder="street"/>
 
                         <h:outputLabel for="city" value="City"/>
-                        <p:inputText id="city" class="userProfileInput" required="true" requiredMessage="Please enter city name" value="#{registrationController.newRegCust.city}" placeholder="city"/>
+                        <p:inputText id="city" class="userProfileInput" required="true" requiredMessage="Please enter city name" value="#{customerController.city}" placeholder="city"/>
 
                         <h:outputLabel for="state" value="State"/>
-                        <p:inputText id="state" class="userProfileInput" required="true" requiredMessage="Please enter state" value="#{registrationController.newRegCust.province}" placeholder="state"/>
+                        <p:inputText id="state" class="userProfileInput" required="true" requiredMessage="Please enter state" value="#{customerController.state}" placeholder="state"/>
 
                         <h:outputLabel for="country" value="Country"/>
-                        <p:inputText id="country" class="userProfileInput" required="true" requiredMessage="Please enter Country" value="#{registrationController.newRegCust.country}" placeholder="country"/>
+                        <p:inputText id="country" class="userProfileInput" required="true" requiredMessage="Please enter Country" value="#{customerController.country}" placeholder="country"/>
 
 
                         <p:outputLabel for="zipcode" value="Postal Code"/>
-                        <p:inputText id="zipcode" class="userProfileInput" required="true" requiredMessage="Please enter postal code" value="#{registrationController.newRegCust.zipCode}" placeholder="postal code"/>
+                        <p:inputText id="zipcode" class="userProfileInput" required="true" requiredMessage="Please enter postal code" value="#{customerController.zipCode}" placeholder="postal code"/>
                     </p:panelGrid>
                     <p:panelGrid>
                         <p:row>
@@ -82,17 +89,17 @@
                                 <h:outputLabel  value="Phone"/>
                             </p:column>
                             <p:column>
-                                <p:selectOneMenu class="userProfileInput" required="true" style="width:120px" requiredMessage="Please select phone dial Code" value ="#{registrationController.newRegCust.phone.countryCode}">
+                                <p:selectOneMenu class="userProfileInput" converter= "countryConverter" required="true" style="width:120px" requiredMessage="Please select phone dial Code" value ="#{customerController.phone.countryCode}">
                                     <f:selectItem itemLabel="Country Code" itemValue="" />
                                     <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.dialingCode}" itemValue="#{country.dialingCode}" />
                                 </p:selectOneMenu>
 
                             </p:column>
                             <p:column>
-                                <p:inputText style="width:50px" class="userProfileInput" required="true" value="#{registrationController.newRegCust.phone.areaCode}" requiredMessage="Please input phone area code" placeholder="#area"/> 
+                                <p:inputText style="width:50px" class="userProfileInput" required="true" value="#{customerController.phone.areaCode}" requiredMessage="Please input phone area code" placeholder="#area"/> 
                             </p:column>
                             <p:column>
-                                <p:inputText style="width:100px" class="userProfileInput" required="true" value="#{registrationController.newRegCust.phone.number}" requiredMessage="Please Input phone number" /> 
+                                <p:inputText style="width:100px" class="userProfileInput" required="true" value="#{customerController.phone.number}" requiredMessage="Please Input phone number" /> 
                             </p:column>
                         </p:row>
 
@@ -101,15 +108,11 @@
 
                 <p:panel header="Login Detail">
                     <p:panelGrid columns="2" styleClass="centered">
-                        <p:outputLabel value="Password: "/>
-                        <p:password id="password" class="userProfileInput" value="#{registrationController.newRegCust.pwd}" required="true" requiredMessage="Please enter password">
-                            <!--<f:validator validatorId="passwordValidator" />-->
-                            <!--<f:attribute name="confirmPassword" value="{confirmPassword}" />-->
-                        </p:password>
+                       
                         <p:outputLabel for="secQue" value="Secutity Question"/>
-                        <p:inputText id="secQue" class="userProfileInput" required="true" requiredMessage="Please input security question" value="#{registrationController.newRegCust.securQuest}" placeholder="security question"/>
+                        <p:inputText id="secQue" class="userProfileInput" required="true" requiredMessage="Please input security question" value="#{customerController.securQest}" placeholder="security question"/>
                         <p:outputLabel for="secAns" value="Secutity Answer"/>
-                        <p:inputText id="secAns" class="userProfileInput" required="true" requiredMessage="Please answer security question" value="#{registrationController.newRegCust.securAns}" placeholder="security answer"/>
+                        <p:inputText id="secAns" class="userProfileInput" required="true" requiredMessage="Please answer security question" value="#{customerController.securAns}" placeholder="security answer"/>
                     </p:panelGrid>
 
 
@@ -118,43 +121,20 @@
                 <p:panel header="Preference Selection">
                     <p:panelGrid columns="2" styleClass="centered">
                         <p:outputLabel for="newsLetterPref" value="Do you want to receive our news letter"/>
-                        <p:selectOneRadio id="newsLetterPref" value="#{registrationController.newRegCust.newsLetterPref}" required="true" requiredMessage="Please Select your news letter preference" binding="#{newsLetterPref}">
+                        <p:selectOneRadio id="newsLetterPref" value="#{customerController.newsLetterPref}" required="true" requiredMessage="Please Select your news letter preference" binding="#{newsLetterPref}">
                             <f:selectItem itemLabel="Yes" itemValue="TRUE" />
                             <f:selectItem itemLabel="No" itemValue="FALSE" />
                         </p:selectOneRadio>
                         <p:outputLabel for="promoPref" value="Do you want to receive our promotion news "/>
-                        <p:selectOneRadio id="promoPref" value="#{registrationController.newRegCust.promoPref}" required="true" requiredMessage="Please Select your promotion preference" binding="#{promoPref}">
+                        <p:selectOneRadio id="promoPref" value="#{customerController.promoPref}" required="true" requiredMessage="Please Select your promotion preference" binding="#{promoPref}">
                             <f:selectItem itemLabel="Yes" itemValue="TRUE" />
                             <f:selectItem itemLabel="No" itemValue="FALSE" />
                         </p:selectOneRadio>
                     </p:panelGrid>
 
-
-
-                    <!--                    <p:row>
-                                            <p:column colspan="2">
-                                                <p:outputLabel for="loginCaptcha" value="Retype the code from the picture:"/>
-                                            </p:column>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column colspan="2">
-                                                <botDetect:jsfCaptcha id="loginCaptcha" binding="{loginController.captcha}"/>
-                                            </p:column>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column colspan="2">
-                                                <p:inputText id="captchaCodeTextBox" value="{loginController.captchaCode}"/> 
-                                            </p:column>
-                                        </p:row>-->
                 </p:panel>
 
-                <p:panelGrid columns="2" styleClass ="centered">
-                    <p:selectManyCheckbox id="basic" required="true" requiredMessage="You must agree the terms and cnditions" >
-                        <f:selectItem  itemLabel="I agree to be bound by the Terms and Conditions of the Merlion Air Premium Flyer Program" itemValue="agreed" />
-                    </p:selectManyCheckbox>
-                </p:panelGrid>
-
-                <p:commandButton action="#{registrationController.createrRegCust()}" value="Submit" update="messages"/>
+                <p:commandButton action="#{customerController.updateProfile()}" value="Save" update="messages"/>
             </p:panel>
 
         </h:form>

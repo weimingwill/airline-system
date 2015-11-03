@@ -8,6 +8,7 @@ package managedbean.crm;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
 import ams.crm.session.CustomerSessionLocal;
+import ams.crm.util.exception.ExistSuchRegCustException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import java.io.Serializable;
 import java.util.Date;
@@ -19,6 +20,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
 
@@ -40,7 +43,6 @@ public class CustomerController implements Serializable {
     private String email;
     private String password;
 
-    
     private String title;
     private String firstname;
     private String lastname;
@@ -54,7 +56,9 @@ public class CustomerController implements Serializable {
     private String state;
     private String country;
     private String zipCode;
-    private Phone phone;
+    private Phone phone=new Phone();
+    private Long customerId;
+
     private String securQest;
     private String securAns;
     private Boolean newsLetterPref;
@@ -65,10 +69,19 @@ public class CustomerController implements Serializable {
     private Boolean activated;
     private Integer numofFlights;
     private String membershipId;
+    @Temporal(value = TemporalType.DATE)
+    private Date passportExpDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date passportIssueDate;
+
+    
+
+    
  
     
     public CustomerController() {
     }
+    
     @PostConstruct
     public void init() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
@@ -81,10 +94,20 @@ public class CustomerController implements Serializable {
        return  customerSession.getRegCustByEmail(email);  
     }
     
+    public String updateProfile() throws ExistSuchRegCustException, NoSuchRegCustException {
+        System.out.print("customerId" +customerId);
+        System.out.print("passport"+passportNo);
+        msgController.addMessage("Update Information Successfully!");
+        customerSession.updateProfile(customerId,passportNo,passportIssueDate,passportExpDate,nationality,email,addr1,addr2,city,state,country,zipCode,phone,securQest,securAns,newsLetterPref,promoPref);
+        return navigationController.redirectToCurrentPage();
+    }
     public void initializeCustomer() {
         try {
             RegCust regCust = getRegCustByEmail();
+            customerId=regCust.getId();
             email = regCust.getEmail();
+            passportIssueDate=regCust.getPassportIssueDate();
+            passportExpDate=regCust.getPassportExpDate();
             firstname=regCust.getFirstName();
             lastname=regCust.getLastName();
             password = regCust.getPwd();
@@ -109,7 +132,8 @@ public class CustomerController implements Serializable {
             custValue=regCust.getCustValue();
             activated=regCust.getActivated();
             numofFlights=regCust.getNumOfFlights();
-            membershipId=regCust.getMemberShipId();
+            membershipId=regCust.getMembershipId();
+            
             
         } catch (NoSuchRegCustException ex) {
             email = null;
@@ -347,5 +371,27 @@ public class CustomerController implements Serializable {
 
     public void setMembershipId(String membershipId) {
         this.membershipId = membershipId;
+    }
+    public Date getPassportExpDate() {
+        return passportExpDate;
+    }
+
+    public void setPassportExpDate(Date passportExpDate) {
+        this.passportExpDate = passportExpDate;
+    }
+
+    public Date getPassportIssueDate() {
+        return passportIssueDate;
+    }
+
+    public void setPassportIssueDate(Date passportIssueDate) {
+        this.passportIssueDate = passportIssueDate;
+    }
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }
