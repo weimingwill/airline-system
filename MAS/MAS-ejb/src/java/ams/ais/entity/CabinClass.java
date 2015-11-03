@@ -27,6 +27,7 @@ public class CabinClass implements Serializable {
     private Long cabinClassId;
     private String type;
     private String name;
+    private Integer rank;
     private Boolean deleted;
     private String milePolicy;
     private Double percentage;
@@ -114,6 +115,20 @@ public class CabinClass implements Serializable {
     @Override
     public String toString() {
         return "ams.ais.entity.CabinClass[ cabinClassId=" + cabinClassId + " ]";
+    }
+
+    /**
+     * @return the rank
+     */
+    public Integer getRank() {
+        return rank;
+    }
+
+    /**
+     * @param rank the rank to set
+     */
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
     
 }
