@@ -13,7 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -26,7 +26,7 @@ public class Pairing implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long pairingId;
     private String pairingCode;
     private Integer cabinCrewQuota;
     private Integer cockpitCrewQuota;
@@ -35,35 +35,32 @@ public class Pairing implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<FlightDuty> flightDuties;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<FlightCrew> cabinCrews;
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private BiddingSession biddingSession;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<FlightCrew> cockpitCrews;
-
-    public Long getId() {
-        return id;
+    public Long getPairingId() {
+        return pairingId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPairingId(Long pairingId) {
+        this.pairingId = pairingId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (pairingId != null ? pairingId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the pairingId fields are not set
         if (!(object instanceof Pairing)) {
             return false;
         }
         Pairing other = (Pairing) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.pairingId == null && other.pairingId != null) || (this.pairingId != null && !this.pairingId.equals(other.pairingId))) {
             return false;
         }
         return true;
@@ -71,7 +68,7 @@ public class Pairing implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.afos.entity.Pairing[ id=" + id + " ]";
+        return "ams.afos.entity.Pairing[ pairingId=" + pairingId + " ]";
     }
 
     /**
@@ -145,31 +142,17 @@ public class Pairing implements Serializable {
     }
 
     /**
-     * @return the cabinCrews
+     * @return the biddingSession
      */
-    public List<FlightCrew> getCabinCrews() {
-        return cabinCrews;
+    public BiddingSession getBiddingSession() {
+        return biddingSession;
     }
 
     /**
-     * @param cabinCrews the cabinCrews to set
+     * @param biddingSession the biddingSession to set
      */
-    public void setCabinCrews(List<FlightCrew> cabinCrews) {
-        this.cabinCrews = cabinCrews;
-    }
-
-    /**
-     * @return the cockpitCrews
-     */
-    public List<FlightCrew> getCockpitCrews() {
-        return cockpitCrews;
-    }
-
-    /**
-     * @param cockpitCrews the cockpitCrews to set
-     */
-    public void setCockpitCrews(List<FlightCrew> cockpitCrews) {
-        this.cockpitCrews = cockpitCrews;
+    public void setBiddingSession(BiddingSession biddingSession) {
+        this.biddingSession = biddingSession;
     }
 
 }

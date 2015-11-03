@@ -14,7 +14,9 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import mas.common.entity.SystemUser;
@@ -40,10 +42,19 @@ public class FlightCrew extends SystemUser implements Serializable {
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightCrewPosition position;
-    
+
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<BiddingSession> biddingSessions;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(joinColumns = @JoinColumn(name = "LANGUAGESID"))
     private List<Languages> languages;
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "sender")
+    private List<SwappingRequest> sentRequests;
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "receiver")
+    private List<SwappingRequest> receivedRequests;
 
     /**
      * @return the totalFlyingTime
@@ -169,6 +180,48 @@ public class FlightCrew extends SystemUser implements Serializable {
      */
     public void setBase(String base) {
         this.base = base;
+    }
+
+    /**
+     * @return the biddingSessions
+     */
+    public List<BiddingSession> getBiddingSessions() {
+        return biddingSessions;
+    }
+
+    /**
+     * @param biddingSessions the biddingSessions to set
+     */
+    public void setBiddingSessions(List<BiddingSession> biddingSessions) {
+        this.biddingSessions = biddingSessions;
+    }
+
+    /**
+     * @return the sentRequests
+     */
+    public List<SwappingRequest> getSentRequests() {
+        return sentRequests;
+    }
+
+    /**
+     * @param sentRequests the sentRequests to set
+     */
+    public void setSentRequests(List<SwappingRequest> sentRequests) {
+        this.sentRequests = sentRequests;
+    }
+
+    /**
+     * @return the receivedRequests
+     */
+    public List<SwappingRequest> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+    /**
+     * @param receivedRequests the receivedRequests to set
+     */
+    public void setReceivedRequests(List<SwappingRequest> receivedRequests) {
+        this.receivedRequests = receivedRequests;
     }
 
 }
