@@ -128,7 +128,7 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
                 + "AND a.aircraftCabinClasses.cabinClassId = c.cabinClassId "
                 + "AND c.deleted = FALSE "
                 + "AND a.status <> :inRetired AND a.status <> :inCrashed "
-                + "ORDER BY c.rank ASC");
+                + "ORDER BY c.rank DESC");
         query.setParameter("inId", id);
         query.setParameter("inCrashed", AircraftStatus.CRASHED);
         query.setParameter("inRetired", AircraftStatus.RETIRED);        
