@@ -40,6 +40,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import mas.util.helper.DateHelper;
 
 /**
  *
@@ -333,7 +334,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return flights;
     }
 
-    public List<Flight> getUnscheduledFlightsByRouteAndAircraftType(Route route, AircraftType aircraftType) throws NoSuchFlightException {
+    private List<Flight> getUnscheduledFlightsByRouteAndAircraftType(Route route, AircraftType aircraftType) throws NoSuchFlightException {
         Query query = em.createQuery("SELECT f FROM Flight f, AircraftType a WHERE f.route.routeId = :inRouteId AND :inAircraftType MEMBER OF f.aircraftTypes AND f.route.deleted = FALSE AND f.numOfUnscheduled > 0 AND f.deleted = FALSE");
         query.setParameter("inRouteId", route.getRouteId());
         query.setParameter("inAircraftType", aircraftType);
@@ -346,7 +347,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return flights;
     }
 
-    public List<Route> getRoutesByDeptAirport(Airport deptAirport) throws NoSuchRouteException {
+    private List<Route> getRoutesByDeptAirport(Airport deptAirport) throws NoSuchRouteException {
         Query query = em.createQuery("SELECT r FROM Route r, RouteLeg rl, Leg l WHERE r.routeId = rl.routeId AND rl.legSeq = 0 AND rl.leg.legId = l.legId AND l.departAirport.id = :inId AND r.deleted = FALSE");
         query.setParameter("inId", deptAirport.getId());
         List<Route> routes = new ArrayList<>();
@@ -377,7 +378,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
     }
 
-    public void verifyScheduleCollision(Aircraft aircraft, Date deptDate, Date arrDate, Date startDate, Date endDate, FlightSchedule currentFlightSched) throws ExistSuchFlightScheduleException {
+    private void verifyScheduleCollision(Aircraft aircraft, Date deptDate, Date arrDate, Date startDate, Date endDate, FlightSchedule currentFlightSched) throws ExistSuchFlightScheduleException {
         List<FlightSchedule> flightSchedules = getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), startDate, endDate, FlightSchedMethod.DISPLAY);
         //remove all Flightschedules starting from current flight schedule
         flightSchedules.remove(currentFlightSched);
@@ -417,7 +418,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return firstFlightSched;
     }
 
-    public Date setFlightSchedule(Flight flight, Aircraft selectedAircraft, Date deptDate, List<FlightSchedule> flightSchedules, String method)
+    private Date setFlightSchedule(Flight flight, Aircraft selectedAircraft, Date deptDate, List<FlightSchedule> flightSchedules, String method)
             throws NoMoreUnscheduledFlightException, NoSelectAircraftException {
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
@@ -484,7 +485,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return dept;
     }
 
-    public void completeOneFlightSchedule(Flight flight) throws NoMoreUnscheduledFlightException {
+    private void completeOneFlightSchedule(Flight flight) throws NoMoreUnscheduledFlightException {
         if (flight.getNumOfUnscheduled() <= 0) {
             throw new NoMoreUnscheduledFlightException(ApsMsg.NO_MORE_UNSCHEDULED_FLIGHT_ERROR);
         } else {
@@ -530,7 +531,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return firstFlightSched;
     }
 
-    public Date reSetFlightSchedule(Flight flight, Aircraft aircraft, Date deptDate, List<FlightSchedule> flightSchedules)
+    private Date reSetFlightSchedule(Flight flight, Aircraft aircraft, Date deptDate, List<FlightSchedule> flightSchedules)
             throws NoSelectAircraftException, NoSuchFlightSchedulException {
         RouteHelper routeHelper = new RouteHelper();
         routePlanningSession.getRouteDetail(flight.getRoute(), routeHelper);
@@ -669,7 +670,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
     }
 
-    public void deleteOneFlightSchedule(Flight flight) {
+    private void deleteOneFlightSchedule(Flight flight) {
         if (flight.getNumOfUnscheduled() < flight.getWeeklyFrequency()) {
             flight = em.find(Flight.class, flight.getId());
             flight.setNumOfUnscheduled(flight.getNumOfUnscheduled() + 1);
@@ -677,7 +678,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
     }
 
-    public List<FlightSchedule> getCollisionFlightSched(Aircraft aircraft, Date startDate, Date endDate, Date weekStartDate, Date weekEndDate, List<FlightSchedule> weekFlightScheds) {
+    private List<FlightSchedule> getCollisionFlightSched(Aircraft aircraft, Date startDate, Date endDate, Date weekStartDate, Date weekEndDate, List<FlightSchedule> weekFlightScheds) {
         List<FlightSchedule> collidedFlightScheds = new ArrayList<>();
         List<FlightSchedule> flightSchedules = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), startDate, endDate, FlightSchedMethod.DISPLAY));
 
@@ -698,7 +699,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return collidedFlightScheds;
     }
 
-    public List<Date> setDeptDateArrDate(Date startDate, Date weekStartDate, FlightSchedule weekFlightSched) {
+    private List<Date> setDeptDateArrDate(Date startDate, Date weekStartDate, FlightSchedule weekFlightSched) {
         List<Date> dates = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
@@ -712,7 +713,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         return dates;
     }
 
-    public int calcDateDifference(Date startDate, Date endDate) {
+    private int calcDateDifference(Date startDate, Date endDate) {
         return (int) (endDate.getTime() - startDate.getTime());
     }
 
@@ -730,7 +731,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         flightSchedule.setLeg(leg);
     }
 
-    public List<FlightSchedule> setRouteFlightSchedules(List<FlightSchedule> inFlightScheds) {
+    private List<FlightSchedule> setRouteFlightSchedules(List<FlightSchedule> inFlightScheds) {
         List<FlightSchedule> outFlightScheds = new ArrayList<>();
         for (FlightSchedule flightSchedule : inFlightScheds) {
             if (flightSchedule.getPreFlightSched() == null) {
@@ -872,7 +873,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         }
     }
 
-    public void initializeApplyDate(List<Date> dates) {
+    private void initializeApplyDate(List<Date> dates) {
         Date startDate = dates.get(0);
         Date endDate = dates.get(1);
 
@@ -880,7 +881,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.setTime(startDate);
         startCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        setToStartOfDay(startCalendar);
+        DateHelper.setToStartOfDay(startCalendar);
 //        startCalendar.add(Calendar.DATE, 7);
         startDate = startCalendar.getTime();
 
@@ -893,7 +894,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         //set end date to the next week saturday of the selected date
         Calendar endCalendar = Calendar.getInstance();
         endCalendar.setTime(endDate);
-        setToStartOfDay(endCalendar);
+        DateHelper.setToStartOfDay(endCalendar);
         if (endCalendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
             endCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
             endCalendar.add(Calendar.DATE, -1);
@@ -903,17 +904,6 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         dates.set(1, endDate);
         dates.add(deptDate);
         dates.add(arrDate);
-        System.out.println("Start Date: " + startDate);
-        System.out.println("End Date: " + endDate);
-        System.out.println("Dept Date: " + deptDate);
-        System.out.println("Arrival Date: " + arrDate);
-    }
-
-    public void setToStartOfDay(Calendar calendar) {
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.getMinimum(Calendar.HOUR_OF_DAY));
-        calendar.set(Calendar.MINUTE, calendar.getMinimum(Calendar.MINUTE));
-        calendar.set(Calendar.SECOND, calendar.getMinimum(Calendar.SECOND));
-        calendar.set(Calendar.MILLISECOND, calendar.getMinimum(Calendar.MILLISECOND));
     }
 
     @Override

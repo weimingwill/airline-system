@@ -6,7 +6,10 @@
 package managedbean.crm;
 
 import ams.aps.entity.Airport;
+import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
+import ams.crm.session.BookingSessionLocal;
+import ams.crm.util.helper.SearchFlightHelper;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -34,7 +37,12 @@ public class BookingManager implements Serializable {
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
-
+    @EJB
+    private BookingSessionLocal bookingSession;
+    
+    //Search conditions
+    private SearchFlightHelper searchFlightHelper = new SearchFlightHelper();
+    
     private int adultNo;
     private int childrenNo;
     private int infantNo;
@@ -46,7 +54,12 @@ public class BookingManager implements Serializable {
     private boolean showPremium;
     private String promoCode;
     private String choice;
-
+    
+    //Search for flights
+    private List<FlightSchedule> directFlightScheds;
+    private List<FlightSchedule> inDirectFlightScheds;
+    
+    
     /**
      * Creates a new instance of bookingManager
      */
@@ -59,12 +72,14 @@ public class BookingManager implements Serializable {
     public BookingManager() {
     }
 
-    public void initialDate() {
+    private void initialDate() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.DATE, 1);
+        searchFlightHelper.setDeptDate(calendar.getTime());
         deptDate = calendar.getTime();
         calendar.add(Calendar.DATE, 3);
+        searchFlightHelper.setArrDate(calendar.getTime());
         arrDate = calendar.getTime();
     }
 
@@ -75,7 +90,8 @@ public class BookingManager implements Serializable {
     //Auto complete departure airport when typing in.
     public List<Airport> completeDeptAirport(String query) {
         List<Airport> deptAirports = allAirports;
-        deptAirports.remove(arrAirport);
+
+        deptAirports.remove(searchFlightHelper.getArrAirport());
         query = query.toLowerCase();
         return completeAirport(deptAirports, query);
     }
@@ -83,7 +99,10 @@ public class BookingManager implements Serializable {
     //Auto complete arrive airport when typing in.
     public List<Airport> completeArrAirport(String query) {
         List<Airport> arrAirports = allAirports;
-        arrAirports.remove(deptAirport);
+//        arrAirports.remove(deptAirport);
+        System.out.println("Departure airport: " + searchFlightHelper.getDeptAirport());
+        arrAirports.remove(searchFlightHelper.getDeptAirport());
+        query = query.toLowerCase();
         return completeAirport(arrAirports, query);
     }
 
@@ -106,6 +125,12 @@ public class BookingManager implements Serializable {
 
     public String searchFlight() {
         return crmExNavController.redirectToSearchFlightResult();
+    }
+    
+    public void searchForOneWayFlights() {
+        List<List<FlightSchedule>> fligthScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, showPremium, adultNo + childrenNo);
+        directFlightScheds = fligthScheds.get(0);
+        inDirectFlightScheds = fligthScheds.get(1);
     }
     
     
@@ -191,4 +216,22 @@ public class BookingManager implements Serializable {
     public void setChoice(String choice) {
         this.choice = choice;
     }
+
+    public List<FlightSchedule> getDirectFlightScheds() {
+        return directFlightScheds;
+    }
+
+    public void setDirectFlightScheds(List<FlightSchedule> directFlightScheds) {
+        this.directFlightScheds = directFlightScheds;
+    }
+
+    public SearchFlightHelper getSearchFlightHelper() {
+        return searchFlightHelper;
+    }
+
+    public void setSearchFlightHelper(SearchFlightHelper searchFlightHelper) {
+        this.searchFlightHelper = searchFlightHelper;
+    }
+    
+    
 }
