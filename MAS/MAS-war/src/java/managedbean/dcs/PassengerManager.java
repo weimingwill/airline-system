@@ -101,7 +101,7 @@ public class PassengerManager implements Serializable {
     }
 
     public String checkInPassenger() {
-        String toLuggageCheckIn = dcsNavController.toCheckInPassenger();
+        String toLuggageCheckIn = dcsNavController.toCheckInLuggage();
         
         if(airTicketsSelected.isEmpty()){
             msgController.addMessage("No airticket selected!");
@@ -111,10 +111,14 @@ public class PassengerManager implements Serializable {
                 boolean success = checkInSession.checkInPassenger(a);
                 if (!success) {
                     msgController.addErrorMessage("Ticket " + a.getId() + " check-in error!");
+                    airTicketsSelected.remove(a);
                 }
             }
-            
+            if (airTicketsSelected.isEmpty()) {
+                toLuggageCheckIn = "";
+            }         
         }
+        return toLuggageCheckIn;
     }
 
     public void onPassportChange(AjaxBehaviorEvent event) {

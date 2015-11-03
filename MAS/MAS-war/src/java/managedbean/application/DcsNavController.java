@@ -33,7 +33,7 @@ public class DcsNavController {
     }
     
     public String toSelectSeat() {
-        return DCS_URL + "selectSeat.xhtml" + REDIRECT;
+        return DCS_URL + "selectSeat.xhtml" + REDIRECT; //not implemented yet
     }
     
     public String toCheckInLuggage() {
