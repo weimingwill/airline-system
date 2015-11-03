@@ -19,19 +19,13 @@
 
 
                         <p:outputLabel for="firstname" value="First/Given Name" />
-                        <p:inputText id="firstname" class="userProfileInput" required="true" requiredMessage="Please enter First/Given Name:" value="#{registrationController.newRegCust.firstName}" placeholder="in full,per passport"/>
+                        <p:outputLabel id="firstname" class="userProfileInput"  value="#{feedbackController.regCust.firstName}"/>
 
                         <p:outputLabel for="lastname" value="Last/Family Name"/>
-                        <p:inputText id="lastname" class="userProfileInput" required="true" requiredMessage="Please enter Last/Family Name:" value="#{registrationController.newRegCust.lastName}" placeholder="in full,per passport"/>           
-                        
+                        <p:outputLabel id="lastname" class="userProfileInput"  value="#{feedbackController.regCust.lastName}"/>           
+
                         <p:outputLabel for="email" value="Email"/>
-                        <p:inputText value="#{userController.email}" required="true" requiredMessage="Please enter email" 
-                                 validatorMessage="Invalid email format" id="email" class="userProfileInput">
-                        <p:ajax update="messages" event="blur" />
-                        <f:validateRegex
-                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                        </p:inputText>
-                        
+                        <p:outputLabel id="email" class="userProfileInput"  value="#{feedbackController.regCust.email}"/> 
                         
                     </p:panelGrid>
 

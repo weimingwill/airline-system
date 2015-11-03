@@ -6,6 +6,7 @@
 package ams.crm.session;
 
 import ams.crm.entity.Feedback;
+import ams.crm.entity.RegCust;
 import javax.ejb.Local;
 
 /**
@@ -14,5 +15,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface FeedbackSessionLocal {
-    public void createFeedback(Feedback feedback);
+    public void createFeedback(Feedback feedback,RegCust regCust);
 }

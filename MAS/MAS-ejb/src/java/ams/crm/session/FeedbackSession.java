@@ -6,11 +6,11 @@
 package ams.crm.session;
 
 import ams.crm.entity.Feedback;
+import ams.crm.entity.RegCust;
 import ams.crm.util.helper.FeedbackChannel;
 import ams.crm.util.helper.FeedbackStatus;
-import java.time.LocalDateTime;
 import java.util.Date;
-import javax.ejb.EJB;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -28,12 +28,19 @@ public class FeedbackSession implements FeedbackSessionLocal {
     
 
     @Override
-    public void createFeedback(Feedback feedback) {
+    public void createFeedback(Feedback feedback,RegCust regCust) {
         Date date = new java.util.Date();
+        
         feedback.setChannel(FeedbackChannel.INTERNET);
         feedback.setStatus(FeedbackStatus.NEW);
         feedback.setCreatedTime(date);
         entityManager.persist(feedback);
+        List<Feedback> feedbackList = regCust.getFeedbacks();
+        feedbackList.add(feedback);
+        regCust.setFeedbacks(feedbackList);
+        entityManager.merge(regCust);
+        entityManager.flush();
+        
     }
 
     // Add business logic below. (Right-click in editor and choose
