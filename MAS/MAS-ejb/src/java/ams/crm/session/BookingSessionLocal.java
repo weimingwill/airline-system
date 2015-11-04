@@ -5,6 +5,8 @@
  */
 package ams.crm.session;
 
+import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import java.util.Date;
@@ -17,5 +19,8 @@ import javax.ejb.Local;
  */
 @Local
 public interface BookingSessionLocal {
-    public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, boolean showPremium, int numOfPassenger);
+
+    public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, CabinClass cabinClass, int numOfPassenger);
+
+    public List<TicketFamily> getFlightSchedLowesetTixFams(List<FlightSchedule> flightScheds, boolean premimum);
 }

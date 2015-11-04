@@ -5,6 +5,9 @@
  */
 package managedbean.crm;
 
+import ams.ais.entity.CabinClass;
+import ams.ais.entity.TicketFamily;
+import ams.ais.session.CabinClassSessionLocal;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
@@ -39,7 +42,9 @@ public class BookingManager implements Serializable {
     private RoutePlanningSessionLocal routePlanningSession;
     @EJB
     private BookingSessionLocal bookingSession;
-    
+    @EJB
+    private CabinClassSessionLocal cabinClassSession;
+
     //Search conditions
     private int adultNo;
     private int childrenNo;
@@ -49,23 +54,25 @@ public class BookingManager implements Serializable {
     private List<Airport> allAirports;
     private Date deptDate;
     private Date arrDate;
+    private List<CabinClass> cabinClses;
+    private CabinClass selectedCabinCls;
     private boolean showPremium;
     private String promoCode;
     private String choice;
-    
+
     //Search Results
     private List<FlightSchedule> directFlightScheds;
     private List<FlightSchedule> inDirectFlightScheds;
     private String searchDeptDate;
     private String searchArrDate;
-    
-    
+
     /**
      * Creates a new instance of bookingManager
      */
     @PostConstruct
     public void init() {
         allAirports = routePlanningSession.getAllAirports();
+        cabinClses = cabinClassSession.getAllCabinClass();
         initialDate();
     }
 
@@ -122,14 +129,17 @@ public class BookingManager implements Serializable {
         searchArrDate = DateHelper.convertDateTime(arrDate);
         return crmExNavController.redirectToSearchFlightResult();
     }
-    
+
     public void searchForOneWayFlights() {
-        List<List<FlightSchedule>> fligthScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, showPremium, adultNo + childrenNo);
+        List<List<FlightSchedule>> fligthScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, selectedCabinCls, adultNo + childrenNo);
         directFlightScheds = fligthScheds.get(0);
         inDirectFlightScheds = fligthScheds.get(1);
     }
-    
-    
+
+    public List<TicketFamily> getFlightSchedLowesetTixFams() {
+        return bookingSession.getFlightSchedLowesetTixFams(directFlightScheds, showPremium);
+    }
+
     //
     //Getter and Setter    
     //
@@ -237,5 +247,20 @@ public class BookingManager implements Serializable {
         this.searchArrDate = searchArrDate;
     }
 
-    
+    public List<CabinClass> getCabinClses() {
+        return cabinClses;
+    }
+
+    public void setCabinClses(List<CabinClass> cabinClses) {
+        this.cabinClses = cabinClses;
+    }
+
+    public CabinClass getSelectedCabinCls() {
+        return selectedCabinCls;
+    }
+
+    public void setSelectedCabinCls(CabinClass selectedCabinCls) {
+        this.selectedCabinCls = selectedCabinCls;
+    }
+
 }
