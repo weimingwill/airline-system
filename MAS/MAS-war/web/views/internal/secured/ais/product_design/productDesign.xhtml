@@ -17,13 +17,14 @@
         </f:facet>
         <h:form>
 
-            <p:panelGrid columns="2">
+            <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
                 <p:panel id="ticketFamilySelection" header="Select Aircraft and Ticket Family">
                     <p:panelGrid columns="2" style="margin-bottom: 10px;">
                         <p:outputLabel for="selectAircraft" value="Select Aircraft: " />
                         <p:selectOneMenu id="selectAircraft" value="#{productDesignController.selectedAircraft}" converter="aircraftConverter" panelStyle="width:180px"
                                          effect="fade" var="aircraft" style="width:160px" filter="true" filterMatchMode="startsWith">
-                            <p:ajax listener="#{productDesignController.onAircraftChange()}" update="selectTicketFamily, ticketFamilyRule" />
+                            <!--<p:ajax listener="{productDesignController.onAircraftChange()}" update="selectTicketFamily, ticketFamilyRule" />-->
+                            <p:ajax listener="#{productDesignController.onAircraftChange()}" update="selectTicketFamily" />
 
                             <f:selectItems value="#{productDesignController.scheduledAircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}" itemValue="#{aircraft}" />
                             <p:column>
@@ -55,7 +56,8 @@
                         </ui:repeat>
                     </p:panel>
                 </p:panel>
-
+                
+                <ui:remove>
                 <p:panel style="max-width:680px; overflow: scroll">
                     <p:dataTable id="ticketFamilyRule" value="#{productDesignController.aircraftTicketFamilys}" var="tf" tableStyleClass="table-small">
                         <f:facet name="header">
@@ -101,7 +103,8 @@
                         </ui:remove>
                     </p:dataTable>
                 </p:panel>
-
+                </ui:remove>
+                
                 <ui:remove>
                     <p:panelGrid id="ticketFamilyRule2">
                         <f:facet name="ticketFamilyRules">

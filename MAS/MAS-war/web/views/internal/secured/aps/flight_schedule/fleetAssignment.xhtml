@@ -17,7 +17,7 @@
             <c:set value="#{flightManager.routeHelper}" var="route"/>
             <c:set value="#{flightManager.returnRouteHelper}" var="returnRoute"/>
             <p:panel header="Choose Aircraft Models for #{flightManager.flight.flightNo} and Its Returned Flight #{flightManager.returnedFlight.flightNo}">
-                <p:panelGrid columns="2">
+                <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
                     <p:panelGrid>
                         <pa:CCRouteDistDisplayPanel route="#{route}" flight="#{flightManager.flight}"/>
                         <pa:CCRouteDistDisplayPanel route="#{returnRoute}" flight="#{flightManager.returnedFlight}"/>

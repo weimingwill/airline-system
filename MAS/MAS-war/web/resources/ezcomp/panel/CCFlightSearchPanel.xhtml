@@ -14,7 +14,7 @@
     <cc:implementation>
         <p:accordionPanel activeIndex="1">
             <p:tab title="#{bookingManager.deptAirport.iataCode} - #{bookingManager.arrAirport.iataCode} / #{bookingManager.searchDeptDate} - #{bookingManager.searchArrDate}   " >              
-               
+
                 <p:panelGrid>
                     <p:row>
                         <p:column colspan="6">
@@ -151,16 +151,17 @@
                     </p:row>
                     <p:row>
                         <p:column colspan="6" rowspan="2">
-                            <p:selectBooleanCheckbox />
-                            <p:outputLabel value=" Only Show Premium Classes" />
+                            <p:selectOneMenu value="#{bookingManager.selectedCabinCls}" converter="cabinClassConverter">
+                                <f:selectItems value="#{bookingManager.cabinClses}" var="cabinCls" itemLabel="#{cabinCls.name}" itemValue="#{cabinCls}" />
+                            </p:selectOneMenu>
                         </p:column>
                         <p:column colspan="4"><p:outputLabel for="promoCode" value="Promo Code"/></p:column>    
                         <p:column colspan="2"><p:outputLabel value=""/></p:column>    
                     </p:row>
-                    
+
                     <p:row>
                         <p:column colspan="4"><p:inputText id="promoCode" /></p:column>
-                        <p:column colspan="2"><p:commandButton value="Search" action="#{bookingManager.searchFlight()}" /></p:column>  
+                        <p:column colspan="2"><p:commandButton value="Search" action="#{bookingManager.searchFlights()}" /></p:column>  
                     </p:row>
 
                 </p:panelGrid>

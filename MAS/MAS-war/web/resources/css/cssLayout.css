@@ -487,3 +487,7 @@ div.timeline-event-selected {
 .bookingAirport>.ui-inputfield {
     width: 230px;
 }
+
+.alignTop {
+    vertical-align: top !important;
+}

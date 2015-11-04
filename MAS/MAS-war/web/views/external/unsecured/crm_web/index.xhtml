@@ -103,8 +103,9 @@
                         </p:row>
                         <p:row>
                             <p:column colspan="6">
-                                <p:selectBooleanCheckbox />
-                                <p:outputLabel value=" Only Show Premium Classes" />
+                                <p:selectOneMenu value="#{bookingManager.selectedCabinCls}" converter="cabinClassConverter">
+                                    <f:selectItems value="#{bookingManager.cabinClses}" var="cabinCls" itemLabel="#{cabinCls.name}" itemValue="#{cabinCls}" />
+                                </p:selectOneMenu>
                             </p:column>
                         </p:row>
                         <p:row>

@@ -38,7 +38,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import mas.util.helper.SafeHelper;
 
 /**
  *
@@ -121,11 +120,11 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
     @Override
     public List<CabinClass> getFlightScheduleCabinCalsses(Long id) throws NoSuchCabinClassException {
         List<CabinClass> cabinClasses = new ArrayList<>();
-        Query query = entityManager.createQuery("SELECT c FROM FlightSchedule f, Aircraft a, CabinClass c "
+        Query query = entityManager.createQuery("SELECT c FROM FlightSchedule f, Aircraft a, CabinClass c, AircraftCabinClass ac "
                 + "WHERE f.flightScheduleId = :inId "
                 + "AND f.aircraft.aircraftId = a.aircraftId "
-                + "AND a.aircraftId = a.aircraftCabinClasses.aircraftId "
-                + "AND a.aircraftCabinClasses.cabinClassId = c.cabinClassId "
+                + "AND a.aircraftId = ac.aircraftId "
+                + "AND ac.cabinClassId = c.cabinClassId "
                 + "AND c.deleted = FALSE "
                 + "AND a.status <> :inRetired AND a.status <> :inCrashed "
                 + "ORDER BY c.rank DESC");

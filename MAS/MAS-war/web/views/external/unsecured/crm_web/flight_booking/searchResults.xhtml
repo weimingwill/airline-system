@@ -6,7 +6,8 @@
                 xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="title">
         Search Result
@@ -43,10 +44,12 @@
                         <p:commandButton value="Arrival time" />
                         <p:commandButton value="Duration" />
                     </p:column>
-                    <p:column colspan="1"></p:column>
+                    <c:forEach items="#{bookingManager.getFlightSchedLowesetTixFams()}" >
+                        <p:column colspan="1"></p:column>
+                    </c:forEach>
                 </p:row>
             </p:panelGrid>
-            
+
         </h:form>
     </ui:define>
 
