@@ -7,8 +7,8 @@ package ams.crm.session;
 
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.CabinClassSessionLocal;
-import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
@@ -36,9 +36,9 @@ public class BookingSession implements BookingSessionLocal {
     private EntityManager em;
 
     @EJB
-    private FlightScheduleSessionLocal flightSchedSession;
+    private RevMgmtSessionLocal flightSchedSession;
     @EJB
-    private CabinClassSessionLocal cabinClassSession;
+    private ProductDesignSessionLocal productDesignSession;
     
     @Override
     public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, boolean showPremium, int numOfPassenger) {

@@ -12,11 +12,11 @@ import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.PhaseDemand;
 import ams.ais.entity.SeatAllocationHistory;
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.BookingClassSessionLocal;
-import ams.ais.session.CabinClassSessionLocal;
-import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
 import ams.ais.session.SeatReallocationSessionLocal;
-import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.util.exception.NeedBookingClassException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
@@ -47,33 +47,27 @@ import managedbean.application.NavigationController;
  *
  * @author Tongtong
  */
-@Named(value = "yieldManagementController")
+@Named(value = "yieldManagementBacking")
 @ViewScoped
-public class YieldManagementController implements Serializable{
+public class YieldManagementBacking implements Serializable {
 
     @Inject
     private MsgController msgController;
 
     @Inject
     private NavigationController navigationController;
-    
-    @Inject 
+
+    @Inject
     private SeatReallocationController seatReallocationController;
 
     @EJB
-    private CabinClassSessionLocal cabinClassSession;
+    private ProductDesignSessionLocal productDesignSession;
 
     @EJB
-    private TicketFamilySessionLocal ticketFamilySession;
-
-    @EJB
-    private BookingClassSessionLocal bookingClassSession;
+    private RevMgmtSessionLocal revMgmtSession;
 
     @EJB
     private SeatReallocationSessionLocal seatReallocationSession;
-
-    @EJB
-    private FlightScheduleSessionLocal flightScheduleSession;
 
     private FlightSchedule flightSchedule;
     private CabinClass cabinClass;
@@ -106,9 +100,9 @@ public class YieldManagementController implements Serializable{
     private List<PhaseDemand> phaseDemands;
 
     /**
-     * Creates a new instance of YieldManagementController
+     * Creates a new instance of yieldManagementBacking
      */
-    public YieldManagementController() {
+    public YieldManagementBacking() {
     }
 
     @PostConstruct
@@ -130,13 +124,13 @@ public class YieldManagementController implements Serializable{
     }
 
     private void initialHelper() {
-        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        flightSchCabinClsTicFamBookingClsHelpers = revMgmtSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
     }
 
     public String toReallocateBookingClassSeats() {
         seatReallocationController.setFlightScheduleId(flightScheduleId);
         seatReallocationController.setBookingClass(bookingClass);
-        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        flightSchCabinClsTicFamBookingClsHelpers = revMgmtSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
         if (flightSchCabinClsTicFamBookingClsHelpers != null) {
             return navigationController.redirectToReallocationBookingClassSeats();
         }
@@ -145,8 +139,8 @@ public class YieldManagementController implements Serializable{
     }
 
     public String toViewSeatReallocationHistory() throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
-        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
-        flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
+        flightSchCabinClsTicFamBookingClsHelpers = revMgmtSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        flightScheduleBookingClass = revMgmtSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
         if (flightSchCabinClsTicFamBookingClsHelpers != null && flightScheduleBookingClass != null) {
             allSeatReAllocationHistorys = seatReallocationSession.getBookingClassSeatAllocationHistory(flightScheduleBookingClass);
             seatReallocationController.setAllSeatReAllocationHistorys(allSeatReAllocationHistorys);
@@ -158,10 +152,10 @@ public class YieldManagementController implements Serializable{
     }
 
     public String toUpdateYieldManagementModel() throws NoSuchFlightScheduleBookingClassException {
-        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
-        flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
+        flightSchCabinClsTicFamBookingClsHelpers = revMgmtSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        flightScheduleBookingClass = revMgmtSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
         phaseDemands = flightScheduleBookingClass.getPhaseDemands();
-        
+
         seatReallocationController.setPhaseDemands(phaseDemands);
         seatReallocationController.setFlightScheduleBookingClass(flightScheduleBookingClass);
 
@@ -209,7 +203,7 @@ public class YieldManagementController implements Serializable{
 
     public void onBookingClassChange() throws NoSuchFlightScheduleBookingClassException {
 
-        flightScheduleBookingClass = flightScheduleSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
+        flightScheduleBookingClass = revMgmtSession.getFlightScheduleBookingClass(flightScheduleId, bookingClass.getBookingClassId());
 
         System.out.println("flight schedule booking class id:" + flightScheduleBookingClass.getFlightScheduleBookingClassId().getBookingClassId());
         System.out.println("flight schedule booking class booking class id" + flightScheduleBookingClass.getFlightScheduleBookingClassId().getBookingClassId());
@@ -231,28 +225,20 @@ public class YieldManagementController implements Serializable{
         this.navigationController = navigationController;
     }
 
-    public CabinClassSessionLocal getCabinClassSession() {
-        return cabinClassSession;
+    public ProductDesignSessionLocal getproductDesignSession() {
+        return productDesignSession;
     }
 
-    public void setCabinClassSession(CabinClassSessionLocal cabinClassSession) {
-        this.cabinClassSession = cabinClassSession;
+    public void setproductDesignSession(ProductDesignSessionLocal productDesignSession) {
+        this.productDesignSession = productDesignSession;
     }
 
-    public TicketFamilySessionLocal getTicketFamilySession() {
-        return ticketFamilySession;
+    public RevMgmtSessionLocal getrevMgmtSession() {
+        return revMgmtSession;
     }
 
-    public void setTicketFamilySession(TicketFamilySessionLocal ticketFamilySession) {
-        this.ticketFamilySession = ticketFamilySession;
-    }
-
-    public BookingClassSessionLocal getBookingClassSession() {
-        return bookingClassSession;
-    }
-
-    public void setBookingClassSession(BookingClassSessionLocal bookingClassSession) {
-        this.bookingClassSession = bookingClassSession;
+    public void setrevMgmtSession(RevMgmtSessionLocal revMgmtSession) {
+        this.revMgmtSession = revMgmtSession;
     }
 
     public SeatReallocationSessionLocal getSeatReallocationSession() {
@@ -261,14 +247,6 @@ public class YieldManagementController implements Serializable{
 
     public void setSeatReallocationSession(SeatReallocationSessionLocal seatReallocationSession) {
         this.seatReallocationSession = seatReallocationSession;
-    }
-
-    public FlightScheduleSessionLocal getFlightScheduleSession() {
-        return flightScheduleSession;
-    }
-
-    public void setFlightScheduleSession(FlightScheduleSessionLocal flightScheduleSession) {
-        this.flightScheduleSession = flightScheduleSession;
     }
 
     public FlightSchedule getFlightSchedule() {
@@ -502,7 +480,5 @@ public class YieldManagementController implements Serializable{
     public void setPhaseDemands(List<PhaseDemand> phaseDemands) {
         this.phaseDemands = phaseDemands;
     }
-    
-    
 
 }

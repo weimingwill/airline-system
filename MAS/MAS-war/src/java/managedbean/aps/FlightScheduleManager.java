@@ -105,13 +105,6 @@ public class FlightScheduleManager implements Serializable {
     private Date schedEndDate;
     private List<FlightSchedule> collidedFlightScheds;
 
-    //View flight schedule
-    private List<Aircraft> aircrafts = new ArrayList<>();
-    private List<Aircraft> selectedAircrafts = new ArrayList<>();
-    private Date startDate;
-    private Date endDate;
-    private List<FlightSchedule> viewFlightScheds;
-    
     /**
      * Creates a new instance of FlightScheduleManager
      */

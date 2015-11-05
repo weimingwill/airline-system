@@ -7,7 +7,7 @@ package managedbean.ais;
 
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.CabinClassSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
 import ams.ais.util.exception.NoSuchCabinClassException;
@@ -35,7 +35,7 @@ public class CabinClassController implements Serializable{
     private MsgController msgController;
     
     @EJB
-    private CabinClassSessionLocal cabinClassSession;
+    private ProductDesignSessionLocal productDesignSession;
     
     private String oldname;
 
@@ -55,7 +55,7 @@ public class CabinClassController implements Serializable{
 
     public String createCabinClass(){
         try {
-            cabinClassSession.createCabinClass(type, name);
+            productDesignSession.createCabinClass(type, name);
             msgController.addMessage("Create cabin class successfully!");
         } catch (ExistSuchCabinClassNameException | ExistSuchCabinClassTypeException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -64,12 +64,12 @@ public class CabinClassController implements Serializable{
     }
     
     public List<CabinClass> getAllCabinClass() {
-        return cabinClassSession.getAllCabinClass();
+        return productDesignSession.getAllCabinClass();
     }
     
     public void deleteCabinClass() {
         try{
-        cabinClassSession.deleteCabinClass(selectedCabinClass.getName());
+        productDesignSession.deleteCabinClass(selectedCabinClass.getName());
         msgController.addMessage("Delete cabin class successfully");
         } catch (NoSuchCabinClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -80,7 +80,7 @@ public class CabinClassController implements Serializable{
     public String updateCabinClass() {
         try {
             System.out.println("selected cabin class name is: "+selectedCabinClass);
-            cabinClassSession.updateCabinClass(selectedCabinClass.getCabinClassId(),selectedCabinClass.getType(),selectedCabinClass.getName());
+            productDesignSession.updateCabinClass(selectedCabinClass.getCabinClassId(),selectedCabinClass.getType(),selectedCabinClass.getName());
             msgController.addMessage("Edit cabin class successfully!");
         }catch( ExistSuchCabinClassNameException | NoSuchCabinClassException | ExistSuchCabinClassTypeException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -92,7 +92,7 @@ public class CabinClassController implements Serializable{
     public List<TicketFamily> getCabinClassTicketFamilys(String type){
         List<TicketFamily> ticketFamilys;
         try {
-            ticketFamilys = cabinClassSession.getCabinClassTicketFamilys(type);
+            ticketFamilys = productDesignSession.getCabinClassTicketFamilys(type);
         } catch (NoSuchTicketFamilyException e) {
             return null;
         }
@@ -100,12 +100,12 @@ public class CabinClassController implements Serializable{
     }
     
     public List<String> getCabinClassTicketFamilyNames(String type){
-        return cabinClassSession.getCabinClassTicketFamilyNames(type);
+        return productDesignSession.getCabinClassTicketFamilyNames(type);
     }
     
     public CabinClass getCabinClassByName(String name){
         try {
-            return cabinClassSession.getCabinClassByName(name);
+            return productDesignSession.getCabinClassByName(name);
         } catch (NoSuchCabinClassException ex) {
             return null;
         }

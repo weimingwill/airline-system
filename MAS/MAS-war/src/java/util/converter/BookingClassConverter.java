@@ -6,7 +6,7 @@
 package util.converter;
  
 import ams.ais.entity.BookingClass;
-import ams.ais.session.BookingClassSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.AisMsg;
 import javax.ejb.EJB;
@@ -22,13 +22,13 @@ import javax.faces.convert.FacesConverter;
 public class BookingClassConverter implements Converter {
     
     @EJB
-    private BookingClassSessionLocal bookingClassSession;
+    private RevMgmtSessionLocal revMgmtSession;
     
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                return bookingClassSession.getBookingClassById(Long.parseLong(value));
+                return revMgmtSession.getBookingClassById(Long.parseLong(value));
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
             } catch (NoSuchBookingClassException ex) {

@@ -7,8 +7,7 @@ package managedbean.ais;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
-import ams.ais.session.AircraftSessionLocal;
-import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.helper.BookingClassHelper;
@@ -18,7 +17,7 @@ import ams.ais.util.helper.FlightScheduleBookingClassHelper;
 import ams.ais.util.helper.SeatClassHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.entity.FlightSchedule;
-import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
 import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.aps.entity.Route;
 import ams.aps.entity.RouteLeg;
@@ -52,15 +51,11 @@ public class FlightScheduleController implements Serializable {
     private NavigationController navigationController;
     @Inject
     private MsgController msgController;
-    @Inject
-    private SeatReallocationController seatReallocationController;
 
     @EJB
-    private FlightScheduleSessionLocal flightScheduleSession;
+    private RevMgmtSessionLocal revMgmtSession;
     @EJB
-    private TicketFamilySessionLocal ticketFamilySession;
-    @EJB
-    private AircraftSessionLocal aircraftSession;
+    private ProductDesignSessionLocal productDesignSession;
     private Long flightScheduleId;
     private String cabinClassType;
     private String bookingClassName;
@@ -78,7 +73,7 @@ public class FlightScheduleController implements Serializable {
     public List<BookingClass> getTicketFamilyBookingClasses(String cabinClassName, String ticketFamilyName) {
         List<BookingClass> bookingClasses;
         try {
-            bookingClasses = ticketFamilySession.getTicketFamilyBookingClasses(cabinClassName, ticketFamilyName);
+            bookingClasses = productDesignSession.getTicketFamilyBookingClasses(cabinClassName, ticketFamilyName);
         } catch (NoSuchBookingClassException e) {
             bookingClasses = new ArrayList<>();
         }
@@ -88,7 +83,7 @@ public class FlightScheduleController implements Serializable {
     public List<FlightSchedule> getAllFlightSchedule() {
         List<FlightSchedule> flightSchedules = new ArrayList<>();
         try {
-            flightSchedules = flightScheduleSession.getAllFilghtSchedules();
+            flightSchedules = revMgmtSession.getAllFilghtSchedules();
         } catch (NoSuchFlightSchedulException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
@@ -139,7 +134,7 @@ public class FlightScheduleController implements Serializable {
             }
 //            if (!selectedFlightSchedule.getPriced()) {
 //                try {
-//                    ticketFamilySession.suggestTicketFamilyPrice(flightScheduleId);
+//                    productDesignSession.suggestTicketFamilyPrice(flightScheduleId);
 //                } catch (NoSuchAircraftException | NoSuchCabinClassException | NoSuchCabinClassTicketFamilyException 
 //                        | NoSuchFlightScheduleBookingClassException ex) {
 //                    msgController.addErrorMessage("Failed to suggest price: " + ex.getMessage());
@@ -156,7 +151,7 @@ public class FlightScheduleController implements Serializable {
 
     public boolean verifyTicketFamilyExistence(Long flightScheduleId) {
         try {
-            aircraftSession.verifyTicketFamilyExistence(flightScheduleSession.getFlightScheduleAircraft(flightScheduleId).getAircraftId());
+            productDesignSession.verifyTicketFamilyExistence(revMgmtSession.getFlightScheduleAircraft(flightScheduleId).getAircraftId());
         } catch (NoSuchAircraftException | NoSuchCabinClassTicketFamilyException e) {
             msgController.addErrorMessage(e.getMessage() + ". Please complete product design first");
             return false;
@@ -166,7 +161,7 @@ public class FlightScheduleController implements Serializable {
 
     public boolean verifyFlightScheduleBookingClassExistence(Long flightScheduleId) {
         try {
-            flightScheduleSession.verifyFlightScheduleBookingClassExistence(flightScheduleId);
+            revMgmtSession.verifyFlightScheduleBookingClassExistence(flightScheduleId);
         } catch (NoSuchFlightScheduleBookingClassException e) {
             msgController.addErrorMessage(e.getMessage() + ". Please add booking classes first.");
             return false;
@@ -190,7 +185,7 @@ public class FlightScheduleController implements Serializable {
     public List<CabinClass> getFlightScheduleCabinClasses() {
         List<CabinClass> cabinClasses;
         try {
-            cabinClasses = flightScheduleSession.getFlightScheduleCabinCalsses(flightScheduleId);
+            cabinClasses = revMgmtSession.getFlightScheduleCabinCalsses(flightScheduleId);
         } catch (NoSuchCabinClassException e) {
             return null;
         }
@@ -200,7 +195,7 @@ public class FlightScheduleController implements Serializable {
     public void onViewBookingClassClick() {
         System.out.println("FlightScheduleId : " + selectedFlightSchedule);
         if (selectedFlightSchedule != null) {
-            flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(selectedFlightSchedule.getFlightScheduleId());
+            flightSchCabinClsTicFamBookingClsHelpers = revMgmtSession.getFlightSchCabinClsTicFamBookingClsHelpers(selectedFlightSchedule.getFlightScheduleId());
             RequestContext context = RequestContext.getCurrentInstance();
             context.update(":viewBookingClassForm:viewBookingClass");
             context.execute("PF('flightScheduleBookingClassDialog').show()");
@@ -221,7 +216,7 @@ public class FlightScheduleController implements Serializable {
 
     public String getArrival(Route route) {
         for (RouteLeg routeleg : route.getRouteLegs()) {
-            if (routeleg.getLegSeq() == (route.getRouteLegs().size()-1)) {
+            if (routeleg.getLegSeq() == (route.getRouteLegs().size() - 1)) {
                 return routeleg.getLeg().getArrivalAirport().getAirportName();
             } else {
             }
@@ -230,7 +225,7 @@ public class FlightScheduleController implements Serializable {
     }
 
     public boolean haveBookingClass() {
-        return flightScheduleSession.haveBookingClass(flightScheduleId);
+        return revMgmtSession.haveBookingClass(flightScheduleId);
     }
 
     //Getter and setter

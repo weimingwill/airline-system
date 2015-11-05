@@ -39,7 +39,7 @@ import mas.util.helper.SafeHelper;
 public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
     @EJB
-    FlightScheduleSessionLocal flightScheduleSession;
+    RevMgmtSessionLocal revMgmtSession;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -289,7 +289,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
             throws NoSuchFlightScheduleBookingClassException {
 
         List<FlightScheduleBookingClass> fsbcs
-                = flightScheduleSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(fsbc.getFlightSchedule().getFlightScheduleId(), fsbc.getBookingClass().getTicketFamily().getTicketFamilyId());
+                = revMgmtSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(fsbc.getFlightSchedule().getFlightScheduleId(), fsbc.getBookingClass().getTicketFamily().getTicketFamilyId());
         fsbcs.remove(fsbc);
         List<FlightScheduleBookingClass> restFlightScheduleBookingClasses = fsbcs;
 
@@ -308,7 +308,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 
     @Override
     public List<PhaseDemand> getPhaseDemands(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> helpers) throws NoSuchFlightSchedulException, NoSuchFlightScheduleBookingClassException, NeedBookingClassException {
-        List<BookingClass> bookingClasses = flightScheduleSession.getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
+        List<BookingClass> bookingClasses = revMgmtSession.getBookingClassesFromFlightSchCabinClsTicFamBookingClsHelpers(helpers);
         long bookingClassId = bookingClasses.get(0).getBookingClassId();
         FlightScheduleBookingClassId fsbci = new FlightScheduleBookingClassId();
         fsbci.setBookingClassId(bookingClassId);
@@ -345,13 +345,13 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
         flightScheduleID = flightScheduleId;
 
         try {
-            flightSchedule = flightScheduleSession.getFlightScheduleById(flightScheduleId);
+            flightSchedule = revMgmtSession.getFlightScheduleById(flightScheduleId);
         } catch (NoSuchFlightSchedulException ex) {
             System.out.println(ex.getMessage());
         }
 
         try {
-            fsbcs = flightScheduleSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
+            fsbcs = revMgmtSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
         } catch (NoSuchFlightScheduleBookingClassException ex) {
             System.out.println(ex.getMessage());
         }
@@ -411,13 +411,13 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 //
 //}
 //        try {
-//            flightSchedule = flightScheduleSession.getFlightScheduleById(flightScheduleId);
+//            flightSchedule = revMgmtSession.getFlightScheduleById(flightScheduleId);
 //        } catch (NoSuchFlightSchedulException ex) {
 //            System.out.println(ex.getMessage());
 //        }
 //
 //        try {
-//            fsbcs = flightScheduleSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
+//            fsbcs = revMgmtSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
 //        } catch (NoSuchFlightScheduleBookingClassException ex) {
 //            System.out.println(ex.getMessage());
 //        }
@@ -466,7 +466,7 @@ public class SeatReallocationSession implements SeatReallocationSessionLocal {
 //
 //        List<FlightScheduleBookingClass> fsbcs = new ArrayList<>();
 //        try {
-//            fsbcs = flightScheduleSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
+//            fsbcs = revMgmtSession.getFlightScheduleBookingClassJoinTables(flightScheduleId);
 //
 //        } catch (NoSuchFlightScheduleBookingClassException ex) {
 //
