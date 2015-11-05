@@ -121,14 +121,20 @@ public class FlightScheduleSession implements FlightScheduleSessionLocal {
     @Override
     public List<CabinClass> getFlightScheduleCabinCalsses(Long id) throws NoSuchCabinClassException {
         List<CabinClass> cabinClasses = new ArrayList<>();
+        Query query = entityManager.createQuery("SELECT c FROM FlightSchedule f, Aircraft a, CabinClass c "
+                + "WHERE f.flightScheduleId = :inId "
+                + "AND f.aircraft.aircraftId = a.aircraftId "
+                + "AND a.aircraftId = a.aircraftCabinClasses.aircraftId "
+                + "AND a.aircraftCabinClasses.cabinClassId = c.cabinClassId "
+                + "AND c.deleted = FALSE "
+                + "AND a.status <> :inRetired AND a.status <> :inCrashed "
+                + "ORDER BY c.rank DESC");
+        query.setParameter("inId", id);
+        query.setParameter("inCrashed", AircraftStatus.CRASHED);
+        query.setParameter("inRetired", AircraftStatus.RETIRED);        
         try {
-            for (AircraftCabinClass aircraftCabinClass : SafeHelper.emptyIfNull(getFlightScheduleAircraft(id).getAircraftCabinClasses())) {
-                CabinClass cabinClass = aircraftCabinClass.getCabinClass();
-                if (!cabinClass.getDeleted()) {
-                    cabinClasses.add(cabinClass);
-                }
-            }
-        } catch (NoSuchAircraftException e) {
+            cabinClasses = (List<CabinClass>)query.getResultList();
+        } catch (NoResultException e) {
             throw new NoSuchCabinClassException(AisMsg.NO_SUCH_CABIN_CLASS_ERROR);
         }
         return cabinClasses;
