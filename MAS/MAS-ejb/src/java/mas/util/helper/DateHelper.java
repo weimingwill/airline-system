@@ -21,7 +21,14 @@ public class DateHelper {
         calendar.set(Calendar.SECOND, calendar.getMinimum(Calendar.SECOND));
         calendar.set(Calendar.MILLISECOND, calendar.getMinimum(Calendar.MILLISECOND));
     }
-    
+
+    public static void setToEndOfDay(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+    }
+
     public static String convertDateTime(Date date) {
         return new SimpleDateFormat("EE, dd MMM yyyy").format(date);
     }

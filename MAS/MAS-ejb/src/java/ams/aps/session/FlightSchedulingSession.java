@@ -844,6 +844,8 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                 calendar.add(Calendar.DATE, 6);
                 arrDate = calendar.getTime();
             }
+            deptDate = dates.get(2);
+            arrDate = dates.get(3);
         }
         collidedFlightScheds.addAll(flightSchedHs);
         return collidedFlightScheds;
@@ -865,8 +867,8 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         calendar.setTime(arrDate);
         for (Aircraft aircraft : aircrafts) {
             System.out.println("Aircraft: " + aircraft.getTailNo());
+            List<FlightSchedule> weekFlightScheds = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), weekStartDate, weekEndDate, FlightSchedMethod.DISPLAY));
             while (arrDate.before(endDate) || arrDate.equals(endDate)) {
-                List<FlightSchedule> weekFlightScheds = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), weekStartDate, weekEndDate, FlightSchedMethod.DISPLAY));
                 List<FlightSchedule> changedWeekFlightScheds = new ArrayList<>();
                 changedWeekFlightScheds.addAll(weekFlightScheds);
                 List<FlightSchedule> fligthSchedules = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), deptDate, arrDate, FlightSchedMethod.DISPLAY));
@@ -878,6 +880,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                             List<Date> newDates = setDeptDateArrDate(deptDate, weekStartDate, weekFlightSched);
                             Date newDeptDate = newDates.get(0);
                             Date newArrDate = newDates.get(1);
+
                             System.out.println("newDeptDate: " + newDeptDate + ". newArrDate: " + newArrDate);
                             System.out.println("DeptDate: " + flightSchedule.getDepartDate() + ". ArrDate: " + flightSchedule.getArrivalDate());
                             if (newDeptDate.equals(flightSchedule.getDepartDate()) && newArrDate.equals(flightSchedule.getArrivalDate())) {
@@ -938,6 +941,13 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                 calendar.add(Calendar.DATE, 6);
                 arrDate = calendar.getTime();
             }
+            for (FlightSchedule weekFlightSched : weekFlightScheds) {
+                try {
+                    updateFlightSchedule(weekFlightSched.getFlight().getFlightNo(), aircraft, weekFlightSched.getDepartDate(), weekFlightSched.getArrivalDate(), weekStartDate, weekEndDate, weekFlightSched);
+                } catch (Exception e) {
+                }
+            }
+
             deptDate = dates.get(2);
             arrDate = dates.get(3);
             calendar.setTime(arrDate);
@@ -965,7 +975,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         //set end date to the next week saturday of the selected date
         Calendar endCalendar = Calendar.getInstance();
         endCalendar.setTime(endDate);
-        DateHelper.setToStartOfDay(endCalendar);
+        DateHelper.setToEndOfDay(endCalendar);
         if (endCalendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
             endCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
             endCalendar.add(Calendar.DATE, -1);
