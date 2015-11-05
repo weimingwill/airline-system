@@ -25,7 +25,7 @@
                     <f:facet name="header">
                         Selected unscheduled flight
                     </f:facet>
-                    <p:panel id="pnl" toggleable="true" header="Flight No: #{flight.flightNo}">
+                    <p:panel id="pnl" toggleable="true" header="Flight No: #{flight.flightNo}" collapsed="true">
                         <p:panelGrid  styleClass="unscheduledFlightPanelGrid" style="width:100%;">
                             <p:row>
                                 <p:column>
@@ -101,7 +101,7 @@
 
                 <pe:timeline id="timeline" value="#{flightScheduleManager.model}" var="flightSchedule" varGroup="aircraft" 
                              browserTimeZone="GMT+8" editable="true" eventMargin="10" eventMarginAxis="0"  widgetVar="timeline" 
-                             min="#{flightScheduleManager.timelineMinDate}" max="#{flightScheduleManager.timelineMaxDate}"
+                             min="#{flightScheduleManager.calendarMinDate}" max="#{flightScheduleManager.calendarMaxDate}"
                              zoomMin="#{flightScheduleManager.zoomMin}" 
                              start="#{flightScheduleManager.calendarMinDate}" 
                              end="#{flightScheduleManager.calendarMaxDate}" 

@@ -7,7 +7,7 @@ package managedbean.crm;
 
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.CabinClassSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
@@ -43,7 +43,7 @@ public class BookingManager implements Serializable {
     @EJB
     private BookingSessionLocal bookingSession;
     @EJB
-    private CabinClassSessionLocal cabinClassSession;
+    private ProductDesignSessionLocal productDesignSession;
 
     //Search conditions
     private int adultNo;
@@ -72,7 +72,7 @@ public class BookingManager implements Serializable {
     @PostConstruct
     public void init() {
         allAirports = routePlanningSession.getAllAirports();
-        cabinClses = cabinClassSession.getAllCabinClass();
+        cabinClses = productDesignSession.getAllCabinClass();
         initialDate();
     }
 

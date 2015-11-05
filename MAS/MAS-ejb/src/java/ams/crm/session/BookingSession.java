@@ -6,10 +6,9 @@
 package ams.crm.session;
 
 import ams.ais.entity.CabinClass;
-import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.CabinClassSessionLocal;
-import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.aps.entity.Airport;
@@ -38,10 +37,10 @@ public class BookingSession implements BookingSessionLocal {
     private EntityManager em;
 
     @EJB
-    private FlightScheduleSessionLocal flightSchedSession;
+    private RevMgmtSessionLocal flightSchedSession;
     @EJB
-    private CabinClassSessionLocal cabinClassSession;
-
+    private ProductDesignSessionLocal productDesignSession;
+    
     @Override
     public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, CabinClass cabinClass, int numOfPassenger) {
         Calendar calendar = Calendar.getInstance();
@@ -115,7 +114,7 @@ public class BookingSession implements BookingSessionLocal {
 
     private List<TicketFamily> addTixFams(List<TicketFamily> tixFams, FlightSchedule flightSched, CabinClass cabinClass) {
         try {
-            List<TicketFamily> ticketFamilys = cabinClassSession.getCabinClassTicketFamilysFromJoinTable(flightSched.getAircraft().getAircraftId(), cabinClass.getCabinClassId());
+            List<TicketFamily> ticketFamilys = productDesignSession.getCabinClassTicketFamilysFromJoinTable(flightSched.getAircraft().getAircraftId(), cabinClass.getCabinClassId());
             for (TicketFamily ticketFamily : ticketFamilys) {
                 if (tixFams.size() < 4) {
                     tixFams.add(ticketFamily);

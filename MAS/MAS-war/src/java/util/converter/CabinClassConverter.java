@@ -6,7 +6,7 @@
 package util.converter;
 
 import ams.ais.entity.CabinClass;
-import ams.ais.session.CabinClassSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.helper.AisMsg;
 import javax.ejb.EJB;
@@ -27,13 +27,13 @@ import javax.faces.convert.FacesConverter;
 public class CabinClassConverter implements Converter {
 
     @EJB
-    private CabinClassSessionLocal cabinClassSession;
+    private ProductDesignSessionLocal productDesignSession;
 
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                return cabinClassSession.getCabinClassByName(value);
+                return productDesignSession.getCabinClassByName(value);
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
             } catch (NoSuchCabinClassException ex) {

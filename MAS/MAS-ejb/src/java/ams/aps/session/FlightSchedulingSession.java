@@ -5,6 +5,16 @@
  */
 package ams.aps.session;
 
+import ams.ais.entity.BookingClass;
+import ams.ais.entity.CabinClassTicketFamily;
+import ams.ais.entity.FlightScheduleBookingClass;
+import ams.ais.entity.TicketFamily;
+import ams.ais.entity.helper.FlightScheduleBookingClassId;
+import ams.ais.session.ProductDesignSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
+import ams.ais.util.exception.ExistSuchBookingClassNameException;
+import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
+import ams.ais.util.helper.BookingClassHelper;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftType;
 import ams.aps.entity.Airport;
@@ -34,6 +44,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -56,9 +68,14 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
     private FleetPlanningSessionLocal fleetPlanningSession;
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
-    public final double BUFFER_TIME = 1 / 6.0; // buffer time for passengers to alight
-    public final double STOPOVER_TIME = 1 / 3.0; //time for plane to rest at the stop-over airport
-    public final double DEFAULT_SPEED_FRACTION = 0.8;
+    @EJB
+    private RevMgmtSessionLocal revMgmtSession;
+    @EJB
+    private ProductDesignSessionLocal productDesignSession;
+
+    private final double BUFFER_TIME = 1 / 6.0; // buffer time for passengers to alight
+    private final double STOPOVER_TIME = 1 / 3.0; //time for plane to rest at the stop-over airport
+    private final double DEFAULT_SPEED_FRACTION = 0.8;
     private final long ONE_MINUTE_IN_MILLIS = 60 * 1000;//one minute in millisecs
 
     private boolean createFlight(Flight flight) {
@@ -474,6 +491,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                 em.merge(flightSched);
                 em.flush();
             }
+            createFlightSchedBookingClass(flightSched);
             flightSched = nextFlightSched;
 
             i++;
@@ -483,6 +501,60 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             completeOneFlightSchedule(flight);
         }
         return dept;
+    }
+
+    //Set default one booking class to each ticket family
+    private void createFlightSchedBookingClass(FlightSchedule flightSchedule) {
+        int i = 0;
+        boolean noError = true;
+        double basicPrice = 100000;
+        List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
+        for (TicketFamily ticketFamily : revMgmtSession.getFlightScheduleTixFams(flightSchedule.getFlightScheduleId())) {
+            //get min price as the basic price
+            double price = revMgmtSession.calTicketFamilyPrice(flightSchedule.getFlightScheduleId(), ticketFamily.getTicketFamilyId());
+            if (basicPrice > price) {
+                basicPrice = price;
+            }
+            while (noError && i < 26) {
+                BookingClass bookingClass;
+                try {
+                    bookingClass = revMgmtSession.createBookingClass(BookingClassHelper.getBookingClsNames().get(i), ticketFamily);
+                } catch (ExistSuchBookingClassNameException e) {
+                    bookingClass = revMgmtSession.getBookingClassByName(BookingClassHelper.getBookingClsNames().get(i));
+                }
+                //Create flightSchedule booking class
+                FlightScheduleBookingClassId flightScheduleBookingClassId = new FlightScheduleBookingClassId();
+                flightScheduleBookingClassId.setFlightScheduleId(flightSchedule.getFlightScheduleId());
+                flightScheduleBookingClassId.setBookingClassId(bookingClass.getBookingClassId());
+                FlightScheduleBookingClass flightSchedBookingCls = revMgmtSession.createFlightSchedBookingCls(flightSchedule, bookingClass, flightScheduleBookingClassId);
+
+                CabinClassTicketFamily cabinClsTixFam = new CabinClassTicketFamily();
+                try {
+                    cabinClsTixFam = productDesignSession.getCabinClassTicketFamilyJoinTable(flightSchedule.getAircraft().getAircraftId(), ticketFamily.getCabinClass().getCabinClassId(), ticketFamily.getTicketFamilyId());
+                } catch (NoSuchCabinClassTicketFamilyException ex) {
+                    System.out.println(ex.getMessage());
+                }
+                flightSchedBookingCls.setSeatQty(cabinClsTixFam.getSeatQty());
+                flightSchedBookingCls.setPrice((float) price);
+                em.merge(flightSchedBookingCls);
+                em.flush();
+                flightScheduleBookingClasses.add(flightSchedBookingCls);
+                noError = false;
+            }
+            i++;
+            noError = true;
+        }
+        setBasicPriceAndPriceCoefficient(flightScheduleBookingClasses, basicPrice);
+    }
+
+    private void setBasicPriceAndPriceCoefficient(List<FlightScheduleBookingClass> flightScheduleBookingClasses, double basicPrice) {
+        for (FlightScheduleBookingClass flightSchedBookingCls : flightScheduleBookingClasses) {
+            flightSchedBookingCls = em.find(FlightScheduleBookingClass.class, flightSchedBookingCls.getFlightScheduleBookingClassId());
+            flightSchedBookingCls.setBasicPrice((float) basicPrice);
+            flightSchedBookingCls.setPriceCoefficient((float) (flightSchedBookingCls.getPrice() / basicPrice));
+            em.merge(flightSchedBookingCls);
+            em.flush();
+        }
     }
 
     private void completeOneFlightSchedule(Flight flight) throws NoMoreUnscheduledFlightException {
@@ -772,6 +844,8 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                 calendar.add(Calendar.DATE, 6);
                 arrDate = calendar.getTime();
             }
+            deptDate = dates.get(2);
+            arrDate = dates.get(3);
         }
         collidedFlightScheds.addAll(flightSchedHs);
         return collidedFlightScheds;
@@ -793,8 +867,8 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         calendar.setTime(arrDate);
         for (Aircraft aircraft : aircrafts) {
             System.out.println("Aircraft: " + aircraft.getTailNo());
+            List<FlightSchedule> weekFlightScheds = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), weekStartDate, weekEndDate, FlightSchedMethod.DISPLAY));
             while (arrDate.before(endDate) || arrDate.equals(endDate)) {
-                List<FlightSchedule> weekFlightScheds = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), weekStartDate, weekEndDate, FlightSchedMethod.DISPLAY));
                 List<FlightSchedule> changedWeekFlightScheds = new ArrayList<>();
                 changedWeekFlightScheds.addAll(weekFlightScheds);
                 List<FlightSchedule> fligthSchedules = setRouteFlightSchedules(getFlightSchedulesByTailNoAndTime(aircraft.getTailNo(), deptDate, arrDate, FlightSchedMethod.DISPLAY));
@@ -806,6 +880,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                             List<Date> newDates = setDeptDateArrDate(deptDate, weekStartDate, weekFlightSched);
                             Date newDeptDate = newDates.get(0);
                             Date newArrDate = newDates.get(1);
+
                             System.out.println("newDeptDate: " + newDeptDate + ". newArrDate: " + newArrDate);
                             System.out.println("DeptDate: " + flightSchedule.getDepartDate() + ". ArrDate: " + flightSchedule.getArrivalDate());
                             if (newDeptDate.equals(flightSchedule.getDepartDate()) && newArrDate.equals(flightSchedule.getArrivalDate())) {
@@ -814,7 +889,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                             }
                         }
                     }
-                    
+
                     for (FlightSchedule flightSchedule : fligthSchedules) {
                         for (FlightSchedule weekFlightSched : changedWeekFlightScheds) {
                             List<Date> newDates = setDeptDateArrDate(deptDate, weekStartDate, weekFlightSched);
@@ -855,7 +930,6 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                         Date newArrDate = newDates.get(1);
                         System.out.println("Apply external: Create to " + aircraft.getTailNo() + " " + newDeptDate + " - " + newArrDate);
                         try {
-
                             createFlightSchedule(weekFlightSched.getFlight(), aircraft, newDeptDate, newArrDate, deptDate, arrDate, FlightSchedMethod.APPLY);
                         } catch (Exception e) {
                             System.out.println("Apply create flight schedule error");
@@ -867,6 +941,13 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                 calendar.add(Calendar.DATE, 6);
                 arrDate = calendar.getTime();
             }
+            for (FlightSchedule weekFlightSched : weekFlightScheds) {
+                try {
+                    updateFlightSchedule(weekFlightSched.getFlight().getFlightNo(), aircraft, weekFlightSched.getDepartDate(), weekFlightSched.getArrivalDate(), weekStartDate, weekEndDate, weekFlightSched);
+                } catch (Exception e) {
+                }
+            }
+
             deptDate = dates.get(2);
             arrDate = dates.get(3);
             calendar.setTime(arrDate);
@@ -894,7 +975,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         //set end date to the next week saturday of the selected date
         Calendar endCalendar = Calendar.getInstance();
         endCalendar.setTime(endDate);
-        DateHelper.setToStartOfDay(endCalendar);
+        DateHelper.setToEndOfDay(endCalendar);
         if (endCalendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
             endCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
             endCalendar.add(Calendar.DATE, -1);

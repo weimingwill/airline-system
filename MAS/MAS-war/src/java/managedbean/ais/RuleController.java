@@ -6,7 +6,7 @@
 package managedbean.ais;
 
 import ams.ais.entity.Rule;
-import ams.ais.session.RuleSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.util.exception.ExistSuchRuleException;
 import ams.ais.util.exception.NoSuchRuleException;
 import java.io.Serializable;
@@ -30,7 +30,7 @@ public class RuleController implements Serializable{
     @Inject
     private MsgController msgController;
     
-    @EJB RuleSessionLocal ruleSession;
+    @EJB ProductDesignSessionLocal productDesignSession;
     
     private String oldname;
     private String name;
@@ -76,7 +76,7 @@ public class RuleController implements Serializable{
     
     public String createRule (){
         try {
-            ruleSession.createRule(name,description);
+            productDesignSession.createRule(name,description);
             msgController.addMessage("Create New Rule successfully!");
         } catch (ExistSuchRuleException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -86,12 +86,12 @@ public class RuleController implements Serializable{
     
     
     public List<Rule> getAllRule() {
-        return ruleSession.getAllRules();
+        return productDesignSession.getAllRules();
     }
     
     public void deleteRule() {
         try{
-        ruleSession.deleteRule(selectedRule.getName());
+        productDesignSession.deleteRule(selectedRule.getName());
         System.out.printf("name is :"+selectedRule.getName());
         msgController.addMessage("Delete rule successfully");
         } catch (NoSuchRuleException ex) {
@@ -101,7 +101,7 @@ public class RuleController implements Serializable{
     
     public String updateRule() {
         try {
-            ruleSession.updateRule(selectedRule.getRuleId(),selectedRule.getName(),selectedRule.getDescription());
+            productDesignSession.updateRule(selectedRule.getRuleId(),selectedRule.getName(),selectedRule.getDescription());
             msgController.addMessage("Edit rule successfully!");
         }catch( ExistSuchRuleException | NoSuchRuleException  ex) {
             msgController.addErrorMessage(ex.getMessage());
