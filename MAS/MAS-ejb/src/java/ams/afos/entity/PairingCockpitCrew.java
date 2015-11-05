@@ -7,6 +7,7 @@ package ams.afos.entity;
 
 import ams.afos.entity.helper.PairingCrewId;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -15,6 +16,8 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -38,6 +41,9 @@ public class PairingCockpitCrew implements Serializable {
 
     @Column(name = "STATUS")
     private String status;
+    
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date lastUpdateTime;
 
     /**
      * @return the pairingCrewId
@@ -93,6 +99,20 @@ public class PairingCockpitCrew implements Serializable {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    /**
+     * @return the lastUpdateTime
+     */
+    public Date getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    /**
+     * @param lastUpdateTime the lastUpdateTime to set
+     */
+    public void setLastUpdateTime(Date lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
     }
 
 }
