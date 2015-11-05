@@ -60,19 +60,19 @@ public class NavigationController implements Serializable {
 
     //Password reset
     public String toPasswordReset() {
-        return "/views/unsecured/common/users/resetPassword.xhtml";
+        return "/views/internal/unsecured/common/users/resetPassword.xhtml";
     }
 
     public String toPasswordResetSendEmail() {
-        return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml";
+        return "/views/internal/unsecured/common/users/resetPasswordSendEmail.xhtml";
     }
 
     public String redirectToPasswordResetSendEmail() {
-        return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml" + REDIRECT;
+        return "/views/internal/unsecured/common/users/resetPasswordSendEmail.xhtml" + REDIRECT;
     }
 
     public String toUnsecuredUsersFolder() {
-        return "http://localhost:8080/MAS-war/views/unsecured/common/users/";
+        return "http://localhost:8080/MAS-war/views/internal/unsecured/common/users/";
     }
 
     //Access control
