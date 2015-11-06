@@ -13,6 +13,8 @@ import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
+import ams.aps.util.exception.NoSuchFlightSchedulException;
+import ams.aps.util.helper.ApsMsg;
 import ams.aps.util.helper.FlightSchedStatus;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,36 +39,39 @@ public class BookingSession implements BookingSessionLocal {
     private EntityManager em;
 
     @EJB
-    private RevMgmtSessionLocal flightSchedSession;
+    private RevMgmtSessionLocal revMgmtSession;
     @EJB
     private ProductDesignSessionLocal productDesignSession;
-    
+
     @Override
-    public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, CabinClass cabinClass, int numOfPassenger) {
+    public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate) throws NoSuchFlightSchedulException{
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(deptDate);
         DateHelper.setToStartOfDay(calendar);
         Date date = calendar.getTime();
-        calendar.add(Calendar.DATE, 1);
+        DateHelper.setToEndOfDay(calendar);
         Date nextDate = calendar.getTime();
 
-        List<FlightSchedule> directFlightScheds = searchForDirectFlights(deptAirport, arrAirport, date, nextDate, cabinClass, numOfPassenger);
-        List<FlightSchedule> inDirectFlightScheds = searchForInDirectFlights(deptAirport, arrAirport, date, nextDate, cabinClass, numOfPassenger);
-
+        List<FlightSchedule> directFlightScheds = searchForDirectFlights(deptAirport, arrAirport, date, nextDate);
+        List<FlightSchedule> inDirectFlightScheds = searchForInDirectFlights(deptAirport, arrAirport, date, nextDate);
+        
+        if (directFlightScheds.isEmpty() && inDirectFlightScheds.isEmpty()) {
+            throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
+        }
+        
         List<List<FlightSchedule>> flightSchedules = new ArrayList<>();
         flightSchedules.add(directFlightScheds);
         flightSchedules.add(inDirectFlightScheds);
         return flightSchedules;
     }
 
-    private List<FlightSchedule> searchForDirectFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate, CabinClass cabinClass, int numOfPassenger) {
-        Query query = em.createQuery("SELECT fb FROM FlightSchedule f, FlightScheduleBookingClass fb WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND fb.flightScheduleBookingClassId.flightScheduleId = f.flightScheduleId AND f.aircraft.aircraftCabinClasses.cabinClassId = :inCabinClass AND f.deleted = FALSE AND f.status = :inStatus");
+    private List<FlightSchedule> searchForDirectFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate) {
+        Query query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f.status = :inStatus");
         query.setParameter("inStatus", FlightSchedStatus.RELEASE);
         query.setParameter("inDeptAirport", deptAirport.getAirportName());
         query.setParameter("inArrAirport", arrAirport.getAirportName());
         query.setParameter("inDate", date);
         query.setParameter("inNextDate", nextDate);
-        query.setParameter("inCabinClass", cabinClass.getCabinClassId());
         List<FlightSchedule> directFlightScheds = new ArrayList<>();
         try {
             directFlightScheds = (List<FlightSchedule>) query.getResultList();
@@ -75,14 +80,13 @@ public class BookingSession implements BookingSessionLocal {
         return directFlightScheds;
     }
 
-    private List<FlightSchedule> searchForInDirectFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate, CabinClass cabinClass, int numOfPassenger) {
-        Query query = em.createQuery("SELECT fb FROM FlightSchedule f, FlightSchedule f2, FlightScheduleBookingClass fb, CabinClass c WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND fb.flightScheduleBookingClassId.flightScheduleId = f.flightScheduleId AND f.aircraft.aircraftCabinClasses.cabinClassId = :inCabinClass AND fb.seatQty > fb.soldSeatQty + :inNumOfPassenger AND f.deleted = FALSE AND f.status = :inStatus");
+    private List<FlightSchedule> searchForInDirectFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate) {
+        Query query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2 WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE AND f.status = :inStatus");
         query.setParameter("inStatus", FlightSchedStatus.RELEASE);
         query.setParameter("inDeptAirport", deptAirport.getAirportName());
         query.setParameter("inArrAirport", arrAirport.getAirportName());
         query.setParameter("inDate", date);
         query.setParameter("inNextDate", nextDate);
-        query.setParameter("inCabinClass", cabinClass.getCabinClassId());
         List<FlightSchedule> flightScheds = new ArrayList<>();
         try {
             flightScheds = (List<FlightSchedule>) query.getResultList();
@@ -92,39 +96,35 @@ public class BookingSession implements BookingSessionLocal {
     }
 
     @Override
-    public List<TicketFamily> getFlightSchedLowesetTixFams(List<FlightSchedule> flightScheds, boolean premimum) {
+    public List<TicketFamily> getFlightSchedLowesetTixFams(List<FlightSchedule> flightScheds, CabinClass selectedCabinClass) {
         List<TicketFamily> tixFams = new ArrayList<>();
         try {
             for (FlightSchedule flightSched : flightScheds) {
-                for (CabinClass cabinClass : flightSchedSession.getFlightScheduleCabinCalsses(flightSched.getFlightScheduleId())) {
-                    if (premimum) {
-                        if (cabinClass.getRank() < 3) {
-                            addTixFams(tixFams, flightSched, cabinClass);
-                        }
-                    } else {
-                        addTixFams(tixFams, flightSched, cabinClass);
+                for (CabinClass cabinClass : revMgmtSession.getFlightScheduleCabinCalsses(flightSched.getFlightScheduleId())) {
+                    if (selectedCabinClass.equals(cabinClass)) {
+                        tixFams = productDesignSession.getCabinClassTicketFamilysFromJoinTable(flightSched.getAircraft().getAircraftId(), cabinClass.getCabinClassId());
+//                        addTixFams(tixFams, flightSched, cabinClass);
                     }
                 }
             }
-
-        } catch (NoSuchCabinClassException e) {
+        } catch (NoSuchCabinClassException | NoSuchTicketFamilyException e) {
         }
         return tixFams;
     }
 
-    private List<TicketFamily> addTixFams(List<TicketFamily> tixFams, FlightSchedule flightSched, CabinClass cabinClass) {
-        try {
-            List<TicketFamily> ticketFamilys = productDesignSession.getCabinClassTicketFamilysFromJoinTable(flightSched.getAircraft().getAircraftId(), cabinClass.getCabinClassId());
-            for (TicketFamily ticketFamily : ticketFamilys) {
-                if (tixFams.size() < 4) {
-                    tixFams.add(ticketFamily);
-                } else {
-                    break;
-                }
-            }
-        } catch (NoSuchTicketFamilyException e) {
-        }
-        return tixFams;
-    }
+//    private List<TicketFamily> addTixFams(List<TicketFamily> tixFams, FlightSchedule flightSched, CabinClass cabinClass) {
+//        try {
+//            List<TicketFamily> ticketFamilys = productDesignSession.getCabinClassTicketFamilysFromJoinTable(flightSched.getAircraft().getAircraftId(), cabinClass.getCabinClassId());
+//            for (TicketFamily ticketFamily : ticketFamilys) {
+//                if (tixFams.size() < 4) {
+//                    tixFams.add(ticketFamily);
+//                } else {
+//                    break;
+//                }
+//            }
+//        } catch (NoSuchTicketFamilyException e) {
+//        }
+//        return tixFams;
+//    }
 
 }

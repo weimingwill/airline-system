@@ -44,8 +44,13 @@
                         <p:commandButton value="Arrival time" />
                         <p:commandButton value="Duration" />
                     </p:column>
-                    <c:forEach items="#{bookingManager.getFlightSchedLowesetTixFams()}" >
-                        <p:column colspan="1"></p:column>
+                    <c:forEach items="#{bookingManager.getFlightSchedLowesetTixFams()}" var="tixFam">
+                        <p:column colspan="1">#{tixFam.cabinClass.name}</p:column>
+                    </c:forEach>
+                </p:row>
+                <p:row>
+                    <c:forEach items="#{bookingManager.getFlightSchedLowesetTixFams()}" var="tixFam">
+                        <p:column colspan="1">#{tixFam.name}</p:column>
                     </c:forEach>
                 </p:row>
             </p:panelGrid>
