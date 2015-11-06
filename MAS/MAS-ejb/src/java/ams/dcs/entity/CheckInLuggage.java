@@ -24,6 +24,7 @@ public class CheckInLuggage implements Serializable {
     private Long id;
     private Double realWeight;
     private String remark;
+    private String status;
 
     public Long getId() {
         return id;
@@ -84,6 +85,20 @@ public class CheckInLuggage implements Serializable {
      */
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }
