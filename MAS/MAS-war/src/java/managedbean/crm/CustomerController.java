@@ -5,6 +5,7 @@
  */
 package managedbean.crm;
 
+import ams.crm.entity.Feedback;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
 import ams.crm.session.CustomerSessionLocal;
@@ -12,6 +13,7 @@ import ams.crm.util.exception.ExistSuchRegCustException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -73,11 +75,9 @@ public class CustomerController implements Serializable {
     private Date passportExpDate;
     @Temporal(value = TemporalType.DATE)
     private Date passportIssueDate;
+    private List<Feedback> feedbacks;
 
     
-
-    
- 
     
     public CustomerController() {
     }
@@ -393,5 +393,13 @@ public class CustomerController implements Serializable {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+    
+    public List<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 }

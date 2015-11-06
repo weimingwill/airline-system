@@ -24,8 +24,8 @@
 
                 
                 <f:facet name="options">
-                    <p:commandButton value="Login"  icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>
-                    <p:commandButton value="Edit Profile"  icon="ui-icon-pencil" styleClass="navBtn" action="#{navigationController.redirectToProfileManagement()}"></p:commandButton>
+                    <p:commandButton value="Login"  icon="ui-icon-extlink" styleClass="navBtn" action="#{crmExNavController.redirectToCustomerLogin()}"></p:commandButton>
+                    <p:commandButton value="Edit Profile"  icon="ui-icon-pencil" styleClass="navBtn" action="#{crmExNavController.redirectToProfileManagement()}"></p:commandButton>
                 </f:facet>
             </p:menubar>
         </h:form>        

@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmExTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="title">
+        Account Summary
+    </ui:define>
+
+    <ui:define name="content" >
+        <h:form id="accountSummary" style="width: 500px;text-align: center;" >
+            <p:panel header="Account Summary" >
+                <p:panelGrid columns="2" styleClass="centered">
+                    <p:outputLabel value="Customer Name: "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
+
+                    <p:outputLabel value="Current Login Email: "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
+
+                    <p:outputLabel value="Accumulated Miles: "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}"/>
+
+                </p:panelGrid>
+
+                <p:panel header="Current Booking">
+                    
+                </p:panel>
+                
+                <p:panel header="Feedbacks">
+                    
+                </p:panel>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

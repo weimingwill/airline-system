@@ -15,6 +15,7 @@ import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import managedbean.application.CrmExNavController;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
 import managedbean.common.EmailController;
@@ -54,7 +55,7 @@ public class RegistrationController implements Serializable {
             msgController.addMessage("Registrated successfully!");
 
             String subject = "Welcome to Merlion Air";
-            String mailContent = "Dear Customer: \n Please activate your account using the following link: \n" + navigationController.redirectToCustomerLogin() + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + "&email=" + newRegCust.getEmail();
+            String mailContent = "Dear Customer: \n Please activate your account using the following link: \n"  + "resetPassword.xhtml?faces-redirect=true&resetDigest=" + "&email=" + newRegCust.getEmail();
             String receiver = newRegCust.getEmail();
             emailController.sendEmail(subject, mailContent, receiver);
 

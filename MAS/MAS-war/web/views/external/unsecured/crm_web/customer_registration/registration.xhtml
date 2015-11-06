@@ -11,9 +11,6 @@
     <ui:define name="content">
         <h:form id="RegistrationForm" style="width: 500px;text-align: center;" >
             <p:panel header="Customer Registation Form" styleClass="centeredPanel">
-
-
-
                 <p:panel header="Personal information">
                     <p:panelGrid columns="2" styleClass="centered">
                         <p:outputLabel for="nametitle" value="Title"/>
@@ -29,7 +26,7 @@
                             <f:selectItem itemLabel="Prof"  itemValue="Prof" />
                             <f:selectItem itemLabel="Others" itemValue="Others" />
                         </p:selectOneMenu>
-                        
+
                         <p:outputLabel for="passportNo" value="Passport No" />
                         <p:inputText id="passportNo" class="userProfileInput" required="true" requiredMessage="Please enter Passport Number" value="#{registrationController.newRegCust.passportNo}"  placeholder="passport"/>
 
