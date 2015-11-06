@@ -40,6 +40,7 @@ import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.ApsMessage;
+import ams.ars.entity.Channel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -71,8 +72,19 @@ public class RevMgmtSession implements RevMgmtSessionLocal {
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
 
+    private Channel getChannelByName(String channelName) {
+        Query query = em.createQuery("SELECT c FROM Channel c WHERE c.name = :inName AND c.deleted = FALSE");
+        query.setParameter("inName", channelName);
+        Channel channel= new Channel();
+        try {
+            channel = (Channel)query.getSingleResult();
+        } catch (NoResultException e) {
+        }
+        return channel;
+    }
+    
     @Override
-    public BookingClass createBookingClass(String name, TicketFamily selectedTicketFamily) throws ExistSuchBookingClassNameException {
+    public BookingClass createBookingClass(String name, TicketFamily selectedTicketFamily, String channelName) throws ExistSuchBookingClassNameException {
         verifyBookingClassName(name, selectedTicketFamily);
         BookingClass bookingClass = new BookingClass();
         TicketFamily ticketFamily = em.find(TicketFamily.class, selectedTicketFamily.getTicketFamilyId());

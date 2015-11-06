@@ -16,7 +16,6 @@ import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NeedBookingClassException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
-import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.WrongSumOfBookingClassSeatQtyException;
 import ams.ais.util.exception.WrongSumOfTicketFamilySeatQtyException;
 import ams.ais.util.helper.BookingClassHelper;
@@ -48,7 +47,7 @@ public interface RevMgmtSessionLocal {
 
     public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId);
 
-    public BookingClass createBookingClass(String name, TicketFamily ticketFamily) throws ExistSuchBookingClassNameException;
+    public BookingClass createBookingClass(String name, TicketFamily ticketFamily, String channelName) throws ExistSuchBookingClassNameException;
 
     public BookingClass getBookingClassByName(String name);
 
