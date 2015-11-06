@@ -469,7 +469,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             flightSched.setDeleted(false);
             flightSched.setCompleted(false);
             flightSched.setTurnoverTime(legHelper.getTurnaroundTime());
-            flightSched.setStatus(FlightSchedStatus.IDLE);
+            flightSched.setStatus(FlightSchedStatus.RELEASE);
             em.persist(flightSched);
             em.flush();
 
