@@ -32,4 +32,14 @@ public class DateHelper {
     public static String convertDateTime(Date date) {
         return new SimpleDateFormat("EE, dd MMM yyyy").format(date);
     }
+
+    public static long calcDateDiff(Date startDate, Date endDate) {
+        return endDate.getTime() - startDate.getTime();
+    }
+
+    public static String convertMSToHourMinute(long ms) {
+        int hours = (int) ((ms / (1000 * 60 * 60)) % 24);
+        int minutes = (int) (((ms - hours * 1000 * 60 * 60) / (1000 * 60)) % 60);
+        return hours + "h" + minutes + "m";
+    }
 }

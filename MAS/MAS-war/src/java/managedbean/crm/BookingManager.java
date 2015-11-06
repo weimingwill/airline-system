@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import managedbean.application.CrmExNavController;
 import managedbean.application.MsgController;
@@ -177,6 +174,9 @@ public class BookingManager implements Serializable {
         return bookingSession.getFlightSchedLowesetTixFams(directFlightScheds, selectedCabinCls);
     }
 
+    public String getFlightSchedTotalDur(FlightSchedule flightSched){
+        return DateHelper.convertMSToHourMinute(DateHelper.calcDateDiff(flightSched.getDepartDate(), flightSched.getArrivalDate()));
+    }
     //
     //Getter and Setter    
     //

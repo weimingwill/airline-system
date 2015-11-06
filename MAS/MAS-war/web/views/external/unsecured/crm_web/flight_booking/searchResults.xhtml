@@ -37,6 +37,7 @@
             </p:tabMenu>
 
             <p:panelGrid>
+                <!--Header-->
                 <p:row>
                     <p:column colspan="3" rowspan="2">
                         <p:outputLabel value="Sort by: " />
@@ -53,6 +54,76 @@
                         <p:column colspan="1">#{tixFam.name}</p:column>
                     </c:forEach>
                 </p:row>
+
+                <p:row>
+                    <p:column>Departure</p:column>
+                    <p:column><p:outputLabel value="" /></p:column>
+                    <p:column>Arrival</p:column>
+                </p:row>
+                <p:row>
+                    <c:forEach items="#{bookingManager.getFlightSchedLowesetTixFams()}" var="tixFam">
+                        <p:column colspan="1"><p:outputLabel value="" /></p:column>
+                    </c:forEach>
+                </p:row>
+
+                <!--Flight Schedules-->
+                <c:forEach items="#{bookingManager.directFlightScheds}" var="flightSched" >
+                    <p:row>
+                        <p:column>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{flightSched.departDate}">
+                                            <f:convertDateTime pattern="EE, dd MMM yyyy" />
+                                        </p:outputLabel>
+                                        <p:outputLabel value="#{flightSched.leg.departAirport.iataCode}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{flightSched.departDate}">
+                                            <f:convertDateTime pattern="HH:mm" />
+                                        </p:outputLabel>
+                                        <p:outputLabel value="#{flightSched.leg.departAirport.iataCode}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{flightSched.leg.departAirport.city.cityName}, #{flightSched.leg.departAirport.airportName}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{flightSched.leg.departAirport.country.countryName}" />
+                                    </p:column>
+                                </p:row>
+
+                            </p:panelGrid>
+                        </p:column>
+                        <p:column>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel styleClass="fa fa-clock-o" style="font-size: 15px;" />                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{bookingManager.getFlightSchedTotalDur(flightSched)}"/>                                        
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                        <p:column>
+                            <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.arrivalAirport}" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <c:forEach items="#{bookingManager.getFlightSchedLowesetTixFams()}" var="tixFam">
+                            <p:column colspan="1"><p:outputLabel value="" /></p:column>
+                        </c:forEach>
+                    </p:row>
+                </c:forEach>
             </p:panelGrid>
 
         </h:form>
