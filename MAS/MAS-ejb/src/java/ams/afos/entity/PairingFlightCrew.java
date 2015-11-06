@@ -24,8 +24,8 @@ import javax.persistence.TemporalType;
  * @author Lewis
  */
 @Entity
-@Table(name = "PAIRINGCABINCREW")
-public class PairingCabinCrew implements Serializable {
+@Table(name = "PAIRINGCOCKPITCREW")
+public class PairingFlightCrew implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -33,7 +33,7 @@ public class PairingCabinCrew implements Serializable {
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "FLIGHTCREWID", referencedColumnName = "SYSTEMUSERID")
-    private FlightCrew cabinCrew;
+    private FlightCrew flightCrew;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "PAIRINGID", referencedColumnName = "PAIRINGID")
@@ -41,7 +41,7 @@ public class PairingCabinCrew implements Serializable {
 
     @Column(name = "STATUS")
     private String status;
-    
+
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date lastUpdateTime;
 
@@ -74,20 +74,6 @@ public class PairingCabinCrew implements Serializable {
     }
 
     /**
-     * @return the cabinCrew
-     */
-    public FlightCrew getCabinCrew() {
-        return cabinCrew;
-    }
-
-    /**
-     * @param cabinCrew the cabinCrew to set
-     */
-    public void setCabinCrew(FlightCrew cabinCrew) {
-        this.cabinCrew = cabinCrew;
-    }
-
-    /**
      * @return the status
      */
     public String getStatus() {
@@ -113,6 +99,20 @@ public class PairingCabinCrew implements Serializable {
      */
     public void setLastUpdateTime(Date lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    /**
+     * @return the flightCrew
+     */
+    public FlightCrew getFlightCrew() {
+        return flightCrew;
+    }
+
+    /**
+     * @param flightCrew the flightCrew to set
+     */
+    public void setFlightCrew(FlightCrew flightCrew) {
+        this.flightCrew = flightCrew;
     }
 
 }

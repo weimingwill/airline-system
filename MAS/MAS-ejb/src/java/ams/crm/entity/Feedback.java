@@ -26,6 +26,7 @@ public class Feedback implements Serializable {
     private Long id;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdTime;
+    private String subject;
     private String content;
     private String status;
     private String channel;
@@ -97,6 +98,20 @@ public class Feedback implements Serializable {
     @Override
     public String toString() {
         return "ams.ars_crm.entity.Feedback[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the subject
+     */
+    public String getSubject() {
+        return subject;
+    }
+
+    /**
+     * @param subject the subject to set
+     */
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
     
 }
