@@ -23,6 +23,7 @@ import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
+import ams.crm.util.helper.ChannelHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,7 +99,7 @@ public class BookingClassController implements Serializable {
 
     public String createBookingClass() {
         try {
-            revMgmtSession.createBookingClass(bookingClassName, selectedTicketFamily);
+            revMgmtSession.createBookingClass(bookingClassName, selectedTicketFamily, ChannelHelper.ARS);
             msgController.addMessage("Create booking class successfully!");
         } catch (ExistSuchBookingClassNameException ex) {
             msgController.addErrorMessage(ex.getMessage());

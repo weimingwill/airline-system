@@ -14,7 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -30,7 +30,7 @@ public class Channel implements Serializable {
     private String name;
     private Boolean deleted;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "channel")
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "channel")
     private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
 
     public Long getChannelId() {

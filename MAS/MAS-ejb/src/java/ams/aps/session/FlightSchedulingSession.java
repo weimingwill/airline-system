@@ -38,14 +38,13 @@ import ams.aps.util.helper.FlightSchedStatus;
 import ams.aps.util.helper.FlightSchedMethod;
 import ams.aps.util.helper.LegHelper;
 import ams.aps.util.helper.RouteHelper;
+import ams.crm.util.helper.ChannelHelper;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -518,7 +517,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             while (noError && i < 26) {
                 BookingClass bookingClass;
                 try {
-                    bookingClass = revMgmtSession.createBookingClass(BookingClassHelper.getBookingClsNames().get(i), ticketFamily);
+                    bookingClass = revMgmtSession.createBookingClass(BookingClassHelper.getBookingClsNames().get(i), ticketFamily, ChannelHelper.ARS);
                 } catch (ExistSuchBookingClassNameException e) {
                     bookingClass = revMgmtSession.getBookingClassByName(BookingClassHelper.getBookingClsNames().get(i));
                 }

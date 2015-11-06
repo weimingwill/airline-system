@@ -13,4 +13,7 @@ public class ChannelHelper {
     public static final String ARS = "ARS";
     public static final String DDS = "DDS";
     public static final String GDS = "GDS";
- }
+    
+    public static final String STATUS_OPEN = "open";
+    public static final String STATUS_CLOSE = "close";
+  }
