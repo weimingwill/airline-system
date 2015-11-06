@@ -24,7 +24,7 @@ import javax.persistence.TemporalType;
  * @author Lewis
  */
 @Entity
-@Table(name = "PAIRINGCOCKPITCREW")
+@Table(name = "PAIRINGFLIGHTCREW")
 public class PairingFlightCrew implements Serializable {
 
     private static final long serialVersionUID = 1L;
