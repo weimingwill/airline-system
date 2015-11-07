@@ -5,7 +5,6 @@
  */
 package ams.aps.entity;
 
-import ams.afos.entity.Checklist;
 import ams.ais.entity.FlightScheduleBookingClass;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -62,9 +61,6 @@ public class FlightSchedule implements Serializable {
     private FlightSchedule preFlightSched;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightSchedule nextFlightSched;
-    
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy = "aircraft")
-    private List<Checklist> checklists;
 
     public Long getFlightScheduleId() {
         return flightScheduleId;
@@ -291,20 +287,6 @@ public class FlightSchedule implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    /**
-     * @return the checklists
-     */
-    public List<Checklist> getChecklists() {
-        return checklists;
-    }
-
-    /**
-     * @param checklists the checklists to set
-     */
-    public void setChecklists(List<Checklist> checklists) {
-        this.checklists = checklists;
     }
 
 }
