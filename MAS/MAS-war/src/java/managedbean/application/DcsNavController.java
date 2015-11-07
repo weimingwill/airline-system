@@ -39,4 +39,12 @@ public class DcsNavController {
     public String toCheckInLuggage() {
         return DCS_URL + "checkInLuggage.xhtml" + REDIRECT;
     }
+    
+    public String toPayLuggage() {
+        return DCS_URL + "payLuggage.xhtml" + REDIRECT;
+    }
+    
+    public String toAddLuggage() {
+        return DCS_URL + "addLuggage.xhtml" + REDIRECT;
+    }
 }

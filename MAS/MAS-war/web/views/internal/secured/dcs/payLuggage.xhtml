@@ -8,7 +8,7 @@
 
     <ui:define name="content">
         <f:facet name="header">
-            Check in Luggage
+            Luggage Update
         </f:facet>
         <h:form>
             <p:panelGrid columns="4">
@@ -20,9 +20,10 @@
             </p:panelGrid>
 
             <p:dataTable id="ticket" var="ticket" value="#{luggageManager.airTickets}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
+                         paginator="true"
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
                 <f:facet name="header">
-                    Checked-in Ticket Information
+                    Luggage Price Updated
                 </f:facet>
 
                 <p:column headerText="Flight No.">
@@ -53,24 +54,30 @@
                     <h:outputText value="#{ticket.purchasedLuggage.description}" />
                 </p:column>
 
+                <p:column headerText="Actual Luggage Weight">
+                    <h:outputText value="#{ticket.purchasedLuggage.description}" />
+                </p:column>
+                
                 <f:facet name="footer">
-                    <p:commandButton icon="ui-icon-check" title="Add luggage" update="myForm:luggageDlg" oncomplete="PF('myForm:luggageDlg').show()"/>
+                    <p:commandButton icon="ui-icon-check" title="Check in luggage and print luggage tags" oncomplete="PF('checkInLuggDlg').show()"/>
                 </f:facet>
 
-            </p:dataTable>
+                <p:dialog id="checkInLuggDlg" header="Luggage Check In" widgetVar="editAircraftDlg" resizable="false">
+                    <p:outputLabel id="confirmCheckinMsg" value="Enter luggage information"/>
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="Enter luggage weight : *" />
+                        <p:inputText value="#{passengerManager.weight}" required="true" label="weight"/>
 
-            <p:dialog id="luggageDlg" header="Enter luggage information" resizable="false">
-                <p:panelGrid columns="1" style="margin: 0 auto">
-                    <p:outputLabel value="Weight: *" />
-                    <p:inputText value="#{luggageManager.weight}" required="true" label="passport"/>
+                        <p:outputLabel value="Enter luggage remark : " />
+                        <p:inputText value="#{passengerManager.remark}"  label="remark"/>
+                    </p:panelGrid>
                     
-                    <p:outputLabel value="Remark: " />
-                    <p:inputTextarea value="#{luggageManager.remark}" rows="6" cols="33" />
-                </p:panelGrid>
-                <p:separator/>
-                <p:commandButton value="Confirm" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.addLuggage}"/>
-                <p:commandButton value="Cancel" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('myForm:luggageDlg').hide()"/>   
-            </p:dialog>
+                    <p:separator/>
+                    <p:commandButton value="Confirm" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" onclick="PF('checkInLuggDlg').hide()" action="#{passengerManager.checkInPassenger}"/>
+                    <p:commandButton value="Cancel" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('checkInLuggDlg').hide()"/>
+                </p:dialog>
+
+            </p:dataTable>
         </h:form>
     </ui:define>
 

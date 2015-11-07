@@ -5,29 +5,26 @@
  */
 package managedbean.dcs;
 
-import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.ars.entity.AirTicket;
-import ams.ars.entity.BoardingPass;
-import ams.ars.entity.Seat;
 import ams.crm.entity.Customer;
-import ams.dcs.util.helper.AirTicketDisplayHelper;
 import ams.dcs.session.CheckInSessionLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.time.Clock;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.event.ActionEvent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 import managedbean.application.DcsNavController;
 import managedbean.application.MsgController;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -45,6 +42,9 @@ public class PassengerManager implements Serializable {
 
     @EJB
     private CheckInSessionLocal checkInSession;
+    
+    @EJB
+    private LuggageManager luggageManager;
 
     private String passportNo;
     private Customer passenger;
@@ -54,7 +54,6 @@ public class PassengerManager implements Serializable {
     private List<AirTicket> airtickets = new ArrayList<>();//available tickets
     private List<AirTicket> airticketsUpdated = new ArrayList<>();//within 48h tickets
     private List<AirTicket> airTicketsSelected = new ArrayList<>();
-    private List<AirTicket> airTicketsForLuggage = new ArrayList<>();
     
     /**
      * Creates a new instance of PassengerController
@@ -62,8 +61,11 @@ public class PassengerManager implements Serializable {
     public PassengerManager() {
     }
 
+    @PostConstruct
+    public void init(){
+        cleanSession();
+    }
     public String checkPassenger() {
-
         passenger = checkInSession.getCustomerByPassport(getPassportNo());
         if (passenger == null) {
             msgController.addErrorMessage("Passenger not found!");
@@ -86,12 +88,12 @@ public class PassengerManager implements Serializable {
                     }
                 }
                 if (getAirticketsUpdated().isEmpty()) {
-                    msgController.addErrorMessage("Passenger do not have trips available for check-in!");
+                    msgController.addErrorMessage("Passenger do not have PNR available for check-in!");
                     return "";
                 }
                 return dcsNavController.toCheckInPassenger();
             } else {
-                msgController.addErrorMessage("Passenger do not have trips available for check-in!");
+                msgController.addErrorMessage("Passenger do not have PNR available for check-in!");
                 return "";
             }
         }
@@ -101,29 +103,40 @@ public class PassengerManager implements Serializable {
         System.out.println("passport = " + passportNo);
     }
 
-    public String checkInPassenger() {
-        String toLuggageCheckIn = dcsNavController.toCheckInLuggage();
-        
-        if(airTicketsSelected.isEmpty()){
-            msgController.addMessage("No airticket selected!");
-            toLuggageCheckIn = "";
-        }else{
+    public void checkInPassenger() {
+        if (airTicketsSelected.isEmpty()) {
+            msgController.addErrorMessage("No PNR selected!");
+        } else {
             for (AirTicket a : airTicketsSelected) {
                 boolean success = checkInSession.checkInPassenger(a);
                 if (!success) {
-                    msgController.addErrorMessage("Ticket " + a.getId() + " check-in error!");
+                    msgController.addErrorMessage("PNR ID: " + a.getId() + " check-in error!");
                     airTicketsSelected.remove(a);
                 }
             }
-            if (airTicketsSelected.isEmpty()) {
-                toLuggageCheckIn = "";
-            }         
+            if (!airTicketsSelected.isEmpty()) {
+                msgController.addMessage("Check in completed!");
+                RequestContext context = RequestContext.getCurrentInstance();
+                context.update(":myForm:ticket");
+                context.execute("PF('luggageDlg').show()");
+            }
         }
-        return toLuggageCheckIn;
     }
-
-    public void checkInLuggage() {
-        System.out.println("passport = " + passportNo);
+    
+    public void proceedToLuggage(){
+        Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        map.put("checkedTickets", airTicketsSelected);
+        luggageManager.ticketReceived();
+    }
+    
+    private void cleanSession(){
+        setAirTicketsSelected(new ArrayList());
+        setAirtickets(new ArrayList());
+        setAirticketsUpdated(new ArrayList());
+        setFlightSchedules(new ArrayList());
+        setPassenger(null);
+        setPassengerList(new ArrayList());
+        setPassportNo("");
     }
 
     /**
@@ -195,7 +208,7 @@ public class PassengerManager implements Serializable {
     public void setAirtickets(List<AirTicket> airtickets) {
         this.airtickets = airtickets;
     }
-    
+
     /**
      * @return the airticketsUpdated
      */
@@ -223,19 +236,4 @@ public class PassengerManager implements Serializable {
     public void setAirTicketsSelected(List<AirTicket> airTicketsSelected) {
         this.airTicketsSelected = airTicketsSelected;
     }
-
-    /**
-     * @return the airTicketsForLuggage
-     */
-    public List<AirTicket> getAirTicketsForLuggage() {
-        return airTicketsForLuggage;
-    }
-
-    /**
-     * @param airTicketsForLuggage the airTicketsForLuggage to set
-     */
-    public void setAirTicketsForLuggage(List<AirTicket> airTicketsForLuggage) {
-        this.airTicketsForLuggage = airTicketsForLuggage;
-    }
-
 }

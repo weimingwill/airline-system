@@ -11,7 +11,7 @@
             Check in Information (PNR)
         </f:facet>
 
-        <h:form>
+        <h:form id="myForm">
             <p:panelGrid columns="4">
                 <p:outputLabel value="Passenger Name: " />
                 <p:outputLabel value="#{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}" />
@@ -54,11 +54,7 @@
                 <p:column headerText="Seat">
                     <h:outputText value="#{ticket.seat.rowNo.toString} #{ticket.seat.colNo}" />
                 </p:column>
-
-                <p:column headerText="Luggage Plan (Max Kg)">
-                    <h:outputText value="#{ticket.purchasedLuggage.maxWeight.toString}" />
-                </p:column>
-
+                \
                 <p:column headerText="Seat Selection" style="width:16px;text-align:center" rendered="#{empty ticket.seat}">
                     <p:commandButton action="#{dcsNavController.toSelectSeat}" icon="ui-icon-check" title="Select seat" />
                 </p:column>
@@ -66,42 +62,49 @@
                 <p:column headerText="Check In" selectionMode="multiple" style="width:16px;text-align:center" rendered="#{not empty ticket.seat}"/>
 
                 <f:facet name="footer">
-                    <p:commandButton icon="ui-icon-check" title="Check in passenger and print boarding pass" update="checkInPassDlg" oncomplete="PF('checkInPassDlg').show()"/>
+                    <p:commandButton icon="ui-icon-check" value="Check in and print boarding pass" update="myForm:checkInPassDlg" oncomplete="PF('myForm:checkInPassDlg').show()"/>
                 </f:facet>
 
-                <p:dialog id="checkInPassDlg" header="Passeger Check In" widgetVar="editAircraftDlg" resizable="false">
-                    <p:outputLabel id="confirmCheckinMsg" value="Confirm check-in of the passenger?"/>
-                    <p:outputLabel value="Passenger: #{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}"/>
-                    <p:outputLabel value="Passport: #{passengerManager.passportNo}"/>
+            </p:dataTable>
 
-                    <p:dataTable var="tick" value="#{passengerManager.airTicketsSelected}" style="width:550px" rows="5" paginator="true" tableStyleClass="table-small-font">
+            <p:dialog id="checkInPassDlg" header="Passeger Check In" resizable="false">
+                <p:outputLabel id="confirmCheckinMsg" value="Confirm check-in of the passenger?"/>
+                <p:outputLabel value="Passenger: #{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}"/>
+                <p:outputLabel value="Passport: #{passengerManager.passportNo}"/>
 
-                        <p:column headerText="Flight" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
-                            <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.flight.flightNo}" />
-                        </p:column>
+                <p:dataTable var="tick" value="#{passengerManager.airTicketsSelected}" style="width:550px" rows="5" paginator="true" tableStyleClass="table-small-font">
 
-                        <p:column headerText="From" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
-                            <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.leg.departAirport.airportName}" />
-                        </p:column>
+                    <p:column headerText="Flight" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.flight.flightNo}" />
+                    </p:column>
 
-                        <p:column headerText="To" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
-                            <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.leg.arrivalAirport.airportName}" />
-                        </p:column>
+                    <p:column headerText="From" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.leg.departAirport.airportName}" />
+                    </p:column>
 
-                        <p:column headerText="Gate" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
-                            <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.departGate}" />
-                        </p:column>
+                    <p:column headerText="To" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.leg.arrivalAirport.airportName}" />
+                    </p:column>
 
-                        <p:column headerText="Seat" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
-                            <p:outputLabel value="#{tick.seat.rowNo}#{tick.seat.colNo}" />
-                        </p:column>
+                    <p:column headerText="Gate" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.departGate}" />
+                    </p:column>
 
-                    </p:dataTable>
-                    <p:separator/>
-                    <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" onclick="PF('checkInPassDlg').hide()" action="#{passengerManager.checkInPassenger}"/>
-                    <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('checkInPassDlg').hide()"/>
-                </p:dialog>
+                    <p:column headerText="Seat" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.seat.rowNo}#{tick.seat.colNo}" />
+                    </p:column>
 
+                </p:dataTable>
+                <p:separator/>
+                <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,myForm:ticket" onclick="PF('myForm:checkInPassDlg').hide()" action="#{passengerManager.checkInPassenger}"/>
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('checkInPassDlg').hide()"/>
+            </p:dialog>
+            
+            <p:dialog id="luggageDlg" header="Do you want to check in luggage for these trip?" resizable="false">
+             <p:separator/>
+             <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,myForm:ticket" onclick="PF('myForm:checkInPassDlg').hide()" action="#{dcsNavController.toCheckInLuggage}" actionListener="#{passengerManager.proceedToLuggage}"/>
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('checkInPassDlg').hide()"/>   
+            </p:dialog>
         </h:form>
     </ui:define>
 

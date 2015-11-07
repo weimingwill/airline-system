@@ -8,7 +8,7 @@
 
     <ui:define name="content">
         <f:facet name="header">
-            Check in Luggage
+            Luggage Information
         </f:facet>
         <h:form>
             <p:panelGrid columns="4">
@@ -63,7 +63,7 @@
                 <p:panelGrid columns="1" style="margin: 0 auto">
                     <p:outputLabel value="Weight: *" />
                     <p:inputText value="#{luggageManager.weight}" required="true" label="passport"/>
-                    
+
                     <p:outputLabel value="Remark: " />
                     <p:inputTextarea value="#{luggageManager.remark}" rows="6" cols="33" />
                 </p:panelGrid>
