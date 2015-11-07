@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AisTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="title">
+        Reallocate booking class seats 
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="cabinClass" value="Cabin Class:" />
+                <p:selectOneMenu id="cabinClass" value="#{yieldManagementController.cabinClass}" converter="cabinClassConverter"  style="width:200px" filter="true" filterMatchMode="startsWith">
+                    <p:ajax listener="#{yieldManagementController.onCabinClassChange()}" update="ticketFamily" />
+                    <f:selectItem itemLabel="Select Cabin Class" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{yieldManagementController.cabinClasses}" var="cabinClass" itemLabel="#{cabinClass.name}" itemValue="#{cabinClass}" />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="ticketFamily" value="Ticket Family:" />
+                <p:selectOneMenu id="ticketFamily" value="#{yieldManagementController.ticketFamily}" converter="ticketFamilyConverter" style="width:200px">
+                    <p:ajax listener="#{yieldManagementController.onTicketFamilyChange()}" update="bookingClass" />
+                    <f:selectItem itemValue="" itemLabel="Select Ticket Family" noSelectionOption="true"/>
+                    <f:selectItems value="#{yieldManagementController.ticketFamilys}" var="ticketFamily" itemLabel="#{ticketFamily.name}" itemValue="#{ticketFamily}"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel for="bookingClass" value="Booking Class:" />
+                <p:selectOneMenu id="bookingClass" value="#{yieldManagementController.bookingClass}" converter="bookingClassConverter" style="width:200px">
+                    <f:selectItem itemLabel="Select Booking Class" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{yieldManagementController.bookingClasses}" var="bookingClass" itemLabel="#{bookingClass.name}" itemValue="#{bookingClass}"/>
+                </p:selectOneMenu>
+
+                <p:commandButton value="Reallocate seats" action="#{yieldManagementController.toReallocateBookingClassSeats()}" update="messages"/>
+                <p:commandButton value="View seat reallocation history" action="#{yieldManagementController.toViewSeatReallocationHistory()}" update="messages"/>
+                <p:commandButton value="Update yield management model" action="#{yieldManagementController.toUpdateYieldManagementModel()}" update="messages"/>
+
+            </h:panelGrid>
+
+
+        </h:form>
+
+
+    </ui:define>
+</ui:composition>

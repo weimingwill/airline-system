@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AisTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+
+    <ui:define name="title">
+        Create New Ticket Family
+    </ui:define >
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Add New Ticket Family
+        </f:facet>
+        <h:form id="createTicketFamilyForm">
+            <p:messages autoUpdate="true"/>
+            <p:panelGrid columns="2">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Ticket Family Type"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText required="true" requiredMessage="Please enter new ticket family type" id="type" value="#{ticketFamilyController.type}"/>                
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                    
+                            <h:outputText value="Ticket Family"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText required="true" requiredMessage="Please enter new ticket family name" id="name" value="#{ticketFamilyController.name}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>    
+                            <p:outputLabel value="Select Cabin Class:" />
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="cabinclasslist" value="#{ticketFamilyController.cabinclassname}" style="width: 100%">
+                                <f:selectItems value="#{ticketFamilyController.allCabinClass}" var="cabinclass" itemLabel="#{cabinclass.name}" itemValue="#{cabinclass.name}" />
+                                <p:column>
+                                    <p:outputLabel id="selectlist" value="#{ticketFamilyController.cabinclassname}" />
+                                </p:column>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="Update value for each rule:" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:panelGrid columns="4">
+                    <p:outputLabel  value="Rule Name" styleClass="label"/>
+                    <p:outputLabel  value="Rule Value" styleClass="label"/>
+                    <p:outputLabel  value="Rule Name" styleClass="label"/>
+                    <p:outputLabel  value="Rule Value" styleClass="label"/>
+
+                    <c:forEach var="ticketFamilyRule" items="#{ticketFamilyController.displayRuleList}">
+
+                        <p:outputLabel id="rule-#{ticketFamilyRule.ruleId}" value="#{ticketFamilyRule.name}">
+                            <p:tooltip value="#{ticketFamilyRule.description}" for="rule-#{ticketFamilyRule.ruleId}"/>
+                        </p:outputLabel>
+
+                        <p:inputText required="true" requiredMessage="Please input rule value" value="#{ticketFamilyRule.ruleValue}"/>
+
+                    </c:forEach>
+                </p:panelGrid>
+            </p:panelGrid>
+
+            <p:separator/>
+            <p:commandButton action="#{ticketFamilyController.createTicketFamily()}" value="Create" update="messages"/> 
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

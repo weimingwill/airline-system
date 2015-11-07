@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/ApsTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Cancel an airport as hub
+        </f:facet>
+        <h:form>
+            <p:panelGrid columns="2" style="margin-bottom:10px">
+                <p:outputLabel for="hub" value="Hub:" />
+                <p:selectOneMenu id="hub" value="#{routeController.hub}" converter="airportConverter" style="width:200px" filter="true" filterMatchMode="contains">
+                    <f:selectItem itemLabel="Select" itemValue="" />
+                    <f:selectItems value="#{routeController.hubs}" var="hub" itemLabel="#{hub.airportName}" itemValue="#{hub}" />
+                </p:selectOneMenu>
+            </p:panelGrid>
+            <p:separator/>
+            <p:commandButton value="Cancel hub" update="messages" action="#{navigationController.redirectToCurrentPage()}" actionListener="#{routeController.cancelHub}" icon="ui-icon-check"/>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

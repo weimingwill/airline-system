@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/WorkspaceTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">
+        Grant role with permissions
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="grantRolePermissions">
+            <p:panel header="Grant Permissions To Role">
+                <p:panelGrid class="access-control" columns="2">
+                    <p:panel header="Select role: ">
+                        <p:selectOneListbox id="grantRolePermissions-roleList" value="#{roleController.selectedRole}"  converter="roleConverter" 
+                                            var="role" filter="true" filterMatchMode="contains" style="width:300px;">
+                            <p:ajax update="grantRolePermissionsPanel,selectPermissions" listener="#{roleController.onRoleSelected()}"/>
+                            <f:selectItems value="#{roleController.allRoles}" var="role" itemLabel="#{role.roleName}" itemValue="#{role}" />
+                            <p:column>
+                                <h:outputText value="#{role.roleName}" />
+                            </p:column>
+
+                        </p:selectOneListbox>
+                    </p:panel>
+
+                    <p:panel header="Select permissions:" id="grantRolePermissionsPanel">
+                        <p:outputLabel value=" " />
+                        <p:selectManyMenu id="grantRolePermissions-permissionList" value="#{roleController.permissionList}" converter="permissionConverter"
+                                          var="permission" filter="true" filterMatchMode="contains" showCheckbox="true" style="width:100%; min-width: 400px">
+                            <f:selectItems value="#{permissionController.allPermissions}" var="permission" itemLabel="#{permission.permissionName}" itemValue="#{permission}"/>
+
+                            <p:column>
+                                <h:outputText value="#{permission.permissionName}"  />
+                            </p:column>
+                        </p:selectManyMenu>
+                    </p:panel>
+                </p:panelGrid>
+
+                <p:dataTable id="selectPermissions" value="#{roleController.permissionList}" var="permission" class="userRoleDataTable" emptyMessage="No role selected" tableStyleClass="table-small-font">
+                    <f:facet name="header">
+                        Existing Permissions
+                    </f:facet>
+                    <p:column>
+                        <h:outputText value="#{permission.permissionName}" />
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton action="#{roleController.grantRolePermissions()}" value="Assign" update="messages"/>    
+
+            </p:panel>
+        </h:form>     
+    </ui:define>
+
+</ui:composition>

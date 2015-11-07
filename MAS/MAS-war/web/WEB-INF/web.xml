@@ -2,13 +2,15 @@
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Development</param-value>
+        <param-value>Development<!--Change to Production after complete--></param-value>
     </context-param>
+    <!--Starting JSF-->
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <!--JSF URL mapping-->
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
@@ -18,7 +20,45 @@
             30
         </session-timeout>
     </session-config>
+    <!--Primefaces Theme-->
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>mas</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.FONT_AWESOME</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <!--Default page-->
     <welcome-file-list>
-        <welcome-file>index.xhtml</welcome-file>
+        <welcome-file>views/internal/secured/common/users/login.xhtml</welcome-file>
     </welcome-file-list>
+    <!--Set SSL Protection-->
+<!--    <security-constraint>
+        <display-name>SSL Protection</display-name>
+        <web-resource-collection>
+            <web-resource-name>Default Secure Pages</web-resource-name>
+            <description>Default Secure Pages</description>
+            <url-pattern>/views/secured/common/users/login.xhtml</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>-->
+    <ejb-local-ref>
+        <ejb-ref-name>systemUserSession</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>mas.common.session.SystemUserSessionLocal</local>
+        <ejb-link>MAS-ejb.jar#SystemUserSession</ejb-link>
+    </ejb-local-ref>
+    
+    <!--register BotDetect Captcha-->
+    <servlet>
+        <servlet-name>BotDetect Captcha</servlet-name>
+        <servlet-class>botdetect.web.http.CaptchaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BotDetect Captcha</servlet-name>
+        <url-pattern>/botdetectcaptcha</url-pattern>
+    </servlet-mapping>  
 </web-app>

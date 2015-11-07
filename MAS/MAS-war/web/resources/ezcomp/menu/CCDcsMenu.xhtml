@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation id="leftMenu">
+        <c:set value="Check-in Staff" var="checkinStaff"/>
+        <c:set value="Boarding Staff" var="boardingStaff"/>
+        
+        <h:form>
+            <p:panelMenu style="width:240px;">
+                <p:submenu label="Check In" expanded="true">
+                    <p:menuitem action="#{dcsNavController.toSearchPassenger()}" value="Passenger Check In"/>
+                    <p:menuitem value="Upgarde ticket"/>
+                    <p:menuitem value="View &amp; Update Luggage Status"/>
+                </p:submenu>
+                <p:submenu label="Board" expanded="true">
+                        <p:menuitem value="Passenger Boarding"/>
+                </p:submenu>
+            </p:panelMenu>
+        </h:form>
+    </cc:implementation>
+</html>

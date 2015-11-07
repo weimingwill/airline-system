@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/ApsTemplate.xhtml"
+                xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <me:CCCreateFlightMenu activeIndex="1"/>
+
+        <h:form id="freqPlanningForm">
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+            <c:set value="#{flightManager.routeHelper}" var="route"/>
+            <c:set value="#{flightManager.returnRouteHelper}" var="returnRoute"/>
+
+            <p:panel header="Determine Weekly Flying Frequency for #{flightManager.flight.flightNo} and Its Returned Flight #{flightManager.returnedFlight.flightNo}">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column rowspan="2">
+                            <p:panelGrid>
+                                <pa:CCFlightDurationDisplayPanel id="routeDuration" route="#{route}" flight="#{flightManager.flight}"/>
+                                <pa:CCFlightDurationDisplayPanel id="returnedRouteDuration" route="#{returnRoute}" flight="#{flightManager.returnedFlight}"/>
+                                <p:row>
+                                    <p:column colspan="5" styleClass="label">
+                                        <p:outputLabel value="Total Duration (hrs)"/>
+                                    </p:column>
+                                    <p:column styleClass="label">
+                                        <p:outputLabel value="#{route.totalDuration + returnRoute.totalDuration}">
+                                            <f:convertNumber maxFractionDigits="2"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                        <p:column>
+                            <p:panel header="Aircraft Model Information">
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Selected Models"/>
+                                        </p:column>
+                                        <p:column>
+                                            <c:forEach items="#{flightManager.selectedModels}" var="model">
+                                                <p:outputLabel value="#{model.typeCode} "/>
+                                            </c:forEach>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="2" class="ui-widget-header">
+                                            <p:outputLabel value="Model with smaller mach number: #{flightManager.modelWithMinMach.typeCode}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Range (km)"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{flightManager.modelWithMinMach.rangeInKm}">
+                                                <f:convertNumber maxFractionDigits="2"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Mach Number"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{flightManager.modelWithMinMach.maxMachNo}">
+                                                <f:convertNumber maxFractionDigits="2"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Speed Fraction"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:spinner value="#{flightManager.speedFraction}" stepFactor="0.05" min="0" max="1" validatorMessage="Speed fraction must be a value from (0,1]!">
+                                                <p:ajax event="change" listener="#{flightManager.onSpeedFractionChange}" update="freqPlanningForm"/>
+                                                <f:convertNumber maxFractionDigits="2"/>
+                                                <f:validateDoubleRange minimum="0.000000001" maximum="1"/>
+                                            </p:spinner>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Cruise speed (km/h)"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{flightManager.cruiseSpeed}">
+                                                <f:convertNumber maxFractionDigits="3"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                    </p:row>
+
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:panel header="Frequency Planning">
+                                <p:panelGrid columns="2">
+                                    <p:outputLabel value="Max Frequency (#/Week)"/>
+                                    <p:outputLabel value="#{flightManager.maxFreq}"/>
+                                    <p:outputLabel value="Weekly Frequency (#/Week)"/>
+                                    <p:spinner value="#{flightManager.weeklyFreq}" stepFactor="1" max="#{flightManager.maxFreq}" min="1"/>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+
+            <p:separator/>
+            <p:panelGrid>
+                <p:row style="border: transparent">
+                    <p:column colspan="5" style="width: 90%">
+                        <p:commandButton value="Back" icon="fa fa-arrow-left" action="#{navigationController.toFleetAssignment()}"/>
+                    </p:column>
+                    <p:column colspan="2" style="text-align: right;">
+                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{navigationController.toConfirmFlight()}"/>
+                    </p:column>
+                </p:row>
+
+            </p:panelGrid>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
