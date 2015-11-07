@@ -6,6 +6,7 @@
 package managedbean.dcs;
 
 import ams.ars.entity.AirTicket;
+import ams.ars.entity.PricingItem;
 import ams.crm.entity.Customer;
 import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.session.CheckInSessionLocal;
@@ -21,6 +22,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import managedbean.application.DcsNavController;
 import managedbean.application.MsgController;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -40,9 +42,11 @@ public class LuggageManager implements Serializable {
     private CheckInSessionLocal checkInSession;
 
     private double weight;
+    private double excessWeight = 0;
+    private double excessWeightPrice = 0;
     private double totalWeight = 0;
     private String remark;
-    
+
     private Customer passenger;
 
     private AirTicket airTicket;
@@ -83,10 +87,24 @@ public class LuggageManager implements Serializable {
         if (remark != null) {
             luggage.setRemark(remark);
         }
-        luggageList.add(luggage);
+        excessWeight = 0;
         totalWeight += weight;
+
+        luggageList.add(luggage);
+        for (AirTicket a : airTickets) {
+            if (totalWeight > a.getPurchasedLuggage().getMaxWeight()) {
+                excessWeight += totalWeight - a.getPurchasedLuggage().getMaxWeight();
+            }
+        }
+        excessWeightPrice = excessWeight * 42;
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.update(":myForm:ticket");
         weight = 0;
         remark = "";
+    }
+
+    public void createLuggage() {
+        checkInSession.checkInPassenger(airTicket);
     }
 
     /**
@@ -199,6 +217,34 @@ public class LuggageManager implements Serializable {
      */
     public void setPassenger(Customer passenger) {
         this.passenger = passenger;
+    }
+
+    /**
+     * @return the excessWeight
+     */
+    public double getExcessWeight() {
+        return excessWeight;
+    }
+
+    /**
+     * @param excessWeight the excessWeight to set
+     */
+    public void setExcessWeight(double excessWeight) {
+        this.excessWeight = excessWeight;
+    }
+
+    /**
+     * @return the excessWeightPrice
+     */
+    public double getExcessWeightPrice() {
+        return excessWeightPrice;
+    }
+
+    /**
+     * @param excessWeightPrice the excessWeightPrice to set
+     */
+    public void setExcessWeightPrice(double excessWeightPrice) {
+        this.excessWeightPrice = excessWeightPrice;
     }
 
 }

@@ -68,7 +68,7 @@
             </p:dataTable>
 
             <p:dialog id="checkInPassDlg" header="Passeger Check In" resizable="false">
-                <p:outputLabel id="confirmCheckinMsg" value="Confirm check-in of the passenger?"/>
+                <p:outputLabel id="confirmCheckinMsg" value="Confirm check-in and print following boarding passes?"/>
                 <p:outputLabel value="Passenger: #{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}"/>
                 <p:outputLabel value="Passport: #{passengerManager.passportNo}"/>
 
@@ -100,7 +100,7 @@
                 <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('checkInPassDlg').hide()"/>
             </p:dialog>
             
-            <p:dialog id="luggageDlg" header="Do you want to check in luggage for these trip?" resizable="false">
+            <p:dialog id="luggageDlg" header="Check in luggage for these trips?" resizable="false">
              <p:separator/>
              <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,myForm:ticket" onclick="PF('myForm:checkInPassDlg').hide()" action="#{dcsNavController.toCheckInLuggage}" actionListener="#{passengerManager.proceedToLuggage}"/>
                 <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('checkInPassDlg').hide()"/>   

@@ -8,7 +8,9 @@ package ams.dcs.session;
 import ams.aps.entity.FlightSchedule;
 import ams.ars.entity.AirTicket;
 import ams.crm.entity.Customer;
+import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.entity.Luggage;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -29,5 +31,5 @@ public interface CheckInSessionLocal {
 
     public boolean checkInPassenger(AirTicket ticket);
 
-    public boolean checkInuggage(String ticketNo);
+    public boolean checkInuggage(ArrayList<AirTicket> airtickets, ArrayList<CheckInLuggage> luggageList);
 }

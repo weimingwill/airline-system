@@ -10,6 +10,7 @@ import ams.ars.entity.AirTicket;
 import ams.ars.entity.BoardingPass;
 import ams.ars.entity.Seat;
 import ams.crm.entity.Customer;
+import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.entity.Luggage;
 import com.sun.xml.wss.util.DateUtils;
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public class CheckInSession implements CheckInSessionLocal {
     }
 
     @Override
-    public boolean checkInuggage(String ticketNo) {
+    public boolean checkInuggage(ArrayList<AirTicket> airtickets, ArrayList<CheckInLuggage> luggageList) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
