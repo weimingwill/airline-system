@@ -6,7 +6,9 @@
 package managedbean.crm;
 
 import ams.aps.entity.Airport;
+import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
+import ams.crm.session.BookingSessionLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -20,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import managedbean.application.CrmExNavController;
+import mas.util.helper.DateHelper;
 
 /**
  *
@@ -34,7 +37,10 @@ public class BookingManager implements Serializable {
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
-
+    @EJB
+    private BookingSessionLocal bookingSession;
+    
+    //Search conditions
     private int adultNo;
     private int childrenNo;
     private int infantNo;
@@ -46,7 +52,14 @@ public class BookingManager implements Serializable {
     private boolean showPremium;
     private String promoCode;
     private String choice;
-
+    
+    //Search Results
+    private List<FlightSchedule> directFlightScheds;
+    private List<FlightSchedule> inDirectFlightScheds;
+    private String searchDeptDate;
+    private String searchArrDate;
+    
+    
     /**
      * Creates a new instance of bookingManager
      */
@@ -59,7 +72,7 @@ public class BookingManager implements Serializable {
     public BookingManager() {
     }
 
-    public void initialDate() {
+    private void initialDate() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.DATE, 1);
@@ -84,6 +97,7 @@ public class BookingManager implements Serializable {
     public List<Airport> completeArrAirport(String query) {
         List<Airport> arrAirports = allAirports;
         arrAirports.remove(deptAirport);
+        query = query.toLowerCase();
         return completeAirport(arrAirports, query);
     }
 
@@ -93,7 +107,6 @@ public class BookingManager implements Serializable {
         Set<Airport> hs = new HashSet<>();
 
         for (Airport airport : allAirports) {
-            System.out.println("Airport: " + airport.getId());
             if (airport.getAirportName().toLowerCase().startsWith(query)
                     || airport.getCity().getCityName().toLowerCase().startsWith(query)
                     || airport.getCountry().getCountryName().toLowerCase().startsWith(query)) {
@@ -104,8 +117,16 @@ public class BookingManager implements Serializable {
         return filteredAirports;
     }
 
-    public String searchFlight() {
+    public String searchFlights() {
+        searchDeptDate = DateHelper.convertDateTime(deptDate);
+        searchArrDate = DateHelper.convertDateTime(arrDate);
         return crmExNavController.redirectToSearchFlightResult();
+    }
+    
+    public void searchForOneWayFlights() {
+        List<List<FlightSchedule>> fligthScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, showPremium, adultNo + childrenNo);
+        directFlightScheds = fligthScheds.get(0);
+        inDirectFlightScheds = fligthScheds.get(1);
     }
     
     
@@ -191,4 +212,30 @@ public class BookingManager implements Serializable {
     public void setChoice(String choice) {
         this.choice = choice;
     }
+
+    public List<FlightSchedule> getDirectFlightScheds() {
+        return directFlightScheds;
+    }
+
+    public void setDirectFlightScheds(List<FlightSchedule> directFlightScheds) {
+        this.directFlightScheds = directFlightScheds;
+    }
+
+    public String getSearchDeptDate() {
+        return searchDeptDate;
+    }
+
+    public void setSearchDeptDate(String searchDeptDate) {
+        this.searchDeptDate = searchDeptDate;
+    }
+
+    public String getSearchArrDate() {
+        return searchArrDate;
+    }
+
+    public void setSearchArrDate(String searchArrDate) {
+        this.searchArrDate = searchArrDate;
+    }
+
+    
 }

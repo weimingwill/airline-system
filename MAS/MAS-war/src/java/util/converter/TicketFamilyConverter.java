@@ -7,13 +7,13 @@ package util.converter;
 
 
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.AisMsg;
 import javax.ejb.EJB;
@@ -34,12 +34,12 @@ import javax.faces.convert.FacesConverter;
 public class TicketFamilyConverter implements Converter {
     
     @EJB
-    private TicketFamilySessionLocal ticketFamilySession;
+    private ProductDesignSessionLocal productDesignSession;
     
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                return ticketFamilySession.getTicketFamilyById(Long.parseLong(value));
+                return productDesignSession.getTicketFamilyById(Long.parseLong(value));
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
             } catch (NoSuchTicketFamilyException ex) {

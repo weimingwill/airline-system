@@ -7,13 +7,12 @@ package managedbean.ais;
 
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.BookingClassSessionLocal;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
-import ams.ais.session.FlightScheduleSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
 import ams.ais.session.SeatReallocationSessionLocal;
-import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.util.exception.DuplicatePriceException;
 import ams.ais.util.exception.NeedBookingClassException;
 import ams.ais.util.exception.WrongSumOfBookingClassSeatQtyException;
@@ -24,6 +23,7 @@ import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
+import ams.crm.util.helper.ChannelHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,17 +52,13 @@ public class BookingClassController implements Serializable {
     private MsgController msgController;
     @Inject
     private NavigationController navigationController;
-    @Inject
-    private SeatReallocationController seatReallocationController;
 
     @EJB
-    private BookingClassSessionLocal bookingClassSession;
-    @EJB
-    private FlightScheduleSessionLocal flightScheduleSession;
+    private RevMgmtSessionLocal revMgmtSession;
     @EJB
     private SeatReallocationSessionLocal seatReallocationSession;
     @EJB
-    private TicketFamilySessionLocal ticketFamilySession;
+    private ProductDesignSessionLocal productDesignSession;
 
     private String bookingClassName;
     private Long flightScheduleId;
@@ -93,17 +89,17 @@ public class BookingClassController implements Serializable {
     }
 
     public List<TicketFamily> getAllTicketFamily() {
-        return ticketFamilySession.getAllTicketFamily();
+        return productDesignSession.getAllTicketFamily();
 
     }
 
     public List<BookingClass> getAllBookingClasses() {
-        return bookingClassSession.getAllBookingClasses();
+        return revMgmtSession.getAllBookingClasses();
     }
 
     public String createBookingClass() {
         try {
-            bookingClassSession.createBookingClass(bookingClassName, selectedTicketFamily);
+            revMgmtSession.createBookingClass(bookingClassName, selectedTicketFamily, ChannelHelper.ARS);
             msgController.addMessage("Create booking class successfully!");
         } catch (ExistSuchBookingClassNameException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -115,7 +111,7 @@ public class BookingClassController implements Serializable {
     public String deleteBookingClass() {
         try {
             System.out.printf("selected booking class is: " + selectedBookingClass);
-            bookingClassSession.deleteBookingClass(selectedBookingClass.getName());
+            revMgmtSession.deleteBookingClass(selectedBookingClass.getName());
             msgController.addMessage("Booking class is deleted successfully!");
         } catch (NoSuchBookingClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -125,7 +121,7 @@ public class BookingClassController implements Serializable {
 
     public String assignFlightScheduleBookingClass() {
         try {
-            flightScheduleSession.assignFlightScheduleBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+            revMgmtSession.assignFlightScheduleBookingClass(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
             msgController.addMessage("assign flight schedule booking class succesffully!");
 
             return navigationController.redirectToViewFlightSchedule();
@@ -137,7 +133,7 @@ public class BookingClassController implements Serializable {
 
     public String allocateSeats() {
         try {
-            bookingClassSession.allocateSeats(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
+            revMgmtSession.allocateSeats(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers);
             msgController.addMessage("Allocate seats succesfully!");
         } catch (NoSuchAircraftCabinClassException | NoSuchAircraftException | NoSuchFlightScheduleBookingClassException | WrongSumOfBookingClassSeatQtyException | WrongSumOfTicketFamilySeatQtyException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -148,7 +144,7 @@ public class BookingClassController implements Serializable {
 
     public String priceBookingClasses() {
         try {
-            bookingClassSession.priceBookingClasses(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers, priceMap);
+            revMgmtSession.priceBookingClasses(flightScheduleId, flightSchCabinClsTicFamBookingClsHelpers, priceMap);
             List<Date> checkPoints = new ArrayList<>();
 
             checkPoints = seatReallocationSession.yieldManagement(flightScheduleId);
@@ -208,7 +204,7 @@ public class BookingClassController implements Serializable {
     }
 
     private void initialHelper() {
-        flightSchCabinClsTicFamBookingClsHelpers = flightScheduleSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
+        flightSchCabinClsTicFamBookingClsHelpers = revMgmtSession.getFlightSchCabinClsTicFamBookingClsHelpers(flightScheduleId);
     }
 
     public float getCalculatedPrice(float priceCoefficient) {

@@ -6,7 +6,7 @@
 package util.converter;
  
 import ams.aps.entity.Aircraft;
-import ams.ais.session.AircraftSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftException;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
@@ -20,7 +20,7 @@ import managedbean.application.MsgController;
 public class AircraftConverter implements Converter {
 
     @EJB
-    private AircraftSessionLocal aircraftSession;
+    private ProductDesignSessionLocal productDesignSession;
     @Inject
     MsgController msgController;
     
@@ -28,7 +28,7 @@ public class AircraftConverter implements Converter {
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if(value != null && value.trim().length() > 0) {
             try {
-                return aircraftSession.getAircraftById(Long.parseLong(value));
+                return productDesignSession.getAircraftById(Long.parseLong(value));
             } catch (NoSuchAircraftException ex) {
                 msgController.addErrorMessage(ex.getMessage());
                 return null;

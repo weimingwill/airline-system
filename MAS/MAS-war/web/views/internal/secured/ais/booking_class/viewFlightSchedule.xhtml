@@ -14,7 +14,7 @@
 
             <p:dataTable id="flight-schedule" var="flightSchedule" selection="#{flightScheduleController.selectedFlightSchedule}" value="#{flightScheduleController.allFlightSchedule}" rows="10"
                          rowKey="#{flightSchedule.flightScheduleId}" tableStyleClass="table-small"
-                         paginator="false" rowsPerPageTemplate="10,15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                         paginator="true" rowsPerPageTemplate="10,15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
                 <f:facet name="header">
                     Flight schedule
@@ -113,8 +113,8 @@
                                                 <p:panelGrid columns="3">
                                                     <p:outputLabel value="#{bc.bookingClass.name}" />
                                                     <p:outputLabel value="#{bc.seatQty} seats" />
-                                                    <p:outputLabel value="S$#{bc.price}">
-                                                        <f:convertNumber currencyCode="S$" />  
+                                                    <p:outputLabel value="#{bc.price}">
+                                                        <f:convertNumber currencyCode="S$" currencySymbol="S$" maxFractionDigits="2"/>  
                                                     </p:outputLabel>
                                                 </p:panelGrid>
                                             </ui:repeat>

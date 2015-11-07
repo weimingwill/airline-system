@@ -17,5 +17,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface BookingSessionLocal {
-    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, boolean showPremium, int numOfPassenger);
+    public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, boolean showPremium, int numOfPassenger);
 }
