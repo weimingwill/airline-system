@@ -12,7 +12,6 @@ import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.PhaseDemand;
 import ams.ais.entity.TicketFamily;
 import ams.ais.entity.TicketFamilyRule;
-import ams.ais.entity.helper.BookingClassChannelId;
 import ams.ais.entity.helper.CabinClassTicketFamilyId;
 import ams.ais.entity.helper.FlightScheduleBookingClassId;
 import ams.ais.util.exception.DuplicatePriceException;
@@ -41,9 +40,6 @@ import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.ApsMessage;
-import ams.ars.entity.BookingClassChannel;
-import ams.ars.entity.Channel;
-import ams.crm.util.helper.ChannelHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -75,42 +71,19 @@ public class RevMgmtSession implements RevMgmtSessionLocal {
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
 
-    private Channel getChannelByName(String channelName) {
-        Query query = em.createQuery("SELECT c FROM Channel c WHERE c.name = :inName AND c.deleted = FALSE");
-        query.setParameter("inName", channelName);
-        Channel channel = new Channel();
-        try {
-            channel = (Channel) query.getSingleResult();
-        } catch (NoResultException e) {
-        }
-        return channel;
-    }
-
     @Override
     public BookingClass createBookingClass(String name, TicketFamily selectedTicketFamily, String channelName) throws ExistSuchBookingClassNameException {
         verifyBookingClassName(name, selectedTicketFamily);
         BookingClass bookingClass = new BookingClass();
         TicketFamily ticketFamily = em.find(TicketFamily.class, selectedTicketFamily.getTicketFamilyId());
-        bookingClass.create(name, ticketFamily);
+        bookingClass.setName(name);
+        bookingClass.setTicketFamily(ticketFamily);
+        bookingClass.setDeleted(false);
+        bookingClass.setChannel(channelName);
         em.persist(bookingClass);
         em.flush();
         em.flush();
-        createBookingClassChannel(bookingClass, channelName);
         return bookingClass;
-    }
-
-    private void createBookingClassChannel(BookingClass bookingClass, String channelName) {
-        Channel channel = getChannelByName(channelName);
-        channel = em.find(Channel.class, channel.getChannelId());
-        BookingClassChannelId bookingClsChannelId = new BookingClassChannelId();
-        bookingClsChannelId.setBookingClassId(bookingClass.getBookingClassId());
-        bookingClsChannelId.setChannelId(channel.getChannelId());
-        BookingClassChannel bookingClsChannel = new BookingClassChannel();
-        bookingClsChannel.setBookingClassChannelId(bookingClsChannelId);
-        bookingClsChannel.setChannel(channel);
-        bookingClsChannel.setBookingClass(bookingClass);
-        bookingClsChannel.setStatus(ChannelHelper.STATUS_OPEN);
-        em.persist(bookingClsChannel);
     }
 
     @Override
@@ -617,12 +590,14 @@ public class RevMgmtSession implements RevMgmtSessionLocal {
         flightScheduleBookingClass.setFlightScheduleBookingClassId(flightSchedBookingClsId);
         flightScheduleBookingClass.setBookingClass(bookingCls);
         flightScheduleBookingClass.setSeatQty(0);
+        flightScheduleBookingClass.setSoldSeatQty(0);
         flightScheduleBookingClass.setDeleted(false);
         flightScheduleBookingClass.setBasicPrice((float) 0);
         flightScheduleBookingClass.setPrice((float) 0);
         flightScheduleBookingClass.setPriceCoefficient((float) 0);
         flightScheduleBookingClass.setDemandDev((float) 0);
         flightScheduleBookingClass.setDemandMean((float) 0);
+        flightScheduleBookingClass.setClosed(false);
 
         //create default check points (phase demand) 
         List<PhaseDemand> pds = seatReallocationSession.getAllPhaseDemands();

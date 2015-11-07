@@ -78,6 +78,9 @@ public class FlightScheduleBookingClass implements Serializable {
     @Column(name = "PRICED")
     private Boolean priced;
 
+    @Column(name = "CLOSED")
+    private Boolean closed;
+
     public FlightScheduleBookingClassId getFlightScheduleBookingClassId() {
         return flightScheduleBookingClassId;
     }
@@ -203,4 +206,14 @@ public class FlightScheduleBookingClass implements Serializable {
     public void setMarketCampaigns(List<MktCampaign> marketCampaigns) {
         this.marketCampaigns = marketCampaigns;
     }
+
+    public Boolean getClosed() {
+        return closed;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
+    }
+    
+    
 }
