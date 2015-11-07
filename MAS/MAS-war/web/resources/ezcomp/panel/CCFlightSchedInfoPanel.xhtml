@@ -9,6 +9,7 @@
     <!-- INTERFACE -->
     <cc:interface>
         <cc:attribute name="flightSched" required="true" />
+        <cc:attribute name="date" required ="true" />
         <cc:attribute name="airport" required="true" />
     </cc:interface>
 
@@ -19,18 +20,17 @@
         <p:panelGrid>
             <p:row>
                 <p:column>
-                    <p:outputLabel value="#{flightSched.departDate}">
-                        <f:convertDateTime pattern="EE, dd MMM yyyy" />
+                    <p:outputLabel value="#{cc.attrs.date}">
+                        <f:convertDateTime pattern="EE, dd MMM yyyy" timeZone="GMT+8" />
                     </p:outputLabel>
-                    <p:outputLabel value="#{airport.iataCode}" />
                 </p:column>
             </p:row>
             <p:row>
                 <p:column>
-                    <p:outputLabel value="#{flightSched.departDate}">
-                        <f:convertDateTime pattern="HH:mm" />
+                    <p:outputLabel value="#{cc.attrs.date}">
+                        <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
                     </p:outputLabel>
-                    <p:outputLabel value="#{airport.iataCode}" />
+                    <p:outputLabel value=" #{airport.iataCode}" />
                 </p:column>
             </p:row>
             <p:row>

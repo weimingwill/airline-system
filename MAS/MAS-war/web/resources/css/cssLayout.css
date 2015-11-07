@@ -491,3 +491,21 @@ div.timeline-event-selected {
 .alignTop {
     vertical-align: top !important;
 }
+
+.alignCenter {
+    text-align: center !important;
+}
+
+.alignRight{
+    text-align: right !important;
+}
+
+.priceTag {
+    font-size: 11px !important;
+    color: #FF984F !important;
+}
+
+.notificationBar {
+    display: block;
+}
+

@@ -6,11 +6,14 @@
 package ams.crm.session;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.CabinClassTicketFamily;
+import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.session.RevMgmtSessionLocal;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
+import ams.ais.util.helper.FlightSchedBookingClsHelper;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
@@ -44,7 +47,7 @@ public class BookingSession implements BookingSessionLocal {
     private ProductDesignSessionLocal productDesignSession;
 
     @Override
-    public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate) throws NoSuchFlightSchedulException{
+    public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate) throws NoSuchFlightSchedulException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(deptDate);
         DateHelper.setToStartOfDay(calendar);
@@ -54,11 +57,11 @@ public class BookingSession implements BookingSessionLocal {
 
         List<FlightSchedule> directFlightScheds = searchForDirectFlights(deptAirport, arrAirport, date, nextDate);
         List<FlightSchedule> inDirectFlightScheds = searchForInDirectFlights(deptAirport, arrAirport, date, nextDate);
-        
+
         if (directFlightScheds.isEmpty() && inDirectFlightScheds.isEmpty()) {
             throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
         }
-        
+
         List<List<FlightSchedule>> flightSchedules = new ArrayList<>();
         flightSchedules.add(directFlightScheds);
         flightSchedules.add(inDirectFlightScheds);
@@ -72,6 +75,8 @@ public class BookingSession implements BookingSessionLocal {
         query.setParameter("inArrAirport", arrAirport.getAirportName());
         query.setParameter("inDate", date);
         query.setParameter("inNextDate", nextDate);
+        System.out.println("inDate: " + date);
+        System.out.println("inNextDate: " + nextDate);
         List<FlightSchedule> directFlightScheds = new ArrayList<>();
         try {
             directFlightScheds = (List<FlightSchedule>) query.getResultList();
@@ -96,7 +101,7 @@ public class BookingSession implements BookingSessionLocal {
     }
 
     @Override
-    public List<TicketFamily> getFlightSchedLowesetTixFams(List<FlightSchedule> flightScheds, CabinClass selectedCabinClass) {
+    public List<TicketFamily> getFlightSchedLowestTixFams(List<FlightSchedule> flightScheds, CabinClass selectedCabinClass) {
         List<TicketFamily> tixFams = new ArrayList<>();
         try {
             for (FlightSchedule flightSched : flightScheds) {
@@ -110,6 +115,66 @@ public class BookingSession implements BookingSessionLocal {
         } catch (NoSuchCabinClassException | NoSuchTicketFamilyException e) {
         }
         return tixFams;
+    }
+
+    @Override
+    public List<FlightSchedBookingClsHelper> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix) {
+        List<FlightSchedBookingClsHelper> fbHelpers = new ArrayList<>();
+        for (TicketFamily tixFam : tixFams) {
+            fbHelpers.add(getOpenedFlightSchedBookingCls(flightSched, tixFam, channelName, numOfTix));
+        }
+        return fbHelpers;
+    }
+    
+    private FlightSchedBookingClsHelper getOpenedFlightSchedBookingCls(FlightSchedule flightSched, TicketFamily tixFam, String channelName, int numOfTix) {
+        Query query = em.createQuery("SELECT fb FROM FlightScheduleBookingClass fb, BookingClass b "
+                + "WHERE fb.flightScheduleBookingClassId.flightScheduleId = :inFlightScheduleId "
+                + "AND fb.flightScheduleBookingClassId.bookingClassId = b.bookingClassId "
+                + "AND b.ticketFamily.ticketFamilyId = :inTicketFamilyId "
+                + "AND fb.closed = FALSE "
+                + "AND b.channel = :inChannel "
+                + "AND b.deleted = FALSE "
+                + "AND b.ticketFamily.deleted = FALSE "
+                + "AND fb.deleted = FALSE");
+        query.setParameter("inFlightScheduleId", flightSched.getFlightScheduleId());
+        query.setParameter("inTicketFamilyId", tixFam.getTicketFamilyId());
+        query.setParameter("inChannel", channelName);
+        FlightSchedBookingClsHelper fbHelper = new FlightSchedBookingClsHelper();
+        
+        try {
+            FlightScheduleBookingClass flightSchedBookingCls = (FlightScheduleBookingClass) query.getSingleResult();
+            fbHelper.setFlightSchedBookingCls(flightSchedBookingCls);
+            fbHelper.setTicketFamily(tixFam);
+            fbHelper.setCabinClass(tixFam.getCabinClass());
+            int remainedSeatQty = getRemainedSeatQty(flightSched, tixFam);
+            fbHelper.setRemainedSeatQty(remainedSeatQty);
+            if (remainedSeatQty > numOfTix) {
+                fbHelper.setAvailable(true);
+            } else {
+                fbHelper.setAvailable(false);
+            }
+            
+            if (remainedSeatQty > 10) {
+                fbHelper.setShowLeftSeatQty(false);
+            } else {
+                fbHelper.setShowLeftSeatQty(true);
+            }
+        } catch (NoResultException e) {
+        }
+        return fbHelper;
+    }
+
+    private int getRemainedSeatQty(FlightSchedule flightSched, TicketFamily tixFam) {
+        int totalSeatQty = 0;
+        try {
+            CabinClassTicketFamily cabinClassTixFam = productDesignSession.getCabinClassTicketFamilyJoinTable(flightSched.getAircraft().getAircraftId(), tixFam.getCabinClass().getCabinClassId(), tixFam.getTicketFamilyId());
+            totalSeatQty = cabinClassTixFam.getSeatQty();
+            for (FlightScheduleBookingClass fb : revMgmtSession.getFlightScheduleBookingClassJoinTablesOfTicketFamily(flightSched.getFlightScheduleId(), tixFam.getTicketFamilyId())) {
+                totalSeatQty = totalSeatQty - fb.getSoldSeatQty();
+            }
+        } catch (Exception e) {
+        }
+        return totalSeatQty;
     }
 
 //    private List<TicketFamily> addTixFams(List<TicketFamily> tixFams, FlightSchedule flightSched, CabinClass cabinClass) {
@@ -126,5 +191,4 @@ public class BookingSession implements BookingSessionLocal {
 //        }
 //        return tixFams;
 //    }
-
 }

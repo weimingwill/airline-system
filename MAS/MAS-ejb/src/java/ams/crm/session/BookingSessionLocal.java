@@ -7,6 +7,7 @@ package ams.crm.session;
 
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
+import ams.ais.util.helper.FlightSchedBookingClsHelper;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
@@ -23,5 +24,8 @@ public interface BookingSessionLocal {
 
     public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate) throws NoSuchFlightSchedulException;
 
-    public List<TicketFamily> getFlightSchedLowesetTixFams(List<FlightSchedule> flightScheds, CabinClass cabinClass);
+    public List<TicketFamily> getFlightSchedLowestTixFams(List<FlightSchedule> flightScheds, CabinClass cabinClass);
+
+    public List<FlightSchedBookingClsHelper> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix);
+
 }

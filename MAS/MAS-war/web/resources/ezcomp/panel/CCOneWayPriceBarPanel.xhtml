@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="flightSchedBookingCls" required="true" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set value="#{cc.attrs.flightSchedBookingCls}" var="fb" />
+        <p:panelGrid>
+
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="OUTBOUND FLIGHT" />
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{fb.cabinClass.name} #{fb.ticketFamily.name}" />
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{fb.flightSchedBookingCls.price}" />
+                </p:column>
+            </p:row>
+
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="#{fb.flightSchedBookingCls.flightSchedule.departDate}">
+                        <f:convertDateTime pattern="EE, dd MMM yyyy" timeZone="GMT+8" />
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="" />x
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{fb.flightSchedBookingCls.flightSchedule.arrivalDate}">
+                        <f:convertDateTime pattern="EE, dd MMM yyyy" timeZone="GMT+8" />
+                    </p:outputLabel>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="#{fb.flightSchedBookingCls.flightSchedule.departDate}">
+                        <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
+                    </p:outputLabel>
+                    <p:outputLabel value=" #{fb.flightSchedBookingCls.flightSchedule.leg}" />
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="#{fb.flightSchedBookingCls.flightSchedule.leg.departAirport.city.cityName}, #{airport.airportName}" />
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+    </cc:implementation>
+</html>

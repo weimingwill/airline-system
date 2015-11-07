@@ -8,11 +8,13 @@ package managedbean.crm;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.ProductDesignSessionLocal;
+import ams.ais.util.helper.FlightSchedBookingClsHelper;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.crm.session.BookingSessionLocal;
+import ams.crm.util.helper.ChannelHelper;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -24,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import managedbean.application.CrmExNavController;
 import managedbean.application.MsgController;
@@ -71,6 +75,8 @@ public class BookingManager implements Serializable {
     private String searchDeptDate;
     private String searchArrDate;
 
+    private FlightSchedBookingClsHelper selectedFbHelper;
+
     /**
      * Creates a new instance of bookingManager
      */
@@ -78,6 +84,7 @@ public class BookingManager implements Serializable {
     public void init() {
         allAirports = routePlanningSession.getAllAirports();
         cabinClses = productDesignSession.getAllCabinClass();
+        deptAirport = routePlanningSession.getAirportByICAOCode("WSSS");
         choice = "return";
         arrDateShow = true;
         initialDate();
@@ -139,13 +146,21 @@ public class BookingManager implements Serializable {
         return filteredAirports;
     }
 
+    public void resetDeptDate(ActionEvent event) {
+        System.out.println("Departure date: " + deptDate);
+        FacesContext context = FacesContext.getCurrentInstance();
+        String departureDate = context.getApplication().evaluateExpressionGet(context, "date", String.class);
+        deptDate = DateHelper.convertStringToDate(departureDate);
+        System.out.println("Departure date: " + deptDate);
+    }
+
+    public void onPriceSelected() {
+        System.out.println("Selected FB Helper " + selectedFbHelper);
+    }
+    
     public String searchFlights() {
         searchDeptDate = DateHelper.convertDateTime(deptDate);
         searchArrDate = DateHelper.convertDateTime(arrDate);
-        System.out.println("Dept Airport: " + deptAirport.getAirportName());
-        System.out.println("Arr Airport: " + arrAirport.getAirportName());
-        System.out.println("Dept Date: " + deptDate);
-        System.out.println("Arr Date: " + arrDate);
         try {
             if (choice.equals("oneway")) {
                 searchForOneWayFlights();
@@ -170,14 +185,42 @@ public class BookingManager implements Serializable {
         System.out.println("searchForReturnFlights");
     }
 
-    public List<TicketFamily> getFlightSchedLowesetTixFams() {
-        return bookingSession.getFlightSchedLowesetTixFams(directFlightScheds, selectedCabinCls);
+    public List<TicketFamily> getFlightSchedLowestTixFams() {
+        return bookingSession.getFlightSchedLowestTixFams(directFlightScheds, selectedCabinCls);
     }
 
-    public String getFlightSchedTotalDur(FlightSchedule flightSched){
+    public String getFlightSchedTotalDur(FlightSchedule flightSched) {
         return DateHelper.convertMSToHourMinute(DateHelper.calcDateDiff(flightSched.getDepartDate(), flightSched.getArrivalDate()));
     }
-    //
+
+    public List<FlightSchedBookingClsHelper> getFlightSchedBookingCls(FlightSchedule flightSched) {
+        return bookingSession.getOpenedFlightSchedBookingClses(flightSched, getFlightSchedLowestTixFams(), ChannelHelper.ARS, adultNo + childrenNo);
+    }
+
+    public List<String> getPreviousThreeDays() {
+        List<String> dates = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(deptDate);
+        calendar.add(Calendar.DATE, -3);
+        dates.add(DateHelper.convertDateTime(calendar.getTime()));
+        for (int i = 0; i < 2; i++) {
+            calendar.add(Calendar.DATE, 1);
+            dates.add(DateHelper.convertDateTime(calendar.getTime()));
+        }
+        return dates;
+    }
+
+    public List<String> getNextThreeDays() {
+        List<String> dates = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(deptDate);
+        for (int i = 0; i < 3; i++) {
+            calendar.add(Calendar.DATE, 1);
+            dates.add(DateHelper.convertDateTime(calendar.getTime()));
+        }
+        return dates;
+    }
+
     //Getter and Setter    
     //
     public int getAdultNo() {
@@ -306,6 +349,14 @@ public class BookingManager implements Serializable {
 
     public void setArrDateShow(boolean arrDateShow) {
         this.arrDateShow = arrDateShow;
+    }
+
+    public FlightSchedBookingClsHelper getSelectedFbHelper() {
+        return selectedFbHelper;
+    }
+
+    public void setSelectedFbHelper(FlightSchedBookingClsHelper selectedFbHelper) {
+        this.selectedFbHelper = selectedFbHelper;
     }
 
 }

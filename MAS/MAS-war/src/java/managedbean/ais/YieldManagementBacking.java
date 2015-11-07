@@ -21,7 +21,7 @@ import ams.ais.util.exception.NeedBookingClassException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.ais.util.helper.FlightSchCabinClsTicFamBookingClsHelper;
-import ams.ais.util.helper.FlightScheduleBookingClassHelper;
+import ams.ais.util.helper.FlightSchedBookingClsHelper;
 import ams.ais.util.helper.SeatClassHelper;
 import ams.ais.util.helper.TicketFamilyBookingClassHelper;
 import ams.aps.entity.AircraftCabinClass;
@@ -87,7 +87,7 @@ public class YieldManagementBacking implements Serializable {
     private float newDemandDev;
     private String cabinClassType;
     private String bookingClassName;
-    private List<FlightScheduleBookingClassHelper> flightScheduleBookingClassHelpers;
+    private List<FlightSchedBookingClsHelper> flightScheduleBookingClassHelpers;
     private List<SeatClassHelper> seatClassHelpers;
     private FlightSchedule selectedFlightSchedule;
     private List<TicketFamilyBookingClassHelper> ticketFamilyBookingClassHelpers;
@@ -393,11 +393,11 @@ public class YieldManagementBacking implements Serializable {
         this.bookingClassName = bookingClassName;
     }
 
-    public List<FlightScheduleBookingClassHelper> getFlightScheduleBookingClassHelpers() {
+    public List<FlightSchedBookingClsHelper> getFlightScheduleBookingClassHelpers() {
         return flightScheduleBookingClassHelpers;
     }
 
-    public void setFlightScheduleBookingClassHelpers(List<FlightScheduleBookingClassHelper> flightScheduleBookingClassHelpers) {
+    public void setFlightScheduleBookingClassHelpers(List<FlightSchedBookingClsHelper> flightScheduleBookingClassHelpers) {
         this.flightScheduleBookingClassHelpers = flightScheduleBookingClassHelpers;
     }
 

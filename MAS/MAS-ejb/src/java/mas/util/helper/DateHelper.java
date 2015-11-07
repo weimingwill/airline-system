@@ -5,9 +5,12 @@
  */
 package mas.util.helper;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,6 +32,14 @@ public class DateHelper {
         calendar.set(Calendar.MILLISECOND, 999);
     }
 
+    public static Date convertStringToDate(String date){
+        try {
+            return new SimpleDateFormat("EE, dd MMM yyyy").parse(date);
+        } catch (ParseException ex) {
+            return new Date();
+        }
+    }
+    
     public static String convertDateTime(Date date) {
         return new SimpleDateFormat("EE, dd MMM yyyy").format(date);
     }
