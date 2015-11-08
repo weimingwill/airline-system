@@ -5,6 +5,7 @@
  */
 package ams.dcs.session;
 
+import ams.ais.entity.TicketFamilyRule;
 import ams.aps.entity.FlightSchedule;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.BoardingPass;
@@ -56,7 +57,7 @@ public class CheckInSession implements CheckInSessionLocal {
 
         try {
             AirTicket at = em.find(AirTicket.class, ticket.getId());
-            
+
             BoardingPass bp = new BoardingPass();
             FlightSchedule f = at.getFlightSchedBookingClass().getFlightSchedule();
 
@@ -72,7 +73,7 @@ public class CheckInSession implements CheckInSessionLocal {
             at.setBoardingPass(bp);
             at.setStatus("Checked-in");
             em.merge(at);
-            
+
             return true;
         } catch (Exception e) {
             return false;
@@ -81,7 +82,22 @@ public class CheckInSession implements CheckInSessionLocal {
 
     @Override
     public boolean checkInuggage(ArrayList<AirTicket> airtickets, ArrayList<CheckInLuggage> luggageList) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<CheckInLuggage> lug = new ArrayList<>();
+        try {
+            for (CheckInLuggage c : luggageList) {
+                em.persist(c);
+                em.flush();
+                lug.add(c);
+            }
+
+            for (AirTicket a : airtickets) {
+                AirTicket at = em.find(AirTicket.class, a.getId());
+                at.setLuggages(lug);
+            }
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     @Override

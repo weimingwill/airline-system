@@ -44,7 +44,6 @@ public class LuggageManager implements Serializable {
     private double weight;
     private double excessWeight = 0;
     private double excessWeightPrice = 0;
-    private double totalWeight = 0;
     private String remark;
 
     private Customer passenger;
@@ -88,12 +87,16 @@ public class LuggageManager implements Serializable {
             luggage.setRemark(remark);
         }
         excessWeight = 0;
-        totalWeight += weight;
 
         luggageList.add(luggage);
         for (AirTicket a : airTickets) {
-            if (totalWeight > a.getPurchasedLuggage().getMaxWeight()) {
-                excessWeight += totalWeight - a.getPurchasedLuggage().getMaxWeight();
+            if (weight > a.getPurchasedLuggage().getMaxWeight()) {
+                excessWeight = weight - a.getPurchasedLuggage().getMaxWeight();
+                if (excessWeight <= 15) {
+                    excessWeightPrice = excessWeight*25;
+                }else if (excessWeight <= 30) {
+                    excessWeightPrice = (excessWeight-15)*35;
+                }
             }
         }
         excessWeightPrice = excessWeight * 42;
@@ -189,20 +192,6 @@ public class LuggageManager implements Serializable {
      */
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    /**
-     * @return the totalWeight
-     */
-    public double getTotalWeight() {
-        return totalWeight;
-    }
-
-    /**
-     * @param totalWeight the totalWeight to set
-     */
-    public void setTotalWeight(double totalWeight) {
-        this.totalWeight = totalWeight;
     }
 
     /**

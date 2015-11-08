@@ -5,6 +5,7 @@
  */
 package ams.dcs.session;
 
+import ams.ais.entity.TicketFamilyRule;
 import ams.aps.entity.FlightSchedule;
 import ams.ars.entity.AirTicket;
 import ams.crm.entity.Customer;
@@ -30,6 +31,6 @@ public interface CheckInSessionLocal {
     public String selectSeat(String ticketNo);
 
     public boolean checkInPassenger(AirTicket ticket);
-
+            
     public boolean checkInuggage(ArrayList<AirTicket> airtickets, ArrayList<CheckInLuggage> luggageList);
 }
