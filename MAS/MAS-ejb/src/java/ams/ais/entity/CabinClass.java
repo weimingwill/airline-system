@@ -31,6 +31,7 @@ public class CabinClass implements Serializable {
     private Boolean deleted;
     private String milePolicy;
     private Double percentage;
+    private Double basePrice;
             
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="cabinClass")
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
@@ -130,5 +131,12 @@ public class CabinClass implements Serializable {
     public void setRank(Integer rank) {
         this.rank = rank;
     }
-    
+
+    public Double getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(Double basePrice) {
+        this.basePrice = basePrice;
+    }
 }

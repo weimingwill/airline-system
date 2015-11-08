@@ -7,10 +7,13 @@ package ams.crm.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -20,6 +23,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 public class Feedback implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +34,9 @@ public class Feedback implements Serializable {
     private String content;
     private String status;
     private String channel;
-    
+
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private RegCust regCust;
 
     public Long getId() {
         return id;
@@ -47,7 +53,7 @@ public class Feedback implements Serializable {
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
     }
-    
+
     public String getContent() {
         return content;
     }
@@ -64,7 +70,6 @@ public class Feedback implements Serializable {
         this.status = status;
     }
 
-
     public String getChannel() {
         return channel;
     }
@@ -72,8 +77,6 @@ public class Feedback implements Serializable {
     public void setChannel(String channel) {
         this.channel = channel;
     }
-    
-    
 
     @Override
     public int hashCode() {
@@ -113,5 +116,13 @@ public class Feedback implements Serializable {
     public void setSubject(String subject) {
         this.subject = subject;
     }
-    
+
+    public RegCust getRegCust() {
+        return regCust;
+    }
+
+    public void setRegCust(RegCust regCust) {
+        this.regCust = regCust;
+    }
+
 }

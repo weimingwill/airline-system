@@ -20,6 +20,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -28,39 +29,39 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class AirTicket implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String status;
-    
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Booking booking;
-    
+
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<AddOn> addOns = new ArrayList<>();
-    
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Luggage purchasedLuggage;
-    
+
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<CheckInLuggage> luggages = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<PricingItem> pricingItems = new ArrayList<>();
-    
-    @OneToOne(cascade={CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "airTicket")
+    private List<AirTicketPricingItem> airTicketPricingItems = new ArrayList<>();
+
+    @OneToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private Seat seat;
-    
-    @OneToOne(cascade={CascadeType.PERSIST}, fetch = FetchType.EAGER)
+
+    @OneToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private BoardingPass boardingPass;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Customer customer;
-    
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightScheduleBookingClass flightSchedBookingClass;
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -94,7 +95,6 @@ public class AirTicket implements Serializable {
         this.id = id;
     }
 
-
     public Booking getBooking() {
         return booking;
     }
@@ -111,12 +111,12 @@ public class AirTicket implements Serializable {
         this.addOns = addOns;
     }
 
-    public List<PricingItem> getPricingItems() {
-        return pricingItems;
+    public List<AirTicketPricingItem> getAirTicketPricingItems() {
+        return airTicketPricingItems;
     }
 
-    public void setPricingItems(List<PricingItem> pricingItems) {
-        this.pricingItems = pricingItems;
+    public void setAirTicketPricingItems(List<AirTicketPricingItem> airTicketPricingItems) {
+        this.airTicketPricingItems = airTicketPricingItems;
     }
 
     public Seat getSeat() {
@@ -192,7 +192,5 @@ public class AirTicket implements Serializable {
     public void setPurchasedLuggage(Luggage purchasedLuggage) {
         this.purchasedLuggage = purchasedLuggage;
     }
-
-
 
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.crm.entity.helper;
+package ams.ars.entity.helper;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
