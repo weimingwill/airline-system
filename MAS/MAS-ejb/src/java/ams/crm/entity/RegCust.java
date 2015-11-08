@@ -47,7 +47,7 @@ public class RegCust extends Customer implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<MileTrans> mileTranses = new ArrayList<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "regCust")
     private List<Feedback> feedbacks = new ArrayList<>();
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
