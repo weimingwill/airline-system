@@ -76,7 +76,8 @@ public class BookingManager implements Serializable {
     private List<FlightSchedule> fligthScheds = new ArrayList<>();
     private List<FlightSchedule> inDirectFlightScheds = new ArrayList<>();
     private Map<FlightSchedule, FlightSchedule> inDirectFlightSchedMaps = new HashMap<>();
-    
+    private Map<FlightScheduleBookingClass, FlightSchedBookingClsHelper> flightSchedBookingClsMaps = new HashMap<>();
+
     private String searchDeptDate;
     private String searchArrDate;
 
@@ -163,10 +164,12 @@ public class BookingManager implements Serializable {
     public void onPriceSelected() {
         System.out.println("Selected FB Helper " + selectedFbHelper);
     }
-    
+
     public String searchFlights() {
         searchDeptDate = DateHelper.convertDateTime(deptDate);
         searchArrDate = DateHelper.convertDateTime(arrDate);
+        inDirectFlightSchedMaps = new HashMap<>();
+        flightSchedBookingClsMaps = new HashMap<>();
         try {
             if (choice.equals("oneway")) {
                 searchForOneWayFlights();
@@ -197,16 +200,20 @@ public class BookingManager implements Serializable {
         return DateHelper.convertMSToHourMinute(DateHelper.calcDateDiff(flightSched.getDepartDate(), flightSched.getArrivalDate()));
     }
 
-    public List<FlightSchedBookingClsHelper> getFlightSchedBookingClsHelper(FlightSchedule flightSched) {
-        return bookingSession.getOpenedFlightSchedBookingClses(flightSched, getFlightSchedLowestTixFams(), ChannelHelper.ARS, adultNo + childrenNo);
+    public String getFlightSchedTotalDur(FlightSchedule flightSched, FlightSchedule nextFlightSched) {
+        return DateHelper.convertMSToHourMinute(DateHelper.calcDateDiff(flightSched.getDepartDate(), nextFlightSched.getArrivalDate()));
     }
 
     public List<FlightScheduleBookingClass> getFlightSchedBookingCls(FlightSchedule flightSched) {
-        List<FlightScheduleBookingClass> flightSchedBookingCls = new ArrayList<>();
-        for (FlightSchedBookingClsHelper fbHelper : bookingSession.getOpenedFlightSchedBookingClses(flightSched, getFlightSchedLowestTixFams(), ChannelHelper.ARS, adultNo + childrenNo)) {
-            flightSchedBookingCls.add(fbHelper.getFlightSchedBookingCls());
+        return bookingSession.getOpenedFlightSchedBookingClses(flightSched, getFlightSchedLowestTixFams(), ChannelHelper.ARS, adultNo + childrenNo, flightSchedBookingClsMaps);
+    }
+
+    public List<FlightSchedBookingClsHelper> getFlightSchedBookingClsHelpers(FlightSchedule flightSched) {
+        List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
+        for (FlightScheduleBookingClass flightSchedBookingCls : getFlightSchedBookingCls(flightSched)) {
+            flightSchedBookingClsHelpers.add(flightSchedBookingClsMaps.get(flightSchedBookingCls));
         }
-        return flightSchedBookingCls;
+        return flightSchedBookingClsHelpers;
     }
 
     public List<String> getPreviousThreeDays() {
@@ -232,17 +239,22 @@ public class BookingManager implements Serializable {
         }
         return dates;
     }
-    
+
     public FlightSchedule getMappedFlightSched(FlightSchedule flightSchedule) {
-        System.out.println("getMappedFlightSched: " + inDirectFlightSchedMaps.get(flightSchedule));
         return inDirectFlightSchedMaps.get(flightSchedule);
     }
-    
+
+    public void onFlightSchedRadioSelected() {
+        System.out.println("Selected FB: " + selectedFb);
+        selectedFbHelper = flightSchedBookingClsMaps.get(selectedFb);
+        System.out.println("selectedFbHelper: " + selectedFbHelper);
+    }
+
     public String test() {
-        System.out.println("Selected FB" + selectedFb);
+        System.out.println("Selected FB: " + selectedFb);
         return crmExNavController.redirectToPassengerInfo();
     }
-    
+
     public String testValue(FlightSchedBookingClsHelper fbHelper) {
         return String.valueOf(fbHelper.getFlightSchedBookingCls().getFlightScheduleBookingClassId());
     }

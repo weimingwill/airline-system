@@ -6,6 +6,7 @@
 package ams.crm.session;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.util.helper.FlightSchedBookingClsHelper;
 import ams.aps.entity.Airport;
@@ -27,5 +28,5 @@ public interface BookingSessionLocal {
 
     public List<TicketFamily> getFlightSchedLowestTixFams(List<FlightSchedule> flightScheds, CabinClass cabinClass);
 
-    public List<FlightSchedBookingClsHelper> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix);
+    public List<FlightScheduleBookingClass> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix, Map<FlightScheduleBookingClass, FlightSchedBookingClsHelper> flightSchedBookingClsMaps);
 }

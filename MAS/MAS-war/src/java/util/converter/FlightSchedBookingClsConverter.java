@@ -33,6 +33,7 @@ public class FlightSchedBookingClsConverter implements Converter {
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
+                System.out.println("Value: " + value);
                 Long bookingClsId = Long.parseLong(value.substring(value.indexOf("=") + 1, value.indexOf(" ]")));
                 Long flightSchedId = Long.parseLong(value.substring(value.lastIndexOf("=") + 1, value.lastIndexOf(" ]")));
                 return revMgmtSession.getFlightScheduleBookingClass(flightSchedId, bookingClsId);

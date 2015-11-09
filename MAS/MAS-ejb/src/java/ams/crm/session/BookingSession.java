@@ -106,7 +106,6 @@ public class BookingSession implements BookingSessionLocal {
     
     private void getInDirectFlightMaps(List<FlightSchedule> flightScheds, Airport deptAirport, Airport arrAirport, Map<FlightSchedule,FlightSchedule> flightSchedMaps) {
         for (FlightSchedule flightSched : flightScheds) {
-            System.out.println("getInDirectFlightMaps: " + getNextInDirectFlight(flightSched, deptAirport, arrAirport));
             flightSchedMaps.put(flightSched, getNextInDirectFlight(flightSched, deptAirport, arrAirport));
         }
     }
@@ -151,15 +150,15 @@ public class BookingSession implements BookingSessionLocal {
     }
 
     @Override
-    public List<FlightSchedBookingClsHelper> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix) {
-        List<FlightSchedBookingClsHelper> fbHelpers = new ArrayList<>();
+    public List<FlightScheduleBookingClass> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix, Map<FlightScheduleBookingClass, FlightSchedBookingClsHelper> flightSchedBookingClsMaps) {
+        List<FlightScheduleBookingClass> flightSchedBookingClses = new ArrayList<>();
         for (TicketFamily tixFam : tixFams) {
-            fbHelpers.add(getOpenedFlightSchedBookingCls(flightSched, tixFam, channelName, numOfTix));
+            flightSchedBookingClses.add(getOpenedFlightSchedBookingCls(flightSched, tixFam, channelName, numOfTix, flightSchedBookingClsMaps));
         }
-        return fbHelpers;
+        return flightSchedBookingClses;
     }
     
-    private FlightSchedBookingClsHelper getOpenedFlightSchedBookingCls(FlightSchedule flightSched, TicketFamily tixFam, String channelName, int numOfTix) {
+    private FlightScheduleBookingClass getOpenedFlightSchedBookingCls(FlightSchedule flightSched, TicketFamily tixFam, String channelName, int numOfTix, Map<FlightScheduleBookingClass, FlightSchedBookingClsHelper> flightSchedBookingClsMaps) {
         Query query = em.createQuery("SELECT fb FROM FlightScheduleBookingClass fb, BookingClass b "
                 + "WHERE fb.flightScheduleBookingClassId.flightScheduleId = :inFlightScheduleId "
                 + "AND fb.flightScheduleBookingClassId.bookingClassId = b.bookingClassId "
@@ -173,9 +172,9 @@ public class BookingSession implements BookingSessionLocal {
         query.setParameter("inTicketFamilyId", tixFam.getTicketFamilyId());
         query.setParameter("inChannel", channelName);
         FlightSchedBookingClsHelper fbHelper = new FlightSchedBookingClsHelper();
-        
+        FlightScheduleBookingClass flightSchedBookingCls = new FlightScheduleBookingClass();
         try {
-            FlightScheduleBookingClass flightSchedBookingCls = (FlightScheduleBookingClass) query.getSingleResult();
+            flightSchedBookingCls = (FlightScheduleBookingClass) query.getSingleResult();
             fbHelper.setFlightSchedBookingCls(flightSchedBookingCls);
             fbHelper.setTicketFamily(tixFam);
             fbHelper.setCabinClass(tixFam.getCabinClass());
@@ -192,9 +191,10 @@ public class BookingSession implements BookingSessionLocal {
             } else {
                 fbHelper.setShowLeftSeatQty(true);
             }
+            flightSchedBookingClsMaps.put(flightSchedBookingCls, fbHelper);
         } catch (NoResultException e) {
         }
-        return fbHelper;
+        return flightSchedBookingCls;
     }
 
     private int getRemainedSeatQty(FlightSchedule flightSched, TicketFamily tixFam) {
