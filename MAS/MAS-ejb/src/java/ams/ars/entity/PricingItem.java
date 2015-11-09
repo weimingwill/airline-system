@@ -5,6 +5,7 @@
  */
 package ams.ars.entity;
 
+import ams.ars.entity.AirTicketPricingItem;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -26,10 +27,9 @@ public class PricingItem implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Double itemValue;
     
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pricingItems")
-    private List<AirTicket> airTickets = new ArrayList<>();
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pricingItem")
+    private List<AirTicketPricingItem> airTicketPricingItems = new ArrayList<>();
     
     @Override
     public int hashCode() {
@@ -72,20 +72,12 @@ public class PricingItem implements Serializable {
         this.name = name;
     }
 
-    public List<AirTicket> getAirTickets() {
-        return airTickets;
+    public List<AirTicketPricingItem> getAirTicketPricingItems() {
+        return airTicketPricingItems;
     }
 
-    public void setAirTickets(List<AirTicket> airTickets) {
-        this.airTickets = airTickets;
-    }
-
-    public Double getItemValue() {
-        return itemValue;
-    }
-
-    public void setItemValue(Double itemValue) {
-        this.itemValue = itemValue;
+    public void setAirTicketPricingItems(List<AirTicketPricingItem> airTicketPricingItems) {
+        this.airTicketPricingItems = airTicketPricingItems;
     }
     
 }

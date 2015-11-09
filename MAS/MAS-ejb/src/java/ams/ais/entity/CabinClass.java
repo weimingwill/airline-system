@@ -31,13 +31,17 @@ public class CabinClass implements Serializable {
     private Boolean deleted;
     private String milePolicy;
     private Double percentage;
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")            
+    private Double basePrice;
+            
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="cabinClass")
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
-    
-    public void create(String type, String name) {
-        this.setType(type);
-        this.setName(name);
-        this.setDeleted(false);
+
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
+    }
+
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
     }
     
     public Long getCabinClassId() {
@@ -71,14 +75,6 @@ public class CabinClass implements Serializable {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
-    
-    public List<TicketFamily> getTicketFamilys() {
-        return ticketFamilys;
-    }
-
-    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
-        this.ticketFamilys = ticketFamilys;
-    }
 
     public String getMilePolicy() {
         return milePolicy;
@@ -95,6 +91,7 @@ public class CabinClass implements Serializable {
     public void setPercentage(Double percentage) {
         this.percentage = percentage;
     }
+
 
     @Override
     public int hashCode() {
@@ -134,5 +131,12 @@ public class CabinClass implements Serializable {
     public void setRank(Integer rank) {
         this.rank = rank;
     }
-    
+
+    public Double getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(Double basePrice) {
+        this.basePrice = basePrice;
+    }
 }
