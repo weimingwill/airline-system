@@ -22,7 +22,10 @@ import ams.aps.util.helper.FlightSchedStatus;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -47,7 +50,7 @@ public class BookingSession implements BookingSessionLocal {
     private ProductDesignSessionLocal productDesignSession;
 
     @Override
-    public List<List<FlightSchedule>> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate) throws NoSuchFlightSchedulException {
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<FlightSchedule,FlightSchedule> flightSchedMaps) throws NoSuchFlightSchedulException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(deptDate);
         DateHelper.setToStartOfDay(calendar);
@@ -62,9 +65,12 @@ public class BookingSession implements BookingSessionLocal {
             throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
         }
 
-        List<List<FlightSchedule>> flightSchedules = new ArrayList<>();
-        flightSchedules.add(directFlightScheds);
-        flightSchedules.add(inDirectFlightScheds);
+        Set<FlightSchedule> flightSchedsSet = new HashSet<>();
+        List<FlightSchedule> flightSchedules = new ArrayList<>();
+        flightSchedsSet.addAll(directFlightScheds);
+        flightSchedsSet.addAll(inDirectFlightScheds);
+        flightSchedules.addAll(flightSchedsSet);
+        getInDirectFlightMaps(inDirectFlightScheds, deptAirport, arrAirport, flightSchedMaps);
         return flightSchedules;
     }
 
@@ -75,8 +81,6 @@ public class BookingSession implements BookingSessionLocal {
         query.setParameter("inArrAirport", arrAirport.getAirportName());
         query.setParameter("inDate", date);
         query.setParameter("inNextDate", nextDate);
-        System.out.println("inDate: " + date);
-        System.out.println("inNextDate: " + nextDate);
         List<FlightSchedule> directFlightScheds = new ArrayList<>();
         try {
             directFlightScheds = (List<FlightSchedule>) query.getResultList();
@@ -99,7 +103,36 @@ public class BookingSession implements BookingSessionLocal {
         }
         return flightScheds;
     }
-
+    
+    private void getInDirectFlightMaps(List<FlightSchedule> flightScheds, Airport deptAirport, Airport arrAirport, Map<FlightSchedule,FlightSchedule> flightSchedMaps) {
+        for (FlightSchedule flightSched : flightScheds) {
+            System.out.println("getInDirectFlightMaps: " + getNextInDirectFlight(flightSched, deptAirport, arrAirport));
+            flightSchedMaps.put(flightSched, getNextInDirectFlight(flightSched, deptAirport, arrAirport));
+        }
+    }
+    
+    private FlightSchedule getNextInDirectFlight(FlightSchedule flightSched, Airport deptAirport, Airport arrAirport) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(flightSched.getArrivalDate());
+        calendar.add(Calendar.MINUTE, 90); //The depart time of the consecutive flight should be more than 1.5h later than the arrival time of the previous one.
+        Date startDate = calendar.getTime();
+        calendar.add(Calendar.HOUR, 23);
+        Date endDate = calendar.getTime();
+        
+        Query query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inStartDate AND :inEndDate AND f.deleted = FALSE AND f.status = :inStatus");
+        query.setParameter("inDeptAirport", flightSched.getLeg().getArrivalAirport().getAirportName());
+        query.setParameter("inArrAirport", arrAirport.getAirportName());
+        query.setParameter("inStartDate", startDate);
+        query.setParameter("inEndDate", endDate);
+        query.setParameter("inStatus",  FlightSchedStatus.RELEASE);
+        FlightSchedule flightSchedule = new FlightSchedule();
+        try {
+            flightSchedule = (FlightSchedule)query.getSingleResult();
+        } catch (NoResultException e) {
+        }
+        return flightSchedule;
+    }
+    
     @Override
     public List<TicketFamily> getFlightSchedLowestTixFams(List<FlightSchedule> flightScheds, CabinClass selectedCabinClass) {
         List<TicketFamily> tixFams = new ArrayList<>();

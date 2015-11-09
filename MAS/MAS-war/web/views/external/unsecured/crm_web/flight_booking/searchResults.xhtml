@@ -7,7 +7,8 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:ti="http://xmlns.jcp.org/jsf/composite/ezcomp/tile">
 
     <ui:define name="title">
         Search Result
@@ -65,70 +66,93 @@
                 </p:row>
 
                 <!--Flight Schedules-->
-                <c:forEach items="#{bookingManager.directFlightScheds}" var="flightSched" >
+                <c:forEach items="#{bookingManager.fligthScheds}" var="flightSched" >
                     <p:row>
                         <p:column>
                             <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.departAirport}" date="#{flightSched.departDate}" />
                         </p:column>
                         <p:column>
-                            <p:panelGrid>
-                                <p:row>
-                                    <p:column styleClass="alignCenter" >
-                                        <p:outputLabel styleClass="fa fa-clock-o" style="font-size: 20px;" />                                        
-                                    </p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>
-                                        <p:outputLabel value="#{bookingManager.getFlightSchedTotalDur(flightSched)}"/>                                        
-                                    </p:column>
-                                </p:row>
-                            </p:panelGrid>
+                            <pa:CCFlightSchedDurationPanel time="#{bookingManager.getFlightSchedTotalDur(flightSched)}" />
                         </p:column>
                         <p:column>
-                            <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.arrivalAirport}" date="#{flightSched.arrivalDate}" />
+                            <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.arrivalAirport}" date="#{flightSched.arrivalDate}" 
+                                                       rendered="#{not empty bookingManager.getMappedFlightSched(flightSched)}"/>
+                            <pa:CCFlightSchedInfoPanel flightSched="#{bookingManager.getMappedFlightSched(flightSched)}" airport="#{bookingManager.getMappedFlightSched(flightSched).leg.arrivalAirport}" date="#{bookingManager.getMappedFlightSched(flightSched).arrivalDate}" 
+                                                       rendered="#{empty bookingManager.inDirectFlightSchedMaps.get(flightSched)}"/>
                         </p:column>
+
                         <p:column colspan="#{bookingManager.getFlightSchedLowestTixFams().size()}">
-                            <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFbHelper}" layout="custom">
-                                <p:ajax oncomplete="PF('bar').show()" event="change" update="bar,form"/>
-                                <f:selectItems value="#{bookingManager.getFlightSchedBookingCls(flightSched)}" var="fb" itemLabel="#{fb}" itemValue="#{fb}"/>
+                            <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFb}" converter="flightSchedBookingClsConverter" layout="custom">
+                                <!--<p:ajax oncomplete="PF('bar').show()" event="change" update="bar"/>-->
+                                <f:selectItems value="#{bookingManager.getFlightSchedBookingCls(flightSched)}" var="fb" itemValue="#{fb}"/>
                             </p:selectOneRadio>
 
                             <p:dataGrid styleClass="alignCenter" value="#{bookingManager.getFlightSchedBookingCls(flightSched)}" var="fbHelper" columns="#{bookingManager.getFlightSchedLowestTixFams().size()}" rowIndexVar="index">
                                 <p:panelGrid styleClass="alignCenter" style="width: 100%;">
                                     <p:row>
                                         <p:column>
-                                            <p:radioButton for=":form:priceRadio" itemIndex="#{index}" rendered="#{fbHelper.available}"/>
-                                        </p:column>
-                                    </p:row>
-                                    <p:row>
-                                        <p:column>
-                                            <p:outputLabel value="S$" rendered="#{fbHelper.available}"/>
-                                            <p:outputLabel value="#{fbHelper.flightSchedBookingCls.price}" rendered="#{fbHelper.available}">
-                                                <f:convertNumber maxFractionDigits="1" /> 
-                                            </p:outputLabel>
-                                            <p:outputLabel value="Not available" rendered="#{not fbHelper.available}" />
-                                        </p:column>
-                                    </p:row>
-                                    <p:row>
-                                        <p:column>
-                                            <p:outputLabel styleClass="priceTag" value="#{fbHelper.remainedSeatQty} Seat(s) Left" rendered="#{not fbHelper.showLeftSeatQty}" />
+                                            <p:radioButton for=":form:priceRadio" itemIndex="#{index}"/>
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>
                             </p:dataGrid>
+                            <ui:remove>
+                                <p:dataGrid styleClass="alignCenter" value="#{bookingManager.getFlightSchedBookingClsHelper(flightSched)}" var="fbHelper" columns="#{bookingManager.getFlightSchedLowestTixFams().size()}" rowIndexVar="index">
+                                    <p:panelGrid styleClass="alignCenter" style="width: 100%;">
+                                        <p:row>
+                                            <p:column>
+                                                <p:radioButton for=":form:priceRadio" itemIndex="#{index}" rendered="#{fbHelper.available}"/>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel value="#{bookingManager.testValue(fbHelper)}" />
+                                                <p:outputLabel value="S$" rendered="#{fbHelper.available}"/>
+                                                <p:outputLabel value="#{fbHelper.flightSchedBookingCls.price}" rendered="#{fbHelper.available}">
+                                                    <f:convertNumber maxFractionDigits="1" /> 
+                                                </p:outputLabel>
+                                                <p:outputLabel value="Not available" rendered="#{not fbHelper.available}" />
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel styleClass="priceTag" value="#{fbHelper.remainedSeatQty} Seat(s) Left" rendered="#{not fbHelper.showLeftSeatQty}" />
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:dataGrid>
+                            </ui:remove>
+
                         </p:column>
                     </p:row>
                     <p:row>
                         <p:column></p:column>
                         <p:column></p:column>
                         <p:column styleClass="alignRight">
-                            <p:link value="More details"  />
+                            <p:commandLink value="More details" oncomplete="PF('flightSchedDetail').show()" >
+                                <f:setPropertyActionListener value="#{flightSched}" target="#{bookingBacking.flightSchedule}" />
+                            </p:commandLink>
                         </p:column>
                     </p:row>
                 </c:forEach>
+                <p:commandButton value="Continue" update="messages" action="#{crmExNavController.redirectToPassengerInfo()}" /> 
             </p:panelGrid>
 
+            <p:dialog id="flightSchedDetail" widgetVar="flightSchedDetail" header="Flight Details" showEffect="clip" hideEffect="clip" width="500px;">
+                <p:panelGrid>
+                    <p:row>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton value="Close" oncomplete="PF('flightSchedDetail').hide();" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+
             <p:notificationBar id="bar" position="bottom" effect="slide" styleClass="notificationBar" widgetVar="bar">
+                <!--<pa:CCOneWayPriceBarPanel flightSchedBookingCls="{bookingManager.selectedFbHelper}" />-->
+
                 <p:panelGrid>
 
                     <p:row>
@@ -158,7 +182,7 @@
                             </p:outputLabel>
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column>
                             <p:outputLabel value="#{bookingManager.selectedFbHelper.flightSchedBookingCls.flightSchedule.departDate}">
@@ -174,7 +198,7 @@
                             </p:outputLabel>
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column>
                             <p:outputLabel value="#{bookingManager.selectedFbHelper.flightSchedBookingCls.flightSchedule.leg.departAirport.city.cityName}, 
