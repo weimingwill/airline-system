@@ -5,6 +5,9 @@
  */
 package ams.afos.session;
 
+import ams.afos.entity.BiddingSession;
+import ams.afos.entity.Checklist;
+import ams.afos.entity.FlightCrew;
 import ams.afos.entity.FlightDuty;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.FlightSchedule;
@@ -154,6 +157,61 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     // "Insert Code > Add Business Method")
     public void persist(Object object) {
         em.persist(object);
+    }
+
+    @Override
+    public void startBiddingSession(BiddingSession session) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void suspendBiddingSession(BiddingSession session) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<BiddingSession> getAllBiddingSession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void assignPairingsToCrew(FlightCrew thisCrew) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void createFlightDutyChecklist(Checklist checklist) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateFlightDutyChecklist(Checklist checklist) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateAttendance(List<FlightCrew> flightCrews) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<FlightCrew> getOnDutyCrews(FlightSchedule flightSchedule) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Checklist> getFlightDutyChecklist(FlightSchedule flightSchedule) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Checklist> getChecklistTemplates(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Checklist> getPostFlightReport(FlightSchedule flightSchedule) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
