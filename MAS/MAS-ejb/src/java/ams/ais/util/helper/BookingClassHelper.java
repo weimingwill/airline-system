@@ -6,12 +6,17 @@
 package ams.ais.util.helper;
 
 import ams.ais.entity.BookingClass;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author winga_000
  */
 public class BookingClassHelper {
+
     private BookingClass bookingClass;
     private int seatQty;
     private float price;
@@ -22,7 +27,7 @@ public class BookingClassHelper {
 
     public BookingClassHelper() {
     }
-    
+
     public BookingClass getBookingClass() {
         return bookingClass;
     }
@@ -78,5 +83,15 @@ public class BookingClassHelper {
     public void setBasicPrice(float basicPrice) {
         this.basicPrice = basicPrice;
     }
-    
+
+    public static List<String> getBookingClsNames() {
+        char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+        List<String> bookingClsNames = new ArrayList<>();
+        Map<Integer, String> nameMap = new HashMap<>();
+        for (int i = 0; i < alphabet.length; i++) {
+            bookingClsNames.add(String.valueOf(alphabet[i]).toUpperCase());
+            nameMap.put(i, String.valueOf(alphabet[i]));
+        }
+        return bookingClsNames;
+    }
 }

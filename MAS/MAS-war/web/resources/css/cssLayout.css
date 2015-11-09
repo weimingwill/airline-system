@@ -417,8 +417,6 @@ permissionLink.a:link, permissionLink.a:visited {
     overflow:visible !important;
 }
 
-
-
 /* Custom styles for the Timeline */  
 div.timeline-frame {  
     border-color: #5D99C3;  
@@ -484,4 +482,12 @@ div.timeline-event-selected {
 
 .flightDetail>.ui-inputfield {
     width: 300px;
+}
+
+.bookingAirport>.ui-inputfield {
+    width: 230px;
+}
+
+.alignTop {
+    vertical-align: top !important;
 }

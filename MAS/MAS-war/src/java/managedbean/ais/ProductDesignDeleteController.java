@@ -9,11 +9,11 @@ import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.Rule;
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.BookingClassSession;
-import ams.ais.session.BookingClassSessionLocal;
-import ams.ais.session.CabinClassSessionLocal;
-import ams.ais.session.RuleSessionLocal;
-import ams.ais.session.TicketFamilySessionLocal;
+import ams.ais.session.RevMgmtSession;
+import ams.ais.session.RevMgmtSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchRuleException;
@@ -44,16 +44,11 @@ public class ProductDesignDeleteController implements Serializable{
     private MsgController msgController;
     
     @EJB
-    private CabinClassSessionLocal cabinClassSession;
+    private ProductDesignSessionLocal productDesignSession;
     
     @EJB
-    private RuleSessionLocal ruleSession;
+    private RevMgmtSessionLocal revMgmtSession;
     
-    @EJB
-    private BookingClassSessionLocal bookingClassSession;
-    
-    @EJB
-    private TicketFamilySessionLocal ticketFamilySession;
     
     private CabinClass selectedCabinClass;
     private Rule selectedRule;
@@ -75,7 +70,7 @@ public class ProductDesignDeleteController implements Serializable{
     
     public void deleteCabinClass() {
         try{
-        cabinClassSession.deleteCabinClass(selectedCabinClass.getName());
+        productDesignSession.deleteCabinClass(selectedCabinClass.getName());
         msgController.addMessage("Delete cabin class successfully");
         } catch (NoSuchCabinClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -85,7 +80,7 @@ public class ProductDesignDeleteController implements Serializable{
     
      public void deleteRule() {
         try{
-        ruleSession.deleteRule(selectedRule.getName());
+        productDesignSession.deleteRule(selectedRule.getName());
         System.out.printf("name is :"+selectedRule.getName());
         msgController.addMessage("Delete rule successfully");
         } catch (NoSuchRuleException ex) {
@@ -96,7 +91,7 @@ public class ProductDesignDeleteController implements Serializable{
      public String deleteBookingClass() {
         try {
             System.out.printf("selected booking class is: "+selectedBookingClass);
-            bookingClassSession.deleteBookingClass(selectedBookingClass.getName());
+            revMgmtSession.deleteBookingClass(selectedBookingClass.getName());
             msgController.addMessage("Booking class is deleted successfully!");
         } catch (NoSuchBookingClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
@@ -108,7 +103,7 @@ public class ProductDesignDeleteController implements Serializable{
         try {
             System.out.print("we are in delete ticket Family!");
             System.out.print("the deleted select ticket family name is: "+selectedTicketFamily);
-            ticketFamilySession.deleteTicketFamilyByType(selectedTicketFamily.getType());
+            productDesignSession.deleteTicketFamilyByType(selectedTicketFamily.getType());
             msgController.addMessage("Delete ticket family successfully");
         } catch (NoSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
