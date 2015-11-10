@@ -18,6 +18,10 @@
     <h:body>
         <me:CCCrmExMenu id="navigation-menu" />
         <p:growl id="messages" showDetail="true"/>
+        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <p:graphicImage name="/images/barloader.gif" />
+        </p:dialog>
         <p:layout style="min-height:100%;">
             <p:layoutUnit position="center">
                 <ui:insert name="content">Content</ui:insert>

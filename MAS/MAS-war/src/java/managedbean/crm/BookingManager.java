@@ -9,8 +9,10 @@ import ams.ais.entity.CabinClass;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
 import ams.ais.session.ProductDesignSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
 import ams.ais.util.helper.FlightSchedBookingClsHelper;
 import ams.aps.entity.Airport;
+import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
@@ -26,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -55,7 +58,10 @@ public class BookingManager implements Serializable {
     private BookingSessionLocal bookingSession;
     @EJB
     private ProductDesignSessionLocal productDesignSession;
-
+    @EJB
+    private RevMgmtSessionLocal revMgmtSession;
+    
+    
     //Search conditions
     private int adultNo;
     private int childrenNo;
@@ -76,13 +82,15 @@ public class BookingManager implements Serializable {
     private List<FlightSchedule> fligthScheds = new ArrayList<>();
     private List<FlightSchedule> inDirectFlightScheds = new ArrayList<>();
     private Map<FlightSchedule, FlightSchedule> inDirectFlightSchedMaps = new HashMap<>();
-    private Map<FlightScheduleBookingClass, FlightSchedBookingClsHelper> flightSchedBookingClsMaps = new HashMap<>();
-
+    private Map<String, FlightSchedBookingClsHelper> fbHelperMaps = new HashMap<>();
+    private Map<String, FlightScheduleBookingClass> fbMaps = new HashMap<>();
+    
     private String searchDeptDate;
     private String searchArrDate;
 
     private FlightSchedBookingClsHelper selectedFbHelper;
-    private FlightScheduleBookingClass selectedFb;
+    private FlightScheduleBookingClass selectedFb = new FlightScheduleBookingClass();
+    private List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
 
     /**
      * Creates a new instance of bookingManager
@@ -161,15 +169,10 @@ public class BookingManager implements Serializable {
         System.out.println("Departure date: " + deptDate);
     }
 
-    public void onPriceSelected() {
-        System.out.println("Selected FB Helper " + selectedFbHelper);
-    }
-
     public String searchFlights() {
         searchDeptDate = DateHelper.convertDateTime(deptDate);
         searchArrDate = DateHelper.convertDateTime(arrDate);
-        inDirectFlightSchedMaps = new HashMap<>();
-        flightSchedBookingClsMaps = new HashMap<>();
+
         try {
             if (choice.equals("oneway")) {
                 searchForOneWayFlights();
@@ -185,7 +188,10 @@ public class BookingManager implements Serializable {
 
     public void searchForOneWayFlights() throws NoSuchFlightSchedulException {
         System.out.println("searchForOneWayFlights");
+        inDirectFlightSchedMaps = new HashMap<>();
         fligthScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, inDirectFlightSchedMaps);
+//        setFlightSchedBookingClsHelperMaps();
+        getAllFlightSchedBookingClsHelpers();
     }
 
     public void searchForReturnFlights() {
@@ -204,18 +210,39 @@ public class BookingManager implements Serializable {
         return DateHelper.convertMSToHourMinute(DateHelper.calcDateDiff(flightSched.getDepartDate(), nextFlightSched.getArrivalDate()));
     }
 
-    public List<FlightScheduleBookingClass> getFlightSchedBookingCls(FlightSchedule flightSched) {
-        return bookingSession.getOpenedFlightSchedBookingClses(flightSched, getFlightSchedLowestTixFams(), ChannelHelper.ARS, adultNo + childrenNo, flightSchedBookingClsMaps);
-    }
+//    public void setFlightSchedBookingClsHelperMaps() {
+//        flightSchedBookingClsMaps = new HashMap<>();
+//        flightSchedBookingClsMaps = bookingSession.getFlightSchedBookingClsHelperMaps(fligthScheds, getFlightSchedLowestTixFams(), ChannelHelper.ARS, adultNo + childrenNo);
+//    }
 
+    private void getAllFlightSchedBookingClsHelpers() {
+        flightSchedBookingClsHelpers = new ArrayList<>();
+        fbMaps = new HashMap<>();
+        fbHelperMaps = new HashMap<>();
+        flightSchedBookingClsHelpers = bookingSession.getAllFlightSchedBookingClses(fligthScheds, getFlightSchedLowestTixFams(), arrAirport, ChannelHelper.ARS, adultNo + childrenNo, fbMaps, fbHelperMaps);
+    }
+    
     public List<FlightSchedBookingClsHelper> getFlightSchedBookingClsHelpers(FlightSchedule flightSched) {
-        List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
-        for (FlightScheduleBookingClass flightSchedBookingCls : getFlightSchedBookingCls(flightSched)) {
-            flightSchedBookingClsHelpers.add(flightSchedBookingClsMaps.get(flightSchedBookingCls));
+        List<FlightSchedBookingClsHelper> fbHelpers = new ArrayList<>();
+        System.out.println("FlightSchedule: " + flightSched.getFlightScheduleId());
+        for (FlightSchedBookingClsHelper fbHelper : flightSchedBookingClsHelpers) {
+            if (Objects.equals(fbHelper.getFlightSchedBookingCls().getFlightSchedule().getFlightScheduleId(), flightSched.getFlightScheduleId())) {
+                System.out.println("FlightSchedule Booking Class: " + fbHelper.getFlightSchedBookingCls().getFlightScheduleBookingClassId());
+                fbHelpers.add(fbHelper);
+            }
         }
-        return flightSchedBookingClsHelpers;
+        return fbHelpers;
+//        return bookingSession.getOpenedFlightSchedBookingClses(flightSched, getFlightSchedLowestTixFams(), ChannelHelper.ARS, adultNo + childrenNo);
     }
 
+    public List<FlightScheduleBookingClass> getFlightSchedBookingCls(FlightSchedule flightSched) {
+        List<FlightScheduleBookingClass> flightSchedBookingClses = new ArrayList<>();
+        for (FlightSchedBookingClsHelper fbHelper : getFlightSchedBookingClsHelpers(flightSched)) {
+            flightSchedBookingClses.add(fbHelper.getFlightSchedBookingCls());
+        }
+        return flightSchedBookingClses;
+    }
+    
     public List<String> getPreviousThreeDays() {
         List<String> dates = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
@@ -244,19 +271,24 @@ public class BookingManager implements Serializable {
         return inDirectFlightSchedMaps.get(flightSchedule);
     }
 
-    public void onFlightSchedRadioSelected() {
+    public void onFlightSchedRadioSelected() throws NoSuchFlightSchedulException {
+//        for (FlightSchedBookingClsHelper fbHelper : getFlightSchedBookingClsHelpers(revMgmtSession.getFlightScheduleById(selectedFb.getFlightSchedule().getFlightScheduleId()))) {
+//            if (fbHelper.getFlightSchedBookingCls().equals(selectedFb)) {
+//                selectedFbHelper = fbHelper;
+//            }
+//        }
         System.out.println("Selected FB: " + selectedFb);
-        selectedFbHelper = flightSchedBookingClsMaps.get(selectedFb);
+        selectedFbHelper = fbHelperMaps.get(selectedFb.getFlightScheduleBookingClassId().toString());
         System.out.println("selectedFbHelper: " + selectedFbHelper);
     }
 
     public String test() {
-        System.out.println("Selected FB: " + selectedFb);
         return crmExNavController.redirectToPassengerInfo();
     }
 
     public String testValue(FlightSchedBookingClsHelper fbHelper) {
-        return String.valueOf(fbHelper.getFlightSchedBookingCls().getFlightScheduleBookingClassId());
+        System.out.println("print: " + fbHelper);
+        return String.valueOf(fbHelper);
     }
 
     //Getter and Setter    

@@ -54,7 +54,7 @@ public class AirTicketPricingItem implements Serializable {
     public PricingItem getPricingItem() {
         return pricingItem;
     }
-
+ 
     public void setPricingItem(PricingItem pricingItem) {
         this.pricingItem = pricingItem;
     }
@@ -68,3 +68,4 @@ public class AirTicketPricingItem implements Serializable {
     }
     
 }
+ 

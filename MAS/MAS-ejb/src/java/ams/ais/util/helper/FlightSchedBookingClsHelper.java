@@ -8,13 +8,14 @@ package ams.ais.util.helper;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  * @author winga_000
  */
-public class FlightSchedBookingClsHelper {
+public class FlightSchedBookingClsHelper implements Serializable{
     private int id;
     private CabinClass cabinClass;
     private List<TicketFamily> ticketFamilys;
@@ -26,6 +27,7 @@ public class FlightSchedBookingClsHelper {
     private boolean available;
     private boolean showLeftSeatQty;
     private TicketFamily ticketFamily;
+    private float price;
     
     public FlightSchedBookingClsHelper() {
     }
@@ -114,6 +116,15 @@ public class FlightSchedBookingClsHelper {
         this.ticketFamily = ticketFamily;
     }
 
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    
 
     
 }

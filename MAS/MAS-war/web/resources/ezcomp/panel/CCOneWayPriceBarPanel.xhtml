@@ -8,12 +8,14 @@
 
     <!-- INTERFACE -->
     <cc:interface>
-        <cc:attribute name="flightSchedBookingCls" required="true" />
+        <cc:attribute name="flightSchedBookingClsHelper" required="true" />
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <c:set value="#{cc.attrs.flightSchedBookingCls}" var="fb" />
+        <c:set value="#{cc.attrs.flightSchedBookingClsHelper}" var="fbHelper" />
+        <c:set value="#{cc.attrs.flightSchedBookingClsHelper.flightSchedBookingCls}" var="fb" />
+        <c:set value="#{cc.attrs.flightSchedBookingClsHelper.flightSchedBookingCls.flightSchedule}" var="flightSchedule" />
         <p:panelGrid>
 
             <p:row>
@@ -21,41 +23,73 @@
                     <p:outputLabel value="OUTBOUND FLIGHT" />
                 </p:column>
                 <p:column>
-                    <p:outputLabel value="#{fb.cabinClass.name} #{fb.ticketFamily.name}" />
+                    <p:outputLabel value="#{fbHelper.cabinClass.name} #{fbHelper.ticketFamily.name}" />
                 </p:column>
                 <p:column>
-                    <p:outputLabel value="#{fb.flightSchedBookingCls.price}" />
+                    <p:outputLabel value="S$" />
+                    <p:outputLabel value="#{fbHelper.price}" >
+                        <f:convertNumber maxFractionDigits="1" />
+                    </p:outputLabel>
+                </p:column>
+                <p:column><p:outputLabel value="" /></p:column>
+                <p:column><p:outputLabel value="Total price" /></p:column>
+                <p:column rowspan="4">
+                    <p:commandButton value="Continue" update="messages" action="#{crmExNavController.redirectToPassengerInfo()}" />
                 </p:column>
             </p:row>
 
             <p:row>
                 <p:column>
-                    <p:outputLabel value="#{fb.flightSchedBookingCls.flightSchedule.departDate}">
+                    <p:outputLabel value="#{flightSchedule.departDate}">
                         <f:convertDateTime pattern="EE, dd MMM yyyy" timeZone="GMT+8" />
                     </p:outputLabel>
                 </p:column>
                 <p:column>
-                    <p:outputLabel value="" />x
+                    <p:outputLabel value="" />
                 </p:column>
                 <p:column>
-                    <p:outputLabel value="#{fb.flightSchedBookingCls.flightSchedule.arrivalDate}">
+                    <p:outputLabel value="#{flightSchedule.arrivalDate}">
                         <f:convertDateTime pattern="EE, dd MMM yyyy" timeZone="GMT+8" />
+                    </p:outputLabel>
+                </p:column>
+                <p:column></p:column>
+                <p:column rowspan="2">
+                    <p:outputLabel value="S$" />
+                    <p:outputLabel value="#{fb.price}" >
+                        <f:convertNumber maxFractionDigits="1" />
                     </p:outputLabel>
                 </p:column>
             </p:row>
+
             <p:row>
                 <p:column>
-                    <p:outputLabel value="#{fb.flightSchedBookingCls.flightSchedule.departDate}">
+                    <p:outputLabel value="#{flightSchedule.departDate}">
                         <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
                     </p:outputLabel>
-                    <p:outputLabel value=" #{fb.flightSchedBookingCls.flightSchedule.leg}" />
                 </p:column>
+                <p:column>
+                    <p:outputLabel styleClass="fa fa-arrow-right alignCenter" />
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                        <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
+                    </p:outputLabel>
+                </p:column>
+                <p:column><p:outputLabel value="" /></p:column>
             </p:row>
+
             <p:row>
                 <p:column>
-                    <p:outputLabel value="#{fb.flightSchedBookingCls.flightSchedule.leg.departAirport.city.cityName}, #{airport.airportName}" />
+                    <p:outputLabel value="#{flightSchedule.leg.departAirport.city.cityName}, #{flightSchedule.leg.departAirport.country.isoCode}" />
                 </p:column>
+                <p:column><p:outputLabel value="" /></p:column>
+                <p:column>
+                    <p:outputLabel value=" #{flightSchedule.leg.arrivalAirport.city.cityName}, #{flightSchedule.leg.arrivalAirport.country.isoCode}" />
+                </p:column>
+                <p:column><p:outputLabel value="" /></p:column>
+                <p:column><p:outputLabel value="for all passengers" /></p:column>
             </p:row>
         </p:panelGrid>
+
     </cc:implementation>
 </html>

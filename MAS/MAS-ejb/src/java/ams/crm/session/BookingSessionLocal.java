@@ -28,5 +28,11 @@ public interface BookingSessionLocal {
 
     public List<TicketFamily> getFlightSchedLowestTixFams(List<FlightSchedule> flightScheds, CabinClass cabinClass);
 
-    public List<FlightScheduleBookingClass> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix, Map<FlightScheduleBookingClass, FlightSchedBookingClsHelper> flightSchedBookingClsMaps);
+//    public List<FlightSchedBookingClsHelper> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix);
+    
+    public List<FlightSchedBookingClsHelper> getAllFlightSchedBookingClses
+        (List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps);
+//
+//     public Map<String, FlightSchedBookingClsHelper> getFlightSchedBookingClsHelperMaps
+//        (List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, String channelName, int numOfTix);
 }
