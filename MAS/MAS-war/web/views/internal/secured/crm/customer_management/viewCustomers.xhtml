@@ -55,6 +55,10 @@
                     <h:outputText value="#{customer.firstName}" />
                 </p:column>
                 
+                <p:column filterBy="#{customer.DTtpe}" headerText="Type" filterMatchMode="exact">
+                    <h:outputText value="#{customer.DType}" />
+                </p:column>
+                
                 <p:column filterBy="#{customer.passportNo}" headerText="Passport Number" filterMatchMode="exact">
                     <h:outputText value="#{customer.passportNo}" />
                 </p:column>
