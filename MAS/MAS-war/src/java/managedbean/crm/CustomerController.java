@@ -76,8 +76,6 @@ public class CustomerController implements Serializable {
     @Temporal(value = TemporalType.DATE)
     private Date passportIssueDate;
     private List<Feedback> feedbacks;
-
-    
     
     public CustomerController() {
     }
@@ -133,6 +131,7 @@ public class CustomerController implements Serializable {
             activated=regCust.getActivated();
             numofFlights=regCust.getNumOfFlights();
             membershipId=regCust.getMembershipId();
+            feedbacks=regCust.getFeedbacks();
             
             
         } catch (NoSuchRegCustException ex) {
@@ -162,6 +161,7 @@ public class CustomerController implements Serializable {
             activated=null;
             numofFlights=null;
             membershipId=null;
+            feedbacks=null;
         }
     }
     

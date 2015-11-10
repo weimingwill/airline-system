@@ -16,4 +16,5 @@ public class CrmMsg {
     public static final String NEED_ACTIVATION_ERROR ="Please activated your account through the link in your email";
     public static final String INVALID_PASSWORD_ERROR ="Input password incorrect";
     public static final String LOGIN_SUCCESS_MSG = "Login Successful!";
+    public static final String NO_SUCH_FEEDBACK_ERROR = "There is no such feedback";
 }  

@@ -16,4 +16,5 @@ import javax.ejb.Local;
 @Local
 public interface FeedbackSessionLocal {
     public void createFeedback(Feedback feedback,RegCust regCust);
+   
 }

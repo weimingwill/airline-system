@@ -26,11 +26,16 @@
 
                         <p:outputLabel for="email" value="Email"/>
                         <p:outputLabel id="email" class="userProfileInput"  value="#{feedbackController.regCust.email}"/> 
-                        
+
+
                     </p:panelGrid>
 
                 </p:panel>
                 <p:panel header="Feedback Session" >
+                    <p:panelGrid columns="2" styleClass="centered">
+                        <p:outputLabel for="subject" value="Feedback Subject"/>
+                        <p:inputText id="subject" class="userProfileInput"  value="#{feedbackController.newFeedback.subject}"/>
+                    </p:panelGrid>
                     <h:form>           
                         <p:editor id="editor" widgetVar="editorWidget" value="#{feedbackController.newFeedback.content}" width="440" />
 
@@ -40,7 +45,7 @@
                             <p:commandButton value="Clear" type="button" onclick="PF('editorWidget').clear();" icon="ui-icon-close" />
                         </h:panelGrid>
 
-                       
+
                     </h:form> 
                 </p:panel>
             </p:panel>

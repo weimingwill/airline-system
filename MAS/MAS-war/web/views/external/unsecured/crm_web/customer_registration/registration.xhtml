@@ -43,7 +43,7 @@
                         </p:selectOneRadio>
 
                         <p:outputLabel for="dob" value="Date of Birth"/>
-                        <p:calendar id="dob" value="#{registrationController.newRegCust.dob}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-100:c+0" placeholder="Date of Birth"/>
+                        <p:calendar id="dob" value="#{registrationController.newRegCust.dob}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-100:c+0" maxdate="c" placeholder="Date of Birth"/>
 
                         <p:outputLabel for="nationality" value="Nationality"/>
                         <p:selectOneMenu style="width:180px" id="nationality"  required="true" requiredMessage="Please enter your Nationality" value="#{registrationController.newRegCust.nationality}">

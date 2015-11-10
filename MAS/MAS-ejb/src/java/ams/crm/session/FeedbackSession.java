@@ -24,13 +24,11 @@ public class FeedbackSession implements FeedbackSessionLocal {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
-    
 
     @Override
-    public void createFeedback(Feedback feedback,RegCust regCust) {
+    public void createFeedback(Feedback feedback, RegCust regCust) {
         Date date = new java.util.Date();
-        
+
         feedback.setChannel(FeedbackChannel.INTERNET);
         feedback.setStatus(FeedbackStatus.NEW);
         feedback.setCreatedTime(date);
@@ -40,7 +38,7 @@ public class FeedbackSession implements FeedbackSessionLocal {
         regCust.setFeedbacks(feedbackList);
         entityManager.merge(regCust);
         entityManager.flush();
-        
+
     }
 
     // Add business logic below. (Right-click in editor and choose

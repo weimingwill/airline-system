@@ -3,7 +3,8 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../../template/CrmExTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
         Account Summary
@@ -25,14 +26,79 @@
                 </p:panelGrid>
 
                 <p:panel header="Current Booking">
-                    
+
                 </p:panel>
-                
+
                 <p:panel header="Feedbacks">
-                    
+                    <h:form>
+                        <p:dataTable value="#{customerController.feedbacks}" var="feedback" style="margin-bottom:40px" rows="5" tableStyleClass="table-small-font"
+                                     paginator="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+
+                            <p:column headerText="Feedback Subject">
+                                <p:outputLabel value="#{feedback.subject}"/>
+                            </p:column>
+
+                            <p:column headerText="Created Time">
+                                <p:outputLabel value="#{feedback.createdTime}">
+                                    <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
+                                </p:outputLabel>
+                            </p:column>
+
+                            <p:column headerText="View" style="width:32px;text-align: center">
+                                <p:commandButton  oncomplete="PF('feedbackDialog').show()" icon="ui-icon-search" update="feedbackDialog">
+                                    <f:setPropertyActionListener value="#{feedback}" target="#{feedbackBacking.selectFeedback}" />
+                                </p:commandButton>
+                            </p:column>
+
+                            
+                        </p:dataTable> 
+                    </h:form>
                 </p:panel>
             </p:panel>
         </h:form>
+        
+        <p:dialog id="feedbackDialog" header="View Feedback:  #{feedbackBacking.selectFeedback.subject}"  widgetVar="feedbackDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            
+            <h:form>
+                <p:panel id="feedbackDetail">
+                    <p:panelGrid>
+                        
+                             <p:row> 
+                                <p:column>
+                                    <p:outputLabel value="Feedback Subject: " />
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{feedbackBacking.selectFeedback.subject}" >
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:row>
+                            <p:row> 
+                                <p:column>
+                                    <p:outputLabel value="Feedback Status: " />
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{feedbackBacking.selectFeedback.status}" >
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Feedback Content: " />
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{feedbackBacking.selectFeedback.content}" />
+                                </p:column>
+                            </p:row>
+                        <!--</ui:repeat>-->
+                        </p:panelGrid>
+                </p:panel>
+                
+            </h:form>
+        </p:dialog>
+        
+        
     </ui:define>
 
 </ui:composition>

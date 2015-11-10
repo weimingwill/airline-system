@@ -44,6 +44,15 @@ public class FeedbackController {
     private Feedback newFeedback=new Feedback();
     private String email;
     private RegCust regCust;
+    private Feedback selectFeedback;
+
+    public Feedback getSelectFeedback() {
+        return selectFeedback;
+    }
+
+    public void setSelectFeedback(Feedback selectFeedback) {
+        this.selectFeedback = selectFeedback;
+    }
 
     public RegCust getRegCust() {
         return regCust;

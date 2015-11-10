@@ -23,6 +23,7 @@ import ams.ais.util.helper.BookingClassHelper;
 import ams.ais.util.exception.NoSuchRuleException;
 import ams.ais.util.exception.NoSuchTicketFamilyRuleException;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -176,8 +177,22 @@ public class TicketFamilyController implements Serializable {
         return ticketFamilyRule;
     }
 
-    public float getTicketFamilyRuleValue(Long tfId, Long ruleid) {
-        return getTicketFamilyRuleById(tfId, ruleid).getRuleValue();
+    public String getTicketFamilyRuleValue(Long tfId, Long ruleid) {
+        double value = getTicketFamilyRuleById(tfId, ruleid).getRuleValue();
+        if(value < 0){
+            return "Not Applicable";
+        }
+        else if(value == 0)
+        {
+            return "Free";
+        }
+        else{
+            DecimalFormat df = new DecimalFormat("0.00");
+            String formatedValue = "S$";
+            formatedValue = formatedValue + df.format(value);
+            return formatedValue;
+        }
+        
     }
 
     public String createTicketFamily() {
