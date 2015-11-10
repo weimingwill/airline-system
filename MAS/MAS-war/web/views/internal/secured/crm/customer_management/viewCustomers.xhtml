@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        View all customers 
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="searchCustomerForm">
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+            <p:panel id = "searchCustomerForm" header="Search Customer">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Passport Number"/>
+                    <p:inputText id="passportNo" value="#{customerController.passportNo}" />
+                    <p:outputLabel value="Email"/>
+                    <p:inputText id="email" value="#{customerController.email}" />
+                    <p:outputLabel value="Membership ID"/>
+                    <p:inputText id="membershipId" value="#{customerController.membershipId}" />
+                </p:panelGrid>
+                <p:separator/>
+                <p:commandButton value="Search" actionListener="#{customerController.searchCustomer()}" update="form"/>
+                <p:commandButton value="Reset" actionListener="#{customerController.resetSearchCustomer()}" update="searchCustomerForm,form" process="@this">
+                    <p:resetInput target="searchCustomerForm" />
+                </p:commandButton>
+            </p:panel>
+        </h:form>
+        <h:form id="form"> 
+            <p:dataTable id="customer-table" var="customer" value="#{customerController.customers}" rows="10" selection="#{customerController.selectedCustomer}" 
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="10,15" rowKey="#{customer.id}" tableStyleClass="table-small">
+                <p:messages autoUpdate="true"/>
+                <f:facet name="header">
+                    <p:outputLabel value="Customer List"/>
+                </f:facet>
+                <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                <p:column headerText="Id" sortBy="#{customer.id}">
+                    <h:outputText value="#{customer.id}" />
+                </p:column>
+
+                <p:column headerText="Title" sortBy="#{customer.title}">
+                    <h:outputText value="#{customer.title}" />
+                </p:column>
+
+                <p:column filterBy="#{customer.lastName}" headerText="Last Name" filterMatchMode="exact">
+                    <h:outputText value="#{customer.lastName}" />
+                </p:column>
+                
+                <p:column filterBy="#{customer.firstName}" headerText="First Name" filterMatchMode="exact">
+                    <h:outputText value="#{customer.firstName}" />
+                </p:column>
+                
+                <p:column filterBy="#{customer.passportNo}" headerText="Passport Number" filterMatchMode="exact">
+                    <h:outputText value="#{customer.passportNo}" />
+                </p:column>
+                
+                <p:column filterBy="#{customer.nationality}" headerText="Nationality" filterMatchMode="exact">
+                    <h:outputText value="#{customer.nationality}" />
+                </p:column>
+                
+                <p:column headerText="Nationality" sortBy="#{customer.nationality}">
+                    <h:outputText value="#{customer.nationality}" />
+                </p:column>
+
+                <p:column headerText="Gender" sortBy="#{customer.gender}">
+                    <h:outputText value="#{customer.gender}" />
+                </p:column>
+
+                <p:column headerText="Date of Birth">
+                    <p:outputLabel value="#{customer.dob}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Passport Expire Date">
+                    <p:outputLabel value="#{customer.passportExpDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Passport Issue Date">
+                    <p:outputLabel value="#{customer.passportIssueDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+
+                <f:facet name="footer" >
+                    <p:commandButton action="#{customerController.toViewFeedbacks()}" value="Pricing" update="messages" />
+                    <p:commandButton action="#{customerController.toCreateFeedback()}" value="Yield Management" update="messages" />
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
