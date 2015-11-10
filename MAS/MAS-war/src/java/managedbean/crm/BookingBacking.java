@@ -8,6 +8,9 @@ package managedbean.crm;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 
@@ -22,12 +25,29 @@ public class BookingBacking implements Serializable {
     private FlightSchedule flightSchedule;
     private FlightScheduleBookingClass selectedFlightSchedBookignCls;
 
+    //Passenger details
+    private List<String> titles = new ArrayList<>();
     /**
      * Creates a new instance of BookingBacking
      */
+    @PostConstruct
+    public void init() {
+        setTitleList();
+    }
+    
     public BookingBacking() {
     }
 
+    public void setTitleList() {
+        titles.add("Ms");
+        titles.add("Mrs");
+        titles.add("Mr");
+        titles.add("Ms Dr.");
+        titles.add("Ms Prof.");
+        titles.add("Mr Dr.");
+        titles.add("Mr Prof.");
+    }
+    
     public FlightSchedule getFlightSchedule() {
         return flightSchedule;
     }
@@ -43,7 +63,13 @@ public class BookingBacking implements Serializable {
     public void setSelectedFlightSchedBookignCls(FlightScheduleBookingClass selectedFlightSchedBookignCls) {
         this.selectedFlightSchedBookignCls = selectedFlightSchedBookignCls;
     }
-    
-    
+
+    public List<String> getTitles() {
+        return titles;
+    }
+
+    public void setTitles(List<String> titles) {
+        this.titles = titles;
+    }
     
 }

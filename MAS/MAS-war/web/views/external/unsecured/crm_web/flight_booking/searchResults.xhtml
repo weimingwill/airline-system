@@ -85,13 +85,13 @@
                         </p:column>
 
                         <p:column colspan="#{bookingManager.getFlightSchedLowestTixFams().size()}">
-
+                            
                             <p:dataGrid styleClass="alignCenter" value="#{bookingManager.getFlightSchedBookingClsHelpers(flightSched)}" var="fbHelper" columns="#{bookingManager.getFlightSchedLowestTixFams().size()}" rowIndexVar="index">
 
                                 <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFb}" converter="flightSchedBookingClsConverter" layout="custom">
                                     <!--<p:ajax event="change" update="form,barForm" onstart="PF('bar').hide();" oncomplete="PF('bar').show();" listener="{bookingManager.onFlightSchedRadioSelected()}"/>-->
                                     <p:ajax event="change" update="form,barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
-                                    <f:selectItems value="#{bookingManager.getFlightSchedBookingCls(flightSched)}" var="fb" itemValue="#{fb}"/>
+                                    <f:selectItems value="#{bookingManager.getFlightSchedBookingCls(flightSched)}"/>
 
                                 </p:selectOneRadio>
                                 
