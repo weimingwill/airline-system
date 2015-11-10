@@ -13,6 +13,7 @@ import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -37,38 +38,73 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
 
     @Override
     public List<FlightDuty> generateFlightDuties() {
-        double minDutyPeriod = 10;
-        double maxDutyPeriod = 14; // data is going to be get from Database (FlightCrewPosition)
-        maxDutyPeriod = maxDutyPeriod < 14 ? 14 : maxDutyPeriod;
-
         List<FlightSchedule> nextMonthFlights = getNextMonthFlightSchedule();
-        List<FlightSchedule> scheduleWithSameFlightNo;
-        for (int i = 0; i < nextMonthFlights.size(); i++) {
-            scheduleWithSameFlightNo = getScheduleWithSameFlightNo(nextMonthFlights.get(i));
-           
-        }
 
-//        for (int i = 0; i < nextMonthFlights.size(); i++) {
-//            for (int j = i + 1; j < nextMonthFlights.size(); j++) {
-//                FlightSchedule schedule1 = nextMonthFlights.get(i);
-//                FlightSchedule schedule2 = nextMonthFlights.get(j);
-//                double schedule1Dur = (schedule1.getArrivalDate().getTime() - schedule1.getDepartDate().getTime()) / (60 * 60 * 1000.0) % 24.0;
-//                double schedule2Dur = (schedule2.getArrivalDate().getTime() - schedule2.getDepartDate().getTime()) / (60 * 60 * 1000.0) % 24.0;
-//                double totalDuration = schedule1Dur + schedule2Dur;
-//                
-//                if (schedule1.getFlight().getFlightNo().equals(schedule2.getFlight().getFlightNo()) && (totalDuration >= minDutyPeriod && totalDuration <= maxDutyPeriod)){
-//                    FlightDuty dp = new FlightDuty();
-//                    dp.setSitTimeInHrs(0.0);
-//                    dp.setFlightSchedules(nextMonthFlights.subList(i, i));
-//                    dp.setFlyingTimeInHrs(totalDuration);
-//                    dp.setFlyingDistInKm(routePlanningSession.distance(schedule1.getLeg().getDepartAirport(), schedule1.getLeg().getArrivalAirport())/1000.0);
-//                    setCrewQuota(dp, schedule1);
-//                    break;
-//                }
-//            }
-//
-//        }
+        for (FlightSchedule thisSchedule : nextMonthFlights) {
+            System.out.print("generateFlightDuties(): Start create new FlightDuty\n");
+            FlightDuty newFlightDuty = new FlightDuty();
+
+            if (thisSchedule.getPreFlightSched() == null 
+                    || (thisSchedule.getPreFlightSched() != null && !thisSchedule.getFlight().getFlightNo().equals(thisSchedule.getPreFlightSched().getFlight().getFlightNo()))) { 
+                //if first flight segment of flight
+                System.out.println("\tFound first flight segment of flight");
+                printFlightInfo(thisSchedule);
+                newFlightDuty.setFlightSchedules(getFlightDutyFlights(thisSchedule));
+                setFlightDutyInfo(newFlightDuty);
+                setCrewQuota(newFlightDuty, thisSchedule);
+            }     
+        }
         return new ArrayList();
+
+    }
+
+    private void setFlightDutyInfo(FlightDuty newFlightDuty){
+        Double totalFlyingTime = 0.0;
+        Double totalFlyingDist = 0.0;
+        Double totalSitTime = 0.0;
+        List<FlightSchedule> flightSchedules = newFlightDuty.getFlightSchedules();
+        for(int i = 0 ; i < flightSchedules.size();i++){
+            if(i != flightSchedules.size()-1){
+                totalSitTime += flightSchedules.get(i).getTurnoverTime();
+            }
+            totalFlyingDist += routePlanningSession.distance(flightSchedules.get(i).getLeg().getDepartAirport(), flightSchedules.get(i).getLeg().getArrivalAirport());
+            totalFlyingTime += flightSchedules.get(i).getArrivalDate().getTime() - flightSchedules.get(i).getDepartDate().getTime();
+        }
+        totalFlyingTime *= 2.77778e-7;
+        totalFlyingDist /= 1000;
+        newFlightDuty.setFlyingDistInKm(totalFlyingDist);
+        newFlightDuty.setFlyingTimeInHrs(totalFlyingTime);
+        newFlightDuty.setSitTimeInHrs(totalSitTime);
+        System.out.println("setFlightDutyInfo(): \n\tTotal Flying Dist = " + totalFlyingDist + "\n\tTotal Flying Hours = " + totalFlyingTime + "\n\tTotal Sit Time = " + totalSitTime);
+    }
+    
+    private void printFlightInfo(FlightSchedule thisSchedule) {
+        System.out.println("thisSchedule: \n\tFlight No: " + thisSchedule.getFlight().getFlightNo()
+                + "\n\tFrom: " + thisSchedule.getLeg().getDepartAirport().getAirportName()
+                + "\n\tTo: " + thisSchedule.getLeg().getArrivalAirport().getAirportName()
+                + "\n\tDeparture Time: " + thisSchedule.getDepartDate()
+                + "\n\tArrival Time: " + thisSchedule.getArrivalDate() + "\n\n");
+    }
+
+    private List<FlightSchedule> getFlightDutyFlights(FlightSchedule thisSchedule) {
+        FlightSchedule currSchedule = thisSchedule;
+        FlightSchedule nextSchedule = thisSchedule.getNextFlightSched();
+        String thisFlightNo, nextFlightNo;
+        List<FlightSchedule> flightDutyFlightSchedules = new ArrayList();
+
+        if (nextSchedule == null) {
+            flightDutyFlightSchedules.add(currSchedule);
+            return flightDutyFlightSchedules;
+        } else {
+            do {
+                thisFlightNo = currSchedule.getFlight().getFlightNo();
+                nextFlightNo = nextSchedule.getFlight().getFlightNo();
+                flightDutyFlightSchedules.add(currSchedule);
+                currSchedule = nextSchedule;
+                nextSchedule = nextSchedule.getNextFlightSched();
+            } while (nextSchedule != null && nextFlightNo.equals(thisFlightNo));
+            return flightDutyFlightSchedules;
+        }
     }
 
     private List<FlightSchedule> getScheduleWithSameFlightNo(FlightSchedule flightSchedule) {
@@ -109,6 +145,8 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
             }
             dp.setCabinCrewQuota(numCabinCrew);
             dp.setCockpitCrewQuota(numCockpitCrew);
+            System.out.println("setCrewQuota(): \n\tNumber of Passengers = " + totalPassenger + "\n\tNumber of Cabin Crew = " + numCabinCrew + "\n\tNumber of Cockpit Crew = " + numCockpitCrew);
+
         }
 
     }
@@ -116,8 +154,8 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     private List<FlightSchedule> getNextMonthFlightSchedule() {
         Date nextMonthFirstDay = getNextMonthFirstDay();
         Date nextMonthLastDay = getNextMonthLastDay();
-//        System.out.println("FlightCrewMgmtSession: nextMonthFirstDay = " + nextMonthFirstDay);
-//        System.out.println("FlightCrewMgmtSession: nextMonthLastDay = " + nextMonthLastDay);
+        System.out.println("FlightCrewMgmtSession: nextMonthFirstDay = " + nextMonthFirstDay);
+        System.out.println("FlightCrewMgmtSession: nextMonthLastDay = " + nextMonthLastDay);
 
         Query query = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.departDate BETWEEN :nextMonthFirstDay AND :nextMonthLastDay AND fs.deleted = FALSE ORDER BY fs.departDate ASC, fs.flight.flightNo ASC");
         query.setParameter("nextMonthFirstDay", nextMonthFirstDay);
@@ -126,6 +164,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         try {
             List<FlightSchedule> nextMonthFlights;
             nextMonthFlights = (List<FlightSchedule>) query.getResultList();
+            System.out.println("nextMonthFlights = " + nextMonthFlights);
             return nextMonthFlights;
         } catch (Exception ex) {
             return new ArrayList();
@@ -136,7 +175,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 1);
         calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR, -12);
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
         calendar.set(Calendar.MINUTE, calendar.getActualMinimum(Calendar.MINUTE));
         calendar.set(Calendar.SECOND, calendar.getActualMinimum(Calendar.SECOND));
         calendar.set(Calendar.MILLISECOND, calendar.getActualMinimum(Calendar.MILLISECOND));
@@ -145,8 +184,9 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
 
     private Date getNextMonthLastDay() {
         Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 1);
         calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR, calendar.getActualMaximum(Calendar.HOUR));
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMaximum(Calendar.HOUR_OF_DAY));
         calendar.set(Calendar.MINUTE, calendar.getActualMaximum(Calendar.MINUTE));
         calendar.set(Calendar.SECOND, calendar.getActualMaximum(Calendar.SECOND));
         calendar.set(Calendar.MILLISECOND, calendar.getActualMaximum(Calendar.MILLISECOND));

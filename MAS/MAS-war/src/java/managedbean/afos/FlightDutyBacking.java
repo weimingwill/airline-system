@@ -36,6 +36,7 @@ public class FlightDutyBacking implements Serializable{
     
     
     public void generateFlightDuty(){
+        System.out.println("FlightDutyBacking: generateFlightDuty");
         setFlightDuties(flightCrewMgmtSession.generateFlightDuties());
     }
 

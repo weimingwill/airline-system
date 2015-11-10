@@ -29,4 +29,8 @@ public class AfosNavController {
     public String toViewCrewProfile() {
         return AFOS_URL + "crew_regulation/viewFlightCrewProfile.xhtml" + REDIRECT;
     }
+    
+    public String toManageBidding() {
+        return AFOS_URL + "crew_schedule/manageBidding.xhtml" + REDIRECT;
+    }
 }
