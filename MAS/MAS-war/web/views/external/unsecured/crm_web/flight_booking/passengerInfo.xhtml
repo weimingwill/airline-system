@@ -1,14 +1,47 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./../../../../../template/CrmExTemplate.xhtml">
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="./../../../../../template/CrmExTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
-        Fill in information
+        Personal data
     </ui:define>
 
     <ui:define name="content">
-        
+        <h:form id="form">
+            <h2>Enter passenger details</h2>
+            <h4>Personal details</h4>
+            <p:accordionPanel>
+                <c:forEach begin="1" end="#{bookingManager.adultNo}" var="customer" varStatus="index" >
+                    <p:tab title="Adult #{index.index}">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="title" value="Title" />
+                            <p:selectOneMenu id="title">
+                                <f:selectItems value="#{bookingBacking.titles}" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                    </p:tab>
+                </c:forEach>
+
+                <p:tab title="Godfather Part II">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <p:graphicImage name="demo/images/godfather/godfather2.jpg" />
+                        <h:outputText value="Francis Ford Coppola's legendary..." />
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="Godfather Part III">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <p:graphicImage name="demo/images/godfather/godfather3.jpg" />
+                        <h:outputText value="After a break of more than 15 years..." />
+                    </h:panelGrid>
+                </p:tab>
+            </p:accordionPanel>
+        </h:form>
     </ui:define>
 
 </ui:composition>
