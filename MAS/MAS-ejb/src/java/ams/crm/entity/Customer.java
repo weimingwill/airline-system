@@ -49,7 +49,8 @@ public class Customer implements Serializable {
     private Date passportExpDate;
     @Temporal(value = TemporalType.DATE)
     private Date passportIssueDate;
-
+    private Boolean isAdult;
+    
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "customer")
     private List<AirTicket> airTickets = new ArrayList<>();
     
@@ -179,5 +180,12 @@ public class Customer implements Serializable {
         this.DType = DType;
     }
 
+    public Boolean getIsAdult() {
+        return isAdult;
+    }
+
+    public void setIsAdult(Boolean isAdult) {
+        this.isAdult = isAdult;
+    }
     
 }
