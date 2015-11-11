@@ -27,12 +27,14 @@ public class BookingBacking implements Serializable {
 
     //Passenger details
     private List<String> titles = new ArrayList<>();
+    private List<String> genders = new ArrayList<>();
     /**
      * Creates a new instance of BookingBacking
      */
     @PostConstruct
     public void init() {
         setTitleList();
+        setGenders();
     }
     
     public BookingBacking() {
@@ -46,6 +48,11 @@ public class BookingBacking implements Serializable {
         titles.add("Ms Prof.");
         titles.add("Mr Dr.");
         titles.add("Mr Prof.");
+    }
+
+    public void setGenders() {
+        genders.add("Male");
+        genders.add("Female");
     }
     
     public FlightSchedule getFlightSchedule() {
@@ -71,5 +78,14 @@ public class BookingBacking implements Serializable {
     public void setTitles(List<String> titles) {
         this.titles = titles;
     }
+
+    public List<String> getGenders() {
+        return genders;
+    }
+
+    public void setGenders(List<String> genders) {
+        this.genders = genders;
+    }
+    
     
 }

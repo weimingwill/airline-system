@@ -15,7 +15,8 @@ import java.util.List;
  */
 public class BookingHelper {
     private Booking booking;
-    private List<Customer> customers;
+    private List<Customer> adults;
+    private List<Customer> children;
 
     public Booking getBooking() {
         return booking;
@@ -25,11 +26,21 @@ public class BookingHelper {
         this.booking = booking;
     }
 
-    public List<Customer> getCustomers() {
-        return customers;
+    public List<Customer> getAdults() {
+        return adults;
     }
 
-    public void setCustomers(List<Customer> customers) {
-        this.customers = customers;
+    public void setAdults(List<Customer> adults) {
+        this.adults = adults;
     }
+
+    public List<Customer> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Customer> children) {
+        this.children = children;
+    }
+
+
 }

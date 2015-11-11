@@ -6,7 +6,8 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel">
 
     <ui:define name="title">
         Personal data
@@ -17,30 +18,70 @@
             <h2>Enter passenger details</h2>
             <h4>Personal details</h4>
             <p:accordionPanel>
-                <c:forEach begin="1" end="#{bookingManager.adultNo}" var="customer" varStatus="index" >
-                    <p:tab title="Adult #{index.index}">
+                <c:forEach items="#{bookingManager.bookingHelper.adults}" var="adult" varStatus="index" >
+                    <p:tab title="Adult #{index.index}" rendered="#{customer.isAdult}">
                         <p:panelGrid columns="2">
                             <p:outputLabel for="title" value="Title" />
                             <p:selectOneMenu id="title">
                                 <f:selectItems value="#{bookingBacking.titles}" />
                             </p:selectOneMenu>
+                            <pa:CCPassengerDetailPanel customer="#{adult}" />
                         </p:panelGrid>
                     </p:tab>
                 </c:forEach>
-
-                <p:tab title="Godfather Part II">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <p:graphicImage name="demo/images/godfather/godfather2.jpg" />
-                        <h:outputText value="Francis Ford Coppola's legendary..." />
-                    </h:panelGrid>
-                </p:tab>
-                <p:tab title="Godfather Part III">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <p:graphicImage name="demo/images/godfather/godfather3.jpg" />
-                        <h:outputText value="After a break of more than 15 years..." />
-                    </h:panelGrid>
-                </p:tab>
+                <c:forEach items="#{bookingManager.bookingHelper.children}" var="child" varStatus="index" >
+                    <p:tab title="Children #{index.index}" rendered="#{not customer.isAdult}">
+                        <p:panelGrid columns="2">
+                            <pa:CCPassengerDetailPanel customer="#{child}" />
+                        </p:panelGrid>
+                    </p:tab>
+                </c:forEach>
             </p:accordionPanel>
+            <h4>Contact details</h4>
+            <p:panelGrid>
+                <p:row>
+                    <p:column>
+                        <h:outputLabel  value="Phone Number"/>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneMenu class="userProfileInput" converter="countryConverter" value ="#{bookingManager.bookingHelper.booking.phoneNo.countryCode}"
+                                         style="width:120px" required="true" requiredMessage="Please select phone dial Code" >
+                            <f:selectItem itemLabel="Country Code" itemValue="" />
+                            <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.dialingCode}" itemValue="#{country.dialingCode}" />
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column>
+                        <p:inputText style="width:50px" class="userProfileInput" value="#{bookingManager.bookingHelper.booking.phoneNo.areaCode}" 
+                                     required="true"  requiredMessage="Please input mobile phone area code" placeholder="#area"/> 
+                    </p:column>
+                    <p:column>
+                        <p:inputText style="width:100px" class="userProfileInput" value="#{bookingManager.bookingHelper.booking.phoneNo.number}" 
+                                     required="true"  requiredMessage="Please Input mobile phone number" /> 
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:outputLabel for="email" value="Email"/></p:column>
+                    <p:column><p:outputLabel for="confirmEmail" value="Confirm email"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:inputText id="email" value="#{bookingManager.bookingHelper.booking.email}" required="Please enter contact email">
+                            <f:validator validatorId="emailValidator" />
+                            <f:attribute name="confirmEmail" value="#{confirmEmail}" />
+                            <p:ajax update="messages" event="blur" />
+                            <f:validateRegex
+                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                        </p:inputText>
+                    </p:column>
+                    <p:column>
+                        <p:inputText id="confirmEmail" binding="#{confirmEmail}" required="Please confirm contact email" >
+                            <p:ajax update="messages" event="blur" />
+                            <f:validateRegex
+                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                        </p:inputText>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
         </h:form>
     </ui:define>
 

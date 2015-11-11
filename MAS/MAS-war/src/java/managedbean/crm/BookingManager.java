@@ -12,11 +12,12 @@ import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.session.RevMgmtSessionLocal;
 import ams.ais.util.helper.FlightSchedBookingClsHelper;
 import ams.aps.entity.Airport;
-import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
+import ams.crm.entity.Customer;
 import ams.crm.session.BookingSessionLocal;
+import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.ChannelHelper;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -72,7 +73,6 @@ public class BookingManager implements Serializable {
     private Date arrDate;
     private List<CabinClass> cabinClses;
     private CabinClass selectedCabinCls;
-    private boolean showPremium;
     private String promoCode;
     private String choice;
     boolean arrDateShow;
@@ -92,6 +92,9 @@ public class BookingManager implements Serializable {
     private FlightScheduleBookingClass selectedFb = new FlightScheduleBookingClass();
     private List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
 
+    //Passenger details
+    private BookingHelper bookingHelper = new BookingHelper();
+    
     /**
      * Creates a new instance of bookingManager
      */
@@ -309,7 +312,30 @@ public class BookingManager implements Serializable {
         System.out.println("print: " + fbHelper);
         return String.valueOf(fbHelper);
     }
-
+    
+    public String toEnterPassengerDetails() {
+        setBookingHelper();
+        return crmExNavController.redirectToPassengerInfo();
+    }
+    
+    private void setBookingHelper() {
+        bookingHelper = new BookingHelper();
+        List<Customer> adults = new ArrayList<>();
+        for (int i = 0; i < adultNo; i++) {
+            Customer customer = new Customer();
+            customer.setIsAdult(true);
+            adults.add(customer);
+        }
+        List<Customer> children = new ArrayList<>();
+        for (int i = 0; i < childrenNo; i++) {
+            Customer customer = new Customer();
+            customer.setIsAdult(false);
+            children.add(customer);
+        }
+        bookingHelper.setAdults(adults);
+        bookingHelper.setChildren(children);
+    }
+    //
     //Getter and Setter    
     //
     public int getAdultNo() {
@@ -366,14 +392,6 @@ public class BookingManager implements Serializable {
 
     public void setArrDate(Date arrDate) {
         this.arrDate = arrDate;
-    }
-
-    public boolean isShowPremium() {
-        return showPremium;
-    }
-
-    public void setShowPremium(boolean showPremium) {
-        this.showPremium = showPremium;
     }
 
     public String getPromoCode() {
@@ -471,4 +489,14 @@ public class BookingManager implements Serializable {
     public void setSelectedFb(FlightScheduleBookingClass selectedFb) {
         this.selectedFb = selectedFb;
     }
+
+    public BookingHelper getBookingHelper() {
+        return bookingHelper;
+    }
+
+    public void setBookingHelper(BookingHelper bookingHelper) {
+        this.bookingHelper = bookingHelper;
+    }
+    
+    
 }

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="customer" required="true"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set value="#{cc.attrs.customer}" var="#{customer}"
+        <p:outputLabel for="firstName" value="First Name" />
+        <p:inputText id="firstName" value="#{customer.firstName}" required="true" />
+        
+        <p:outputLabel for="lastName" value="Last Name"/>
+        <p:inputText id="lastName" value="#{customer.lastName}" required="true" />
+        
+        <p:outputLabel for="gender" value="Gender"/>
+        <p:selectOneMenu id="gender" value="#{customer.gender}" required="true">
+            <f:selectItems value="#{bookingBacking.genders}" />
+        </p:selectOneMenu>
+
+        <p:outputLabel for="dob" value="#{customer.dob}"/>
+        <p:calendar id="dob" navigator="true" timeZone="GMT+8" pattern="dd/MM/yyyy" />
+    </cc:implementation>
+</html>
