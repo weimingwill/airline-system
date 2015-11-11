@@ -37,7 +37,11 @@ public class FlightDutyBacking implements Serializable{
     
     @PostConstruct
     public void init(){
-        setFlightDuties(new ArrayList());
+        getFutureFlightDuties();
+    }
+    
+    private void getFutureFlightDuties(){
+        setFlightDuties(flightCrewMgmtSession.getNextMonthFlightDuties());
     }
     
     

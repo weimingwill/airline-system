@@ -36,6 +36,12 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     @PersistenceContext(unitName = "MAS-ejbPU")
     private EntityManager em;
 
+    
+    private void generatePairings(){
+        List<FlightDuty> flightDuties = getNextMonthFlightDuties();
+        
+    }
+    
     @Override
     public List<FlightDuty> generateFlightDuties() throws FlightDutyConflictException{
         List<FlightSchedule> nextMonthFlights = getNextMonthFlightSchedule();
@@ -53,10 +59,11 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
                 newFlightDuty.setFlightSchedules(getFlightDutyFlights(thisSchedule));
                 setFlightDutyInfo(newFlightDuty);
                 setCrewQuota(newFlightDuty, thisSchedule);
+                newFlightDuty.setAppliedPeriod(getNextMonthFirstDay());
                 em.persist(newFlightDuty);
                 em.flush();
                 outputList.add(newFlightDuty);
-            }     
+            }
         }
         return outputList;
     }
@@ -67,6 +74,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
             q = em.createQuery("SELECT fd FROM FlightDuty fd WHERE :fs MEMBER OF (fd.flightSchedules)");
             q.setParameter("fs", fs);
             if(!q.getResultList().isEmpty()){
+                System.out.println("Flight duty has already bean generated");
                 throw new FlightDutyConflictException("Flight duty has already bean generated");
             }
         }
@@ -118,17 +126,6 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
                 nextSchedule = nextSchedule.getNextFlightSched();
             } while (nextSchedule != null && nextFlightNo.equals(thisFlightNo));
             return flightDutyFlightSchedules;
-        }
-    }
-
-    private List<FlightSchedule> getScheduleWithSameFlightNo(FlightSchedule flightSchedule) {
-        Query query = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightNo LIKE :flightNo AND fs.flightScheduleId <> :id");
-        query.setParameter("flightNo", flightSchedule.getFlight().getFlightNo());
-        query.setParameter("id", flightSchedule.getFlightScheduleId());
-        try {
-            return (List<FlightSchedule>) query.getResultList();
-        } catch (Exception ex) {
-            return new ArrayList();
         }
     }
 
@@ -266,6 +263,16 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     @Override
     public List<Checklist> getPostFlightReport(FlightSchedule flightSchedule) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<FlightDuty> getNextMonthFlightDuties() {
+        Date nextMonthFirstDay = getNextMonthFirstDay();
+        Date nextMonthLastDay = getNextMonthLastDay();
+        Query query = em.createQuery("SELECT fd FROM FlightDuty fd WHERE fd.appliedPeriod BETWEEN :nextMonthFirstDay AND :nextMonthLastDay");
+        query.setParameter("nextMonthFirstDay", nextMonthFirstDay);
+        query.setParameter("nextMonthLastDay", nextMonthLastDay);
+        return (List<FlightDuty>) query.getResultList();
     }
 
 }
