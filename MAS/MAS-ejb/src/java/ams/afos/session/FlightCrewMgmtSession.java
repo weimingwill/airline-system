@@ -11,6 +11,7 @@ import ams.afos.entity.FlightCrew;
 import ams.afos.entity.FlightDuty;
 import ams.afos.util.exception.FlightDutyConflictException;
 import ams.aps.entity.AircraftCabinClass;
+import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import java.util.ArrayList;
@@ -38,12 +39,37 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
 
     
     private void generatePairings(){
-        List<FlightDuty> flightDuties = getNextMonthFlightDuties();
-        for(FlightDuty thisDuty: flightDuties){
+        List<FlightDuty> nextMonthFlightDuties = getNextMonthFlightDuties();
+        List<FlightDuty> pairingDuties = new ArrayList();
+        for(FlightDuty thisDuty: nextMonthFlightDuties){
             Date reportTime = thisDuty.getReportTime();
             Date dismissTime = thisDuty.getDismissTime();
-            
+            Airport reportLoc = getReportLoc(thisDuty);
+            Airport dismissLoc = getDismissLoc(thisDuty);
+            if(reportLoc.getIsHub()){
+                em.createQuery("SELECT fd FROM FlightDuty fd WHERE fd.reportTime > :t AND fd.flightSchedules.leg");
+            }
         } 
+    }
+    
+    private Airport getReportLoc(FlightDuty thisDuty){
+        for(FlightSchedule thisSchedule: thisDuty.getFlightSchedules()){
+            if(thisSchedule.getPreFlightSched() == null 
+                    || (thisSchedule.getPreFlightSched() != null && !thisSchedule.getFlight().getFlightNo().equals(thisSchedule.getPreFlightSched().getFlight().getFlightNo()))){
+                return thisSchedule.getLeg().getDepartAirport();
+            }
+        }
+        return null;
+    }
+    
+    private Airport getDismissLoc(FlightDuty thisDuty){
+        for(FlightSchedule thisSchedule: thisDuty.getFlightSchedules()){
+            if(thisSchedule.getNextFlightSched()== null 
+                    || (thisSchedule.getNextFlightSched() != null && !thisSchedule.getFlight().getFlightNo().equals(thisSchedule.getNextFlightSched().getFlight().getFlightNo()))){
+                return thisSchedule.getLeg().getArrivalAirport();
+            }
+        }
+        return null;
     }
     
     @Override
