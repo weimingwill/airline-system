@@ -10,7 +10,7 @@
         <f:facet name="header">
             Luggage Information
         </f:facet>
-        <h:form>
+        <h:form id="myForm">
             <p:panelGrid columns="4">
                 <p:outputLabel value="Passenger Name: " />
                 <p:outputLabel value="#{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}" />
@@ -52,9 +52,14 @@
                 <p:column headerText="Luggage Plan description">
                     <h:outputText value="#{ticket.purchasedLuggage.description}" />
                 </p:column>
+                
+                <f:facet name="footer1">
+                    <h:outputText value="Excess weight price: #{luggageManager.totalExcessWeightPrice} SGD" />
+                </f:facet>
 
                 <f:facet name="footer">
-                    <p:commandButton icon="ui-icon-check" title="Add luggage" update="myForm:luggageDlg" oncomplete="PF('myForm:luggageDlg').show()"/>
+                    <p:commandButton title="Add luggage" update="myForm:luggageDlg" oncomplete="PF('myForm:luggageDlg').show()"/>
+                    <p:commandButton icon="ui-icon-check" title="Check in luggage and print luggage tags" oncomplete="PF('checkInLuggDlg').show()"/> 
                 </f:facet>
 
             </p:dataTable>
@@ -68,9 +73,35 @@
                     <p:inputTextarea value="#{luggageManager.remark}" rows="6" cols="33" />
                 </p:panelGrid>
                 <p:separator/>
-                <p:commandButton value="Confirm" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.addLuggage}"/>
+                <p:commandButton value="Confirm" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,:myForm:ticket" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.addLuggage}"/>
                 <p:commandButton value="Cancel" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('myForm:luggageDlg').hide()"/>   
             </p:dialog>
+            
+            
+            <p:dialog id="checkInLuggDlg" header="Payment confirmed?" resizable="false">
+                <p:outputLabel id="confirmCheckinMsg" value="Confirm check-in and print following luggage tags?"/>
+                <p:outputLabel value="Passenger: #{luggageManager.passenger.firstName} #{luggageManager.passenger.lastName}"/>
+                <p:outputLabel value="Passport: #{luggageManager.passenger.passportNo}"/>
+
+                <p:dataTable var="tick" value="#{luggageManager.airTickets}" style="width:550px" rows="5" paginator="true" tableStyleClass="table-small-font">
+                    
+                    <p:column headerText="Flight" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.flight.flightNo}" />
+                    </p:column>
+
+                    <p:column headerText="From" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.leg.departAirport.airportName}" />
+                    </p:column>
+
+                    <p:column headerText="To" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.leg.arrivalAirport.airportName}" />
+                    </p:column>
+
+                </p:dataTable>
+                <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action="#{dcsNavController.toSearchPassenger}" actionListener="#{luggageManager.checkInLuggage}"/>
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('myForm:luggageDlg').hide()"/>   
+            </p:dialog>
+            
         </h:form>
     </ui:define>
 

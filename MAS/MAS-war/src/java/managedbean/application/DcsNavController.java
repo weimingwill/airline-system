@@ -47,4 +47,20 @@ public class DcsNavController {
     public String toAddLuggage() {
         return DCS_URL + "addLuggage.xhtml" + REDIRECT;
     }
+    
+    public String toBoardPassenger() {
+        return DCS_URL + "boardPassenger.xhtml" + REDIRECT;
+    }
+    
+    public String toConfirmBoarding() {
+        return DCS_URL + "boardPassenger.xhtml" + REDIRECT;
+    }
+    
+    public String toBoardingPass() {
+        return DCS_URL + "boardingPass.xhtml";
+    }
+    
+    public String toSearchCheckedInPNR(){
+        return DCS_URL + "searchCheckedInPNR.xhtml" + REDIRECT;
+    }
 }

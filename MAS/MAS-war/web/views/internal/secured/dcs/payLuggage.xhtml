@@ -13,15 +13,14 @@
         <h:form id="myForm">
             <p:panelGrid columns="4">
                 <p:outputLabel value="Passenger Name: " />
-                <p:outputLabel value="#{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}" />
+                <p:outputLabel value="#{luggageManager.passenger.firstName} #{luggageManager.passenger.lastName}" />
 
                 <p:outputLabel value="Passport Number: " />
-                <p:outputLabel value="#{passengerManager.passportNo}" />
+                <p:outputLabel value="#{luggageManager.passenger.passportNo}" />
             </p:panelGrid>
 
             <p:dataTable id="ticket" var="ticket" value="#{luggageManager.airTickets}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
-                         paginator="true"
-                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
                 <f:facet name="header">
                     Luggage Information Updated
                 </f:facet>
@@ -54,14 +53,8 @@
                     <h:outputText value="#{ticket.purchasedLuggage.description}" />
                 </p:column>
 
-                <p:column headerText="Actual Luggage Weight In Total">
-                    <h:outputText value="#{luggageManager.totalWeight}" />
-                </p:column>
-
                 <f:facet name="footer">
-                    <h:outputText value="Excess weight #{luggageManager.excessWeight} kg" />
-                    <br/>
-                    <h:outputText value="Excess weight price #{luggageManager.excessWeightPrice} SGD" />
+                    <h:outputText value="Excess weight price #{luggageManager.totalExcessWeightPrice} SGD" />
                 </f:facet>
                 <f:facet name="footer2">
                     <p:commandButton icon="ui-icon-check" title="Add luggage" oncomplete="PF('addLuggDlg').show()"/>
@@ -77,7 +70,7 @@
                     <p:inputTextarea value="#{luggageManager.remark}" rows="6" cols="33" />
                 </p:panelGrid>
                 <p:separator/>
-                <p:commandButton value="Confirm" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.addLuggage}"/>
+                <p:commandButton value="Confirm" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,myForm:ticket" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.addLuggage}"/>
                 <p:commandButton value="Cancel" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('myForm:luggageDlg').hide()"/>   
             </p:dialog>
 
@@ -101,7 +94,7 @@
                     </p:column>
 
                 </p:dataTable>
-                <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.addLuggage}"/>
+                <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.checkInLuggage}"/>
                 <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('myForm:luggageDlg').hide()"/>   
             </p:dialog>
         </h:form>

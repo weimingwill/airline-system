@@ -6,10 +6,10 @@
 package managedbean.dcs;
 
 import ams.ars.entity.AirTicket;
-import ams.ars.entity.PricingItem;
 import ams.crm.entity.Customer;
 import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.session.CheckInSessionLocal;
+import ams.dcs.util.exception.NoSuchPNRException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -22,7 +22,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import managedbean.application.DcsNavController;
 import managedbean.application.MsgController;
-import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -44,7 +43,10 @@ public class LuggageManager implements Serializable {
     private double weight;
     private double excessWeight = 0;
     private double excessWeightPrice = 0;
+    private double totalExcessWeightPrice = 0;
+
     private String remark;
+    private long ticketID;
 
     private Customer passenger;
 
@@ -66,104 +68,88 @@ public class LuggageManager implements Serializable {
 
     public void ticketReceived() {
         boolean refresh = false;
-        if (!airTickets.isEmpty()) {
+        if (airTicket != null) {
             refresh = true;
         }
         Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        List<AirTicket> temp = (ArrayList<AirTicket>) map.get("checkedTickets");
-        if (!temp.isEmpty()) {
-            setAirTickets(temp);
+        AirTicket temp = (AirTicket) map.get("checkedTicket");
+        if (temp != null) {
+            setAirTicket(temp);
+            airTickets.clear();
+            airTickets.add(airTicket);
             if (refresh) {
-                airTicket = null;
-                luggage = null;
-                luggageList.clear();
+                setPassenger((Customer) map.get("passenger"));
+                setLuggage(new CheckInLuggage());
+                getLuggageList().clear();
             }
+        }
+    }
+
+    public String searchTicket() {
+        try {
+            AirTicket a = checkInSession.searchTicketByID(ticketID);
+            if (a == null) {
+                msgController.addErrorMessage("No PNR founded!");
+                return "";
+            }else if (!a.getStatus().equals("Checked in")) {
+                msgController.addErrorMessage("Air ticket not checked in!");
+                return "";
+            }else{
+                return dcsNavController.toCheckInLuggage();
+            }
+        } catch (NoSuchPNRException e) {
+            msgController.addErrorMessage("No PNR found!");
+            return "";
         }
     }
 
     public void addLuggage() {
-        luggage.setRealWeight(weight);
-        if (remark != null) {
-            luggage.setRemark(remark);
-        }
-        excessWeight = 0;
+        if (weight > 53) {
+            msgController.addErrorMessage("Luggage weight excesses 53 kg limitation!");
+        } else {
+            getLuggage().setRealWeight(getWeight());
+            if (getRemark() != null) {
+                getLuggage().setRemark(getRemark());
+                remark = "";
+            }
+            getLuggageList().add(getLuggage());
+            setLuggage(new CheckInLuggage());
+            setExcessWeight(0);
+            setExcessWeightPrice(0);
 
-        luggageList.add(luggage);
-        for (AirTicket a : airTickets) {
-            if (weight > a.getPurchasedLuggage().getMaxWeight()) {
-                excessWeight = weight - a.getPurchasedLuggage().getMaxWeight();
-                if (excessWeight <= 15) {
-                    excessWeightPrice = excessWeight*25;
-                }else if (excessWeight <= 30) {
-                    excessWeightPrice = (excessWeight-15)*35;
-                }
+            for (AirTicket a : getAirTickets()) {
+                excessWeightPrice = checkInSession.calculateLuggagePrice(a, luggageList);
+                totalExcessWeightPrice += excessWeightPrice;
             }
         }
-        excessWeightPrice = excessWeight * 42;
-        RequestContext context = RequestContext.getCurrentInstance();
-        context.update(":myForm:ticket");
-        weight = 0;
-        remark = "";
     }
 
-    public void createLuggage() {
-        checkInSession.checkInPassenger(airTicket);
+    public void checkInLuggage() {
+        boolean flag = true;
+        for (AirTicket a : airTickets) {
+            Double price = checkInSession.calculateLuggagePrice(a, luggageList);
+            if (!checkInSession.checkInLuggage(a, luggageList, price)) {
+                msgController.addErrorMessage("Check In error for ticket " + a.getId() + " !");
+                flag = false;
+            }
+        }
+        if (flag) {
+            msgController.addMessage("Check in luggage successfully!");
+            cleanVariables();
+        }
     }
 
-    /**
-     * @return the luggage
-     */
-    public CheckInLuggage getLuggage() {
-        return luggage;
-    }
-
-    /**
-     * @param luggage the luggage to set
-     */
-    public void setLuggage(CheckInLuggage luggage) {
-        this.luggage = luggage;
-    }
-
-    /**
-     * @return the luggageList
-     */
-    public List<CheckInLuggage> getLuggageList() {
-        return luggageList;
-    }
-
-    /**
-     * @param luggageList the luggageList to set
-     */
-    public void setLuggageList(List<CheckInLuggage> luggageList) {
-        this.luggageList = luggageList;
-    }
-
-    /**
-     * @return the airTicket
-     */
-    public AirTicket getAirTicket() {
-        return airTicket;
-    }
-
-    /**
-     * @param airTicket the airTicket to set
-     */
-    public void setAirTicket(AirTicket airTicket) {
-        this.airTicket = airTicket;
-    }
-
-    /**
-     * @return the airTickets
-     */
-    public List<AirTicket> getAirTickets() {
-        return airTickets;
-    }
-
-    /**
-     * @param airTickets the airTickets to set
-     */
-    public void setAirTickets(List<AirTicket> airTickets) {
-        this.airTickets = airTickets;
+    private void cleanVariables() {
+        setAirTicket(new AirTicket());
+        setAirTickets(new ArrayList<>());
+        setExcessWeight(0);
+        setExcessWeightPrice(0);
+        setLuggage(new CheckInLuggage());
+        setLuggageList(new ArrayList<>());
+        setPassenger(new Customer());
+        setRemark("");
+        setTotalExcessWeightPrice(0);
+        setWeight(0);
     }
 
     /**
@@ -178,6 +164,34 @@ public class LuggageManager implements Serializable {
      */
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    /**
+     * @return the excessWeight
+     */
+    public double getExcessWeight() {
+        return excessWeight;
+    }
+
+    /**
+     * @param excessWeight the excessWeight to set
+     */
+    public void setExcessWeight(double excessWeight) {
+        this.excessWeight = excessWeight;
+    }
+
+    /**
+     * @return the excessWeightPrice
+     */
+    public double getExcessWeightPrice() {
+        return excessWeightPrice;
+    }
+
+    /**
+     * @param excessWeightPrice the excessWeightPrice to set
+     */
+    public void setExcessWeightPrice(double excessWeightPrice) {
+        this.excessWeightPrice = excessWeightPrice;
     }
 
     /**
@@ -209,31 +223,87 @@ public class LuggageManager implements Serializable {
     }
 
     /**
-     * @return the excessWeight
+     * @return the airTicket
      */
-    public double getExcessWeight() {
-        return excessWeight;
+    public AirTicket getAirTicket() {
+        return airTicket;
     }
 
     /**
-     * @param excessWeight the excessWeight to set
+     * @param airTicket the airTicket to set
      */
-    public void setExcessWeight(double excessWeight) {
-        this.excessWeight = excessWeight;
+    public void setAirTicket(AirTicket airTicket) {
+        this.airTicket = airTicket;
     }
 
     /**
-     * @return the excessWeightPrice
+     * @return the airTickets
      */
-    public double getExcessWeightPrice() {
-        return excessWeightPrice;
+    public List<AirTicket> getAirTickets() {
+        return airTickets;
     }
 
     /**
-     * @param excessWeightPrice the excessWeightPrice to set
+     * @param airTickets the airTickets to set
      */
-    public void setExcessWeightPrice(double excessWeightPrice) {
-        this.excessWeightPrice = excessWeightPrice;
+    public void setAirTickets(List<AirTicket> airTickets) {
+        this.airTickets = airTickets;
+    }
+
+    /**
+     * @return the luggage
+     */
+    public CheckInLuggage getLuggage() {
+        return luggage;
+    }
+
+    /**
+     * @param luggage the luggage to set
+     */
+    public void setLuggage(CheckInLuggage luggage) {
+        this.luggage = luggage;
+    }
+
+    /**
+     * @return the luggageList
+     */
+    public List<CheckInLuggage> getLuggageList() {
+        return luggageList;
+    }
+
+    /**
+     * @param luggageList the luggageList to set
+     */
+    public void setLuggageList(List<CheckInLuggage> luggageList) {
+        this.luggageList = luggageList;
+    }
+
+    /**
+     * @return the totalExcessWeightPrice
+     */
+    public double getTotalExcessWeightPrice() {
+        return totalExcessWeightPrice;
+    }
+
+    /**
+     * @param totalExcessWeightPrice the totalExcessWeightPrice to set
+     */
+    public void setTotalExcessWeightPrice(double totalExcessWeightPrice) {
+        this.totalExcessWeightPrice = totalExcessWeightPrice;
+    }
+
+    /**
+     * @return the ticketID
+     */
+    public long getTicketID() {
+        return ticketID;
+    }
+
+    /**
+     * @param ticketID the ticketID to set
+     */
+    public void setTicketID(long ticketID) {
+        this.ticketID = ticketID;
     }
 
 }

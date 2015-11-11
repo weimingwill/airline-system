@@ -10,13 +10,13 @@
         <f:facet name="header">
             Check in Luggage
         </f:facet>
-        <h:form>
+        <h:form id="myForm">
             <p:panelGrid columns="4">
                 <p:outputLabel value="Passenger Name: " />
-                <p:outputLabel value="#{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}" />
+                <p:outputLabel value="#{luggageManager.passenger.firstName} #{luggageManager.passenger.lastName}" />
 
                 <p:outputLabel value="Passport Number: " />
-                <p:outputLabel value="#{passengerManager.passportNo}" />
+                <p:outputLabel value="#{luggageManager.passenger.passportNo}" />
             </p:panelGrid>
 
             <p:dataTable id="ticket" var="ticket" value="#{luggageManager.airTickets}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
