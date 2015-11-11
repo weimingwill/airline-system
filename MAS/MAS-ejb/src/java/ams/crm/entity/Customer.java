@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,6 +30,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name = "DType")
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,9 +49,15 @@ public class Customer implements Serializable {
     private Date passportExpDate;
     @Temporal(value = TemporalType.DATE)
     private Date passportIssueDate;
-
+    private Boolean isAdult;
+    
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "customer")
     private List<AirTicket> airTickets = new ArrayList<>();
+    
+    
+    @Column(insertable = false, updatable = false) 
+    private String DType; 
+    
     
     @Override
     public int hashCode() {
@@ -163,5 +172,20 @@ public class Customer implements Serializable {
         this.airTickets = airTickets;
     }
 
+    public String getDType() {
+        return DType;
+    }
+
+    public void setDType(String DType) {
+        this.DType = DType;
+    }
+
+    public Boolean getIsAdult() {
+        return isAdult;
+    }
+
+    public void setIsAdult(Boolean isAdult) {
+        this.isAdult = isAdult;
+    }
     
 }
