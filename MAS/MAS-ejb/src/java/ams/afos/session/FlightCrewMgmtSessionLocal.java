@@ -21,6 +21,7 @@ import javax.ejb.Local;
 @Local
 public interface FlightCrewMgmtSessionLocal {
     public List<FlightDuty> generateFlightDuties() throws FlightDutyConflictException;
+    public void getAllFlightDuties();
     
     public void startBiddingSession(BiddingSession session);
     public void suspendBiddingSession(BiddingSession session);

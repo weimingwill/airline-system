@@ -16,7 +16,6 @@ import ams.aps.session.RoutePlanningSessionLocal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
