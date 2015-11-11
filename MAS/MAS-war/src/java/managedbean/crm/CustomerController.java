@@ -38,6 +38,9 @@ public class CustomerController implements Serializable {
     private NavigationController navigationController;
     @Inject
     private MsgController msgController;
+    
+    @Inject
+    private RedeemMilesBacking redeemMilesBacking;
  
     @EJB
     private CustomerSessionLocal customerSession;
@@ -95,8 +98,14 @@ public class CustomerController implements Serializable {
     public String updateProfile() throws ExistSuchRegCustException, NoSuchRegCustException {
         System.out.print("customerId" +customerId);
         System.out.print("passport"+passportNo);
-        msgController.addMessage("Update Information Successfully!");
+        
         customerSession.updateProfile(customerId,passportNo,passportIssueDate,passportExpDate,nationality,email,addr1,addr2,city,state,country,zipCode,phone,securQest,securAns,newsLetterPref,promoPref);
+        msgController.addMessage("Update Information Successfully!");
+        return navigationController.redirectToCurrentPage();
+    }
+    
+    public String updateMiles() throws NoSuchRegCustException{
+        customerSession.updateMiles(email,accMiles-redeemMilesBacking.getSelectedMilesRedemption().getMiles());
         return navigationController.redirectToCurrentPage();
     }
     public void initializeCustomer() {

@@ -18,13 +18,13 @@
                     <p:panelGrid columns="2" styleClass="centered">
                         <p:outputLabel value="Title"/>
                         <p:outputLabel value="#{customerController.title}"/>
-                        
+
                         <p:outputLabel for="firstname" value="First/Given Name" />
                         <p:outputLabel id="firstname" class="userProfileInput"  value="#{customerController.firstname}" />
 
                         <p:outputLabel for="lastname" value="Last/Family Name"/>
                         <p:outputLabel id="lastname" class="userProfileInput" value="#{customerController.lastname}"/>           
-                        
+
                         <p:outputLabel for="passportNo" value="Passport No" />
                         <p:inputText id="passportNo" class="userProfileInput"  value="#{customerController.passportNo}"  placeholder="passport"/>
 
@@ -35,10 +35,10 @@
                         <p:outputLabel  id="dob" value="#{customerController.dob}">
                             <f:convertDateTime timeZone="GMT+8" pattern="yyyy-MMM-dd" />
                         </p:outputLabel>
-                        
+
                         <p:outputLabel for="passportIssueDate" value="Passport Issue Date"/>
                         <p:calendar id="passportIssueDate" value="#{customerController.passportIssueDate}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-50:c" maxdate="c" placeholder="Issue Date"/>
-                        
+
                         <p:outputLabel for="passportExpireDate" value="Passport Expire Date"/>
                         <p:calendar id="passportExpireDate" value="#{customerController.passportExpDate}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-50:c+50" placeholder="Expire Date"/>
                         <p:outputLabel for="nationality" value="Nationality"/>
@@ -58,10 +58,10 @@
                             <f:validateRegex
                                 pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
                         </p:inputText>
-                        
+
                         <p:outputLabel for="membershipId" value="Membership ID"/>
                         <p:outputLabel id="membershipId" value="#{customerController.membershipId}"/>
-                        
+
                         <h:outputLabel class="userProfileInput" for="address1" value="Address1" />
                         <p:inputText id="address1" class="userProfileInput"  required="true" requiredMessage="Please enter address" value="#{customerController.addr1}" placeholder="block, street"/>
 
@@ -106,9 +106,18 @@
 
                 <p:panel header="Login Detail">
                     <p:panelGrid columns="2" styleClass="centered">
-                       
                         <p:outputLabel for="secQue" value="Secutity Question"/>
-                        <p:inputText id="secQue" class="userProfileInput" required="true" requiredMessage="Please input security question" value="#{customerController.securQest}" placeholder="security question"/>
+                        <p:selectOneMenu style="width:180px" id="secQue" required="true" requiredMessage="Please choose your security question" value="#{customerController.securQest}">
+                            <f:selectItem itemLabel="Select Question" itemValue="" />
+                            <f:selectItem itemLabel="Please Choose" itemValue="" />
+                            <f:selectItem itemLabel="What is your primary school?"  itemValue="What is your primary school" />
+                            <f:selectItem itemLabel="What is your mom's first name" itemValue="What is your mom's first name"/>
+                            <f:selectItem itemLabel="What is your pet’s name?"  itemValue="What is your pet’s name?" />
+                            <f:selectItem itemLabel="In what year was your father born?"  itemValue="In what year was your father born?" />
+                            <f:selectItem itemLabel="What is your favorite movie?"  itemValue="What is your favorite movie?" />
+                            <f:selectItem itemLabel="What is the name of the place your wedding reception was held?" itemValue="What is the name of the place your wedding reception was held?" />
+                            <f:selectItem itemLabel="In what city or town does your nearest sibling live?"  itemValue="In what city or town does your nearest sibling live?"/>
+                        </p:selectOneMenu>
                         <p:outputLabel for="secAns" value="Secutity Answer"/>
                         <p:inputText id="secAns" class="userProfileInput" required="true" requiredMessage="Please answer security question" value="#{customerController.securAns}" placeholder="security answer"/>
                     </p:panelGrid>
