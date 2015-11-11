@@ -6,7 +6,6 @@
 package managedbean.crm;
 
 import ams.ais.entity.Rule;
-import ams.ais.entity.TicketFamily;
 import ams.crm.session.GeneralInformationSessionLocal;
 import java.util.List;
 import javax.ejb.EJB;
@@ -20,6 +19,7 @@ import javax.enterprise.context.RequestScoped;
 @Named(value = "generalInformationController")
 @RequestScoped
 public class GeneralInformationController {
+
     @EJB
     private GeneralInformationSessionLocal generalInformationSession;
     /**
@@ -33,9 +33,7 @@ public class GeneralInformationController {
     public List<Rule> getNameChangeRules() {
         return generalInformationSession.getNameChangeRule();
     } 
-    public List<TicketFamily> getNameChangeTicketFamily() {
-        return generalInformationSession.getNameChangeTicketFamily();
-    } 
+    
     public List<Rule> getCancellationRules(){
         return generalInformationSession.getCancellationRule();
     }
