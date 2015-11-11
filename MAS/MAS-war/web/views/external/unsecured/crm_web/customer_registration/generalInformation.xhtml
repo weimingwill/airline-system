@@ -1,0 +1,303 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmExTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="title">
+        General Information
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="generalRules" style="width: 600px;text-align: center;" >
+
+            <p:panel style="max-width:600px; overflow: scroll">
+                <p:dataTable id="nameChangePolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Name Change Policy
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="CabinClass - TicketFamily" />
+                            <ui:repeat value="#{generalInformationController.nameChangeRules}" var="rule">
+                                <p:column id="rule#{rule.ruleId}" headerText="#{rule.name}">
+                                    <p:tooltip for="rule#{rule.ruleId}" value="#{rule.description}" />
+                                </p:column>
+                            </ui:repeat>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column>
+                        <p:outputLabel id="tf#{tf.ticketFamilyId}" value="#{tf.getCabinClass().name} - #{tf.name}" />
+                        <!--<p:tooltip for="tf{tf.ticketFamilyId}" value="{tf.getCabinClass().name}" />-->
+                    </p:column>
+                    <c:forEach items="#{generalInformationController.nameChangeRules}" var="rule">
+                        <p:column>
+                            <p:outputLabel value="#{ticketFamilyController.getTicketFamilyRuleValue(tf.ticketFamilyId, rule.ruleId)}" />
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+                <p:dataTable id="nameChangePolicyDetails" value="#{generalInformationController.nameChangeRules}" var="rule" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Name Change Policy Explanation
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="Name Change Rule Name" />
+                            <p:column headerText="Name Change Rule Description" />
+                        </p:row>
+                        
+                    </p:columnGroup>
+
+                    <p:column headerText="Rule Name">
+                        <p:outputLabel value="#{rule.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Rule Description">
+                        <p:outputLabel value="#{rule.description}"/>
+                    </p:column>
+                </p:dataTable> 
+            </p:panel>
+            
+            <p:panel style="max-width:610px; overflow: scroll">
+                <p:dataTable id="cancellationPolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Cancellation Policy
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="CabinClass - TicketFamily" />
+                            <ui:repeat value="#{generalInformationController.cancellationRules}" var="rule">
+                                <p:column id="rule#{rule.ruleId}" headerText="#{rule.name}">
+                                    <p:tooltip for="rule#{rule.ruleId}" value="#{rule.description}" />
+                                </p:column>
+                            </ui:repeat>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column>
+                        <p:outputLabel id="tf#{tf.ticketFamilyId}" value="#{tf.getCabinClass().name} - #{tf.name}" />
+                        <!--<p:tooltip for="tf{tf.ticketFamilyId}" value="{tf.getCabinClass().name}" />-->
+                    </p:column>
+                    <c:forEach items="#{generalInformationController.cancellationRules}" var="rule">
+                        <p:column>
+                            <p:outputLabel value="#{ticketFamilyController.getTicketFamilyRuleValue(tf.ticketFamilyId, rule.ruleId)}" />
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+                <p:dataTable id="cancellationPolicyDetails" value="#{generalInformationController.cancellationRules}" var="rule" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Cancellation Policy Explanation
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="Cancellation Rule Name" />
+                            <p:column headerText="Cancellation Rule Description" />
+                        </p:row>
+                        
+                    </p:columnGroup>
+
+                    <p:column headerText="Rule Name">
+                        <p:outputLabel value="#{rule.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Rule Description">
+                        <p:outputLabel value="#{rule.description}"/>
+                    </p:column>
+                </p:dataTable> 
+            </p:panel>
+            
+            <p:panel style="max-width:610px; overflow: scroll">
+                <p:dataTable id="luggage" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Carry On Luggage Policy
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="CabinClass - TicketFamily" />
+                            <ui:repeat value="#{generalInformationController.luggageRules}" var="rule">
+                                <p:column id="rule#{rule.ruleId}" headerText="#{rule.name}">
+                                    <p:tooltip for="rule#{rule.ruleId}" value="#{rule.description}" />
+                                </p:column>
+                            </ui:repeat>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column>
+                        <p:outputLabel id="tf#{tf.ticketFamilyId}" value="#{tf.getCabinClass().name} - #{tf.name}" />
+                        <!--<p:tooltip for="tf{tf.ticketFamilyId}" value="{tf.getCabinClass().name}" />-->
+                    </p:column>
+                    <c:forEach items="#{generalInformationController.luggageRules}" var="rule">
+                        <p:column>
+                            <p:outputLabel value="#{ticketFamilyController.getTicketFamilyRuleValue(tf.ticketFamilyId, rule.ruleId)}" />
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+                <p:dataTable id="luggagePolicyDetails" value="#{generalInformationController.luggageRules}" var="rule" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Cancellation Policy Explanation
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="Cancellation Rule Name" />
+                            <p:column headerText="Cancellation Rule Description" />
+                        </p:row>
+                        
+                    </p:columnGroup>
+
+                    <p:column headerText="Rule Name">
+                        <p:outputLabel value="#{rule.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Rule Description">
+                        <p:outputLabel value="#{rule.description}"/>
+                    </p:column>
+                </p:dataTable> 
+            </p:panel>
+            
+            <p:panel style="max-width:610px; overflow: scroll">
+                <p:dataTable id="flightChangePolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Flight Change Policy
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="CabinClass - TicketFamily" />
+                            <ui:repeat value="#{generalInformationController.flightChangeRules}" var="rule">
+                                <p:column id="rule#{rule.ruleId}" headerText="#{rule.name}">
+                                    <p:tooltip for="rule#{rule.ruleId}" value="#{rule.description}" />
+                                </p:column>
+                            </ui:repeat>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column>
+                        <p:outputLabel id="tf#{tf.ticketFamilyId}" value="#{tf.getCabinClass().name} - #{tf.name}" />
+                        <!--<p:tooltip for="tf{tf.ticketFamilyId}" value="{tf.getCabinClass().name}" />-->
+                    </p:column>
+                    <c:forEach items="#{generalInformationController.flightChangeRules}" var="rule">
+                        <p:column>
+                            <p:outputLabel value="#{ticketFamilyController.getTicketFamilyRuleValue(tf.ticketFamilyId, rule.ruleId)}" />
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+                <p:dataTable id="flightChangePolicyDetails" value="#{generalInformationController.flightChangeRules}" var="rule" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Cancellation Policy Explanation
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="Flight Change Rule Name" />
+                            <p:column headerText="Flight Change Rule Description" />
+                        </p:row>
+                        
+                    </p:columnGroup>
+
+                    <p:column headerText="Rule Name">
+                        <p:outputLabel value="#{rule.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Rule Description">
+                        <p:outputLabel value="#{rule.description}"/>
+                    </p:column>
+                </p:dataTable> 
+            </p:panel>
+            
+            <p:panel style="max-width:610px; overflow: scroll">
+                <p:dataTable id="otherService" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Other Service
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="CabinClass - TicketFamily" />
+                            <ui:repeat value="#{generalInformationController.getOtherServiceRules()}" var="rule">
+                                <p:column id="rule#{rule.ruleId}" headerText="#{rule.name}">
+                                    <p:tooltip for="rule#{rule.ruleId}" value="#{rule.description}" />
+                                </p:column>
+                            </ui:repeat>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column>
+                        <p:outputLabel id="tf#{tf.ticketFamilyId}" value="#{tf.getCabinClass().name} - #{tf.name}" />
+                        <!--<p:tooltip for="tf{tf.ticketFamilyId}" value="{tf.getCabinClass().name}" />-->
+                    </p:column>
+                    <c:forEach items="#{generalInformationController.getOtherServiceRules()}" var="rule">
+                        <p:column>
+                            <p:outputLabel value="#{ticketFamilyController.getTicketFamilyRuleValue(tf.ticketFamilyId, rule.ruleId)}" />
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+                <p:dataTable id="otherServicePolicyDetails" value="#{generalInformationController.getOtherServiceRules()}" var="rule" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        Cancellation Policy Explanation
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="Other Service Rule Name" />
+                            <p:column headerText="Other Service Rule Description" />
+                        </p:row>
+                        
+                    </p:columnGroup>
+
+                    <p:column headerText="Rule Name">
+                        <p:outputLabel value="#{rule.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Rule Description">
+                        <p:outputLabel value="#{rule.description}"/>
+                    </p:column>
+                </p:dataTable> 
+            </p:panel>
+            
+            <p:panel style="max-width:610px; overflow: scroll">
+                <p:dataTable id="noShowFee" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        No-show fee ex-SIN
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="CabinClass - TicketFamily" />
+                            <ui:repeat value="#{generalInformationController.noShowFeeRules}" var="rule">
+                                <p:column id="rule#{rule.ruleId}" headerText="#{rule.name}">
+                                    <p:tooltip for="rule#{rule.ruleId}" value="#{rule.description}" />
+                                </p:column>
+                            </ui:repeat>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column>
+                        <p:outputLabel id="tf#{tf.ticketFamilyId}" value="#{tf.getCabinClass().name} - #{tf.name}" />
+                        <!--<p:tooltip for="tf{tf.ticketFamilyId}" value="{tf.getCabinClass().name}" />-->
+                    </p:column>
+                    <c:forEach items="#{generalInformationController.noShowFeeRules}" var="rule">
+                        <p:column>
+                            <p:outputLabel value="#{ticketFamilyController.getTicketFamilyRuleValue(tf.ticketFamilyId, rule.ruleId)}" />
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+                <p:dataTable id="noShowFeeDetails" value="#{generalInformationController.noShowFeeRules}" var="rule" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        No-Show Fee Policy Explanation
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="No-Show Fee" />
+                            <p:column headerText="No-Show Fee Description" />
+                        </p:row>
+                        
+                    </p:columnGroup>
+
+                    <p:column headerText="Rule Name">
+                        <p:outputLabel value="#{rule.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Rule Description">
+                        <p:outputLabel value="#{rule.description}"/>
+                    </p:column>
+                </p:dataTable> 
+            </p:panel>
+        </h:form>
+        
+       
+    </ui:define>
+
+</ui:composition>
