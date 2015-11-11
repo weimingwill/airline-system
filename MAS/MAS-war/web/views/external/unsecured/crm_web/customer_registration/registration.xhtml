@@ -88,14 +88,14 @@
                                 <h:outputLabel  value="Phone Number"/>
                             </p:column>
                             <p:column>
-                                <p:selectOneMenu class="userProfileInput" converter="countryConverter" required="true" style="width:120px" requiredMessage="Please select phone dial Code" value ="#{registrationController.newRegCust.phone.countryCode}">
+                                <p:selectOneMenu class="userProfileInput" required="true" style="width:120px" requiredMessage="Please select phone dial Code" value ="#{registrationController.newRegCust.phone.countryCode}">
                                     <f:selectItem itemLabel="Country Code" itemValue="" />
-                                    <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.dialingCode}" itemValue="#{country.dialingCode}" />
+                                    <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.countryName}(#{country.dialingCode})" itemValue="#{country.dialingCode}" />
                                 </p:selectOneMenu>
 
                             </p:column>
                             <p:column>
-                                <p:inputText style="width:50px" class="userProfileInput" required="true" value="#{registrationController.newRegCust.phone.areaCode}" requiredMessage="Please input mibilephone area code" placeholder="#area"/> 
+                                <p:inputText style="width:50px" class="userProfileInput"  value="#{registrationController.newRegCust.phone.areaCode}"   placeholder="#area"/> 
                             </p:column>
                             <p:column>
                                 <p:inputText style="width:100px" class="userProfileInput" required="true" value="#{registrationController.newRegCust.phone.number}" requiredMessage="Please Input mobile phone number" /> 

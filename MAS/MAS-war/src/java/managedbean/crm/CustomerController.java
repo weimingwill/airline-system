@@ -121,6 +121,7 @@ public class CustomerController implements Serializable {
             country=regCust.getCountry();
             zipCode=regCust.getZipCode();
             phone=regCust.getPhone();
+            System.out.println("phone country code is" + phone.getCountryCode());
             securQest=regCust.getSecurQuest();
             securAns=regCust.getSecurAns();
             newsLetterPref=regCust.getNewsLetterPref();

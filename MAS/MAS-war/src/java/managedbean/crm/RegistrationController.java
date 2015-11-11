@@ -50,8 +50,9 @@ public class RegistrationController implements Serializable {
 
     public String createrRegCust() {
         try {
-
+            System.out.printf("registered customer"+ newRegCust);
             registrationSession.createRegCust(newRegCust);
+            System.out.printf("countrycode"+ newRegCust.getPhone().getCountryCode());
             msgController.addMessage("Registrated successfully!");
 
             String subject = "Welcome to Merlion Air";

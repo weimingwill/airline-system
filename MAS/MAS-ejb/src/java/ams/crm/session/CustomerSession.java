@@ -49,14 +49,21 @@ public class CustomerSession implements CustomerSessionLocal {
         Random r = new Random( System.currentTimeMillis() );
         verifyRegCustExistence(regCust.getPassportNo());
         verifyEmailExistence(regCust.getEmail());
-        regCust.setAccMiles(0.0);
+        regCust.setAccMiles(28563.0);
         regCust.setCustValue(0.0);
         regCust.setNumOfFlights(0);
         regCust.setActivated(true);
+        System.out.println("createRegCust: \n\tCountry Code: " + regCust.getPhone().getCountryCode());
         try {
             regCust.setMembership(entityManager.find(Membership.class,getMembershipByName("Elite Bronze").getId()));
         } catch (NoSuchMembershipException ex) {
             Logger.getLogger(CustomerSession.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException ex){
+            try {
+                System.out.println("getMembershipByName(\"Elite Bronze\"): " + getMembershipByName("Elite Bronze"));
+            } catch (NoSuchMembershipException ex1) {
+                Logger.getLogger(CustomerSession.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
         regCust.setMembershipId("MA"+ 10000 + r.nextInt(20000));
         entityManager.persist(regCust);

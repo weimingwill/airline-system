@@ -37,9 +37,9 @@
                         </p:outputLabel>
                         
                         <p:outputLabel for="passportIssueDate" value="Passport Issue Date"/>
-                        <p:calendar id="passportIssueDate" value="#{customerController.passportIssueDate}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-50:c+50" placeholder="Issue Date"/>
+                        <p:calendar id="passportIssueDate" value="#{customerController.passportIssueDate}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-50:c" maxdate="c" placeholder="Issue Date"/>
                         
-                        <p:outputLabel for="passportExpireDate" value="Date of Birth"/>
+                        <p:outputLabel for="passportExpireDate" value="Passport Expire Date"/>
                         <p:calendar id="passportExpireDate" value="#{customerController.passportExpDate}"  navigator="true" pattern="yyyy-MMM-dd" yearRange="c-50:c+50" placeholder="Expire Date"/>
                         <p:outputLabel for="nationality" value="Nationality"/>
                         <p:selectOneMenu style="width:180px" id="nationality" required="true" requiredMessage="Please enter your Nationality" value="#{customerController.nationality}">
@@ -87,14 +87,14 @@
                                 <h:outputLabel  value="Phone"/>
                             </p:column>
                             <p:column>
-                                <p:selectOneMenu class="userProfileInput" converter= "countryConverter" required="true" style="width:120px" requiredMessage="Please select phone dial Code" value ="#{customerController.phone.countryCode}">
+                                <p:selectOneMenu class="userProfileInput"   required="true" style="width:120px" requiredMessage="Please select phone dial Code" value ="#{customerController.phone.countryCode}">
                                     <f:selectItem itemLabel="Country Code" itemValue="" />
-                                    <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.dialingCode}" itemValue="#{country.dialingCode}" />
+                                    <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.countryName}(#{country.dialingCode})" itemValue="#{country.dialingCode}" />
                                 </p:selectOneMenu>
 
                             </p:column>
                             <p:column>
-                                <p:inputText style="width:50px" class="userProfileInput" required="true" value="#{customerController.phone.areaCode}" requiredMessage="Please input phone area code" placeholder="#area"/> 
+                                <p:inputText style="width:50px" class="userProfileInput"  value="#{customerController.phone.areaCode}"  placeholder="#area"/> 
                             </p:column>
                             <p:column>
                                 <p:inputText style="width:100px" class="userProfileInput" required="true" value="#{customerController.phone.number}" requiredMessage="Please Input phone number" /> 
