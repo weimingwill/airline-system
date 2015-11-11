@@ -83,7 +83,7 @@ public class BookingManager implements Serializable {
     private Map<FlightSchedule, FlightSchedule> inDirectFlightSchedMaps = new HashMap<>();
     private Map<String, FlightSchedBookingClsHelper> fbHelperMaps = new HashMap<>();
     private Map<String, FlightScheduleBookingClass> fbMaps = new HashMap<>();
-    private Map<Long, List<FlightSchedBookingClsHelper>> flightSchedMaps = new HashMap<>();
+//    private Map<Long, List<FlightSchedBookingClsHelper>> flightSchedMaps = new HashMap<>();
 
     private String searchDeptDate;
     private String searchArrDate;
@@ -315,6 +315,7 @@ public class BookingManager implements Serializable {
     
     public String toEnterPassengerDetails() {
         setBookingHelper();
+        System.out.println("bookingHelper Adult: " + bookingHelper.getAdults().isEmpty());
         return crmExNavController.redirectToPassengerInfo();
     }
     

@@ -43,7 +43,6 @@ public class FlightSchedBookingClsConverter implements Converter {
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
         if (object != null) {
-            System.out.println("Converter: " + object);
             FlightScheduleBookingClass fb = (FlightScheduleBookingClass) object;
             return fb.getFlightScheduleBookingClassId().getBookingClassId() + " " + fb.getFlightScheduleBookingClassId().getFlightScheduleId();
         } else {

@@ -66,7 +66,7 @@
                 </p:row>
 
                 <!--Flight Schedules-->
-                <c:forEach items="#{bookingManager.fligthScheds}" var="flightSched" varStatus="i">
+                <c:forEach items="#{bookingManager.fligthScheds}" var="flightSched" varStatus="i" >
                     <p:row>
                         <p:column>
                             <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.departAirport}" date="#{flightSched.departDate}" />
@@ -85,20 +85,20 @@
                         </p:column>
 
                         <p:column colspan="#{bookingManager.getFlightSchedLowestTixFams().size()}">
-                            
-                            <p:dataGrid styleClass="alignCenter" value="#{bookingManager.getFlightSchedBookingClsHelpers(flightSched)}" var="fbHelper" columns="#{bookingManager.getFlightSchedLowestTixFams().size()}" rowIndexVar="index">
 
+                            <p:dataGrid styleClass="alignCenter" value="#{bookingManager.getFlightSchedBookingClsHelpers(flightSched)}" var="fbHelper" columns="#{bookingManager.getFlightSchedLowestTixFams().size()}" rowIndexVar="index">
                                 <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFb}" converter="flightSchedBookingClsConverter" layout="custom">
                                     <!--<p:ajax event="change" update="form,barForm" onstart="PF('bar').hide();" oncomplete="PF('bar').show();" listener="{bookingManager.onFlightSchedRadioSelected()}"/>-->
                                     <p:ajax event="change" update="form,barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
                                     <f:selectItems value="#{bookingManager.getFlightSchedBookingCls(flightSched)}"/>
 
                                 </p:selectOneRadio>
-                                
+
+
                                 <p:panelGrid styleClass="alignCenter" style="width: 100%;">
                                     <p:row>
                                         <p:column>
-                                            <p:radioButton for="priceRadio" rendered="#{fbHelper.available}"/>
+                                            <p:radioButton for="priceRadio" itemIndex="#{index}" rendered="#{fbHelper.available}"/>
                                         </p:column>
                                     </p:row>
                                     <p:row>
@@ -121,13 +121,15 @@
                         </p:column>
                     </p:row>
                     <p:row>
-                        <p:column></p:column>
-                        <p:column></p:column>
+                        <p:column>&nbsp;</p:column>
+                        <p:column>&nbsp;</p:column>
                         <p:column styleClass="alignRight">
                             <p:commandLink value="More details" oncomplete="PF('flightSchedDetail').show()" >
                                 <f:setPropertyActionListener value="#{flightSched}" target="#{bookingBacking.flightSchedule}" />
                             </p:commandLink>
                         </p:column>
+                        <p:column>&nbsp;</p:column>
+                        <p:column>&nbsp;</p:column>
                     </p:row>
                 </c:forEach>
             </p:panelGrid>
@@ -147,10 +149,11 @@
         <h:form id="barForm">
             <pa:CCOneWayPriceBarPanel flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" />
             <ui:remove>
-            <p:notificationBar id="bar" position="bottom" effect="slide" styleClass="notificationBar" widgetVar="bar">
-                <pa:CCOneWayPriceBarPanel flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" />
-            </p:notificationBar>
+                <p:notificationBar id="bar" position="bottom" effect="slide" styleClass="notificationBar" widgetVar="bar">
+                    <pa:CCOneWayPriceBarPanel flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" />
+                </p:notificationBar>
             </ui:remove>
+
         </h:form>
     </ui:define>
 

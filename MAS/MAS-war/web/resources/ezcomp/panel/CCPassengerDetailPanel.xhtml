@@ -13,19 +13,26 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <c:set value="#{cc.attrs.customer}" var="#{customer}"
-        <p:outputLabel for="firstName" value="First Name" />
-        <p:inputText id="firstName" value="#{customer.firstName}" required="true" />
-        
-        <p:outputLabel for="lastName" value="Last Name"/>
-        <p:inputText id="lastName" value="#{customer.lastName}" required="true" />
-        
-        <p:outputLabel for="gender" value="Gender"/>
-        <p:selectOneMenu id="gender" value="#{customer.gender}" required="true">
-            <f:selectItems value="#{bookingBacking.genders}" />
-        </p:selectOneMenu>
+        <c:set value="#{cc.attrs.customer}" var="#{customer}" />
+        <p:panelGrid columns="2">
+            <p:outputLabel for="title" value="Title"/>
+            <p:selectOneMenu id="title" >
+                <f:selectItems value="#{bookingBacking.titles}" />
+            </p:selectOneMenu>
+            <p:outputLabel for="firstName" value="First Name" />
+            <p:inputText id="firstName" value="#{customer.firstName}" required="true" />
 
-        <p:outputLabel for="dob" value="#{customer.dob}"/>
-        <p:calendar id="dob" navigator="true" timeZone="GMT+8" pattern="dd/MM/yyyy" />
+            <p:outputLabel for="lastName" value="Last Name"/>
+            <p:inputText id="lastName" value="#{customer.lastName}" required="true" />
+
+            <p:outputLabel for="gender" value="Gender"/>
+            <p:selectOneMenu id="gender" value="#{customer.gender}" required="true">
+                <f:selectItems value="#{bookingBacking.genders}" />
+            </p:selectOneMenu>
+
+            <p:outputLabel for="dob" value="Date of birth" />
+            <p:calendar id="dob" value="#{customer.dob}" navigator="true" timeZone="GMT+8" pattern="dd/MM/yyyy" />
+        </p:panelGrid>
+
     </cc:implementation>
 </html>

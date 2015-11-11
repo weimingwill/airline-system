@@ -5,7 +5,6 @@
  */
 package ams.ars.entity;
 
-import ams.ars.entity.AirTicketPricingItem;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

@@ -7,13 +7,14 @@ package ams.crm.util.helper;
 
 import ams.ars.entity.Booking;
 import ams.crm.entity.Customer;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  * @author weiming
  */
-public class BookingHelper {
+public class BookingHelper implements Serializable{
     private Booking booking;
     private List<Customer> adults;
     private List<Customer> children;

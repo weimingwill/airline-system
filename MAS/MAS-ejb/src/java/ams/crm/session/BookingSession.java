@@ -127,7 +127,11 @@ public class BookingSession implements BookingSessionLocal {
         query.setParameter("inStatus", FlightSchedStatus.RELEASE);
         FlightSchedule flightSchedule = null;
         try {
-            flightSchedule = (FlightSchedule) query.getSingleResult();
+            List<FlightSchedule> flightSchedules = (List<FlightSchedule>) query.getResultList();
+            if (flightSchedules.size() > 0) {
+                flightSchedule = flightSchedules.get(0);
+            }
+//            flightSchedule = (FlightSchedule) query.getSingleResult();
         } catch (NoResultException e) {
         }
         return flightSchedule;
@@ -160,10 +164,8 @@ public class BookingSession implements BookingSessionLocal {
 //        }
 //        return flightSchedBookingClsMaps;
 //    }
-
     @Override
-    public List<FlightSchedBookingClsHelper> getAllFlightSchedBookingClses
-        (List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps) {
+    public List<FlightSchedBookingClsHelper> getAllFlightSchedBookingClses(List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps) {
         List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
         for (FlightSchedule flightSched : flightScheds) {
             for (TicketFamily tixFam : tixFams) {
@@ -180,9 +182,7 @@ public class BookingSession implements BookingSessionLocal {
 //        }
 //        return flightSchedBookingClsHelpers;
 //    }
-
-    private FlightSchedBookingClsHelper getOpenedFlightSchedBookingCls
-        (FlightSchedule flightSched, TicketFamily tixFam, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps) {
+    private FlightSchedBookingClsHelper getOpenedFlightSchedBookingCls(FlightSchedule flightSched, TicketFamily tixFam, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps) {
         Query query = em.createQuery("SELECT fb FROM FlightScheduleBookingClass fb, BookingClass b "
                 + "WHERE fb.flightScheduleBookingClassId.flightScheduleId = :inFlightScheduleId "
                 + "AND fb.flightScheduleBookingClassId.bookingClassId = b.bookingClassId "
@@ -223,9 +223,9 @@ public class BookingSession implements BookingSessionLocal {
             } else {
                 fbHelper.setShowLeftSeatQty(true);
             }
-            
+
             fbHelperMaps.put(flightSchedBookingCls.getFlightScheduleBookingClassId().toString(), fbHelper);
-            
+
         } catch (NoResultException e) {
         } catch (NoSuchFlightScheduleBookingClassException ex) {
         }
@@ -252,7 +252,7 @@ public class BookingSession implements BookingSessionLocal {
             return a;
         }
     }
-    
+
 //    private List<TicketFamily> addTixFams(List<TicketFamily> tixFams, FlightSchedule flightSched, CabinClass cabinClass) {
 //        try {
 //            List<TicketFamily> ticketFamilys = productDesignSession.getCabinClassTicketFamilysFromJoinTable(flightSched.getAircraft().getAircraftId(), cabinClass.getCabinClassId());
