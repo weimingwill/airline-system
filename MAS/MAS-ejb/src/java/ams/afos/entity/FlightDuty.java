@@ -34,6 +34,10 @@ public class FlightDuty implements Serializable {
     private Double flyingDistInKm;
     private Double flyingTimeInHrs;
     private Double sitTimeInHrs;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date reportTime;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date dismissTime;
     private Integer cabinCrewQuota;
     private Integer cockpitCrewQuota;
     @Temporal(value = TemporalType.DATE)
@@ -168,6 +172,34 @@ public class FlightDuty implements Serializable {
      */
     public void setAppliedPeriod(Date appliedPeriod) {
         this.appliedPeriod = appliedPeriod;
+    }
+
+    /**
+     * @return the reportTime
+     */
+    public Date getReportTime() {
+        return reportTime;
+    }
+
+    /**
+     * @param reportTime the reportTime to set
+     */
+    public void setReportTime(Date reportTime) {
+        this.reportTime = reportTime;
+    }
+
+    /**
+     * @return the dismissTime
+     */
+    public Date getDismissTime() {
+        return dismissTime;
+    }
+
+    /**
+     * @param dismissTime the dismissTime to set
+     */
+    public void setDismissTime(Date dismissTime) {
+        this.dismissTime = dismissTime;
     }
 
 }
