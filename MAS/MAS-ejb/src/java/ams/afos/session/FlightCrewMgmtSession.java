@@ -9,13 +9,14 @@ import ams.afos.entity.BiddingSession;
 import ams.afos.entity.Checklist;
 import ams.afos.entity.FlightCrew;
 import ams.afos.entity.FlightDuty;
+import ams.afos.util.exception.FlightDutyConflictException;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -37,9 +38,10 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     private EntityManager em;
 
     @Override
-    public List<FlightDuty> generateFlightDuties() {
+    public List<FlightDuty> generateFlightDuties() throws FlightDutyConflictException{
         List<FlightSchedule> nextMonthFlights = getNextMonthFlightSchedule();
-
+        checkFlightDutyExist(nextMonthFlights);
+        List<FlightDuty> outputList = new ArrayList();
         for (FlightSchedule thisSchedule : nextMonthFlights) {
             System.out.print("generateFlightDuties(): Start create new FlightDuty\n");
             FlightDuty newFlightDuty = new FlightDuty();
@@ -52,12 +54,25 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
                 newFlightDuty.setFlightSchedules(getFlightDutyFlights(thisSchedule));
                 setFlightDutyInfo(newFlightDuty);
                 setCrewQuota(newFlightDuty, thisSchedule);
+                em.persist(newFlightDuty);
+                em.flush();
+                outputList.add(newFlightDuty);
             }     
         }
-        return new ArrayList();
-
+        return outputList;
     }
 
+    private void checkFlightDutyExist(List<FlightSchedule> nextMonthFlights) throws FlightDutyConflictException{
+        Query q;
+        for(FlightSchedule fs: nextMonthFlights){
+            q = em.createQuery("SELECT fd FROM FlightDuty fd WHERE :fs MEMBER OF (fd.flightSchedules)");
+            q.setParameter("fs", fs);
+            if(!q.getResultList().isEmpty()){
+                throw new FlightDutyConflictException("Flight duty has already bean generated");
+            }
+        }
+    }
+    
     private void setFlightDutyInfo(FlightDuty newFlightDuty){
         Double totalFlyingTime = 0.0;
         Double totalFlyingDist = 0.0;

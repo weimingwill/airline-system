@@ -7,6 +7,7 @@ package managedbean.afos;
 
 import ams.afos.entity.FlightDuty;
 import ams.afos.session.FlightCrewMgmtSessionLocal;
+import ams.afos.util.exception.FlightDutyConflictException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import managedbean.application.MsgController;
 
 /**
  *
@@ -25,6 +28,9 @@ public class FlightDutyBacking implements Serializable{
     @EJB
     private FlightCrewMgmtSessionLocal flightCrewMgmtSession;
 
+    @Inject
+    private MsgController msgController;
+    
     private List<FlightDuty> flightDuties;
     private FlightDuty selectedFlightDuty;
     
@@ -37,7 +43,12 @@ public class FlightDutyBacking implements Serializable{
     
     public void generateFlightDuty(){
         System.out.println("FlightDutyBacking: generateFlightDuty");
-        setFlightDuties(flightCrewMgmtSession.generateFlightDuties());
+        try {
+            setFlightDuties(flightCrewMgmtSession.generateFlightDuties());
+            msgController.addMessage("Flight duties of next month generated succesfully");
+        } catch (FlightDutyConflictException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
     }
 
     /**

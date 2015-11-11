@@ -9,7 +9,7 @@ import ams.afos.entity.BiddingSession;
 import ams.afos.entity.Checklist;
 import ams.afos.entity.FlightCrew;
 import ams.afos.entity.FlightDuty;
-import ams.afos.entity.Pairing;
+import ams.afos.util.exception.FlightDutyConflictException;
 import ams.aps.entity.FlightSchedule;
 import java.util.List;
 import javax.ejb.Local;
@@ -20,7 +20,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface FlightCrewMgmtSessionLocal {
-    public List<FlightDuty> generateFlightDuties();
+    public List<FlightDuty> generateFlightDuties() throws FlightDutyConflictException;
     
     public void startBiddingSession(BiddingSession session);
     public void suspendBiddingSession(BiddingSession session);
