@@ -169,7 +169,7 @@
                     </p:selectManyCheckbox>
                 </p:panelGrid>
 
-                <p:commandButton action="#{registrationController.createrRegCust()}" value="Submit" update="messages"/>
+                <p:commandButton action="#{crmExNavController.redirectToCustomerLogin()}" actionListener="#{registrationController.createrRegCust()}" value="Submit" update="messages"/>
             </p:panel>
 
         </h:form>
