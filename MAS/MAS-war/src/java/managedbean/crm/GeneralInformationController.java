@@ -7,9 +7,6 @@ package managedbean.crm;
 
 import ams.ais.entity.Rule;
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.CabinClassSessionLocal;
-import ams.ais.session.RuleSessionLocal;
-import ams.ais.session.TicketFamilySessionLocal;
 import ams.crm.session.GeneralInformationSessionLocal;
 import java.util.List;
 import javax.ejb.EJB;
@@ -30,10 +27,7 @@ public class GeneralInformationController {
     private NavigationController navigationController;
     @Inject
     private MsgController msgController;
-    @EJB
-    private TicketFamilySessionLocal ticketFamilySession;
-    @EJB
-    private CabinClassSessionLocal cabinClaSession;
+
     @EJB
     private GeneralInformationSessionLocal generalInformationSession;
     /**
@@ -47,9 +41,7 @@ public class GeneralInformationController {
     public List<Rule> getNameChangeRules() {
         return generalInformationSession.getNameChangeRule();
     } 
-    public List<TicketFamily> getNameChangeTicketFamily() {
-        return generalInformationSession.getNameChangeTicketFamily();
-    } 
+    
     public List<Rule> getCancellationRules(){
         return generalInformationSession.getCancellationRule();
     }
