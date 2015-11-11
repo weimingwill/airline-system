@@ -7,12 +7,15 @@ package ams.afos.entity;
 
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -31,8 +34,14 @@ public class FlightDuty implements Serializable {
     private Double flyingDistInKm;
     private Double flyingTimeInHrs;
     private Double sitTimeInHrs;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date reportTime;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date dismissTime;
     private Integer cabinCrewQuota;
     private Integer cockpitCrewQuota;
+    @Temporal(value = TemporalType.DATE)
+    private Date appliedPeriod;
 
     public Long getId() {
         return id;
@@ -149,6 +158,48 @@ public class FlightDuty implements Serializable {
      */
     public void setCockpitCrewQuota(Integer cockpitCrewQuota) {
         this.cockpitCrewQuota = cockpitCrewQuota;
+    }
+
+    /**
+     * @return the appliedPeriod
+     */
+    public Date getAppliedPeriod() {
+        return appliedPeriod;
+    }
+
+    /**
+     * @param appliedPeriod the appliedPeriod to set
+     */
+    public void setAppliedPeriod(Date appliedPeriod) {
+        this.appliedPeriod = appliedPeriod;
+    }
+
+    /**
+     * @return the reportTime
+     */
+    public Date getReportTime() {
+        return reportTime;
+    }
+
+    /**
+     * @param reportTime the reportTime to set
+     */
+    public void setReportTime(Date reportTime) {
+        this.reportTime = reportTime;
+    }
+
+    /**
+     * @return the dismissTime
+     */
+    public Date getDismissTime() {
+        return dismissTime;
+    }
+
+    /**
+     * @param dismissTime the dismissTime to set
+     */
+    public void setDismissTime(Date dismissTime) {
+        this.dismissTime = dismissTime;
     }
 
 }
