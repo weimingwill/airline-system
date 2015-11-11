@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/CrmExTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="title">
+        Home
+    </ui:define>
+
+    <ui:define name="content">
+        <!--            <me:CCWebFunNavMenu /> -->
+
+
+        <p:tabView style="width: 490px; opacity: 0.95">
+
+            <p:tab title="Book A Flight" >
+                <h:form>
+                    <p:panelGrid style="width: 445px;">
+
+                        <!--Departure Airport-->
+                        <p:row> 
+                            <p:column colspan="1"><p:outputLabel for="deptLoc" value="From"/></p:column>
+                            <p:column colspan="5">
+                                <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                                value="#{bookingManager.deptAirport}" completeMethod="#{bookingManager.completeDeptAirport}"
+                                                var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                                    <p:column>
+                                        <p:outputLabel value="#{airport.city.cityName}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel value="#{airport.airportName}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel value="#{airport.iataCode}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel value="#{airport.country.countryName}" />
+                                    </p:column>
+                                </p:autoComplete>
+                            </p:column>
+                        </p:row>
+
+                        <!--Arrival Airport-->
+                        <p:row>
+                            <p:column colspan="1"><p:outputLabel for="arriveLoc" value="To"/></p:column>
+                            <p:column colspan="5">
+                                <p:autoComplete id="arriveLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                                value="#{bookingManager.arrAirport}" completeMethod="#{bookingManager.completeArrAirport}"
+                                                var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                                    <p:column>
+                                        <p:outputLabel value="#{airport.city.cityName}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel value="#{airport.airportName}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel value="#{airport.iataCode}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel value="#{airport.country.countryName}" />
+                                    </p:column>
+                                </p:autoComplete>
+                            </p:column>
+                        </p:row>
+
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:selectOneRadio id="console" value="#{bookingManager.choice}">
+                                    <f:selectItem itemLabel="Return" itemValue="return" />
+                                    <f:selectItem itemLabel="One-Way" itemValue="oneway" />
+                                </p:selectOneRadio>
+                            </p:column>
+                            <p:column colspan="3"><p:commandLink value="Multi City" /></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3"><p:outputLabel for="deptDate" value="Departure Date"/></p:column>
+                            <p:column colspan="3"><p:outputLabel for="arriveDate" value="Arrival Date"/></p:column>
+                        </p:row>
+
+                        <!--Departure Date & Arrival Date-->
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:calendar id="deptDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
+                                            value="#{bookingManager.deptDate}" mindate="#{bookingManager.deptDate}" >
+                                    <p:ajax event="dateSelect" update="arriveDate" listener="#{bookingManager.onDeptDateChange()}" />
+                                </p:calendar>
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:calendar id="arriveDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
+                                            value="#{bookingManager.arrDate}" mindate="#{bookingManager.deptDate}" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6">
+                                <p:selectOneMenu value="#{bookingManager.selectedCabinCls}" converter="cabinClassConverter">
+                                    <f:selectItems value="#{bookingManager.cabinClses}" var="cabinCls" itemLabel="#{cabinCls.name}" itemValue="#{cabinCls}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:outputLabel value="Adult" />
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:outputLabel value="Children" />
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:outputLabel value="Infant" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <!--Number of adult-->
+                            <p:column colspan="2">
+                                <p:selectOneMenu value="#{bookingManager.adultNo}">
+                                    <c:forEach begin="1" end="10" varStatus="index">
+                                        <f:selectItem itemLabel="#{index.index}" itemValue="#{index.index}" />
+                                    </c:forEach>
+                                </p:selectOneMenu>
+                            </p:column>
+
+                            <!--Number of children-->
+                            <p:column colspan="2">
+                                <p:selectOneMenu value="#{bookingManager.childrenNo}">
+                                    <c:forEach begin="0" end="9" varStatus="index">
+                                        <f:selectItem itemLabel="#{index.index}" itemValue="#{index.index}" />
+                                    </c:forEach>
+                                </p:selectOneMenu>
+                            </p:column>
+
+                            <!--Number of infant-->
+                            <p:column colspan="2">
+                                <p:selectOneMenu value="#{bookingManager.infantNo}">
+                                    <c:forEach begin="0" end="2" varStatus="index">
+                                        <f:selectItem itemLabel="#{index.index}" itemValue="#{index.index}" />
+                                    </c:forEach>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:outputLabel value="12+ years" />
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:outputLabel value="2-11 years" />
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:outputLabel value="0-23 months" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="1"><p:outputLabel for="promoCode" value="Promo Code"/></p:column>
+                            <p:column colspan="5"><p:inputText id="promoCode" /></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6">
+                                <p:commandButton value="Search" action="#{bookingManager.searchFlights()}" update="messages" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </h:form>
+
+            </p:tab>
+
+
+            <p:tab title="Manage Booking">
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText value="Francis Ford Coppola's legendary..." />
+                </h:panelGrid>
+            </p:tab>
+            <p:tab title="Check-in">
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText value="After a break of more than 15 years..." />
+                </h:panelGrid>
+            </p:tab>
+            <p:tab title="Flight Status">
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText value="After a break of more than 15 years..." />
+                </h:panelGrid>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+</ui:composition>

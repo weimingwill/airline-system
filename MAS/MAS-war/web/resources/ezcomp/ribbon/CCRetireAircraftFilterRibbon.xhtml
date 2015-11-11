@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set var="target" value="Retire"/>
+        #{fleetFilterController.setInitialValue(target)}
+        <p:ribbon id="retireAircraftFilters" styleClass="filterRibbon">
+            
+            <p:tab title="Filter and find the aircraft to retire">
+                <c:set var="retireAircraftFilterHelper" value="#{fleetFilterController.retireAircraftFilterHelper}"/>
+                <p:ribbonGroup label="Lifespan">
+                    <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
+                        <p:outputLabel for="addOnDate" value="Added Since Date"/>
+                        <p:calendar id="addOnDate" pattern="dd-MM-yyyy" mask="true" value="#{retireAircraftFilterHelper.fromAddOnDate}"/>
+
+                        <p:outputLabel for="lifespanRange" value="Range of lifespan (yrs)"/>
+                        <h:outputText id="displayRange" value="Between #{retireAircraftFilterHelper.minLifespan} and #{retireAircraftFilterHelper.maxLifespan}" />
+                        <p:outputLabel/>
+                        <p:slider id="lifespanRange" display="displayRange" for="min,max" step="1" maxValue="#{retireAircraftFilterHelper.maxLifespan}" minValue="#{retireAircraftFilterHelper.minLifespan}" range="true" displayTemplate="Between {min} and {max}" >
+                            <h:inputHidden id="min" value="#{retireAircraftFilterHelper.minLifespan}"/>
+                            <h:inputHidden id="max" value="#{retireAircraftFilterHelper.maxLifespan}"/>
+                        </p:slider>
+                    </p:panelGrid>
+                    <p:outputLabel/>
+                </p:ribbonGroup>
+
+                <p:ribbonGroup label="Fuel Usage">
+                    <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
+                        <p:outputLabel for="minFuelCap" value="Fuel Capacity (&gt;)"/>
+                        <p:spinner id="minFuelCap" value="#{retireAircraftFilterHelper.minFuelCapacity}" stepFactor="0.5" min="#{retireAircraftFilterHelper.minFuelCapacity}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0" groupingUsed="false"/>
+                        </p:spinner>
+
+                        <p:outputLabel for="minFuelUsg" value="Average Fuel Usage (&gt;)"/>
+                        <p:spinner id="minFuelUsg" value="#{retireAircraftFilterHelper.minAvgFuelUsage}" stepFactor="0.5" min="#{retireAircraftFilterHelper.minAvgFuelUsage}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="0"/>
+                        </p:spinner>
+                    </p:panelGrid>
+                    <p:outputLabel/>
+                </p:ribbonGroup>
+
+                <p:ribbonGroup label="Maintenance">
+                    <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
+                        <p:outputLabel for="timesOfMaint" value="# of Maintenance (&gt;)"/>
+                        <p:spinner id="timesOfMaint" value="#{retireAircraftFilterHelper.timesOfMaint}" stepFactor="1" min="0"/>
+
+                        <p:outputLabel for="typeOfMaint" value="Type of Maintenance"/>
+                        <p:selectManyCheckbox id="typeOfMaint" value="#{retireAircraftFilterHelper.typeOfMaint}" layout="grid" columns="2">
+                            <f:selectItem itemLabel="A Check" itemValue="A"/>
+                            <f:selectItem itemLabel="B Check" itemValue="B"/>
+                            <f:selectItem itemLabel="C Check" itemValue="C"/>
+                            <f:selectItem itemLabel="D Check" itemValue="D"/>
+<!--                            <f:selectItems value="{fleetFilterController.typeOfMaint}" var="type" itemLabel="{reason}" itemValue="{reason}"/>-->
+                        </p:selectManyCheckbox>
+                    </p:panelGrid>
+                </p:ribbonGroup>
+
+                <p:ribbonGroup label="Flight Cycle">
+                    <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
+                        <p:outputLabel for="numOfFlightCycle" value="# of Flight Cycle (&gt;)"/>
+                        <p:spinner id="numOfFlightCycle" value="#{retireAircraftFilterHelper.numOfFlightCycle}" stepFactor="1" min="0"/>
+
+                        <p:outputLabel for="totalFlightDist" value="Total Flight Distance in km (&lt;)"/>
+                        <p:selectOneRadio id="totalFlightDist" value="#{retireAircraftFilterHelper.maxTotalFlightDist}">
+                            <f:selectItem itemLabel="1000" itemValue="1000" />
+                            <f:selectItem itemLabel="10000" itemValue="10000" />
+                            <f:selectItem itemLabel="100000" itemValue="100000" />
+                        </p:selectOneRadio>
+                    </p:panelGrid>
+                </p:ribbonGroup>
+
+                <p:ribbonGroup label="Actions">
+                    <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
+                        <p:commandButton value="Apply" update=":form:retire-fleet-table" actionListener="#{fleetTableController.applyFilters(target)}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
+                        <p:commandButton value="Reset" update="retireAircraftFilters,:form:retire-fleet-table" actionListener="#{fleetTableController.resetFilters(target)}" icon="fa fa-refresh" styleClass="filterBtn"/>
+                    </p:panelGrid>
+                </p:ribbonGroup>
+            </p:tab>
+        </p:ribbon>
+    </cc:implementation>
+</html>

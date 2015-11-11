@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="route" required="true"/>
+        <cc:attribute name="flight" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set value="#{cc.attrs.route}" var="thisRoute"/>
+        <c:set value="#{cc.attrs.flight}" var="thisFlight"/>
+        
+        <p:row>
+            <p:column colspan="5" class="ui-widget-header">
+                <p:outputLabel value="Flight: #{thisFlight.flightNo}"/>
+            </p:column>
+        </p:row>
+
+        <p:row>
+            <p:column colspan="4">
+                <p:outputLabel value="Route (id: #{thisRoute.id}) #{thisRoute.origin.city.cityName} - #{thisRoute.destination.city.cityName}" styleClass="label"/>
+            </p:column>
+        </p:row>
+
+        <p:row>
+            <p:column>
+                <p:outputLabel value="LegId"/>
+            </p:column>
+            <p:column>
+                <p:outputLabel value="From"/>
+            </p:column>
+            <p:column>
+                <p:outputLabel value="To"/>
+            </p:column>
+            <p:column>
+                <p:outputLabel value="Distance (km)"/>
+            </p:column>
+        </p:row>
+
+        <c:forEach items="#{thisRoute.legs}" var="leg">
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="#{leg.legId}"/>
+                </p:column>
+                <p:column>
+                    <p:outputLabel id="from-#{leg.departure.icaoCode}" value="#{leg.departure.city.cityName}">
+                        <p:tooltip for="from-#{leg.departure.icaoCode}" trackMouse="true" value="#{leg.departure.airportName} (#{leg.departure.icaoCode}/#{leg.departure.iataCode})"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <p:outputLabel id="to-#{leg.arrival.icaoCode}" value="#{leg.arrival.city.cityName}">
+                        <p:tooltip for="to-#{leg.arrival.icaoCode}" trackMouse="true" value="#{leg.arrival.airportName} (#{leg.arrival.icaoCode}/#{leg.arrival.iataCode})"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{leg.distance}">
+                        <f:convertNumber maxFractionDigits="4"/>
+                    </p:outputLabel>
+                </p:column>
+            </p:row>
+        </c:forEach>
+
+        <p:row>
+            <p:column colspan="3">
+                <p:outputLabel value="Total"/>
+            </p:column>
+            <p:column colspan="1">
+                <p:outputLabel value="#{thisRoute.totalDistance}">
+                    <f:convertNumber maxFractionDigits="4"/>
+                </p:outputLabel>
+            </p:column>
+        </p:row>
+
+    </cc:implementation>
+</html>

@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/ApsTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
+
+    <ui:define name="content">
+        <me:CCScheduleFlightMenu activeIndex="0"/>
+        <h:form id="form"> 
+            <p:ribbon id="unscheduledFlightFilter" styleClass="flightFilter">
+                <p:tab title="Filter and find unscheduled flight to schedule">
+                    <p:ribbonGroup label="Select departure airport" style="width:175px;">
+                        <p:selectOneMenu id="deptAirport"  value="#{flightScheduleManager.selectedAirport}" converter="airportConverter" panelStyle="width:180px"
+                                         effect="fade" var="deptAirport" style="width:160px" filter="true" filterMatchMode="startsWith">
+                            <f:selectItem itemLabel="Select departure " itemValue="" />
+                            <f:selectItems value="#{flightScheduleManager.deptAirports}" var="deptAirport" itemLabel="#{deptAirport.airportName}" itemValue="#{deptAirport}" />
+                            <p:column>
+                                <h:outputText value="#{deptAirport.airportName}" />
+                            </p:column>
+                        </p:selectOneMenu>
+                    </p:ribbonGroup>
+
+                    <p:ribbonGroup label="Select aircraft type family" style="width:175px">
+                        <p:selectOneMenu id="aircraftFamily"  value="#{flightScheduleManager.selectedAircraftTypeFamily}" panelStyle="width:180px"
+                                         effect="fade" style="width:160px" filter="true" filterMatchMode="startsWith">
+                            <p:ajax update="aircraftModels" listener="#{flightScheduleManager.onAircraftTypeFamilyChange()}" />
+                            <f:selectItem itemLabel="Select aircraft type family" itemValue="" />
+                            <f:selectItems value="#{flightScheduleManager.aircraftTypeFamilys}"/>
+                        </p:selectOneMenu>                        
+                    </p:ribbonGroup>
+
+                    <p:ribbonGroup label="Select aircraft models" style="width:188px">
+                        <p:selectCheckboxMenu id="aircraftModels" label="Select aircraft models" value="#{flightScheduleManager.selectedAircraftTypeCodes}"
+                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                            <f:selectItems value="#{flightScheduleManager.aircraftTypeCodes}" var="aircraftType"/>
+                        </p:selectCheckboxMenu>
+                    </p:ribbonGroup>
+
+                    <p:ribbonGroup label="Actions">
+                        <p:panelGrid>
+                            <p:commandButton value="Apply" update="form" actionListener="#{flightScheduleManager.applyFilters()}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
+                            <p:commandButton value="Reset" update="form" actionListener="#{flightScheduleManager.resetFilters()}" icon="fa fa-refresh" styleClass="filterBtn"/>
+                        </p:panelGrid>
+                    </p:ribbonGroup>
+                </p:tab>
+            </p:ribbon>
+ 
+            <ta:CCUnscheduledFlightTable id="unscheduledFlight" />
+
+        </h:form>
+
+        <p:separator/>
+        <h:form>
+            <p:panelGrid>
+                <p:row style="border: transparent">
+                    <p:column style="width:100%"></p:column>
+                    <p:column style="text-align: right">
+                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{navigationController.redirectToScheduleFlight()}" />
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

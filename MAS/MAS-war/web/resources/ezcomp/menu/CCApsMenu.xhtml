@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form>
+            <p:menu toggleable="true" style="width:200px;">
+                <p:submenu label="Fleet Planning">
+                    <p:menuitem action="#{navigationController.toViewAircraftModel()}" value="View Aircraft Models" />
+                    <p:menuitem action="#{navigationController.toAddNewAircraft()}" value="Add New Aircraft"/>
+                    <p:menuitem action="#{navigationController.toViewFleet()}" value="View Fleet"/>
+                    <p:menuitem action="#{navigationController.toRetireAicraft()}" value="Retire Aircraft"/>
+                    <p:menuitem action="#{navigationController.toViewRetiredFleet()}" value="View Retired Fleet"/>
+                </p:submenu>
+                <p:submenu label="Route Planning">
+                    <p:menuitem  action="#{navigationController.toAddHub()}" value="Add Hub"/>
+                    <p:menuitem  action="#{navigationController.toCancelHub()}" value="Cancel Hub"/>
+                    <p:menuitem  action="#{navigationController.toAddAirport()}" value="Add Airport"/>
+                    <p:menuitem  action="#{navigationController.toCheckRoute()}" value="Plan Routes"/>
+                    <p:menuitem  action="#{navigationController.toAddRoute()}" value="Add Route"/>
+                    <p:menuitem  action="#{navigationController.toViewRoutes()}" value="View and Delete Routes"/>
+                    <p:menuitem  action="#{navigationController.toViewObsoleteRoutes()}" value="View Obsolete Routes"/>
+                </p:submenu>
+                <p:submenu label="Flight Scheduling">
+                    <p:menuitem action ="#{navigationController.toCreateFlight()}" value ="Create Flight"/>
+                    <p:menuitem action ="#{flightScheduleManager.toSelectFlight()}" value ="Schedule Flights"/>
+                    <p:menuitem  action="#{navigationController.toViewFlightSchedule()}" value="View Flight Schedule"/>
+                </p:submenu>
+            </p:menu>
+        </h:form>
+    </cc:implementation>
+</html>

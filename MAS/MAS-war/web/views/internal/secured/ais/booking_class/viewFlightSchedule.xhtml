@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AisTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="title">
+        AIS - View Flight Schedules
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+
+            <p:dataTable id="flight-schedule" var="flightSchedule" selection="#{flightScheduleController.selectedFlightSchedule}" value="#{flightScheduleController.allFlightSchedule}" rows="10"
+                         rowKey="#{flightSchedule.flightScheduleId}" tableStyleClass="table-small"
+                         paginator="true" rowsPerPageTemplate="10,15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+                <f:facet name="header">
+                    Flight schedule
+                </f:facet>
+                <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                <p:column headerText="Id">
+                    <p:outputLabel value="#{flightSchedule.flightScheduleId }" />
+                </p:column>
+                <p:column headerText="Flight No.">
+                    <p:outputLabel value="#{flightSchedule.flight.flightNo}" />
+                </p:column>
+                <p:column headerText="Departure">
+                    <p:outputLabel id="depart" value="#{flightSchedule.leg.departAirport.city.cityName}">
+                        <p:tooltip for="depart" value="#{flightSchedule.leg.departAirport.country.countryName} - #{flightSchedule.leg.departAirport.city.cityName} - #{flightSchedule.leg.departAirport.airportName}" trackMouse="true"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Departure Date">
+                    <p:outputLabel value="#{flightSchedule.departDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Departure Time">
+                    <p:outputLabel value="#{flightSchedule.departDate}">
+                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Arrival">
+                    <p:outputLabel id="arrival" value="#{flightSchedule.leg.arrivalAirport.city.cityName}" >
+                        <p:tooltip for="arrival" value="#{flightSchedule.leg.arrivalAirport.country.countryName} - #{flightSchedule.leg.arrivalAirport.city.cityName} - #{flightSchedule.leg.arrivalAirport.airportName}" trackMouse="true"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Arrival Date">
+                    <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Arrival Time">
+                    <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Aircraft Type">
+                    <p:outputLabel value="#{flightSchedule.aircraft.aircraftType.typeCode}" />
+                </p:column>
+                <p:column headerText="Aircraft Tail No.">
+                    <p:outputLabel value="#{flightSchedule.aircraft.tailNo}" />
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:commandButton icon="ui-icon-search" value="View booking classes" 
+                                     update=":viewBookingClassForm:viewBookingClass,messages"
+                                     actionListener="#{flightScheduleController.onViewBookingClassClick()}" />
+                    <p:commandButton action="#{flightScheduleController.toAssignFlightScheduleBookingClass()}" value="Add booking classes" update="messages"/>
+                    <p:commandButton action="#{flightScheduleController.toSeatAllocation()}" value="Seat allocation" update="messages" />
+                    <p:commandButton action="#{flightScheduleController.toPriceBookingClasses()}" value="Pricing" update="messages" />
+                    <p:commandButton action="#{flightScheduleController.toYieldManagement()}" value="Yield Management" update="messages" />
+
+                </f:facet>
+            </p:dataTable>
+
+        </h:form>
+
+        <p:dialog header="Flight Schedule Booking Class" widgetVar="flightScheduleBookingClassDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form id="viewBookingClassForm">
+                <p:panel id="viewBookingClass" header="Seat Allocation" style="margin-bottom:20px">
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="2">Cabin Class</p:column>
+                                <p:column colspan="2">Ticket Family</p:column>
+                                <p:column colspan="3">Booking Class</p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1">Name</p:column>
+                                <p:column colspan="1">Seat Quantity</p:column>
+                                <p:column colspan="1">Name</p:column>
+                                <p:column colspan="1">Seat Quantity</p:column>
+                                <p:column colspan="1">Name</p:column>
+                                <p:column colspan="1">Seat Quantity</p:column>
+                                <p:column colspan="1">Price</p:column>
+                            </p:row>
+                        </f:facet>
+                        <ui:repeat var="helper" value="#{flightScheduleController.flightSchCabinClsTicFamBookingClsHelpers}">
+                            <p:row>
+                                <p:column colspan="1">#{helper.cabinClass.name}</p:column>
+                                <p:column colspan="1">#{helper.seatQty} seats</p:column>
+                                <p:column colspan="5">
+
+                                    <ui:repeat var="tf" value="#{helper.ticketFamilyBookingClassHelpers}">
+                                        <p:panelGrid columns="2">
+                                            <p:panelGrid columns="2">
+                                                <p:outputLabel value="#{tf.ticketFamily.name}" />
+                                                <p:outputLabel value="#{tf.seatQty} seats" />
+                                            </p:panelGrid>
+                                            <ui:repeat var="bc" value="#{tf.bookingClassHelpers}">
+                                                <p:panelGrid columns="3">
+                                                    <p:outputLabel value="#{bc.bookingClass.name}" />
+                                                    <p:outputLabel value="#{bc.seatQty} seats" />
+                                                    <p:outputLabel value="#{bc.price}">
+                                                        <f:convertNumber currencyCode="S$" currencySymbol="S$" maxFractionDigits="2"/>  
+                                                    </p:outputLabel>
+                                                </p:panelGrid>
+                                            </ui:repeat>
+                                        </p:panelGrid>
+                                    </ui:repeat>
+                                </p:column>
+                            </p:row>
+                        </ui:repeat>
+                        <f:facet name="footer">
+                            <p:row>
+                                <p:column colspan="2">                                
+                                    <p:commandButton action="#{flightScheduleController.toAssignFlightScheduleBookingClass()}" value="Add booking classes" update="messages" />
+                                </p:column>
+                                <p:column colspan="2">                                
+                                    <p:commandButton action="#{flightScheduleController.toSeatAllocation()}" value="Seat allocation" update="messages" />
+                                </p:column>
+                                <p:column colspan="2">                                
+                                    <p:commandButton action="#{flightScheduleController.toYieldManagement()}" value="Yield Management" update="messages" />
+                                </p:column>
+                                <p:column colspan="2">             
+                                    <p:commandButton action="#{flightScheduleController.toPriceBookingClasses()}" value="Pricing" update="messages" />
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                    </p:panelGrid>
+                    <!--<p:commandButton value="Save" action="{bookingClassController.allocateSeats()}" update="messages"/>-->
+
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

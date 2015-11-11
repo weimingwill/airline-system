@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="navigationMenu">
+            <p:menubar style="font-size: 15px" styleClass="navigationMenu">
+                <p:menuitem value="Merline Airline" url="#{navigationController.redirectToHome()}">
+                    <p:commandLink action="#{navigationController.redirectToHome()}">
+                        <p:graphicImage value="/resources/images/logo.png" height="45px" width="auto"/>
+                    </p:commandLink>
+                </p:menuitem>
+
+                <p:menuitem value="User Workspace" url="#{navigationController.redirectToWorkspace()}" icon="fa fa-home" styleClass="navMenuItem"></p:menuitem>
+                <p:submenu label="Airline Management Systems" icon="fa fa-database" rendered="#{loginController.loggedIn and userController.canAccessAMS()}" >
+                    <c:forEach items="#{userController.permissionHelpers}" var="permission" >
+                        <p:menuitem value="#{permission.name}" url="#{permission.url}"  icon="ui-icon-pencil" />
+                    </c:forEach>
+                </p:submenu>
+
+                <p:menuitem value="CRM" url="#{crmNavController.redirectToCRM()}" icon="fa fa-home" styleClass="navMenuItem"></p:menuitem>
+
+                <p:submenu label="Setting" icon="fa fa-cog" rendered="#{loginController.loggedIn}">
+                    <p:menuitem  value="Profile" url="#{navigationController.redirectToViewUserProfile()}" />
+                    <p:menuitem  value="Change password" url="#{navigationController.redirectToChangePassword()}" />
+                </p:submenu>
+                <f:facet name="options">
+                    <p:outputLabel value="Welcome: #{loginController.username} [#{userController.department}]! " rendered="#{loginController.loggedIn}"/>
+                    <p:commandButton action="#{navigationController.redirectToLogin()}" value="Login" rendered="#{not loginController.loggedIn}" icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>
+                    <p:commandButton action="#{loginController.doLogout()}" value="Logout" rendered="#{loginController.loggedIn}" icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>
+                </f:facet>
+            </p:menubar>
+        </h:form>        
+    </cc:implementation>
+</html>

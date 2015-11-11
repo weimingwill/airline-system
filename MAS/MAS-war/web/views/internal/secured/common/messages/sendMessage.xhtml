@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/WorkspaceTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <p:panel header="Send Message">
+            <h:form id="sendMessage">
+                <p:panelGrid columns="2">  
+                    <p:outputLabel value="Message subject" />
+                    <p:inputText id="subject" binding="#{subject}" /> 
+                    <p:outputLabel value="Message content" />
+                    <p:inputTextarea id="message" binding="#{message}" style="width: 400px;" autoResize="true" />
+                    <p:outputLabel value="Select recivers" />
+
+                    <p:selectCheckboxMenu id="menu" binding="#{receivers}" label="Receivers"
+                                          filter="true" filterMatchMode="startsWith">
+                        <f:selectItems value="#{userController.allOtherUsernames}" />
+                        <p:ajax update ="display"/>
+                    </p:selectCheckboxMenu>
+                    <p:outputLabel value="" />
+
+                    <p:outputPanel id="display" style="width:250px;padding-left:5px;margin-top:10px">
+                        <p:dataList value="#{receivers.value}" var="receiver" emptyMessage="No receiver selected">
+                            #{receiver}
+                        </p:dataList>
+                    </p:outputPanel>
+
+                    <p:commandButton action="#{internalMsgController.saveMessage(subject.value, message.value, receivers.value)}" value="send message" update="messages"  />
+
+                </p:panelGrid>  
+
+            </h:form>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+
+        <c:set var="target" value="Purchase"/>
+        #{fleetFilterController.setInitialValue(target)}
+
+        <p:ribbon id="aircraftModelFilters" styleClass="filterRibbon">
+            <p:tab title="Filter and find the aircraft model">
+                <c:set var="aircraftModelFilterHelper" value="#{fleetFilterController.aircraftModelFilterHelper}"/>
+
+                <p:ribbonGroup label="Operational">
+                    <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
+                        <p:outputLabel for="manufacturer" value="Manufacturer"/>
+                        <p:selectCheckboxMenu id="manufacturer" label="Manufacturer" value="#{aircraftModelFilterHelper.manufacturers}" filter="true" filterMatchMode="startsWith">
+                            <f:selectItems value="#{fleetFilterController.manufacturerList}"/>
+                        </p:selectCheckboxMenu>
+                        <p:outputLabel for="typeFamily" value="Type Family"/>
+
+                        <p:selectCheckboxMenu id="typeFamily" label="Type Family" value="#{aircraftModelFilterHelper.typeFamilies}" filter="true" filterMatchMode="startsWith">
+                            <f:selectItems value="#{fleetFilterController.typeFamilyList}"/>                            
+                        </p:selectCheckboxMenu>
+                    </p:panelGrid>
+                </p:ribbonGroup>
+
+                <p:ribbonGroup label="Technical">
+                    <p:panelGrid columns="3">
+                        <p:panelGrid columns="2" style="background-color: transparent; border: inherit;">
+                            <p:outputLabel for="range" value="Range (km)"/>
+                            <p:outputLabel for="payload" value="Payload (T)"/>
+
+                            <h:outputText id="displayRange" value="[#{aircraftModelFilterHelper.minRange}, #{aircraftModelFilterHelper.maxRange}]" />
+                            <h:outputText id="displayPayload" value="[#{aircraftModelFilterHelper.minPayload}, #{aircraftModelFilterHelper.maxPayload}]" />
+
+                            <p:slider id="range" display="displayRange" for="minRange,maxRange" step="1" minValue="#{aircraftModelFilterHelper.minRange}" maxValue="#{aircraftModelFilterHelper.maxRange}" range="true" displayTemplate="[{min}, {max}]" >
+                                <h:inputHidden id="minRange" value="#{aircraftModelFilterHelper.minRange}"/>
+                                <h:inputHidden id="maxRange" value="#{aircraftModelFilterHelper.maxRange}"/>
+                            </p:slider>
+                            <p:slider id="payload" display="displayPayload" for="minPayload,maxPayload" step="1" minValue="#{aircraftModelFilterHelper.minPayload}" maxValue="#{aircraftModelFilterHelper.maxPayload}" range="true" displayTemplate="[{min}, {max}]" >
+                                <h:inputHidden id="minPayload" value="#{aircraftModelFilterHelper.minPayload}"/>
+                                <h:inputHidden id="maxPayload" value="#{aircraftModelFilterHelper.maxPayload}"/>
+                            </p:slider>
+
+                            <p:outputLabel for="fuelCapacity" value="Fuel Capacity (L)"/>
+                            <p:outputLabel for="maxSeating" value="Seating Capacity (ppl)"/>
+
+                            <h:outputText id="displayFuelCap" value="[#{aircraftModelFilterHelper.minFuelCapacity}, #{aircraftModelFilterHelper.maxFuelCapacity}]" />
+                            <h:outputText id="displaySeatCap" value="[#{aircraftModelFilterHelper.minMaxSeating}, #{aircraftModelFilterHelper.maxMaxSeating}]" />
+
+                            <p:slider id="fuelCapacity" display="displayFuelCap" for="minFuelCap,maxFuelCap" step="1" minValue="#{aircraftModelFilterHelper.minFuelCapacity}" maxValue="#{aircraftModelFilterHelper.maxFuelCapacity}" range="true" displayTemplate="[{min}, {max}]" >
+                                <h:inputHidden id="minFuelCap" value="#{aircraftModelFilterHelper.minFuelCapacity}"/>
+                                <h:inputHidden id="maxFuelCap" value="#{aircraftModelFilterHelper.maxFuelCapacity}"/>
+                            </p:slider>
+                            <p:slider id="maxSeating" display="displaySeatCap" for="minSeatCap,maxSeatCap" step="1" minValue="#{aircraftModelFilterHelper.minMaxSeating}" maxValue="#{aircraftModelFilterHelper.maxMaxSeating}" range="true" displayTemplate="[{min}, {max}]" >
+                                <h:inputHidden id="minSeatCap" value="#{aircraftModelFilterHelper.minMaxSeating}"/>
+                                <h:inputHidden id="maxSeatCap" value="#{aircraftModelFilterHelper.maxMaxSeating}"/>
+                            </p:slider>
+                        </p:panelGrid>
+                        <p:panelGrid style="width: 150px">
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:outputLabel value="Max Mach Number"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="minMach" value="Min" style="width:30%"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputMask id="minMach" mask="0.99" style="width:70%" value="#{aircraftModelFilterHelper.minMaxMachNum}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="maxMach" value="Max" style="width:30%"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputMask id="maxMach" mask="0.99" style="width:70%" value="#{aircraftModelFilterHelper.maxMaxMachNum}"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                </p:ribbonGroup>
+
+                <p:ribbonGroup label="Economical">
+                    <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
+                        <p:outputLabel for="price" value="Approximate Price (M USD)"/>
+                        <h:outputText id="displayPrice" value="[#{aircraftModelFilterHelper.minApproxPrice}, #{aircraftModelFilterHelper.maxApproxPrice}]" />
+                        <p:slider id="price" display="displayPrice" for="minPrice,maxPrice" step="1" minValue="#{aircraftModelFilterHelper.minApproxPrice}" maxValue="#{aircraftModelFilterHelper.maxApproxPrice}" range="true" displayTemplate="[{min}, {max}]" >
+                            <h:inputHidden id="minPrice" value="#{aircraftModelFilterHelper.minApproxPrice}"/>
+                            <h:inputHidden id="maxPrice" value="#{aircraftModelFilterHelper.maxApproxPrice}"/>
+                        </p:slider>
+
+                        <p:outputLabel for="fuelCost" value="Fuel Cost (USD/km)"/>
+                        <h:outputText id="displayFuelCost" value="[#{aircraftModelFilterHelper.minFuelCostPerKm}, #{aircraftModelFilterHelper.maxFuelCostPerKm}]" />
+                        <p:slider id="fuelCost" display="displayFuelCost" for="minFuelCost,maxFuelCost" step="1" minValue="#{aircraftModelFilterHelper.minFuelCostPerKm}" maxValue="#{aircraftModelFilterHelper.maxFuelCostPerKm}" range="true" displayTemplate="[{min}, {max}]" >
+                            <h:inputHidden id="minFuelCost" value="#{aircraftModelFilterHelper.minFuelCostPerKm}"/>
+                            <h:inputHidden id="maxFuelCost" value="#{aircraftModelFilterHelper.maxFuelCostPerKm}"/>
+                        </p:slider>
+                    </p:panelGrid>
+                </p:ribbonGroup>
+
+                <p:ribbonGroup label="Actions">
+                    <p:panelGrid columns="1" style="background-color: transparent; border: inherit;">
+                        <p:commandButton value="Apply" update=":aircraftModelForm:aircraftModelTable" action="#{fleetTableController.applyFilters(target)}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
+                        <p:commandButton value="Reset" update="aircraftModelFilters,:aircraftModelForm:aircraftModelTable" action="#{fleetTableController.resetFilters(target)}" icon="fa fa-refresh" styleClass="filterBtn"/>
+                    </p:panelGrid>
+                </p:ribbonGroup>
+            </p:tab>
+        </p:ribbon>
+
+
+
+    </cc:implementation>
+</html>
