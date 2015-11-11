@@ -22,12 +22,14 @@ import ams.aps.util.helper.AircraftModelFilterHelper;
 import ams.aps.util.helper.AircraftStatus;
 import ams.aps.util.helper.Message;
 import ams.aps.util.helper.RetireAircraftFilterHelper;
+import ams.ars.entity.Seat;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
@@ -177,9 +179,12 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
             thisAircraftCabinClass.setCabinClass(thisCabinClass);
             thisAircraftCabinClass.setCabinClassId(thisCabinClass.getCabinClassId());
             thisAircraftCabinClass.setSeatQty(aircraftCabinClassHelper.getSeatQty());
+            thisAircraftCabinClass.setNumRows(aircraftCabinClassHelper.getNumOfRow());
+            thisAircraftCabinClass.setNumCols(aircraftCabinClassHelper.getNumOfCol());
             entityManager.persist(thisAircraftCabinClass);
             entityManager.flush();
             addCabinClassTickeFamily(thisAircraftCabinClass);
+            addAircraftCabinClassSeat(thisAircraftCabinClass);
             if (!aircraftCabinClassList.add(thisAircraftCabinClass)) {
                 return false;
             }
@@ -188,6 +193,27 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
         entityManager.merge(newAircraft);
         entityManager.flush();
         return true;
+    }
+    
+    private void addAircraftCabinClassSeat(AircraftCabinClass aircraftCabinClass){
+        List<String> columns = new ArrayList(Arrays.asList("A","B","C","D","E","F","G","H"));
+        List<Seat> seats = new ArrayList();
+        int row = aircraftCabinClass.getNumRows();
+        int col = aircraftCabinClass.getNumCols();
+        for(int i = 0; i < row; i ++){
+            for(int j = 0; j < col; j++){
+                Seat newSeat = new Seat();
+                newSeat.setReserved(Boolean.FALSE);
+                newSeat.setRowNo(i+1);
+                newSeat.setColNo(columns.get(j));
+                entityManager.persist(newSeat);
+                entityManager.flush();
+                seats.add(newSeat);
+            }
+        }
+        aircraftCabinClass.setSeats(seats);
+        entityManager.merge(aircraftCabinClass);
+        entityManager.flush();
     }
     
     //Set all ticket familys under cabin class to aircraft as default.
