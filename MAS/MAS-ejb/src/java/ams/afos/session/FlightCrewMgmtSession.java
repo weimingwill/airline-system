@@ -39,7 +39,11 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     
     private void generatePairings(){
         List<FlightDuty> flightDuties = getNextMonthFlightDuties();
-        
+        for(FlightDuty thisDuty: flightDuties){
+            Date reportTime = thisDuty.getReportTime();
+            Date dismissTime = thisDuty.getDismissTime();
+            
+        } 
     }
     
     @Override
@@ -281,7 +285,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     public List<FlightDuty> getNextMonthFlightDuties() {
         Date nextMonthFirstDay = getNextMonthFirstDay();
         Date nextMonthLastDay = getNextMonthLastDay();
-        Query query = em.createQuery("SELECT fd FROM FlightDuty fd WHERE fd.appliedPeriod BETWEEN :nextMonthFirstDay AND :nextMonthLastDay");
+        Query query = em.createQuery("SELECT fd FROM FlightDuty fd WHERE fd.appliedPeriod BETWEEN :nextMonthFirstDay AND :nextMonthLastDay ORDER BY fd.reportTime");
         query.setParameter("nextMonthFirstDay", nextMonthFirstDay);
         query.setParameter("nextMonthLastDay", nextMonthLastDay);
         return (List<FlightDuty>) query.getResultList();
