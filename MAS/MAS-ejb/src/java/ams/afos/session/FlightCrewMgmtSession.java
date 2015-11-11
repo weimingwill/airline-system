@@ -59,7 +59,6 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
                 newFlightDuty.setFlightSchedules(getFlightDutyFlights(thisSchedule));
                 setFlightDutyInfo(newFlightDuty);
                 setCrewQuota(newFlightDuty, thisSchedule);
-                newFlightDuty.setAppliedPeriod(getNextMonthFirstDay());
                 em.persist(newFlightDuty);
                 em.flush();
                 outputList.add(newFlightDuty);
@@ -98,6 +97,19 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         newFlightDuty.setFlyingTimeInHrs(totalFlyingTime);
         newFlightDuty.setSitTimeInHrs(totalSitTime);
         System.out.println("setFlightDutyInfo(): \n\tTotal Flying Dist = " + totalFlyingDist + "\n\tTotal Flying Hours = " + totalFlyingTime + "\n\tTotal Sit Time = " + totalSitTime);
+        setFlightDutyTime(newFlightDuty);
+    }
+    
+    private void setFlightDutyTime(FlightDuty newFlightDuty){
+        Calendar reportTime = Calendar.getInstance();
+        Calendar dismissTime = Calendar.getInstance();
+        reportTime.setTime(newFlightDuty.getFlightSchedules().get(0).getDepartDate());
+        dismissTime.setTime(newFlightDuty.getFlightSchedules().get(newFlightDuty.getFlightSchedules().size()-1).getArrivalDate());
+        reportTime.add(Calendar.HOUR_OF_DAY, -1);
+        dismissTime.add(Calendar.MINUTE, 20);
+        newFlightDuty.setReportTime(reportTime.getTime());
+        newFlightDuty.setDismissTime(dismissTime.getTime());
+        newFlightDuty.setAppliedPeriod(getNextMonthFirstDay());
     }
     
     private void printFlightInfo(FlightSchedule thisSchedule) {
