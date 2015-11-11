@@ -13,5 +13,6 @@ public class FlightSchedStatus {
 
     public static final String IDLE = "Idle";
     public static final String RELEASE = "Release";
-    
+    public static final String ON_SCHEDULE = "On schedule";
+    public static final String ARRIVE = "Arrive";
 }

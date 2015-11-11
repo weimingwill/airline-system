@@ -491,3 +491,13 @@ div.timeline-event-selected {
     width: 300px;
 }
 
+<<<<<<< HEAD
+=======
+.bookingAirport>.ui-inputfield {
+    width: 230px;
+}
+
+.alignTop {
+    vertical-align: top !important;
+}
+>>>>>>> ffd628b7b977bc44023e17bb2e46249c00f01e95

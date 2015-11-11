@@ -16,7 +16,7 @@
             <c:set value="#{flightManager.routeHelper}" var="route"/>
             <c:set value="#{flightManager.returnRouteHelper}" var="returnRoute"/>
             <p:panel header="Confirm the Following Information for #{flightManager.flight.flightNo} and Its Returned Flight #{flightManager.returnedFlight.flightNo}">
-                <p:panelGrid columns="2">
+                <p:panelGrid columns="2"  columnClasses="alignTop,alignTop">
                     <p:panelGrid>
                         <pa:CCFlightDisplayPanel route="#{route}" flight="#{flightManager.flight}"/>
                         <pa:CCFlightDisplayPanel route="#{returnRoute}" flight="#{flightManager.returnedFlight}"/>

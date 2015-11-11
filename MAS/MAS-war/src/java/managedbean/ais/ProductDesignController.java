@@ -6,15 +6,13 @@
 package managedbean.ais;
 
 import ams.ais.entity.TicketFamily;
-import ams.ais.session.CabinClassSessionLocal;
-import ams.ais.session.TicketFamilySessionLocal;
 import ams.ais.util.exception.NeedTicketFamilyException;
 import ams.ais.util.exception.NoSuchCabinClassException;
 import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.exception.NoSuchTicketFamilyException;
 import ams.ais.util.helper.CabinClassTicketFamilyHelper;
 import ams.aps.entity.Aircraft;
-import ams.ais.session.AircraftSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.NoSuchAircraftException;
 import javax.inject.Named;
@@ -41,11 +39,7 @@ public class ProductDesignController implements Serializable {
     private MsgController msgController;
 
     @EJB
-    private TicketFamilySessionLocal ticketFamilySession;
-    @EJB
-    private AircraftSessionLocal aircraftSession;
-    @EJB
-    private CabinClassSessionLocal cabinClassSession;
+    private ProductDesignSessionLocal productDesignSession;
 
     private List<CabinClassTicketFamilyHelper> cabinClassTicketFamilyHelpers;
     private Aircraft selectedAircraft = new Aircraft();
@@ -58,7 +52,7 @@ public class ProductDesignController implements Serializable {
 
     public void onAircraftChange() {
         try {
-            cabinClassTicketFamilyHelpers = cabinClassSession.getCabinClassTicketFamilyHelpers(selectedAircraft.getAircraftId());
+            cabinClassTicketFamilyHelpers = productDesignSession.getCabinClassTicketFamilyHelpers(selectedAircraft.getAircraftId());
         } catch (NoSuchCabinClassException | NoSuchTicketFamilyException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
@@ -66,7 +60,7 @@ public class ProductDesignController implements Serializable {
 
     public String assignAircraftTicketFamily() {
         try {
-            ticketFamilySession.assignAircraftTicketFamily(selectedAircraft, cabinClassTicketFamilyHelpers);
+            productDesignSession.assignAircraftTicketFamily(selectedAircraft, cabinClassTicketFamilyHelpers);
             cleanAttribute();
             msgController.addMessage("Assign ticket family to aircraft successfully!");
         } catch (NeedTicketFamilyException | NoSuchAircraftCabinClassException | NoSuchCabinClassTicketFamilyException ex) {
@@ -79,7 +73,7 @@ public class ProductDesignController implements Serializable {
     public List<Aircraft> getScheduledAircrafts() {
         List<Aircraft> aircrafts;
         try {
-            aircrafts = aircraftSession.getScheduledAircrafts();
+            aircrafts = productDesignSession.getScheduledAircrafts();
         } catch (NoSuchAircraftException ex) {
             aircrafts = new ArrayList<>();
         }
@@ -90,7 +84,7 @@ public class ProductDesignController implements Serializable {
         List<TicketFamily> ticketFamilys = new ArrayList<>();
         try {
             if (selectedAircraft != null) {
-                ticketFamilys = aircraftSession.getAircraftTicketFamilys(selectedAircraft.getAircraftId());
+                ticketFamilys = productDesignSession.getAircraftTicketFamilys(selectedAircraft.getAircraftId());
             }
         } catch (NoSuchTicketFamilyException ex) {
         }

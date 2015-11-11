@@ -8,9 +8,8 @@ package managedbean.ais;
 import ams.ais.entity.BookingClass;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.Rule;
-import ams.ais.session.BookingClassSessionLocal;
-import ams.ais.session.CabinClassSessionLocal;
-import ams.ais.session.RuleSessionLocal;
+import ams.ais.session.RevMgmtSessionLocal;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassNameException;
 import ams.ais.util.exception.ExistSuchCabinClassTypeException;
@@ -32,7 +31,7 @@ import managedbean.application.NavigationController;
  */
 @Named(value = "productDesignEditController")
 @ViewScoped
-public class ProductDesignEditController implements Serializable{
+public class ProductDesignEditController implements Serializable {
 
     /**
      * Creates a new instance of EditCabinClassController
@@ -41,69 +40,60 @@ public class ProductDesignEditController implements Serializable{
     private NavigationController navigationController;
     @Inject
     private MsgController msgController;
-    
+
     @EJB
-    private CabinClassSessionLocal cabinClassSession;
-    
+    private ProductDesignSessionLocal productDesignSession;
+
     @EJB
-    private BookingClassSessionLocal bookingClassSession;
-    
-    @EJB
-    private RuleSessionLocal ruleSession;
-    
+    private RevMgmtSessionLocal revMgmtSession;
+
     private CabinClass selectedCabinClass;
     private Rule selectedRule;
     private BookingClass selectedBookingClass;
 
-    
-
-    
-
-    
     public ProductDesignEditController() {
     }
-    
+
     public String updateCabinClass() {
         try {
-            System.out.println("selected cabin class name is: "+selectedCabinClass.getType());
-            cabinClassSession.updateCabinClass(selectedCabinClass.getCabinClassId(),selectedCabinClass.getType(),selectedCabinClass.getName());
+            System.out.println("selected cabin class name is: " + selectedCabinClass.getType());
+            productDesignSession.updateCabinClass(selectedCabinClass.getCabinClassId(), selectedCabinClass.getType(), selectedCabinClass.getName());
             msgController.addMessage("Edit cabin class successfully!");
-        }catch( ExistSuchCabinClassNameException | NoSuchCabinClassException | ExistSuchCabinClassTypeException ex) {
+        } catch (ExistSuchCabinClassNameException | NoSuchCabinClassException | ExistSuchCabinClassTypeException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToViewAllCabinClass();
-        
+
     }
-    
+
     public String updateRule() {
         try {
 
-            System.out.printf("selected rule id is: "+selectedRule);
-            System.out.printf("selected rule name is "+ selectedRule.getName());
-            System.out.println("rule session =" + ruleSession);
-            
-            ruleSession.updateRule(selectedRule.getRuleId(),selectedRule.getName(),selectedRule.getDescription());
+            System.out.printf("selected rule id is: " + selectedRule);
+            System.out.printf("selected rule name is " + selectedRule.getName());
+            System.out.println("rule session =" + productDesignSession);
+
+            productDesignSession.updateRule(selectedRule.getRuleId(), selectedRule.getName(), selectedRule.getDescription());
             msgController.addMessage("Edit rule successfully!");
-        }catch( ExistSuchRuleException | NoSuchRuleException  ex) {
+        } catch (ExistSuchRuleException | NoSuchRuleException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToViewAllRules();
-        
+
     }
-    
-    
-    
+
     public String updateBookingClass() {
         try {
-            System.out.printf("BookingClass is"+selectedBookingClass);
-            bookingClassSession.updateBookingClass(selectedBookingClass.getBookingClassId(),selectedBookingClass.getName());
+            System.out.printf("BookingClass is" + selectedBookingClass);
+            revMgmtSession.updateBookingClass(selectedBookingClass.getBookingClassId(), selectedBookingClass.getName());
             msgController.addMessage("Edit Booking Class successfully!");
-        }catch( ExistSuchBookingClassNameException | NoSuchBookingClassException  ex) {
+        } catch (ExistSuchBookingClassNameException | NoSuchBookingClassException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
         return navigationController.redirectToViewAllBookingClass();
-        
+
     }
+
     public CabinClass getSelectedCabinClass() {
         return selectedCabinClass;
     }
@@ -111,7 +101,7 @@ public class ProductDesignEditController implements Serializable{
     public void setSelectedCabinClass(CabinClass selectedCabinClass) {
         this.selectedCabinClass = selectedCabinClass;
     }
-    
+
     public Rule getSelectedRule() {
         return selectedRule;
     }
@@ -119,8 +109,7 @@ public class ProductDesignEditController implements Serializable{
     public void setSelectedRule(Rule selectedRule) {
         this.selectedRule = selectedRule;
     }
-    
-    
+
     public BookingClass getSelectedBookingClass() {
         return selectedBookingClass;
     }

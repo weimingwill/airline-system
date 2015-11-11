@@ -6,10 +6,16 @@
 package ams.aps.session;
 
 import ams.ais.entity.CabinClass;
+import ams.ais.entity.CabinClassTicketFamily;
+import ams.ais.entity.TicketFamily;
+import ams.ais.entity.helper.CabinClassTicketFamilyId;
+import ams.ais.session.ProductDesignSessionLocal;
 import ams.aps.entity.Aircraft;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.AircraftType;
+import ams.aps.entity.helper.AircraftCabinClassId;
 import ams.aps.util.exception.EmptyTableException;
+import ams.aps.util.exception.NoSuchAircraftCabinClassException;
 import ams.aps.util.exception.ObjectExistsException;
 import ams.aps.util.helper.AircraftCabinClassHelper;
 import ams.aps.util.helper.AircraftModelFilterHelper;
@@ -26,6 +32,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -39,11 +46,12 @@ import mas.common.util.helper.MySQLConnection;
  */
 @Stateless
 public class FleetPlanningSession implements FleetPlanningSessionLocal {
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    
     @PersistenceContext
     private EntityManager entityManager;
+
+    @EJB
+    private ProductDesignSessionLocal productDesignSession;
 
     @Override
     public List<AircraftType> getAircraftModels() throws EmptyTableException {
@@ -170,12 +178,75 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
             thisAircraftCabinClass.setCabinClassId(thisCabinClass.getCabinClassId());
             thisAircraftCabinClass.setSeatQty(aircraftCabinClassHelper.getSeatQty());
             entityManager.persist(thisAircraftCabinClass);
-            aircraftCabinClassList.add(thisAircraftCabinClass);
+            entityManager.flush();
+            addCabinClassTickeFamily(thisAircraftCabinClass);
+            if (!aircraftCabinClassList.add(thisAircraftCabinClass)) {
+                return false;
+            }
         }
         newAircraft.setAircraftCabinClasses(aircraftCabinClassList);
         entityManager.merge(newAircraft);
         entityManager.flush();
         return true;
+    }
+    
+    //Set all ticket familys under cabin class to aircraft as default.
+    private boolean addCabinClassTickeFamily(AircraftCabinClass aircraftCabinClass) {
+        List<CabinClassTicketFamily> cabinClassTixFams = new ArrayList<>();
+        try { 
+            AircraftCabinClass aircraftCabinCls = productDesignSession.getAircraftCabinClassById(aircraftCabinClass.getAircraftId(), aircraftCabinClass.getCabinClassId());
+            AircraftCabinClassId aircraftCabinClassId = new AircraftCabinClassId(aircraftCabinCls.getAircraftId(), aircraftCabinCls.getCabinClassId());
+            List<TicketFamily> ticketFamilys = getCabinClassTicketFamily(aircraftCabinCls.getCabinClassId());
+            int i = 0;
+            for (TicketFamily ticketFamily : ticketFamilys) {
+                TicketFamily tixFam = entityManager.find(TicketFamily.class, ticketFamily.getTicketFamilyId());
+                CabinClassTicketFamilyId cabinClassTicketFamilyId = new CabinClassTicketFamilyId(aircraftCabinClassId, tixFam.getTicketFamilyId());
+                CabinClassTicketFamily cabinClassTicketFamily = new CabinClassTicketFamily();
+                cabinClassTicketFamily.setAircraftCabinClass(aircraftCabinCls);
+                cabinClassTicketFamily.setCabinClassTicketFamilyId(cabinClassTicketFamilyId);
+                cabinClassTicketFamily.setTicketFamily(tixFam);
+                cabinClassTicketFamily.setSeatQty(calcSeatQty(i, ticketFamilys.size(), aircraftCabinCls.getSeatQty()));
+                cabinClassTicketFamily.setPrice((float) 0);
+                cabinClassTicketFamily.setDeleted(false);
+                entityManager.persist(cabinClassTicketFamily);
+                entityManager.flush();
+                cabinClassTixFams.add(cabinClassTicketFamily);
+                i++;
+            }
+            aircraftCabinCls.setCabinClassTicketFamilys(cabinClassTixFams);
+            entityManager.merge(aircraftCabinCls);
+            entityManager.flush();
+        } catch (NoSuchAircraftCabinClassException ex) {
+            return false;
+        }
+        return true;
+    }
+    
+    private int calcSeatQty(int index, int numOfTixFam, int totalSeatQty) {
+        if (index == numOfTixFam - 1) {
+            return totalSeatQty - totalSeatQty/numOfTixFam * (numOfTixFam - 1);
+        } else {
+            return totalSeatQty/numOfTixFam;
+        }
+        
+//        System.out.println("index: " + index + " .numOfRemainedTixFam: " + numOfRemainedTixFam + " .totalSeatQty" + totalSeatQty);
+//        if (index <= 0) {
+//            return totalSeatQty/numOfRemainedTixFam;
+//        } else {
+//            int num = numOfRemainedTixFam;
+//            return (totalSeatQty - calcSeatQty(--index, ++numOfRemainedTixFam, totalSeatQty))/num;
+//        }
+    }
+
+    private List<TicketFamily> getCabinClassTicketFamily(Long cabinClassId) {
+        Query query = entityManager.createQuery("SELECT t FROM TicketFamily t WHERE t.cabinClass.cabinClassId = :inId AND t.deleted = FALSE");
+        query.setParameter("inId", cabinClassId);
+        List<TicketFamily> ticketFamilys = new ArrayList<>();
+        try {
+            ticketFamilys = query.getResultList();
+        } catch (NoResultException e) {
+        }
+        return ticketFamilys;
     }
 
     @Override
@@ -414,7 +485,7 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
             query.getSingleResult();
             throw new ObjectExistsException("Aicraft with tail number " + tailNo + " already exists!");
         } catch (NoResultException ex) {
-            
+
         }
     }
 
