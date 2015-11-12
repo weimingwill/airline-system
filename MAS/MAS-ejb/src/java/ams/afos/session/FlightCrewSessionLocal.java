@@ -24,11 +24,13 @@ public interface FlightCrewSessionLocal {
     public List<FlightCrew> getAllFlightCrew() throws EmptyTableException;
     public FlightCrew getFlightCrewByUsername(String username);
     public List<BiddingSession> getEligibleBiddingSessions(FlightCrew flightCrew);
+    public Pairing getPairingById(Long id);
+    
     // Flight Crew Duty Report
     public void updatePreFlightChecklist(Checklist checklist);
     public void updatePostFlightChecklist(Checklist checklist);
     // Flight Crew Bidding
-//    public List<Pairing> getAllEligiblePairings(FlightCrew flightCrew);
+    public List<Pairing> getAllEligiblePairings(BiddingSession session, FlightCrew flightCrew);
     public void placeBidForPairings(List<Pairing> pairings, FlightCrew flightCrew);
     public void updateBids(List<PairingFlightCrew> selectedPairings, FlightCrew flightCrew);
     public List<PairingFlightCrew> getFlightCrewBiddingHistory(FlightCrew flightCrew);

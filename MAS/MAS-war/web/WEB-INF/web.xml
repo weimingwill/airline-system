@@ -51,7 +51,6 @@
         <local>mas.common.session.SystemUserSessionLocal</local>
         <ejb-link>MAS-ejb.jar#SystemUserSession</ejb-link>
     </ejb-local-ref>
-    
     <!--register BotDetect Captcha-->
     <servlet>
         <servlet-name>BotDetect Captcha</servlet-name>
@@ -60,5 +59,17 @@
     <servlet-mapping>
         <servlet-name>BotDetect Captcha</servlet-name>
         <url-pattern>/botdetectcaptcha</url-pattern>
-    </servlet-mapping>  
+    </servlet-mapping>
+    <ejb-local-ref>
+        <ejb-ref-name>FlightCrewMgmtSession</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>ams.afos.session.FlightCrewMgmtSessionLocal</local>
+        <ejb-link>MAS-ejb.jar#FlightCrewMgmtSession</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>FlightCrewMgmtSession1</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>ams.afos.session.FlightCrewMgmtSessionLocal</local>
+        <ejb-link>MAS-ejb.jar#FlightCrewMgmtSession</ejb-link>
+    </ejb-local-ref>
 </web-app>

@@ -11,7 +11,9 @@ import ams.afos.entity.FlightDuty;
 import ams.afos.entity.Pairing;
 import ams.afos.session.FlightCrewMgmtSessionLocal;
 import ams.afos.session.FlightCrewSessionLocal;
+import ams.afos.util.exception.BiddingSessionConflictException;
 import ams.afos.util.exception.FlightDutyConflictException;
+import ams.afos.util.exception.PairingConflictException;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -37,7 +39,7 @@ public class BiddingSessionBacking implements Serializable {
 
     @Inject
     private MsgController msgController;
-    
+
     @Inject
     private FlightCrewBacking flightCrewBacking;
 
@@ -63,8 +65,6 @@ public class BiddingSessionBacking implements Serializable {
         getAllBiddingSession();
     }
 
-
-
     private void getAllBiddingSession() {
         setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
     }
@@ -78,13 +78,23 @@ public class BiddingSessionBacking implements Serializable {
     }
 
     public void generatePairings() {
-        flightCrewMgmtSession.generatePairings();
-        setPairings(flightCrewMgmtSession.getNextMonthPairings());
+        try {
+            flightCrewMgmtSession.generatePairings();
+            setPairings(flightCrewMgmtSession.getNextMonthPairings());
+            msgController.addMessage("Flight pairings of next month generated succesfully");
+        } catch (PairingConflictException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
     }
 
     public void generateBiddingSession(String target) {
-        flightCrewMgmtSession.generateBiddingSession(target);
-        setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
+        try {
+            flightCrewMgmtSession.generateBiddingSession(target);
+            setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
+            msgController.addMessage("Bidding seesion of next month for "+ target +" generated succesfully");
+        } catch (BiddingSessionConflictException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+        }
     }
 
     public void generateFlightDuty() {
@@ -97,7 +107,6 @@ public class BiddingSessionBacking implements Serializable {
         }
     }
 
-    
     //    public boolean getOnOffValue(BiddingSession session) {
 //        switch (session.getStatus()) {
 //            case BiddingSessionStatus.CLOSED:

@@ -12,7 +12,9 @@ import ams.afos.entity.Pairing;
 import ams.afos.entity.PairingFlightCrew;
 import ams.afos.entity.SwappingRequest;
 import ams.afos.util.helper.BiddingSessionStatus;
+import ams.afos.util.helper.PairingCrewStatus;
 import ams.aps.util.exception.EmptyTableException;
+import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -59,7 +61,21 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
 
     @Override
     public void placeBidForPairings(List<Pairing> pairings, FlightCrew flightCrew) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Calendar cal = Calendar.getInstance();
+        for (Pairing thisPairing : pairings) {
+            System.out.println(flightCrew);
+            System.out.println(thisPairing);
+            em.merge(flightCrew);
+            em.merge(thisPairing);
+            PairingFlightCrew pairingFlightCrew = new PairingFlightCrew();
+            pairingFlightCrew.setLastUpdateTime(cal.getTime());
+            pairingFlightCrew.setStatus(PairingCrewStatus.PENDING);
+            
+            pairingFlightCrew.setFlightCrew(flightCrew);
+            pairingFlightCrew.setPairing(thisPairing);
+//            em.persist(pairingFlightCrew);
+//            em.flush();
+        }
     }
 
     @Override
@@ -113,8 +129,17 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
         return (List<BiddingSession>) query.getResultList();
     }
 
-    //    @Override
-//    public List<Pairing> getAllEligiblePairings(FlightCrew flightCrew) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
+    @Override
+    public List<Pairing> getAllEligiblePairings(BiddingSession session, FlightCrew flightCrew) {
+        Query query = em.createQuery("SELECT p FROM Pairing p, IN(p.biddingSessions) AS bs WHERE (:session MEMBER OF p.biddingSessions) AND (:crew MEMBER OF bs.flightCrews) AND p NOT IN(SELECT pfc.pairing FROM PairingFlightCrew pfc WHERE pfc.flightCrew.systemUserId = :crewId)");
+        query.setParameter("session", session);
+        query.setParameter("crew", flightCrew);
+        query.setParameter("crewId", flightCrew.getSystemUserId());
+        return (List<Pairing>) query.getResultList();
+    }
+
+    @Override
+    public Pairing getPairingById(Long id) {
+        return em.find(Pairing.class, id);
+    }
 }

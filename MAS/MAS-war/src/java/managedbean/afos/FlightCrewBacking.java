@@ -6,6 +6,7 @@
 package managedbean.afos;
 
 import ams.afos.entity.FlightCrew;
+import ams.afos.entity.Pairing;
 import ams.afos.session.FlightCrewSessionLocal;
 import ams.aps.util.exception.EmptyTableException;
 import java.io.Serializable;
@@ -19,7 +20,6 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
-import managedbean.common.UserController;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
@@ -76,6 +76,9 @@ public class FlightCrewBacking implements Serializable {
         }
     }
 
+    public Pairing getPairingById(Long id){
+        return flightCrewSession.getPairingById(id);
+    }
     /**
      * @return the flightCrews
      */

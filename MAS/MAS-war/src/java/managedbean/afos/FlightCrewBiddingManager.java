@@ -12,6 +12,9 @@ import ams.afos.session.FlightCrewSessionLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -36,14 +39,16 @@ public class FlightCrewBiddingManager implements Serializable {
 
     @Inject
     private BiddingSessionBacking biddingSessionBacking;
-    
+
     @Inject
     private AfosNavController afosNavController;
-    
+
     @Inject
     private MsgController msgController;
 
     private List<Pairing> availablePairings;
+    private List<Pairing> pairingsWithSameCode;
+    private List<Pairing> pairingsToBid;
     private Pairing selectedPairing;
     private FlightCrew currentCrew;
 
@@ -65,8 +70,12 @@ public class FlightCrewBiddingManager implements Serializable {
             getCrewBiddingSessions(currentCrew);
         }
     }
-    
 
+    public void placeBidForPairings(){
+        flightCrewSession.placeBidForPairings(pairingsToBid, currentCrew);
+        setAvailablePairings(flightCrewSession.getAllEligiblePairings(selectedBiddingSession, currentCrew));
+    }
+    
     public void getCrewBiddingSessions(FlightCrew flightCrew) {
         setCrewBiddingSessions(flightCrewSession.getEligibleBiddingSessions(flightCrew));
     }
@@ -74,17 +83,17 @@ public class FlightCrewBiddingManager implements Serializable {
     public void getSessionAvailablePairings() {
         System.out.println("selectedBiddingSession:" + selectedBiddingSession);
         System.out.println("parings: " + selectedBiddingSession.getPairings());
-        setAvailablePairings(selectedBiddingSession.getPairings());
+        setAvailablePairings(flightCrewSession.getAllEligiblePairings(selectedBiddingSession, currentCrew));
     }
 
-    public String onContinueToBiddingBtnClick(){
-        if(selectedBiddingSession != null){
+    public String onContinueToBiddingBtnClick() {
+        if (selectedBiddingSession != null) {
             getSessionAvailablePairings();
             RequestContext context = RequestContext.getCurrentInstance();
             context.update("availablePairingTable");
             return afosNavController.toBidPairings();
         } else {
-            if(crewBiddingSessions.isEmpty()){
+            if (crewBiddingSessions.isEmpty()) {
                 msgController.addErrorMessage("There is no open bidding session currently.");
             } else {
                 msgController.addErrorMessage("Please select bidding session to proceed.");
@@ -92,7 +101,44 @@ public class FlightCrewBiddingManager implements Serializable {
             return "";
         }
     }
+
+    public void onViewPairingBtnClick() {
+        System.out.println("selectedPairing: " + selectedPairing);
+    }
+
+    public void onBidBtnClick() {
+        System.out.println("selectedPairing: " + selectedPairing);
+        setPairingWithSamePairingCode(selectedPairing);
+    }
+
+    private void setPairingWithSamePairingCode(Pairing selectedPairing) {
+        List<Pairing> outputList = new ArrayList();
+        for(Pairing thisPairing : availablePairings){
+            if(selectedPairing.getPairingCode().equals(thisPairing.getPairingCode())){
+                outputList.add(thisPairing);
+            }
+        }
+        setPairingsWithSameCode(outputList);
+    }
     
+    public String convertDateFormat(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd");	
+        return sdf.format(date);
+    }
+    /**
+     * @return the pairingsWithSameCode
+     */
+    public List<Pairing> getPairingsWithSameCode() {
+        return pairingsWithSameCode;
+    }
+
+    /**
+     * @param pairingsWithSameCode the pairingsWithSameCode to set
+     */
+    public void setPairingsWithSameCode(List<Pairing> pairingsWithSameCode) {
+        this.pairingsWithSameCode = pairingsWithSameCode;
+    }
+
     /**
      * @param availablePairings the availablePairings to set
      */
@@ -161,5 +207,19 @@ public class FlightCrewBiddingManager implements Serializable {
      */
     public void setSelectedPairing(Pairing selectedPairing) {
         this.selectedPairing = selectedPairing;
+    }
+
+    /**
+     * @return the pairingsToBid
+     */
+    public List<Pairing> getPairingsToBid() {
+        return pairingsToBid;
+    }
+
+    /**
+     * @param pairingsToBid the pairingsToBid to set
+     */
+    public void setPairingsToBid(List<Pairing> pairingsToBid) {
+        this.pairingsToBid = pairingsToBid;
     }
 }

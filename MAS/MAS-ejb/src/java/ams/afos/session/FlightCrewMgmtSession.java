@@ -10,7 +10,9 @@ import ams.afos.entity.Checklist;
 import ams.afos.entity.FlightCrew;
 import ams.afos.entity.FlightDuty;
 import ams.afos.entity.Pairing;
+import ams.afos.util.exception.BiddingSessionConflictException;
 import ams.afos.util.exception.FlightDutyConflictException;
+import ams.afos.util.exception.PairingConflictException;
 import ams.afos.util.helper.BiddingSessionStatus;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.Airport;
@@ -43,10 +45,10 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     private final double msToHrCoe = 2.77778e-7;
 
     @Override
-    public void generatePairings() {
+    public void generatePairings() throws PairingConflictException{
         List<FlightDuty> nextMonthFlightDuties = getNextMonthFlightDuties();
         ArrayList<Long> flightDutyIdList = new ArrayList();
-        List<FlightDuty> pairingDuties = new ArrayList();
+        checkFlightPairingExist(nextMonthFlightDuties);
 
         for (FlightDuty thisDuty : nextMonthFlightDuties) {
             flightDutyIdList.add(thisDuty.getId());
@@ -203,7 +205,32 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
             q.setParameter("fs", fs);
             if (!q.getResultList().isEmpty()) {
                 System.out.println("Flight duty has already bean generated");
-                throw new FlightDutyConflictException("Flight duty has already bean generated");
+                throw new FlightDutyConflictException("Next month flight duties have already bean generated");
+            }
+        }
+    }
+    
+    private void checkFlightPairingExist(List<FlightDuty> nextMonthFlightDutys) throws PairingConflictException {
+        Query q;
+        for (FlightDuty fd : nextMonthFlightDutys) {
+            q = em.createQuery("SELECT p FROM Pairing p WHERE :fd MEMBER OF (p.flightDuties)");
+            q.setParameter("fd", fd);
+            if (!q.getResultList().isEmpty()) {
+                System.out.println("Flight duty has already bean generated");
+                throw new PairingConflictException("Next month parings have already bean generated");
+            }
+        }
+    }
+    
+    private void checkBiddingSessionExist(List<Pairing> pairings, FlightCrew crew) throws BiddingSessionConflictException {
+        Query q;
+        for (Pairing p: pairings) {
+            q = em.createQuery("SELECT bs FROM BiddingSession bs WHERE (:p MEMBER OF (bs.pairings)) AND (:c MEMBER OF (bs.flightCrews))");
+            q.setParameter("p", p);
+            q.setParameter("c", crew);
+            if (!q.getResultList().isEmpty()) {
+                System.out.println("Bidding session for "+crew.getPosition().getType()+" has already bean generated");
+                throw new BiddingSessionConflictException("Bidding session for "+crew.getPosition().getType()+" has already bean generated");
             }
         }
     }
@@ -331,9 +358,10 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     }
 
     @Override
-    public void generateBiddingSession(String target) {
+    public void generateBiddingSession(String target) throws BiddingSessionConflictException{
         List<Pairing> nextMonthPairings = getNextMonthPairings();
         List<FlightCrew> flightCrews = getCrews(target);
+        checkBiddingSessionExist(nextMonthPairings, flightCrews.get(0));
         BiddingSession newBiddingSession = new BiddingSession();
         Calendar createTime, startTime;
         createTime = Calendar.getInstance();
@@ -349,9 +377,9 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         printBiddingSession(newBiddingSession);
         em.persist(newBiddingSession);
         for(Pairing pairing: nextMonthPairings){
-            List<BiddingSession> biddingSessions = pairing.getBiddingSession();
+            List<BiddingSession> biddingSessions = pairing.getBiddingSessions();
             biddingSessions.add(newBiddingSession);
-            pairing.setBiddingSession(biddingSessions);
+            pairing.setBiddingSessions(biddingSessions);
             em.merge(pairing);
         }
         for(FlightCrew crew: flightCrews){
