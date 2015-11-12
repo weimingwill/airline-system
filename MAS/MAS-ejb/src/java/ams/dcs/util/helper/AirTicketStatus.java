@@ -7,7 +7,7 @@ package ams.dcs.util.helper;
 
 /**
  *
- * @author ChuningLiu
+ * @author weiming
  */
 public class AirTicketStatus {
     public static final String PENDING = "To be paid";

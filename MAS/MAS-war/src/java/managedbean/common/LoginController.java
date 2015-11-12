@@ -83,7 +83,7 @@ public class LoginController implements Serializable {
             countTrial++;
             if (countTrial > 2) {
                 if (!isAdmin()) {
-                    systemUserSession.lockUser(username);
+                     systemUserSession.lockUser(username);
                     System.out.println("locked user " + username);
                 }
 

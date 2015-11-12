@@ -14,6 +14,8 @@ public class AircraftCabinClassHelper {
     private String type;
     private String name;
     private int seatQty;
+    private int numOfRow;
+    private int numOfCol;
 
     public AircraftCabinClassHelper(Long id, String type, String name, int seatQty) {
         this.id = id;
@@ -79,6 +81,34 @@ public class AircraftCabinClassHelper {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * @return the numOfRow
+     */
+    public int getNumOfRow() {
+        return numOfRow;
+    }
+
+    /**
+     * @param numOfRow the numOfRow to set
+     */
+    public void setNumOfRow(int numOfRow) {
+        this.numOfRow = numOfRow;
+    }
+
+    /**
+     * @return the numOfCol
+     */
+    public int getNumOfCol() {
+        return numOfCol;
+    }
+
+    /**
+     * @param numOfCol the numOfCol to set
+     */
+    public void setNumOfCol(int numOfCol) {
+        this.numOfCol = numOfCol;
     }
     
 }
