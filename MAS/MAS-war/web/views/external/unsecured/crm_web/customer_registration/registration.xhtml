@@ -112,8 +112,17 @@
                             <!--<f:validator validatorId="passwordValidator" />-->
                             <!--<f:attribute name="confirmPassword" value="{confirmPassword}" />-->
                         </p:password>
-                        <p:outputLabel for="secQue" value="Secutity Question"/>
-                        <p:inputText id="secQue" class="userProfileInput" required="true" requiredMessage="Please input security question" value="#{registrationController.newRegCust.securQuest}" placeholder="security question"/>
+                        <p:outputLabel for="secQue" value="Security Question"/>
+                        <p:selectOneMenu id="secQue" required="true" requiredMessage="Please Choose a security question"  style="width:180px" value="#{registrationController.newRegCust.securQuest}" >
+                            <f:selectItem itemLabel="Please Choose" itemValue="" />
+                            <f:selectItem itemLabel="What is your primary school?"  itemValue="What is your primary school" />
+                            <f:selectItem itemLabel="What is your mom's first name" itemValue="What is your mom's first name"/>
+                            <f:selectItem itemLabel="What is your pet’s name?"  itemValue="What is your pet’s name?" />
+                            <f:selectItem itemLabel="In what year was your father born?"  itemValue="In what year was your father born?" />
+                            <f:selectItem itemLabel="What is your favorite movie?"  itemValue="What is your favorite movie?" />
+                            <f:selectItem itemLabel="What is the name of the place your wedding reception was held?" itemValue="What is the name of the place your wedding reception was held?" />
+                            <f:selectItem itemLabel="In what city or town does your nearest sibling live?"  itemValue="In what city or town does your nearest sibling live?"/>
+                        </p:selectOneMenu>
                         <p:outputLabel for="secAns" value="Secutity Answer"/>
                         <p:inputText id="secAns" class="userProfileInput" required="true" requiredMessage="Please answer security question" value="#{registrationController.newRegCust.securAns}" placeholder="security answer"/>
                     </p:panelGrid>
@@ -160,7 +169,7 @@
                     </p:selectManyCheckbox>
                 </p:panelGrid>
 
-                <p:commandButton action="#{registrationController.createrRegCust()}" value="Submit" update="messages"/>
+                <p:commandButton action="#{crmExNavController.redirectToCustomerLogin()}" actionListener="#{registrationController.createrRegCust()}" value="Submit" update="messages"/>
             </p:panel>
 
         </h:form>

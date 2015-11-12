@@ -14,11 +14,9 @@
     <ui:define name="content">
         <h:form id="generalRules" style="width: 600px;text-align: center;" >
 
-            <p:panel style="max-width:600px; overflow: scroll">
+            <p:panel  header="Name Change Policy" toggleable="true"  collapsed="true" toggleSpeed="500"  widgetVar="panel" style="max-width:500px; overflow: scroll" styleClass="centeredPanel" >
                 <p:dataTable id="nameChangePolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
-                    <f:facet name="header">
-                        Name Change Policy
-                    </f:facet>
+                    
                     <p:columnGroup type="header">
                         <p:row>
                             <p:column headerText="CabinClass - TicketFamily" />
@@ -61,7 +59,7 @@
                 </p:dataTable> 
             </p:panel>
             
-            <p:panel style="max-width:610px; overflow: scroll">
+            <p:panel header="Cancellation Policy" toggleable="true"  collapsed="true" toggleSpeed="500"  widgetVar="panel1" style="max-width:500px; overflow: scroll" styleClass="centeredPanel">
                 <p:dataTable id="cancellationPolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
                     <f:facet name="header">
                         Cancellation Policy
@@ -108,10 +106,10 @@
                 </p:dataTable> 
             </p:panel>
             
-            <p:panel style="max-width:610px; overflow: scroll">
+            <p:panel header="Luggage Policy" toggleable="true"  collapsed="true" toggleSpeed="500"  widgetVar="panel2" style="max-width:500px; overflow: scroll" styleClass="centeredPanel">
                 <p:dataTable id="luggage" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
                     <f:facet name="header">
-                        Carry On Luggage Policy
+                       Luggage Policy
                     </f:facet>
                     <p:columnGroup type="header">
                         <p:row>
@@ -155,7 +153,7 @@
                 </p:dataTable> 
             </p:panel>
             
-            <p:panel style="max-width:610px; overflow: scroll">
+            <p:panel header="Flight Change Policy" toggleable="true" collapsed="true" toggleSpeed="500"  widgetVar="panel3" style="max-width:500px; overflow: scroll" styleClass="centeredPanel">
                 <p:dataTable id="flightChangePolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
                     <f:facet name="header">
                         Flight Change Policy
@@ -202,7 +200,7 @@
                 </p:dataTable> 
             </p:panel>
             
-            <p:panel style="max-width:610px; overflow: scroll">
+            <p:panel header="Other Service" toggleable="true"  collapsed="true" toggleSpeed="500"  widgetVar="panel4" style="max-width:500px; overflow: scroll" styleClass="centeredPanel">
                 <p:dataTable id="otherService" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
                     <f:facet name="header">
                         Other Service
@@ -249,7 +247,7 @@
                 </p:dataTable> 
             </p:panel>
             
-            <p:panel style="max-width:610px; overflow: scroll">
+            <p:panel header="No Show Policy" toggleable="true" collapsed="true" toggleSpeed="500"  widgetVar="panel5" style="max-width:500px; overflow: scroll" styleClass="centeredPanel">
                 <p:dataTable id="noShowFee" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
                     <f:facet name="header">
                         No-show fee ex-SIN

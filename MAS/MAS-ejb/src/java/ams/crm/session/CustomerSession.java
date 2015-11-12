@@ -5,7 +5,6 @@
  */
 package ams.crm.session;
 
-
 import ams.crm.entity.Membership;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
@@ -39,13 +38,11 @@ public class CustomerSession implements CustomerSessionLocal {
     @PersistenceContext
     private EntityManager entityManager;
     private Object emailController;
-    
-    
-    
+
     @Override
-    public void createRegCust(RegCust regCust) throws ExistSuchRegCustException{
-        
-        Random r = new Random( System.currentTimeMillis() );
+    public void createRegCust(RegCust regCust) throws ExistSuchRegCustException {
+
+        Random r = new Random(System.currentTimeMillis());
         verifyRegCustExistence(regCust.getPassportNo());
         verifyEmailExistence(regCust.getEmail());
         regCust.setAccMiles(28563.0);
@@ -54,17 +51,17 @@ public class CustomerSession implements CustomerSessionLocal {
         regCust.setActivated(true);
         System.out.println("createRegCust: \n\tCountry Code: " + regCust.getPhone().getCountryCode());
         try {
-            regCust.setMembership(entityManager.find(Membership.class,getMembershipByName("Elite Bronze").getId()));
+            regCust.setMembership(entityManager.find(Membership.class, getMembershipByName("Elite Bronze").getId()));
         } catch (NoSuchMembershipException ex) {
             Logger.getLogger(CustomerSession.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             try {
                 System.out.println("getMembershipByName(\"Elite Bronze\"): " + getMembershipByName("Elite Bronze"));
             } catch (NoSuchMembershipException ex1) {
                 Logger.getLogger(CustomerSession.class.getName()).log(Level.SEVERE, null, ex1);
             }
         }
-        regCust.setMembershipId("MA"+ 10000 + r.nextInt(20000));
+        regCust.setMembershipId("MA" + 10000 + r.nextInt(20000));
         entityManager.persist(regCust);
     }
 //    public void createRegCust(String title, String firstname,String lastname, String passportNo, String nationality, String gender,Date dob, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone mobilephone, Phone telephone, String pwd,String securQuest,String securAns, Boolean newsLetterPref, Boolean promoPref, String membershipClass, Double accMiles,Double custValue, Integer numOfFlights, String memberShipId) throws ExistSuchRegCustException {
@@ -100,14 +97,14 @@ public class CustomerSession implements CustomerSessionLocal {
 
     @Override
     public void doLogin(String email, String inputPassword) throws NoSuchRegCustException, InvalidPasswordException {
-        System.out.print("sessionbean email is" +email);
-        System.out.print("sessionbean password is"+inputPassword);
+        System.out.print("sessionbean email is" + email);
+        System.out.print("sessionbean password is" + inputPassword);
         getRegCustByEmail(email);
-        verifyRegCustPassword(email, inputPassword);   
+        verifyRegCustPassword(email, inputPassword);
     }
-    
-    private void verifyRegCustPassword (String email, String inputPassword) throws NoSuchRegCustException, InvalidPasswordException{
-        
+
+    private void verifyRegCustPassword(String email, String inputPassword) throws NoSuchRegCustException, InvalidPasswordException {
+
         try {
             RegCust regCust = getRegCustByEmail(email);
             String userPassword = regCust.getPwd();
@@ -118,7 +115,6 @@ public class CustomerSession implements CustomerSessionLocal {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
         }
     }
-    
 
     private void verifyRegCustExistence(String passportNo) throws ExistSuchRegCustException {
         List<RegCust> regCusts = getAllRegCusts();
@@ -136,9 +132,9 @@ public class CustomerSession implements CustomerSessionLocal {
         Query query = entityManager.createQuery("SELECT r FROM RegCust r");
         return query.getResultList();
     }
-    
+
     @Override
-    public Membership getMembershipByName(String membershipClassName) throws NoSuchMembershipException{
+    public Membership getMembershipByName(String membershipClassName) throws NoSuchMembershipException {
         Query query = entityManager.createQuery("SELECT c FROM Membership c WHERE c.name = :inMembershipName");
         query.setParameter("inMembershipName", membershipClassName);
         Membership selectMembership = null;
@@ -146,32 +142,31 @@ public class CustomerSession implements CustomerSessionLocal {
             selectMembership = (Membership) query.getSingleResult();
         } catch (NoResultException ex) {
             throw new NoSuchMembershipException(CrmMsg.NO_SUCH_MEMBERSHIP_NAME_ERROR);
-        }catch(NonUniqueResultException e){
-            
+        } catch (NonUniqueResultException e) {
+
         }
         return selectMembership;
     }
-    
-    
+
     @Override
-    public RegCust getRegCustByEmail (String email) throws NoSuchRegCustException{
-        System.out.print("test email"+email);
+    public RegCust getRegCustByEmail(String email) throws NoSuchRegCustException {
+        System.out.print("test email" + email);
         Query query = entityManager.createQuery("SELECT r FROM RegCust r WHERE r.email = :inEmail");
         query.setParameter("inEmail", email);
         RegCust selectRegCust = null;
-        System.out.printf("selectRegCustrtyjrytr "+selectRegCust);
+        System.out.printf("selectRegCustrtyjrytr " + selectRegCust);
         try {
             selectRegCust = (RegCust) query.getSingleResult();
-            System.out.printf("selectRegCust "+selectRegCust);
+            System.out.printf("selectRegCust " + selectRegCust);
         } catch (NoResultException ex) {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
-        }catch(NonUniqueResultException e){
-            
+        } catch (NonUniqueResultException e) {
+
         }
-        System.out.printf("selectRegCust "+selectRegCust);
+        System.out.printf("selectRegCust " + selectRegCust);
         return selectRegCust;
     }
-    
+
     private void verifyEmailExistence(String email) throws ExistSuchRegCustException {
         List<RegCust> regCusts = getAllRegCusts();
         if (regCusts != null) {
@@ -181,19 +176,32 @@ public class CustomerSession implements CustomerSessionLocal {
                 }
             }
         }
-    } 
+    }
 
     @Override
-    public void updateProfile(Long customerId,String passportNo, Date passportIssueDate, Date passportExpDate, String nationality, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone phone, String securQuest, String securAns,Boolean newsLetterPref, Boolean promoPref) throws ExistSuchRegCustException,NoSuchRegCustException {
-        RegCust r=getRegCustById(customerId);
-        if(r==null){
+    public void updateMiles(String email, Double accMiles) throws NoSuchRegCustException {
+        RegCust r = getRegCustByEmail(email);
+        if (r == null) {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
-        }else{
-            List<RegCust> regCusts=getAllOtherRegCustById(customerId);
-            if(regCusts!=null){
-                for(RegCust rc: regCusts){
-                    if(email.equals(rc.getEmail())){
-                       throw new ExistSuchRegCustException(CrmMsg.EXIST_SUCH_Reg_Cust_ERROR);
+        } else {
+            r.setAccMiles(accMiles);
+            entityManager.merge(r);
+            entityManager.flush();
+
+        }
+    }
+
+    @Override
+    public void updateProfile(Long customerId, String passportNo, Date passportIssueDate, Date passportExpDate, String nationality, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone phone, String securQuest, String securAns, Boolean newsLetterPref, Boolean promoPref) throws ExistSuchRegCustException, NoSuchRegCustException {
+        RegCust r = getRegCustById(customerId);
+        if (r == null) {
+            throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
+        } else {
+            List<RegCust> regCusts = getAllOtherRegCustById(customerId);
+            if (regCusts != null) {
+                for (RegCust rc : regCusts) {
+                    if (email.equals(rc.getEmail())) {
+                        throw new ExistSuchRegCustException(CrmMsg.EXIST_SUCH_Reg_Cust_ERROR);
                     }
                 }
             }
@@ -216,29 +224,29 @@ public class CustomerSession implements CustomerSessionLocal {
         r.setPromoPref(promoPref);
         entityManager.merge(r);
         entityManager.flush();
-        
+
     }
-    
-    private RegCust getRegCustById(Long customerId) throws NoSuchRegCustException{
-       Query query = entityManager.createQuery("SELECT r FROM RegCust r WHERE r.id = :customerId");
+
+    private RegCust getRegCustById(Long customerId) throws NoSuchRegCustException {
+        Query query = entityManager.createQuery("SELECT r FROM RegCust r WHERE r.id = :customerId");
         query.setParameter("customerId", customerId);
         RegCust selectRegCust = null;
-        System.out.printf("selectRegCustrtyjrytr "+selectRegCust);
+        System.out.printf("selectRegCustrtyjrytr " + selectRegCust);
         try {
             selectRegCust = (RegCust) query.getSingleResult();
-            System.out.printf("selectRegCust "+selectRegCust);
+            System.out.printf("selectRegCust " + selectRegCust);
         } catch (NoResultException ex) {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
-        }catch(NonUniqueResultException e){
-            
+        } catch (NonUniqueResultException e) {
+
         }
-        System.out.printf("selectRegCust "+selectRegCust);
-        return selectRegCust; 
+        System.out.printf("selectRegCust " + selectRegCust);
+        return selectRegCust;
     }
-    
-    private List<RegCust> getAllOtherRegCustById(Long customerId){
+
+    private List<RegCust> getAllOtherRegCustById(Long customerId) {
         Query query = entityManager.createQuery("SELECT c FROM RegCust c where c.id <> :customerId");
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
-}   
+}

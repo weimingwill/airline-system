@@ -58,4 +58,14 @@ public class CrmExNavController implements Serializable {
     public String redirectToAccountSummary(){
         return CRM_EX_SECURED_URL + "accountSummary.xhtml"+REDIRECT;
     }
+    public String redirectToMainPage(){
+        return CRM_EX_SECURED_URL + "customerMainPage.xhtml"+REDIRECT;
+    }
+    public String redirectToGeneralInformation(){
+        return CRM_EX_UNSECURED_URL + "generalInformation.xhtml"+REDIRECT;
+    }
+    public String redirectToCustomerRegistration(){
+        return CRM_EX_UNSECURED_URL + "registration.xhtml"+REDIRECT;
+    }
+   
 }
