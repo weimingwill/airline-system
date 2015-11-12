@@ -36,7 +36,7 @@ public class BiddingSession implements Serializable {
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "biddingSession")
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "biddingSessions")
     private List<Pairing> pairings;
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="biddingSessions")

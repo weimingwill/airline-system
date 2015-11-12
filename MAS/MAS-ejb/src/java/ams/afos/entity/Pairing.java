@@ -36,7 +36,7 @@ public class Pairing implements Serializable {
     private List<FlightDuty> flightDuties;
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private BiddingSession biddingSession;
+    private List<BiddingSession> biddingSession;
 
     public Long getPairingId() {
         return pairingId;
@@ -144,14 +144,14 @@ public class Pairing implements Serializable {
     /**
      * @return the biddingSession
      */
-    public BiddingSession getBiddingSession() {
+    public List<BiddingSession> getBiddingSession() {
         return biddingSession;
     }
 
     /**
      * @param biddingSession the biddingSession to set
      */
-    public void setBiddingSession(BiddingSession biddingSession) {
+    public void setBiddingSession(List<BiddingSession> biddingSession) {
         this.biddingSession = biddingSession;
     }
 
