@@ -5,6 +5,7 @@
  */
 package ams.crm.util.helper;
 
+import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ars.entity.Booking;
 import ams.crm.entity.Customer;
 import java.io.Serializable;
@@ -18,6 +19,9 @@ public class BookingHelper implements Serializable{
     private Booking booking;
     private List<Customer> adults;
     private List<Customer> children;
+    private String channel;
+    private List<FlightScheduleBookingClass> flightSchedBookingClses;
+    
 
     public Booking getBooking() {
         return booking;
@@ -43,5 +47,21 @@ public class BookingHelper implements Serializable{
         this.children = children;
     }
 
+    public String getChannel() {
+        return channel;
+    }
 
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public List<FlightScheduleBookingClass> getFlightSchedBookingClses() {
+        return flightSchedBookingClses;
+    }
+
+    public void setFlightSchedBookingClses(List<FlightScheduleBookingClass> flightSchedBookingClses) {
+        this.flightSchedBookingClses = flightSchedBookingClses;
+    }
+
+   
 }

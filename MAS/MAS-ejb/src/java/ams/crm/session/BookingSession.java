@@ -20,6 +20,11 @@ import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.util.helper.ApsMsg;
 import ams.aps.util.helper.FlightSchedStatus;
+import ams.ars.entity.AirTicket;
+import ams.ars.entity.Booking;
+import ams.crm.entity.Customer;
+import ams.crm.util.helper.BookingHelper;
+import ams.dcs.util.helper.AirTicketStatus;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,6 +39,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import mas.util.helper.DateHelper;
+import mas.util.helper.NumberGenerator;
 
 /**
  *
@@ -51,7 +57,7 @@ public class BookingSession implements BookingSessionLocal {
     private ProductDesignSessionLocal productDesignSession;
 
     @Override
-    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<FlightSchedule, FlightSchedule> flightSchedMaps) throws NoSuchFlightSchedulException {
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps) throws NoSuchFlightSchedulException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(deptDate);
         DateHelper.setToStartOfDay(calendar);
@@ -105,9 +111,9 @@ public class BookingSession implements BookingSessionLocal {
         return flightScheds;
     }
 
-    private void getInDirectFlightMaps(List<FlightSchedule> flightScheds, Airport arrAirport, Map<FlightSchedule, FlightSchedule> flightSchedMaps) {
+    private void getInDirectFlightMaps(List<FlightSchedule> flightScheds, Airport arrAirport, Map<Long, FlightSchedule> flightSchedMaps) {
         for (FlightSchedule flightSched : flightScheds) {
-            flightSchedMaps.put(flightSched, getNextInDirectFlight(flightSched, arrAirport));
+            flightSchedMaps.put(flightSched.getFlightScheduleId(), getNextInDirectFlight(flightSched, arrAirport));
         }
     }
 
@@ -267,4 +273,110 @@ public class BookingSession implements BookingSessionLocal {
 //        }
 //        return tixFams;
 //    }
+    @Override
+    public void bookingFlight(BookingHelper bookingHelper) {
+        List<Customer> customers = new ArrayList<>();
+        
+        for (Customer customer : bookingHelper.getAdults()) {
+            System.out.println("Customer: " + customer.getFirstName());
+        }
+        //Customer
+        customers.addAll(createCustomers(bookingHelper.getAdults()));
+        customers.addAll(createCustomers(bookingHelper.getChildren()));
+
+        //create booking
+        Booking booking = bookingHelper.getBooking();
+        System.out.println("Booking: " + booking.getEmail());
+        booking.setCreatedTime(new Date());
+        booking.setChannel(bookingHelper.getChannel());
+        booking.setPaid(true);
+
+        //Update flightSchedule booking class
+        List<FlightScheduleBookingClass> fbs = bookingHelper.getFlightSchedBookingClses();
+        float price = 0;
+        for (FlightScheduleBookingClass fb : fbs) {
+            price += fb.getPrice();
+        }
+        booking.setPrice((double) price);
+        em.persist(booking);
+        em.flush();
+
+        //Airticket
+        List<AirTicket> airTickets = createAirTickets(fbs, customers, booking);
+
+        String eTicketNo = "MLA";
+        eTicketNo += NumberGenerator.airTicketFormNumber();
+        eTicketNo += NumberGenerator.airTicketSerialNumber();
+
+        //Need to check whether the number exist or not, if yes, loop to create a new one. But just generate in current case.
+        booking.seteTicketNo(eTicketNo);
+        booking.setReferenceNo(NumberGenerator.bookingReference());
+        booking.setAirTickets(airTickets);
+        em.merge(booking);
+        em.flush();
+        //Select seat
+        //Select add on
+        //Generate pnr
+    }
+
+    private List<AirTicket> createAirTickets(List<FlightScheduleBookingClass> fbs, List<Customer> customers, Booking booking) {
+        List<AirTicket> airTickets = new ArrayList<>();
+        for (Customer customer : customers) {
+            List<AirTicket> custAirTickets = new ArrayList<>();
+            for (FlightScheduleBookingClass fb : fbs) {
+                fb = updateFlightSchedBookingCls(fb);
+                AirTicket airTicket = createAirTicket(fb, customer, booking);
+                airTickets.add(airTicket);
+                custAirTickets.add(airTicket);
+            }
+            customer.setAirTickets(custAirTickets);
+        }
+        return airTickets;
+    }
+
+    private AirTicket createAirTicket(FlightScheduleBookingClass fb, Customer customer, Booking booking) {
+        AirTicket airTicket = new AirTicket();
+        airTicket.setStatus(AirTicketStatus.PAID);
+        airTicket.setCustomer(customer);
+        airTicket.setBooking(booking);
+        airTicket.setFlightSchedBookingClass(fb);
+        em.persist(airTicket);
+        em.flush();
+        return airTicket;
+    }
+
+    private List<Customer> createCustomers(List<Customer> customers) {
+        List<Customer> customerList = new ArrayList<>();
+        for (Customer customer : customers) {
+            Customer cust = verifyCustomerExistence(customer);
+            if (cust == null) {
+                em.persist(customer);
+                em.flush();
+                customerList.add(customer);
+            } else {
+                customerList.add(cust);
+            }
+        }
+        return customerList;
+    }
+
+    private FlightScheduleBookingClass updateFlightSchedBookingCls(FlightScheduleBookingClass flightSchedBookingCls) {
+        flightSchedBookingCls = em.find(FlightScheduleBookingClass.class, flightSchedBookingCls.getFlightScheduleBookingClassId());
+        flightSchedBookingCls.setSoldSeatQty(flightSchedBookingCls.getSoldSeatQty() + 1);
+        em.merge(flightSchedBookingCls);
+        em.flush();
+        return flightSchedBookingCls;
+    }
+
+    private Customer verifyCustomerExistence(Customer customer) {
+        Query query = em.createQuery("SELECT c FROM Customer c WHERE c.passportNo = :passportNo");
+        query.setParameter("passportNo", customer.getPassportNo());
+        Customer cust = null;
+        try {
+            cust = (Customer) query.getSingleResult();
+        } catch (NoResultException e) {
+        }
+        return cust;
+    }
+
 }

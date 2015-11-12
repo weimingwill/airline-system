@@ -27,11 +27,11 @@ public class EmailValidator implements Validator {
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         String email = value.toString();
 
-        UIInput uiInputConfirmPassword = (UIInput) component.getAttributes().get("confirmEmail");
-        String confirmPassword = uiInputConfirmPassword.getSubmittedValue().toString();
+        UIInput uiInputConfirmEmail = (UIInput) component.getAttributes().get("confirmEmail");
+        String confirmEmail = uiInputConfirmEmail.getSubmittedValue().toString();
 
-        if (!email.equals(confirmPassword)) {
-            uiInputConfirmPassword.setValid(false);
+        if (!email.equals(confirmEmail)) {
+            uiInputConfirmEmail.setValid(false);
             throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Email must match confirm email."));
         }
 
