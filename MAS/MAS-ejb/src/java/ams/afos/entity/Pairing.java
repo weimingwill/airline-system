@@ -13,7 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 /**
@@ -35,7 +35,7 @@ public class Pairing implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<FlightDuty> flightDuties;
 
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private BiddingSession biddingSession;
 
     public Long getPairingId() {
