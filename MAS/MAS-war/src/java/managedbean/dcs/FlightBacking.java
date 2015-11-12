@@ -6,6 +6,7 @@
 package managedbean.dcs;
 
 import ams.aps.entity.FlightSchedule;
+import java.io.Serializable;
 import java.util.Date;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -16,7 +17,7 @@ import javax.faces.view.ViewScoped;
  */
 @Named(value = "flightBacking")
 @ViewScoped
-public class FlightBacking {
+public class FlightBacking implements Serializable{
 
     /**
      * Creates a new instance of FlightBacking
