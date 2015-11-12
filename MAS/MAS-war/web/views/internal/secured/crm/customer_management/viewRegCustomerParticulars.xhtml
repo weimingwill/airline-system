@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        View customer particulars
+    </ui:define>
+
+
+    <ui:define name="content">
+        <h:form>
+            <h:panelGrid columns="2" columnClasses="column" cellpadding="5">
+                <h:outputLabel value="ID:   " />
+                <p:outputLabel value="#{customerManager.selectedRegCust.id}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Title:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.title}">
+                </p:outputLabel>
+
+                <h:outputLabel value="First Name:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.firstName}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Last Name:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.lastName}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Passport Number" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.passportNo}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Date of Birth:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.dob}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
+
+
+                <h:outputLabel value="Nationality:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.nationality}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Passport Issue Date:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.passportIssueDate}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
+
+
+                <h:outputLabel value="Passport Expire Date:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.passportExpDate}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
+
+
+                <h:outputLabel value="Email:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.email}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Phone:"/>
+                <p:outputLabel value="#{customerManager.selectedRegCust.phone}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Address Line 1:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.addr1}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Address Line 2:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.addr2}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Zip Code:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.zipCode}">
+                </p:outputLabel>
+
+                <h:outputLabel value="City:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.city}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Province:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.province}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Country:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.country}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Newletter Preference:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.newsLetterPref}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Promotion Preference:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.promoPref}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Membership Class:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.membershipClass}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Accumulated Miles:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.accMiles}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Customer Value:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.custValue}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Number of Flights:" />
+                <p:outputLabel value="#{customerManager.selectedRegCust.numOfFlights}">
+                </p:outputLabel>
+
+                <f:facet name="footer">
+                    <p:commandButton action="#{customerManager.toCreateFeedback()}" value="Record feedback" update="messages" />
+                    <p:commandButton action="#{customerManager.toViewFeedbacks()}" value="View feedbacks" update="messages" />
+                </f:facet>
+
+            </h:panelGrid>
+        </h:form>
+    </ui:define>
+</ui:composition>
+
+

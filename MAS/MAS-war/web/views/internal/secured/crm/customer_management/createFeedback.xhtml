@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">
+        Record customer feedback 
+    </ui:define>
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Create customer feedback record 
+        </f:facet>
+        <h:form id="form">
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Subject: "/>
+                <p:inputText value="#{customerManager.feedbackSubject}"/>
+                <p:outputLabel value="Content: "/>
+                <p:inputTextarea value="#{customerManager.feedbackContent}" rows="6" cols="33" />
+
+                <p:selectOneMenu id="channel" value="#{customerManager.feedbackChannel}" style="width:200px">
+                    <f:selectItem itemLabel="Select feedback channel" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{customerManager.predefinedChannels}" var="feedbackChannel" itemLabel="#{feedbackChannel}" itemValue="#{feedbackChannel}"/>
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+            <p:separator/>
+            <p:commandButton action="#{customerManager.createFeedback()}" value="Create" update="messages" />
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

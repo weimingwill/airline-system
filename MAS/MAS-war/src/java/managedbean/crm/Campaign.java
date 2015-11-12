@@ -3,15 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.crm.session;
-
-import javax.ejb.Local;
+package managedbean.crm;
 
 /**
  *
- * @author winga_000
+ * @author Tongtong
  */
-@Local
-public interface CampaignManagementSessionLocal {
+class Campaign {
     
 }

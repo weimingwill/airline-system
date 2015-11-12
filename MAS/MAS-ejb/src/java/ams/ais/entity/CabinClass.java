@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class CabinClass implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cabinClassId;
@@ -32,16 +33,24 @@ public class CabinClass implements Serializable {
     private String milePolicy;
     private Double percentage;
     private Double basePrice;
-            
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="cabinClass")
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
-    
+
     public void create(String type, String name) {
         this.setType(type);
         this.setName(name);
         this.setDeleted(false);
     }
-    
+
+    public List<TicketFamily> getTicketFamilys() {
+        return ticketFamilys;
+    }
+
+    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
+        this.ticketFamilys = ticketFamilys;
+    }
+
     public Long getCabinClassId() {
         return cabinClassId;
     }
@@ -72,14 +81,6 @@ public class CabinClass implements Serializable {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
-    }
-    
-    public List<TicketFamily> getTicketFamilys() {
-        return ticketFamilys;
-    }
-
-    public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
-        this.ticketFamilys = ticketFamilys;
     }
 
     public String getMilePolicy() {

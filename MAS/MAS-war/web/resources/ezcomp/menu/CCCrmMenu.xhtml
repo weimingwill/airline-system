@@ -14,12 +14,12 @@
         <h:form>
             <p:menu toggleable="true" style="width:200px;">
                 <p:submenu label="Campaign Management">
-                    <p:menuitem value="Create campaign" action="#{crmNavController.redirectToCreateCampaign()}" />
+                    <p:menuitem value="Campaign dashboard" action="#{crmNavController.redirectToViewCampaigns()}" />
                 </p:submenu>
                 <p:submenu label="Customer Management">
-                    <p:menuitem value="View customers" action="#{crmNavController.redirectToViewCustomers()}" />
+                    <p:menuitem value="Customer dashboard" action="#{crmNavController.redirectToViewCustomers()}" />
                 </p:submenu>
-                <p:submenu label="Analysis">
+                <p:submenu label="CRM Analytics">
                 </p:submenu>
 
             </p:menu>

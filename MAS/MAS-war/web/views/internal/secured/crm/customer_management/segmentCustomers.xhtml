@@ -7,69 +7,46 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
-        View all customers 
+        Customer segmentation
     </ui:define>
 
     <ui:define name="content">
+        <f:facet name="header">
+            Customer Segmentation Criteria
+        </f:facet>
+        <h:form id="filterForm">         
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="gender" value="Gender:" />
+                <p:selectOneRadio id="gender" value="#{customerManager.gender}">
+                    <f:selectItem itemLabel="Female" itemValue="Female" />
+                    <f:selectItem itemLabel="Male" itemValue="Male" />
+                </p:selectOneRadio>
+            </h:panelGrid>
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="nationality" value="Nationality: " />
+                <p:selectOneMenu id="nationality" value="#{customerManager.nationality}" style="width:180px">
+                    <f:selectItem itemLabel="Select nationality" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{customerManager.nationalities}" />
+                </p:selectOneMenu>
+            </h:panelGrid>
 
-        <p:growl id="msgs" showDetail="true" />
 
-        <p:tabView>
-            <p:tab title="Search by Passport Number">
-                <h:form id="searchForm1">
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-                    <p:panel id = "searchForm1">
-                        <p:panelGrid columns="2">
-                            <p:outputLabel value="Passport Number"/>
-                            <p:inputText id="passportNo" value="#{customerManager.passportNo}" />
-                        </p:panelGrid>
-                        <p:commandButton value="Search" actionListener="#{customerManager.searchCustomerByPassportNo()}" update="form"/>
-                        <p:commandButton value="Reset" actionListener="#{customerManager.resetSearchCustomer()}" update="searchForm1,form" process="@this">
-                            <p:resetInput target="searchForm1" />
-                        </p:commandButton>
-                    </p:panel>
-                </h:form>
-            </p:tab>
+            <p:growl id="growl" showDetail="true" />
 
-            <p:tab title="Search by Name">
-                <h:form id="searchForm2">
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+            <h:panelGrid columns="1" style="margin-bottom: 10px">
+                <h:outputText id="displayRange" value="Age between #{customerManager.minAge} and #{customerManager.maxAge} years old" />
+                <p:slider for="lowerAgeLimit,higherAgeLimit" display="displayRange" style="width: 400px" range="true" displayTemplate="Between {min} and {max}" />
+            </h:panelGrid>
+            <h:inputHidden id="lowerAgeLimit" value="#{customerManager.minAge}" />
+            <h:inputHidden id="higherAgeLimit" value="#{customerManager.maxAge}" />
+            <p:separator />
 
-                    <p:panel id = "searchForm2">
-                        <p:panelGrid columns="2">
-                            <p:outputLabel value="Last Name"/>
-                            <p:inputText id="lastName" value="#{customerManager.lastName}" required="true" />
-                            <p:outputLabel value="First Name"/>
-                            <p:inputText id="firstName" value="#{customerManager.firstName}" required="true" />
-                        </p:panelGrid>
-                        <p:commandButton value="Search" actionListener="#{customerManager.searchCustomerByName()}" update="form"/>
-                        <p:commandButton value="Reset" actionListener="#{customerManager.resetSearchCustomer()}" update="searchForm2,form" process="@this">
-                            <p:resetInput target="searchForm2" />
-                        </p:commandButton>
-                    </p:panel>
-                </h:form>
-            </p:tab>
-            <p:tab title="Search by Membership ID ">
-                <h:form id="searchForm3">
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+            <p:commandButton value="Submit" actionListener="#{customerManager.segmentCustomers()}" update="form"/>
 
-                    <p:panel id = "searchForm3">
-                        <p:panelGrid columns="2">
-                            <p:outputLabel value="Membership ID"/>
-                            <p:inputText id="membershipId" value="#{customerManager.membershipId}" required="true" />
-                        </p:panelGrid>
-                        <p:commandButton value="Search" actionListener="#{customerManager.searchCustomerByMembershipId()}" update="form"/>
-                        <p:commandButton value="Reset" actionListener="#{customerManager.resetSearchCustomer()}" update="searchForm3,form" process="@this">
-                            <p:resetInput target="searchForm3" />
-                        </p:commandButton>
-                    </p:panel>
-                </h:form>
-            </p:tab>
-        </p:tabView>
-
+        </h:form>
 
         <h:form id="form"> 
-            <p:dataTable id="customer-table" var="customer" value="#{customerManager.customers}" rows="10" selectionMode="single" selection="#{customerManager.selectedCustomer}" 
+            <p:dataTable id="customer-table" var="customer" value="#{customerManager.regCusts}" rows="10" selectionMode="single" selection="#{customerManager.selectedCustomer}" 
                          paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          rowsPerPageTemplate="10,15" rowKey="#{customer.id}" tableStyleClass="table-small">
                 <p:messages autoUpdate="true"/>
@@ -128,8 +105,11 @@
 
                 <f:facet name="footer" >
                     <p:commandButton action="#{customerManager.toViewCustomerParticulars()}" value="View Particulars" update="messages" />
+                    <p:commandButton action="#{customerManager.toCreateFeedback()}" value="Yield Management" update="messages" />
                     <p:commandButton action="#{customerManager.toSegmentCustomers()}" value="Customer segmentation" update="messages" />
-                    <p:commandButton value="Reset" actionListener="#{customerManager.resetCustomer()}" update="form" process="@this">
+                    <p:commandButton action="#{customerManager.createCustomerList()}" value="Save as list" update="messages" />
+
+                    <p:commandButton value="Reset" actionListener="#{customerManager.resetSegmentCustomers()}" update="form" process="@this">
                         <p:resetInput target="form" />
                     </p:commandButton>
                 </f:facet>

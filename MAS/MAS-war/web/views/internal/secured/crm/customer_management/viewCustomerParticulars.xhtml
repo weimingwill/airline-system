@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">
+        View customer particulars
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <h:panelGrid columns="2" columnClasses="column" cellpadding="5">
+                <h:outputLabel value="ID:   " />
+                <p:outputLabel value="#{customerManager.selectedCustomer.id}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Title:" />
+                <p:inplace id="title" editor="true">
+                    <p:inputText value="#{customerManager.selectedCustomer.title}" required="true" label="text" />
+                </p:inplace>
+
+                <h:outputLabel value="First Name:" />
+                <p:inplace id="firstName" editor="true">
+                    <p:inputText value="#{customerManager.selectedCustomer.firstName}" required="true" label="text" />
+                </p:inplace>
+
+                <h:outputLabel value="Last Name:" />
+                <p:inplace id="lastName" editor="true">
+                    <p:inputText value="#{customerManager.selectedCustomer.lastName}" required="true" label="text" />
+                </p:inplace>
+
+                <h:outputLabel value="Passport Number" />
+                <p:inplace id="passportNo" editor="true">
+                    <p:inputText value="#{customerManager.selectedCustomer.passportNo}" required="true" label="text" />
+                </p:inplace>
+
+                <h:outputLabel value="Date of Birth:" />
+                <p:inplace id="dob" editor="true">
+                    <p:inputText value="#{customerManager.selectedCustomer.dob}" required="true" label="text" />
+                </p:inplace>
+
+                <h:outputLabel value="Nationality:" />
+                <p:inplace id="nationality" editor="true">
+                    <p:inputText value="#{customerManager.selectedCustomer.nationality}" required="true" label="text" />
+                </p:inplace>
+
+                <h:outputLabel value="Passport Issue Date:" />
+                <p:inplace id="passportIssueDate" editor="true">
+                    <p:inputText value="#{customerManager.selectedCustomer.passportIssueDate}" required="true" label="text" />
+                </p:inplace>
+
+                <h:outputLabel value="Passport Expire Date:" />
+                <p:inplace id="passportExpDate" editor="true">
+                    <p:inputText value="#{customerManager.selectedCustomer.passportExpDate}" required="true" label="text" />
+                </p:inplace>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Back to customer list" action="#{customerManager.toViewCustomers()}"  />
+                </f:facet>
+
+            </h:panelGrid>
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>
