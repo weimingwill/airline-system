@@ -102,7 +102,7 @@
                                     <p:row>
                                         <p:column>
                                             <p:outputLabel value="S$" rendered="#{fbHelper.available}"/>
-                                            <p:outputLabel value="#{fbHelper.flightSchedBookingCls.price}" rendered="#{fbHelper.available}">
+                                            <p:outputLabel value="#{fbHelper.price}" rendered="#{fbHelper.available}">
                                                 <f:convertNumber maxFractionDigits="1" /> 
                                             </p:outputLabel>
                                             <p:outputLabel value="Not available" rendered="#{not fbHelper.available}" />
