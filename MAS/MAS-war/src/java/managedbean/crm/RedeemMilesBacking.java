@@ -66,12 +66,16 @@ public class RedeemMilesBacking implements Serializable {
 
     public List<MilesRedemption> getMilesRedemptions() {
         List<MilesRedemption> milesRedemptions = new ArrayList();
-        milesRedemptions.add(new MilesRedemption("Singapore", "Perth", 2431.0, "SIN-PER-01"));
-        milesRedemptions.add(new MilesRedemption("Perth", "Singapore", 2431.0, "PER-SIN-02"));
-        milesRedemptions.add(new MilesRedemption("Singapore", "Beijing", 2777.0, "SIN-PEK-01"));
-        milesRedemptions.add(new MilesRedemption("Beijing", "Singapore", 7364.0, "PEK-SIN-02"));
-        milesRedemptions.add(new MilesRedemption("New York", "Shanghai", 7364.0, "JFK-PVG-01"));
-        milesRedemptions.add(new MilesRedemption("Shanghai", "New York", 7364.0, "PVG-JFK-02"));
+        milesRedemptions.add(new MilesRedemption("Singapore", "Hong Kong", 1604.0*4, "SIN-HKG-01"));
+        milesRedemptions.add(new MilesRedemption("Hong Kong", "Singapore", 1604.0*4, "HKG-SIN-02"));
+        milesRedemptions.add(new MilesRedemption("Singapore", "Perth", 2431.0*4, "SIN-PER-01"));
+        milesRedemptions.add(new MilesRedemption("Perth", "Singapore", 2431.0*4, "PER-SIN-02"));
+        milesRedemptions.add(new MilesRedemption("London", "San Francisco", 5368.0*4, "LCY-SFO-01"));
+        milesRedemptions.add(new MilesRedemption("San Francisco", "London", 5368.0*4, "SFO-LCY-02"));
+        milesRedemptions.add(new MilesRedemption("Singapore", "Beijing", 2777.0*4, "SIN-PEK-01"));
+        milesRedemptions.add(new MilesRedemption("Beijing", "Singapore", 7364.0*4, "PEK-SIN-02"));
+        milesRedemptions.add(new MilesRedemption("New York", "Shanghai", 7364.0*4, "JFK-PVG-01"));
+        milesRedemptions.add(new MilesRedemption("Shanghai", "New York", 7364.0*4, "PVG-JFK-02"));
         return milesRedemptions;
     }
 
