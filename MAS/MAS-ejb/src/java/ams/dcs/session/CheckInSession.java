@@ -5,12 +5,14 @@
  */
 package ams.dcs.session;
 
+import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.AirTicketPricingItem;
 import ams.ars.entity.BoardingPass;
 import ams.ars.entity.PricingItem;
+import ams.ars.entity.Seat;
 import ams.crm.entity.Customer;
 import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.entity.Luggage;
@@ -44,9 +46,9 @@ public class CheckInSession implements CheckInSessionLocal {
 
     @Override
     public List<AirTicket> getFSforCheckin(String passport) {
-        List<AirTicket> airTickets = new ArrayList<>();
+        List<AirTicket> airTickets = new ArrayList();
 
-        Query q = em.createQuery("SELECT a FROM Airticket a ORDER BY a.flightSchedBookingClass.flightSchedule.departureDate ASC WHERE a.customer.passportNo =:pass AND a.status =:ready");
+        Query q = em.createQuery("SELECT a FROM AirTicket a WHERE a.customer.passportNo =:pass AND a.status =:ready ORDER BY a.flightSchedBookingClass.flightSchedule.departDate ASC");
         q.setParameter("pass", passport);
         q.setParameter("ready", "Booking confirmed");
         try {
@@ -57,12 +59,26 @@ public class CheckInSession implements CheckInSessionLocal {
         return airTickets;
     }
 
-    public String selectSeat(String ticketNo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        at.g
+    @Override
+    public boolean selectSeat(long ticketNo, Seat seat) {
+        try {
+            Seat s = em.find(Seat.class, seat.getId());
+            AirTicket a = em.find(AirTicket.class, ticketNo);
+
+            s.setReserved(Boolean.TRUE);
+            a.setSeat(s);
+
+            em.merge(s);
+            em.merge(a);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public boolean checkInPassenger(AirTicket ticket) {
+    public BoardingPass checkInPassenger(AirTicket ticket) {
 
         try {
             AirTicket at = em.find(AirTicket.class, ticket.getId());
@@ -83,9 +99,9 @@ public class CheckInSession implements CheckInSessionLocal {
             at.setStatus("Checked-in");
             em.merge(at);
 
-            return true;
+            return bp;
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 
@@ -132,7 +148,6 @@ public class CheckInSession implements CheckInSessionLocal {
 
     @Override
     public List<Luggage> getCustomerLuggages(Customer cust, FlightSchedule schedule) {
-        em.createQuery("SELECT l FROM Luggage l WHERE ");
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -183,12 +198,44 @@ public class CheckInSession implements CheckInSessionLocal {
     @Override
     public AirTicket searchTicketByID(long ticketID) throws NoSuchPNRException {
         AirTicket a = new AirTicket();
-        
-        try{
+
+        try {
             a = em.find(AirTicket.class, ticketID);
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new NoSuchPNRException();
         }
         return a;
+    }
+
+    @Override
+    public List<Seat> getSeatsByTicket(AirTicket airTicket) {
+        Query q = em.createQuery("SELECT s FROM AirTicket a, IN(a.flightSchedBookingClass.seats) AS s WHERE a.id = :aid");
+        q.setParameter("aid", airTicket.getId());
+        try {
+            return (ArrayList<Seat>)q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Integer> getRowList() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<String> getColList() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Seat getSeatByID(long id) {
+        Query q = em.createQuery("SELECT s FROM Seat s WHERE s.id =:seatID");
+        q.setParameter("seatID", id);
+        try {
+            return (Seat) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

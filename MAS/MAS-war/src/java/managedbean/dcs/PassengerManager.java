@@ -5,14 +5,7 @@
  */
 package managedbean.dcs;
 
-import ams.ais.entity.BookingClass;
-import ams.ais.entity.CabinClass;
-import ams.ais.entity.FlightScheduleBookingClass;
-import ams.ais.entity.TicketFamily;
-import ams.aps.entity.Airport;
-import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
-import ams.aps.entity.Leg;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.BoardingPass;
 import ams.ars.entity.Seat;
@@ -63,6 +56,10 @@ public class PassengerManager implements Serializable {
     private long boardingPassNo;
     private BoardingPass pass;
 
+    private Seat seat;
+    private List<Seat> seats;
+
+    private AirTicket selectedTicket;
     private AirTicket airTicket;
     private Date boardingDate;
     private List<FlightSchedule> flightSchedules = new ArrayList<>();
@@ -79,55 +76,8 @@ public class PassengerManager implements Serializable {
     @PostConstruct
     public void init() {
         cleanSession();
-        
-        passenger = new Customer();
-        passenger.setFirstName("Chuning");
-        passenger.setLastName("Liu");
-        passportNo = "G11231123";
-        passenger.setPassportNo("G11231123");
-        
-        Airport a1 = new Airport();
-        a1.setAirportName("aaa111");
-        a1.setIataCode("AAA");
-        Airport a2 = new Airport();
-        a2.setAirportName("aaa222");
-        a2.setIataCode("AAB");
-        Leg l = new Leg();
-        l.setDepartAirport(a1);
-        l.setArrivalAirport(a2);
-        
-        Flight f = new Flight();
-        f.setFlightNo("MU545");
-        FlightSchedule fs = new FlightSchedule();
-        fs.setLeg(l);
-        fs.setArrivalDate(new Date());
-        fs.setDepartGate("28");
-        fs.setDepartDate(new Date());
-        fs.setFlight(f);
-        
-        CabinClass cc = new CabinClass();
-        cc.setType("B");
-        TicketFamily tf = new TicketFamily();
-        tf.setCabinClass(cc);
-        FlightScheduleBookingClass fabc = new FlightScheduleBookingClass();
-        fabc.setFlightSchedule(fs);
-        BookingClass bc = new BookingClass();
-        bc.setTicketFamily(tf);
-        fabc.setBookingClass(bc);
-        
-        Seat s = new Seat();
-        s.setRowNo(11);
-        s.setColNo("A");
-        
-        pass = new BoardingPass();
-        airTicket = new AirTicket();
-        airTicket.setSeat(s);
-        airTicket.setCustomer(passenger);
-        airTicket.setFlightSchedBookingClass(fabc);
-        airTicket.setBoardingPass(pass);
-        airTicketsSelected.add(airTicket);
     }
-            
+
     public String checkPassenger() {
         passenger = checkInSession.getCustomerByPassport(getPassportNo());
         if (passenger == null) {
@@ -162,33 +112,62 @@ public class PassengerManager implements Serializable {
         }
     }
 
-    public void selectSeat(AjaxBehaviorEvent event) {
+    public String getAvailableSeats() {
+        List<Seat> ss = checkInSession.getSeatsByTicket(selectedTicket);
+        if (ss != null) {
+            setSeats(ss);
+            return dcsNavController.toSelectSeat();
+        } else {
+            msgController.addErrorMessage("No seats available");
+            return "";
+        }
+    }
+
+    public void onRowChange() {
+    }
+
+    public void selectSeat() {
         System.out.println("passport = " + passportNo);
+        if (seat == null) {
+            msgController.addErrorMessage("Seat not selected!");
+        } else {
+            if (checkInSession.selectSeat(airTicket.getId(), seat)) {
+                msgController.addMessage("Select a seat successfully!");
+                seat = null;
+                airTicket = null;
+            } else {
+                msgController.addErrorMessage("Failed to select seat!");
+            }
+        }
     }
 
     public void checkInPassenger() {
-        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        RequestContext context = RequestContext.getCurrentInstance();
-        context.execute("window.open('" + request.getContextPath() + dcsNavController.toBoardingPass() + "', '_blank')");
+//        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+//        RequestContext context = RequestContext.getCurrentInstance();
+//        context.execute("window.open('" + request.getContextPath() + dcsNavController.toBoardingPass() + "', '_blank')");
         if (airTicket == null) {
             msgController.addErrorMessage("No PNR selected!");
-        } else if (!checkInSession.checkInPassenger(airTicket)) {
-            msgController.addErrorMessage("Check-in error!");
         } else {
-            msgController.addMessage("Check in completed!");
-//            HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-//            RequestContext context = RequestContext.getCurrentInstance();
-            context.update(":myForm:ticket");
-            context.execute("PF('luggageDlg').show()");
-            context.execute("window.open('" + request.getContextPath() + dcsNavController.toBoardingPass() + "', '_blank')");
+            pass = checkInSession.checkInPassenger(airTicket);
+            if (pass == null) {
+                msgController.addErrorMessage("Check-in error!");
+            } else {
+                msgController.addMessage("Check in completed!");
+                boardingDate = pass.getBoardingTime();
+                HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+                RequestContext context = RequestContext.getCurrentInstance();
+                context.update(":myForm:ticket");
+                context.execute("PF('luggageDlg').show()");
+                context.execute("window.open('" + request.getContextPath() + dcsNavController.toBoardingPass() + "', '_blank')");
+            }
         }
-
     }
 
     public void proceedToLuggage() {
         Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         map.put("checkedTicket", airTicket);
         map.put("passenger", passenger);
+        cleanSession();
         luggageManager.ticketReceived();
     }
 
@@ -199,6 +178,7 @@ public class PassengerManager implements Serializable {
             pass = airTicket.getBoardingPass();
             return dcsNavController.toConfirmBoarding();
         } catch (NoSuchBoardingPassException e) {
+            cleanSession();
             msgController.addErrorMessage("No such boarding pass found!");
             return "";
         }
@@ -208,20 +188,36 @@ public class PassengerManager implements Serializable {
         try {
             checkInSession.boardPassenger(airTicket);
             msgController.addMessage("Boarding successfully!");
+            cleanSession();
             return dcsNavController.toBoardPassenger();
         } catch (Exception e) {
+            cleanSession();
             msgController.addErrorMessage("Boarsing Error happened!");
             return dcsNavController.toBoardPassenger();
         }
     }
 
     private void cleanSession() {
+
         setAirTicketsSelected(new ArrayList());
         setAirtickets(new ArrayList());
         setAirticketsUpdated(new ArrayList());
         setFlightSchedules(new ArrayList());
         setPassenger(null);
         setPassportNo("");
+        setAirTicket(new AirTicket());
+        setBoardingDate(new Date());
+    }
+
+    public Seat getSeatbyID(long id) {
+        Seat temp = checkInSession.getSeatByID(id);
+        if (temp == null) {
+            System.out.println("Seat Not Found: " + id);
+            msgController.addErrorMessage("Seat Not Found!");
+            return null;
+        } else {
+            return temp;
+        }
     }
 
     /**
@@ -363,4 +359,47 @@ public class PassengerManager implements Serializable {
     public void setBoardingDate(Date boardingDate) {
         this.boardingDate = boardingDate;
     }
+
+    /**
+     * @return the seats
+     */
+    public List<Seat> getSeats() {
+        return seats;
+    }
+
+    /**
+     * @param seats the seats to set
+     */
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
+    }
+
+    /**
+     * @return the selectedTicket
+     */
+    public AirTicket getSelectedTicket() {
+        return selectedTicket;
+    }
+
+    /**
+     * @param selectedTicket the selectedTicket to set
+     */
+    public void setSelectedTicket(AirTicket selectedTicket) {
+        this.selectedTicket = selectedTicket;
+    }
+
+    /**
+     * @return the seat
+     */
+    public Seat getSeat() {
+        return seat;
+    }
+
+    /**
+     * @param seat the seat to set
+     */
+    public void setSeat(Seat seat) {
+        this.seat = seat;
+    }
+
 }

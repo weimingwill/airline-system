@@ -95,6 +95,7 @@ public class LuggageManager implements Serializable {
                 msgController.addErrorMessage("Air ticket not checked in!");
                 return "";
             }else{
+                setAirTicket(a);
                 return dcsNavController.toCheckInLuggage();
             }
         } catch (NoSuchPNRException e) {

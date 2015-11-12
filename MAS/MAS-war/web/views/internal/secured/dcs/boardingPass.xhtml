@@ -12,7 +12,7 @@
                 <p:graphicImage value="/resources/images/boardingpass.png" height="auto" width="40%" style="margin-right: 700"/>
             </f:facet>
 
-            <p:outputLabel value="Boarding Pass ID"/>
+            <p:outputLabel value="Reference ID"/>
             <p:outputLabel value="#{passengerManager.airTicket.boardingPass.id}"/>
             <p:graphicImage value="/resources/images/barcode.png" height="auto" width="50%"/>
             <p:outputLabel value="" />
@@ -42,8 +42,10 @@
                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
                 </p:outputLabel>
             </p:outputLabel>
-            <p:outputLabel style="font-weight: bold;" value="Boarding Time"/>
-            <p:outputLabel style="font-weight: bold;" value="#{passengerManager.boardingDate}" />
+            <p:outputLabel style="font-weight: bold;" value="Boarding Time" />
+            <p:outputLabel style="font-weight: bold;" value="#{passengerManager.boardingDate}">
+                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+            </p:outputLabel>
 
         </p:panelGrid>
 

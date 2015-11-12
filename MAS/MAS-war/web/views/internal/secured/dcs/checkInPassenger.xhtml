@@ -56,10 +56,12 @@
                 </p:column>
 
                 <p:column headerText="Seat Selection" style="width:16px;text-align:center" rendered="#{empty ticket.seat}">
-                    <p:commandButton action="#{dcsNavController.toSelectSeat}" icon="ui-icon-check" title="Select seat" />
+                    <p:commandButton action="#{dcsNavController.toSelectSeat}" icon="ui-icon-check" title="Select seat">
+                        <f:setPropertyActionListener value="#{ticket}" target="#{passengerManager.selectedTicket}" />
+                    </p:commandButton>
                 </p:column>
 
-                <p:column headerText="Check In" selectionMode="single" style="width:16px;text-align:center" rendered="#{not empty ticket.seat and (ticket.status != 'Checked in')}"/>
+                <p:column headerText="Check In" selectionMode="single" style="width:16px;text-align:center" />
 
                 <f:facet name="footer">
                     <p:commandButton icon="ui-icon-check" process="ticket" value="Check in and print boarding pass" update=":myForm:checkInPassDlg" oncomplete="PF('checkInPassDlg').show()"/>
@@ -69,11 +71,11 @@
 
             <p:dialog id="checkInPassDlg" widgetVar="checkInPassDlg" header="Passeger Check In" resizable="false">
                 <p:outputLabel id="confirmCheckinMsg" value="Confirm check-in and print following boarding pass?"/>
-                
+
                 <p:panelGrid  columns="2" style="margin-top:2px">
                     <p:outputLabel value="Passenger #{passengerManager.passenger.firstName}/#{passengerManager.passenger.lastName}"/>
                     <p:outputLabel value="Passport #{passengerManager.passportNo}"/>
-                    
+
                     <p:outputLabel value="Flight: "/>
                     <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.flightSchedule.flight.flightNo}"/>
 
