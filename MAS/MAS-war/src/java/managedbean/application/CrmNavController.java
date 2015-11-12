@@ -65,4 +65,8 @@ public class CrmNavController implements Serializable {
     public String redirectToViewCampaigns() {
         return CRM_URL + "campaign_management/viewCampaigns.xhtml" + REDIRECT;
     }
+    
+    public String redirectToGenderDistribution() {
+        return CRM_URL + "analytics/genderDistribution.xhtml" + REDIRECT;
+    }
 }
