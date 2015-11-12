@@ -7,6 +7,8 @@ package managedbean.application;
 
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import managedbean.afos.FlightCrewBiddingManager;
 
 /**
  *
@@ -15,6 +17,9 @@ import javax.enterprise.context.RequestScoped;
 @Named(value = "afosNavController")
 @RequestScoped
 public class AfosNavController {
+
+    @Inject
+    FlightCrewBiddingManager biddingManager;
 
     private final String REDIRECT = "?faces-redirect=true";
     private final String AFOS_URL = "/views/internal/secured/afos/";
@@ -28,5 +33,22 @@ public class AfosNavController {
     // AFOS
     public String toViewCrewProfile() {
         return AFOS_URL + "crew_regulation/viewFlightCrewProfile.xhtml" + REDIRECT;
+    }
+
+    public String toManageBidding() {
+        return AFOS_URL + "crew_schedule/manageBidding.xhtml" + REDIRECT;
+    }
+
+    public String toSelectBiddingSession() {
+        biddingManager.init();
+        return AFOS_URL + "crew_schedule/selectBiddingSession.xhtml" + REDIRECT;
+    }
+
+    public String toBidPairings() {
+        return AFOS_URL + "crew_schedule/bidPairings.xhtml" + REDIRECT;
+    }
+    
+    public String toViewBidHist(){
+        return AFOS_URL + "crew_schedule/viewBidHist.xhtml" + REDIRECT;
     }
 }

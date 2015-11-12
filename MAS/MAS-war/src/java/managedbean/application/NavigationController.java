@@ -60,19 +60,19 @@ public class NavigationController implements Serializable {
 
     //Password reset
     public String toPasswordReset() {
-        return "/views/unsecured/common/users/resetPassword.xhtml";
+        return "/views/internal/unsecured/common/users/resetPassword.xhtml";
     }
 
     public String toPasswordResetSendEmail() {
-        return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml";
+        return "/views/internal/unsecured/common/users/resetPasswordSendEmail.xhtml";
     }
 
     public String redirectToPasswordResetSendEmail() {
-        return "/views/unsecured/common/users/resetPasswordSendEmail.xhtml" + REDIRECT;
+        return "/views/internal/unsecured/common/users/resetPasswordSendEmail.xhtml" + REDIRECT;
     }
 
     public String toUnsecuredUsersFolder() {
-        return "http://localhost:8080/MAS-war/views/unsecured/common/users/";
+        return "http://localhost:8080/MAS-war/views/internal/unsecured/common/users/";
     }
 
     //Access control
@@ -321,15 +321,15 @@ public class NavigationController implements Serializable {
     }
 
     public String toCheckRoute() {
-        return APS_URL + "route/checkRouteExistence.xhtml" + REDIRECT;
+        return APS_URL + "route/planRoute.xhtml" + REDIRECT;
     }
 
     public String toGenerateRoute() {
-        return APS_URL + "route/generateRoute.xhtml" + REDIRECT;
+        return APS_URL + "route/generateRoute.xhtml";
     }
 
     public String toCustomizeRoute() {
-        return APS_URL + "route/customizeRoute.xhtml" + REDIRECT;
+        return APS_URL + "route/customizeRoute.xhtml";
     }
 
     public String toViewRoutes() {

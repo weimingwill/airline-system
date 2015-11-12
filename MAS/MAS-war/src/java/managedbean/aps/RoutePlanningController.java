@@ -62,10 +62,6 @@ public class RoutePlanningController implements Serializable {
     public RoutePlanningController() {
     }
 
-    public void cleanOD() {
-        setOrigin(null);
-        setDestination(null);
-    }
 
     public void odPass() {
         boolean refresh = false;
@@ -87,7 +83,7 @@ public class RoutePlanningController implements Serializable {
         System.out.println("RoutePlanningController: odPass: " + origin.getAirportName() + " " + destination.getAirportName());
     }
 
-    public void planODRoute() {
+    private void planODRoute() {
         List<Airport> stops = new ArrayList<>();
         stops.add(origin);
         stops.add(destination);
@@ -98,7 +94,7 @@ public class RoutePlanningController implements Serializable {
         routeList.add(od);
     }
 
-    public void planHSRoute() {
+    private void planHSRoute() {
         System.out.println("RoutePlanningController: planHSRoute(): ");
 
         List<Airport> stops = routePlanningSession.getShortestHSRoute(origin, destination);
@@ -166,7 +162,7 @@ public class RoutePlanningController implements Serializable {
         }
     }
     
-    public void refreshAirportList(){
+    private void refreshAirportList(){
         stopOvers = routePlanningSession.getAllAirports();
         stopOvers.remove(origin);
         stopOvers.remove(destination);
