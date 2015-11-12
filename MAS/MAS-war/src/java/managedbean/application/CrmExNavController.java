@@ -48,4 +48,5 @@ public class CrmExNavController implements Serializable {
     public String redirectToMainPage(){
         return CRM_EX_SECURED_URL + "customerMainPage.xhtml"+REDIRECT;
     }
+   
 }

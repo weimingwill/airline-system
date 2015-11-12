@@ -36,9 +36,11 @@ public class FeedbackSession implements FeedbackSessionLocal {
         System.out.println("regcustid is "+regCust.getId());
         regCust = entityManager.find(RegCust.class, regCust.getId());
         List<Feedback> feedbackList = regCust.getFeedbacks();
-        System.out.println("feedbacks" +regCust.getFeedbacks());
+        System.out.println("feedbacks" +feedbackList);
         feedbackList.add(feedback);
         regCust.setFeedbacks(feedbackList);
+        feedback.setRegCust(regCust);
+        entityManager.merge(feedback);
         entityManager.merge(regCust);
         entityManager.flush();
 

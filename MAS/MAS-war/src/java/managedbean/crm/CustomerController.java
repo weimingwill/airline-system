@@ -108,6 +108,11 @@ public class CustomerController implements Serializable {
         customerSession.updateMiles(email,accMiles-redeemMilesBacking.getSelectedMilesRedemption().getMiles());
         return navigationController.redirectToCurrentPage();
     }
+    
+    public String claimMiles() throws NoSuchRegCustException{
+        customerSession.updateMiles(email,accMiles+redeemMilesBacking.getSelectedMilesRedemption().getMiles());
+        return navigationController.redirectToCurrentPage();
+    }
     public void initializeCustomer() {
         try {
             RegCust regCust = getRegCustByEmail();

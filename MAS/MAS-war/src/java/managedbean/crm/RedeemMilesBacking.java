@@ -6,9 +6,7 @@
 package managedbean.crm;
 
 import ams.crm.entity.helper.MilesRedemption;
-import ams.crm.util.exception.NoEnoughPointException;
 import ams.crm.util.exception.NoSuchRegCustException;
-import ams.crm.util.helper.CrmMsg;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

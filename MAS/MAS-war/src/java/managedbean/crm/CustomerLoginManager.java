@@ -5,12 +5,10 @@
  */
 package managedbean.crm;
 
-import ams.crm.entity.RegCust;
 import ams.crm.session.CustomerSessionLocal;
 import ams.crm.util.exception.InvalidPasswordException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.CrmMsg;
-import botdetect.web.jsf.JsfCaptcha;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -19,11 +17,10 @@ import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import managedbean.application.CrmExNavController;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
-import mas.common.session.SystemUserSessionLocal;
-import util.helper.CountdownHelper;
-import util.security.CryptographicHelper;
+import mas.common.util.helper.UserMsg;
 
 /**
  *
@@ -37,11 +34,14 @@ public class CustomerLoginManager implements Serializable {
     private NavigationController navigationController;
     @Inject
     private MsgController msgController;
+    @Inject
+    private CrmExNavController CrmExNavController;
 
     @EJB
     private CustomerSessionLocal customerSession;
 
     private String email;
+    
 
     public String getEmail() {
         return email;
@@ -58,6 +58,13 @@ public class CustomerLoginManager implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
     
     private String password;
     private boolean loggedIn=false;
@@ -65,12 +72,20 @@ public class CustomerLoginManager implements Serializable {
 //    private JsfCaptcha captcha;
 //    private String captchaCode;
 
+    
+
     /**
      * Creates a new instance of LoginManager
      */
     public CustomerLoginManager() {
     }
-
+    public String doLogout() {
+        loggedIn = false;
+        
+        email = null;
+        msgController.addMessage(UserMsg.LOGIN_OUT_MSG);
+        return CrmExNavController.redirectToCustomerLogin();
+    }
     public String doLogin() throws NoSuchRegCustException, InvalidPasswordException, InterruptedException {
 //        CountdownHelper countdownHelper = new CountdownHelper(registrationSession);
 //     
