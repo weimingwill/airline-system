@@ -32,7 +32,7 @@ public class PairingFlightCrew implements Serializable {
     private PairingCrewId pairingCrewId;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @PrimaryKeyJoinColumn(name = "FLIGHTCREWID", referencedColumnName = "SYSTEMUSERID")
+    @PrimaryKeyJoinColumn(name = "SYSTEMUSERID", referencedColumnName = "SYSTEMUSERID")
     private FlightCrew flightCrew;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
