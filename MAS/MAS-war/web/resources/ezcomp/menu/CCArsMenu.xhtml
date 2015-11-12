@@ -14,19 +14,15 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:form id="navigationMenu">
-            <p:menubar style="font-size: larger" styleClass="navigationMenu">
-                <p:menuitem value="Merline Airline" url="#{arsNavController.redirectToARS()}">
-                    <p:commandLink action="#{arsNavController.redirectToARS()}">
-                        <p:graphicImage value="/resources/images/logo.png" height="45px" width="auto"/>
-                    </p:commandLink>
-                </p:menuitem>
-
-                
-                <f:facet name="options">
-                    <p:commandButton value="Login"  icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>
-                </f:facet>
-            </p:menubar>
-        </h:form>        
+                    <h:form>
+            <p:menu toggleable="true" style="width:200px;">
+                <p:submenu label="Flight Booking">
+                    <p:menuitem action="#{arsNavController.redirectToARS()}" value="Search for flights" />
+                </p:submenu>
+                <p:submenu label="Manage Booking">
+                    <p:menuitem   value="Search for booking"/>
+                </p:submenu>
+            </p:menu>
+        </h:form>
     </cc:implementation>
 </html>

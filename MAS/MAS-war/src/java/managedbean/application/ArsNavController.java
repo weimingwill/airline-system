@@ -17,7 +17,7 @@ import javax.enterprise.context.RequestScoped;
 @RequestScoped
 public class ArsNavController implements Serializable {
     private final String REDIRECT = "?faces-redirect=true";
-    private final String ARS_URL = "/views/external/unsecured/ars/";
+    private final String ARS_URL = "/views/internal/secured/ars/";
     /**
      * Creates a new instance of ArsNavController
      */
@@ -31,6 +31,18 @@ public class ArsNavController implements Serializable {
     public String redirectToSearchFlightResult() {
         return ARS_URL + "flight_booking/searchResults.xhtml" + REDIRECT;
     }
+    
+    public String redirectToLoginBooking() {
+        return ARS_URL + "flight_booking/loginBooking.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToPassengerInfo() {
+        return ARS_URL + "flight_booking/passengerInfo.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToBookingSummary() {
+        return ARS_URL + "flight_booking/bookingSummary.xhtml" + REDIRECT;
+    } 
     
     
     

@@ -34,7 +34,8 @@
                 <p:column><p:outputLabel value="" /></p:column>
                 <p:column><p:outputLabel value="Total price" /></p:column>
                 <p:column rowspan="4">
-                    <p:commandButton value="Continue" update="messages" action="#{crmExNavController.redirectToLoginBooking()}" />
+                    <p:commandButton value="Continue" update="messages" action="#{crmExNavController.redirectToLoginBooking()}" rendered="#{not loginController.loggedIn}" />
+                    <p:commandButton value="Continue" update="messages" action="#{arsNavController.redirectToPassengerInfo()}" rendered="#{loginController.loggedIn}" />
                 </p:column>
             </p:row>
 

@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="./../../../../../template/ArsTemplate.xhtml"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:ti="http://xmlns.jcp.org/jsf/composite/ezcomp/tile">
+
+    <ui:define name="title">
+        Search Result
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <pa:CCFlightSearchPanel />
+
+            <h2>#{bookingManager.deptAirport.city.cityName} > #{bookingManager.arrAirport.city.cityName}</h2>
+
+            <p:panelGrid>
+                <!--Header-->
+                <p:row>
+                    <p:column rowspan="2">Departure</p:column>
+                    <p:column rowspan="2"><p:outputLabel value="" /></p:column>
+                    <p:column rowspan="2">Arrival</p:column>
+                  
+                    <c:forEach items="#{bookingManager.tixFams}" var="tixFam">
+                        <p:column colspan="1" styleClass="alignCenter" >#{tixFam.cabinClass.name}</p:column>
+                    </c:forEach>
+                </p:row>
+                <p:row>
+                    <c:forEach items="#{bookingManager.tixFams}" var="tixFam">
+                        <p:column colspan="1" styleClass="alignCenter" >#{tixFam.name}</p:column>
+                    </c:forEach>
+                </p:row>
+
+                <p:row>
+                    <c:forEach items="#{bookingManager.tixFams}" var="tixFam">
+                        <p:column colspan="1"><p:outputLabel value="" /></p:column>
+                    </c:forEach>
+                </p:row>
+
+                <!--Flight Schedules-->
+                <c:forEach items="#{bookingManager.flightSchedHelpers}" var="flightSchedHelper" varStatus="i" >
+                    <c:set value="#{flightSchedHelper.flightSched}" var="flightSched" />
+                    <p:row>
+                        <p:column>
+                            <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.departAirport}" date="#{flightSched.departDate}" />
+                        </p:column>
+                        <p:column>
+                            <pa:CCFlightSchedDurationPanel time="#{flightSchedHelper.totalDur}"/>
+                        </p:column>
+                        <p:column>
+                            <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.arrivalAirport}" date="#{flightSched.arrivalDate}" 
+                                                       rendered="#{empty flightSchedHelper.nextFlightSched}"/>
+                            <pa:CCFlightSchedInfoPanel flightSched="#{flightSchedHelper.nextFlightSched}" airport="#{flightSchedHelper.nextFlightSched.leg.arrivalAirport}" date="#{flightSchedHelper.nextFlightSched.arrivalDate}" 
+                                                       rendered="#{not empty flightSchedHelper.nextFlightSched}"/>
+                        </p:column>
+
+                        <p:column colspan="#{bookingManager.tixFams.size()}">
+
+                            <p:dataGrid styleClass="alignCenter" value="#{flightSchedHelper.fbHelpers}" var="fbHelper" columns="#{bookingManager.tixFams.size()}" rowIndexVar="index">
+                                <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFb}" converter="flightSchedBookingClsConverter" layout="custom">
+                                    <!--<p:ajax event="change" update="form,barForm" onstart="PF('bar').hide();" oncomplete="PF('bar').show();" listener="{bookingManager.onFlightSchedRadioSelected()}"/>-->
+                                    <p:ajax event="change" update="form,barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
+                                    <f:selectItems value="#{flightSchedHelper.flightSchedBookingClses}"/>
+
+                                </p:selectOneRadio>
+
+
+                                <p:panelGrid styleClass="alignCenter" style="width: 100%;">
+                                    <p:row>
+                                        <p:column>
+                                            <p:radioButton for="priceRadio" itemIndex="#{index}" rendered="#{fbHelper.available}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="S$" rendered="#{fbHelper.available}"/>
+                                            <p:outputLabel value="#{fbHelper.price}" rendered="#{fbHelper.available}">
+                                                <f:convertNumber maxFractionDigits="1" /> 
+                                            </p:outputLabel>
+                                            <p:outputLabel value="Not available" rendered="#{not fbHelper.available}" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel styleClass="priceTag" value="#{fbHelper.remainedSeatQty} Seat(s) Left" rendered="#{not fbHelper.showLeftSeatQty and fbHelper.available}" />
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:dataGrid>
+
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>&nbsp;</p:column>
+                        <p:column>&nbsp;</p:column>
+                        <p:column styleClass="alignRight">
+                            <p:commandLink value="More details" oncomplete="PF('flightSchedDetail').show()" >
+                                <f:setPropertyActionListener value="#{flightSched}" target="#{bookingBacking.flightSchedule}" />
+                            </p:commandLink>
+                        </p:column>
+                        <p:column>&nbsp;</p:column>
+                        <p:column>&nbsp;</p:column>
+                    </p:row>
+                </c:forEach>
+            </p:panelGrid>
+
+            <p:dialog id="flightSchedDetail" widgetVar="flightSchedDetail" header="Flight Details" showEffect="clip" hideEffect="clip" width="500px;">
+                <p:panelGrid>
+                    <p:row>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton value="Close" oncomplete="PF('flightSchedDetail').hide();" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+        <h:form id="barForm">
+            <pa:CCOneWayPriceBarPanel flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" />
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>
