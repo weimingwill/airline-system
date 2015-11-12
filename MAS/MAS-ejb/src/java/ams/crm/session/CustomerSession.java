@@ -360,4 +360,28 @@ public class CustomerSession implements CustomerSessionLocal {
         }
         return customerLists;
     }
+
+    @Override
+    public int getTotalNumberOfFemale() {
+        Query query = em.createQuery("SELECT c FROM Customer c WHERE c.gender = :female");
+        query.setParameter("female", "Female");
+        List<Customer> customers = new ArrayList<>();
+        try {
+            customers = (List<Customer>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+        return customers.size();
+    }
+
+    @Override
+    public int getTotalNumberOfMale() {
+        Query query = em.createQuery("SELECT c FROM Customer c WHERE c.gender = :male");
+        query.setParameter("male", "Male");
+        List<Customer> customers = new ArrayList<>();
+        try {
+            customers = (List<Customer>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+        return customers.size();
+    }
 }
