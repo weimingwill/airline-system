@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/DcsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Luggage Information
+        </f:facet>
+        <h:form id="myForm">
+            <p:panelGrid columns="4">
+                <p:outputLabel value="Passenger Name: " />
+                <p:outputLabel value="#{passengerManager.passenger.firstName} #{passengerManager.passenger.lastName}" />
+
+                <p:outputLabel value="Passport Number: " />
+                <p:outputLabel value="#{passengerManager.passportNo}" />
+            </p:panelGrid>
+
+            <p:dataTable id="ticket" var="ticket" value="#{luggageManager.airTickets}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                <f:facet name="header">
+                    Checked-in Ticket Information
+                </f:facet>
+
+                <p:column headerText="Flight No.">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.flight.flightNo}" />
+                </p:column>
+
+                <p:column headerText="Origin">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.leg.departAirport.iataCode}" />
+                </p:column>
+
+                <p:column headerText="Departure Date" sortBy="#{ticket.flightSchedBookingClass.flightSchedule.departDate}">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.departDate}" />
+                </p:column>
+
+                <p:column headerText="Destination">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.leg.arrivalAirport.iataCode}" />
+                </p:column>
+
+                <p:column headerText="Arrival Date">
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.arrivalDate}" />
+                </p:column>
+
+                <p:column headerText="Luggage Plan (Max Kg)">
+                    <h:outputText value="#{ticket.purchasedLuggage.maxWeight.toString}" />
+                </p:column>
+
+                <p:column headerText="Luggage Plan description">
+                    <h:outputText value="#{ticket.purchasedLuggage.description}" />
+                </p:column>
+                
+                <f:facet name="footer1">
+                    <h:outputText value="Excess weight price: #{luggageManager.totalExcessWeightPrice} SGD" />
+                </f:facet>
+
+                <f:facet name="footer">
+                    <p:commandButton title="Add luggage" update="myForm:luggageDlg" oncomplete="PF('myForm:luggageDlg').show()"/>
+                    <p:commandButton icon="ui-icon-check" title="Check in luggage and print luggage tags" oncomplete="PF('checkInLuggDlg').show()"/> 
+                </f:facet>
+
+            </p:dataTable>
+
+            <p:dialog id="luggageDlg" header="Enter luggage information" resizable="false">
+                <p:panelGrid columns="1" style="margin: 0 auto">
+                    <p:outputLabel value="Weight: *" />
+                    <p:inputText value="#{luggageManager.weight}" required="true" label="passport"/>
+
+                    <p:outputLabel value="Remark: " />
+                    <p:inputTextarea value="#{luggageManager.remark}" rows="6" cols="33" />
+                </p:panelGrid>
+                <p:separator/>
+                <p:commandButton value="Confirm" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages,:myForm:ticket" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.addLuggage}"/>
+                <p:commandButton value="Cancel" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('myForm:luggageDlg').hide()"/>   
+            </p:dialog>
+            
+            
+            <p:dialog id="checkInLuggDlg" header="Payment confirmed?" resizable="false">
+                <p:outputLabel id="confirmCheckinMsg" value="Confirm check-in and print following luggage tags?"/>
+                <p:outputLabel value="Passenger: #{luggageManager.passenger.firstName} #{luggageManager.passenger.lastName}"/>
+                <p:outputLabel value="Passport: #{luggageManager.passenger.passportNo}"/>
+
+                <p:dataTable var="tick" value="#{luggageManager.airTickets}" style="width:550px" rows="5" paginator="true" tableStyleClass="table-small-font">
+                    
+                    <p:column headerText="Flight" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.flight.flightNo}" />
+                    </p:column>
+
+                    <p:column headerText="From" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.leg.departAirport.airportName}" />
+                    </p:column>
+
+                    <p:column headerText="To" sortBy="#{tick.flightSchedBookingClass.flightSchedule.departDate}">
+                        <p:outputLabel value="#{tick.flightSchedBookingClass.flightSchedule.leg.arrivalAirport.airportName}" />
+                    </p:column>
+
+                </p:dataTable>
+                <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action="#{dcsNavController.toSearchPassenger}" actionListener="#{luggageManager.checkInLuggage}"/>
+                <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('myForm:luggageDlg').hide()"/>   
+            </p:dialog>
+            
+        </h:form>
+    </ui:define>
+
+</ui:composition>

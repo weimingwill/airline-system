@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package ams.ars.entity;
-
 import ams.crm.entity.Customer;
 import java.io.Serializable;
 import java.util.ArrayList;

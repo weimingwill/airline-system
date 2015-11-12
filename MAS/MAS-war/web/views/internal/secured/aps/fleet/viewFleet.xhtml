@@ -74,6 +74,7 @@
                         <f:setPropertyActionListener value="#{aircraft}" target="#{fleetTableController.selectedAircraft}" />
                     </p:commandButton>
                 </p:column>
+                
                 <f:facet name="footer" >
                     <p:commandButton process="fleet-table" value="Add New" icon="ui-icon-plusthick" oncomplete="PF('addNewAircraftDlg').show()"/>
                 </f:facet>

@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/DcsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Select Seat
+        </f:facet>
+        <h:form id="myForm">
+            <p:panelGrid columns="2" style="margin-bottom:10px">
+                <p:outputLabel for="seat" value="Select from avaliable seats: " />
+                <p:selectOneMenu id="seat" value="#{passengerManger.seats}" converter="seatConverter" style="width:200px" filter="true" filterMatchMode="contains">
+                    <f:selectItem itemLabel="Select" itemValue="" noSelectionOption="false"/>
+                    <f:selectItems value="#{passengerManger.seat}" var="seat" itemLabel="#{seat}" itemValue="#{seat}" />
+                </p:selectOneMenu>
+                
+            </p:panelGrid>
+            <p:separator/>
+            <p:commandButton value="Seat Confirmed" update="messages" action="#{dcsNavController.toCheckInPassenger()}" actionListener="#{passengerManager.selectSeat}" icon="ui-icon-check"/>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>
