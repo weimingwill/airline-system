@@ -349,7 +349,9 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         printBiddingSession(newBiddingSession);
         em.persist(newBiddingSession);
         for(Pairing pairing: nextMonthPairings){
-            pairing.setBiddingSession(newBiddingSession);
+            List<BiddingSession> biddingSessions = pairing.getBiddingSession();
+            biddingSessions.add(newBiddingSession);
+            pairing.setBiddingSession(biddingSessions);
             em.merge(pairing);
         }
         for(FlightCrew crew: flightCrews){
