@@ -19,6 +19,7 @@ public class CrmNavController implements Serializable {
 
     private final String REDIRECT = "?faces-redirect=true";
     private final String CRM_URL = "/views/internal/secured/crm/";
+
     /**
      * Creates a new instance of CrmNaviController
      */
@@ -28,9 +29,44 @@ public class CrmNavController implements Serializable {
     public String redirectToCRM() {
         return CRM_URL + "crmMain.xhtml" + REDIRECT;
     }
+  
+    public String redirectToViewFeedbacks() {
+        return CRM_URL + "customer_management/viewFeedbacks.xhtml" + REDIRECT;
+    }
 
+    public String redirectToCreateFeedback() {
+        return CRM_URL + "customer_management/createFeedback.xhtml" + REDIRECT;
+    }
+
+    public String redirectToViewCustomers() {
+        return CRM_URL + "customer_management/viewCustomers.xhtml" + REDIRECT;
+    }
+
+    public String redirectToViewCustomerParticulars() {
+        return CRM_URL + "customer_management/viewCustomerParticulars.xhtml" + REDIRECT;
+    }
+
+    public String redirectToViewRegCustomerParticulars() {
+        return CRM_URL + "customer_management/viewRegCustomerParticulars.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewCustomerLists() {
+        return CRM_URL + "customer_management/viewCustomerList.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToSegmentCustomers() {
+        return CRM_URL + "customer_management/segmentCustomers.xhtml" + REDIRECT;
+    }
+    
     public String redirectToCreateCampaign() {
         return CRM_URL + "campaign_management/createCampaign.xhtml" + REDIRECT;
     }
 
+    public String redirectToViewCampaigns() {
+        return CRM_URL + "campaign_management/viewCampaigns.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToGenderDistribution() {
+        return CRM_URL + "analytics/genderDistribution.xhtml" + REDIRECT;
+    }
 }
