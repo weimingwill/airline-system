@@ -7,7 +7,7 @@ package managedbean.crm;
 
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
-import ams.crm.session.CustomerSessionLocal;
+import ams.crm.session.CustomerExSessionLocal;
 import ams.crm.util.exception.ExistSuchRegCustException;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
@@ -35,7 +35,7 @@ public class RegistrationController implements Serializable {
     @Inject
     private EmailController emailController;
     @EJB
-    private CustomerSessionLocal registrationSession;
+    private CustomerExSessionLocal registrationSession;
     /**
      * Creates a new instance of RegistrationController
      */

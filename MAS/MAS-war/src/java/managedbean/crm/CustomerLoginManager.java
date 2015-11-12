@@ -5,7 +5,7 @@
  */
 package managedbean.crm;
 
-import ams.crm.session.CustomerSessionLocal;
+import ams.crm.session.CustomerExSessionLocal;
 import ams.crm.util.exception.InvalidPasswordException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.CrmMsg;
@@ -38,7 +38,7 @@ public class CustomerLoginManager implements Serializable {
     private CrmExNavController CrmExNavController;
 
     @EJB
-    private CustomerSessionLocal customerSession;
+    private CustomerExSessionLocal customerSession;
 
     private String email;
     

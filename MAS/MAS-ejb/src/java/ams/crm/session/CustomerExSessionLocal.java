@@ -21,7 +21,7 @@ import javax.ejb.Local;
  * @author Bowen
  */
 @Local
-public interface CustomerSessionLocal {
+public interface CustomerExSessionLocal {
  //   public void createRegCust(String title, String firstname,String lastname, String passportNo, String nationality, String gender,Date dob, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone mobilephone, Phone telephone, String pwd,String securQuest,String securAns, Boolean newsLetterPref, Boolean promoPref, String membershipClass, Double accMiles,Double custValue, Integer numOfFlights, String memberShipId) throws ExistSuchRegCustException;
 //    public void verifyRegCustExistence(String passportNo) throws ExistSuchRegCustException;
     public List<RegCust> getAllRegCusts();
