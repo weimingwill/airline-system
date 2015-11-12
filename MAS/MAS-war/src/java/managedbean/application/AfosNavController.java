@@ -47,4 +47,8 @@ public class AfosNavController {
     public String toBidPairings() {
         return AFOS_URL + "crew_schedule/bidPairings.xhtml" + REDIRECT;
     }
+    
+    public String toViewBidHist(){
+        return AFOS_URL + "crew_schedule/viewBidHist.xhtml" + REDIRECT;
+    }
 }

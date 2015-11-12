@@ -11,16 +11,19 @@ import ams.afos.entity.FlightCrew;
 import ams.afos.entity.Pairing;
 import ams.afos.entity.PairingFlightCrew;
 import ams.afos.entity.SwappingRequest;
+import ams.afos.entity.helper.PairingCrewId;
 import ams.afos.util.helper.BiddingSessionStatus;
 import ams.afos.util.helper.PairingCrewStatus;
 import ams.aps.util.exception.EmptyTableException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import mas.common.entity.SystemUser;
 
 /**
  *
@@ -67,23 +70,24 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
         for (Pairing thisPairing : pairings) {
             System.out.println(flightCrew);
             System.out.println(thisPairing);
-            em.merge(flightCrew);
-            em.merge(thisPairing);
             PairingFlightCrew pairingFlightCrew = new PairingFlightCrew();
             pairingFlightCrew.setLastUpdateTime(cal.getTime());
             pairingFlightCrew.setStatus(PairingCrewStatus.PENDING);
-            
-            pairingFlightCrew.setFlightCrew(flightCrew);
-            pairingFlightCrew.setPairing(thisPairing);
+            PairingCrewId pairingCrewId = new PairingCrewId();
+            pairingCrewId.setPairingId(thisPairing.getPairingId());
+            pairingCrewId.setSystemUserId(flightCrew.getSystemUserId());
+            pairingFlightCrew.setPairingCrewId(pairingCrewId);
+            pairingFlightCrew.setFlightCrew(em.find(FlightCrew.class, flightCrew.getSystemUserId()));
+            pairingFlightCrew.setPairing(em.find(Pairing.class, thisPairing.getPairingId()));
             em.persist(pairingFlightCrew);
             pairingFlightCrews.add(pairingFlightCrew);
         }
         setPairingFlightCrewsToPairing(pairings, pairingFlightCrews);
-        
+
     }
-    
-    private void setPairingFlightCrewsToPairing(List<Pairing> pairings, List<PairingFlightCrew> pairingFlightCrews){
-        for(Pairing pairing: pairings){
+
+    private void setPairingFlightCrewsToPairing(List<Pairing> pairings, List<PairingFlightCrew> pairingFlightCrews) {
+        for (Pairing pairing : pairings) {
             pairing.setPairingFlightCrews(pairingFlightCrews);
             em.merge(pairing);
         }
@@ -97,7 +101,33 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
 
     @Override
     public List<PairingFlightCrew> getFlightCrewBiddingHistory(FlightCrew flightCrew) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Date currMonthFirstDay = getCurrMonthFirstDay();
+        Date currMonthLastDay = getCurrMonthLastDay();
+        Query query = em.createQuery("SELECT pfc FROM PairingFlightCrew pfc WHERE pfc.flightCrew.systemUserId = :id ");
+        query.setParameter("id", flightCrew.getSystemUserId());
+//        query.setParameter("currMonthFirstDay", currMonthFirstDay);
+//        query.setParameter("currMonthLastDay", currMonthLastDay);
+        return (List<PairingFlightCrew>) query.getResultList();
+    }
+
+    private Date getCurrMonthFirstDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, calendar.getActualMinimum(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, calendar.getActualMinimum(Calendar.SECOND));
+        calendar.set(Calendar.MILLISECOND, calendar.getActualMinimum(Calendar.MILLISECOND));
+        return calendar.getTime();
+    }
+
+    private Date getCurrMonthLastDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMaximum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, calendar.getActualMaximum(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, calendar.getActualMaximum(Calendar.SECOND));
+        calendar.set(Calendar.MILLISECOND, calendar.getActualMaximum(Calendar.MILLISECOND));
+        return calendar.getTime();
     }
 
     @Override
