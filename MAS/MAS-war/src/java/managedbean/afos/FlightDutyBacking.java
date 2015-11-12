@@ -5,18 +5,9 @@
  */
 package managedbean.afos;
 
-import ams.afos.entity.FlightDuty;
-import ams.afos.session.FlightCrewMgmtSessionLocal;
-import ams.afos.util.exception.FlightDutyConflictException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import managedbean.application.MsgController;
 
 /**
  *
@@ -24,69 +15,12 @@ import managedbean.application.MsgController;
  */
 @Named(value = "flightDutyBacking")
 @ViewScoped
-public class FlightDutyBacking implements Serializable{
-    @EJB
-    private FlightCrewMgmtSessionLocal flightCrewMgmtSession;
-
-    @Inject
-    private MsgController msgController;
-    
-    private List<FlightDuty> flightDuties;
-    private FlightDuty selectedFlightDuty;
-    
-    
-    @PostConstruct
-    public void init(){
-        getFutureFlightDuties();
-    }
-    
-    private void getFutureFlightDuties(){
-        setFlightDuties(flightCrewMgmtSession.getNextMonthFlightDuties());
-    }
-    
-    
-    public void generateFlightDuty(){
-        System.out.println("FlightDutyBacking: generateFlightDuty");
-        try {
-            setFlightDuties(flightCrewMgmtSession.generateFlightDuties());
-            msgController.addMessage("Flight duties of next month generated succesfully");
-        } catch (FlightDutyConflictException ex) {
-            msgController.addErrorMessage(ex.getMessage());
-        }
-    }
+public class FlightDutyBacking implements Serializable {
 
     /**
      * Creates a new instance of FlightDutyBacking
      */
     public FlightDutyBacking() {
-    }
-
-    /**
-     * @return the flightDuties
-     */
-    public List<FlightDuty> getFlightDuties() {
-        return flightDuties;
-    }
-
-    /**
-     * @param flightDuties the flightDuties to set
-     */
-    public void setFlightDuties(List<FlightDuty> flightDuties) {
-        this.flightDuties = flightDuties;
-    }
-
-    /**
-     * @return the selectedFlightDuty
-     */
-    public FlightDuty getSelectedFlightDuty() {
-        return selectedFlightDuty;
-    }
-
-    /**
-     * @param selectedFlightDuty the selectedFlightDuty to set
-     */
-    public void setSelectedFlightDuty(FlightDuty selectedFlightDuty) {
-        this.selectedFlightDuty = selectedFlightDuty;
     }
 
 }

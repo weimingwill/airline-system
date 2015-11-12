@@ -10,12 +10,16 @@ import ams.afos.session.FlightCrewSessionLocal;
 import ams.aps.util.exception.EmptyTableException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.MsgController;
+import managedbean.common.UserController;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
@@ -33,6 +37,7 @@ public class FlightCrewBacking implements Serializable {
     @Inject
     private MsgController msgController;
 
+
     private List<FlightCrew> flightCrews;
     private FlightCrew selectedCrew;
 
@@ -47,6 +52,14 @@ public class FlightCrewBacking implements Serializable {
         getAllFlightCrew();
     }
 
+    public FlightCrew getCurrFlightCrew(){
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        Map<String, Object> sessionMap = externalContext.getSessionMap();
+        String username = (String) sessionMap.get("username");
+        System.out.println("Flight Crew username: " + username);
+        return flightCrewSession.getFlightCrewByUsername(username);
+    }
+    
     public void onCrewTableRowSelect(SelectEvent event) {
         if(selectedCrew != null){
             RequestContext context = RequestContext.getCurrentInstance();

@@ -5,11 +5,13 @@
  */
 package ams.afos.session;
 
+import ams.afos.entity.BiddingSession;
 import ams.afos.entity.Checklist;
 import ams.afos.entity.FlightCrew;
 import ams.afos.entity.Pairing;
 import ams.afos.entity.PairingFlightCrew;
 import ams.afos.entity.SwappingRequest;
+import ams.afos.util.helper.BiddingSessionStatus;
 import ams.aps.util.exception.EmptyTableException;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -23,25 +25,24 @@ import javax.persistence.Query;
  */
 @Stateless
 public class FlightCrewSession implements FlightCrewSessionLocal {
+
     @PersistenceContext(unitName = "MAS-ejbPU")
     private EntityManager em;
-    
-    
+
     @Override
-    public List<FlightCrew> getAllFlightCrew() throws EmptyTableException{
+    public List<FlightCrew> getAllFlightCrew() throws EmptyTableException {
         Query query = em.createQuery("SELECT f FROM FlightCrew f WHERE f.deleted = FALSE");
         List<FlightCrew> flightCrews;
-        try{
+        try {
             flightCrews = (List<FlightCrew>) query.getResultList();
             return flightCrews;
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new EmptyTableException("No Flight Crew Found in Database!");
         }
     }
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-
     public void persist(Object object) {
         em.persist(object);
     }
@@ -53,11 +54,6 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
 
     @Override
     public void updatePostFlightChecklist(Checklist checklist) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Pairing> getAllEligiblePairings(FlightCrew flightCrew) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -95,4 +91,30 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
     public void cancelSwappingRequest(SwappingRequest thisRequest) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public FlightCrew getFlightCrewByUsername(String username) {
+        Query query = em.createQuery("SELECT fc FROM FlightCrew fc WHERE fc.username =:username");
+        query.setParameter("username", username);
+        try {
+            return (FlightCrew) query.getSingleResult();
+        } catch (Exception ex) {
+            System.out.println("No such user exits");
+        }
+        return null;
+    }
+
+    @Override
+    public List<BiddingSession> getEligibleBiddingSessions(FlightCrew flightCrew) {
+
+        Query query = em.createQuery("SELECT bs FROM BiddingSession bs WHERE bs.status = :status AND :crew MEMBER OF bs.flightCrews ORDER BY bs.startTime ASC");
+        query.setParameter("status", BiddingSessionStatus.CREATED);
+        query.setParameter("crew", flightCrew);
+        return (List<BiddingSession>) query.getResultList();
+    }
+
+    //    @Override
+//    public List<Pairing> getAllEligiblePairings(FlightCrew flightCrew) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
 }

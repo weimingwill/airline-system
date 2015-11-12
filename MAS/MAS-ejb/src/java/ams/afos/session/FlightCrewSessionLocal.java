@@ -5,6 +5,7 @@
  */
 package ams.afos.session;
 
+import ams.afos.entity.BiddingSession;
 import ams.afos.entity.Checklist;
 import ams.afos.entity.FlightCrew;
 import ams.afos.entity.Pairing;
@@ -21,11 +22,13 @@ import javax.ejb.Local;
 @Local
 public interface FlightCrewSessionLocal {
     public List<FlightCrew> getAllFlightCrew() throws EmptyTableException;
+    public FlightCrew getFlightCrewByUsername(String username);
+    public List<BiddingSession> getEligibleBiddingSessions(FlightCrew flightCrew);
     // Flight Crew Duty Report
     public void updatePreFlightChecklist(Checklist checklist);
     public void updatePostFlightChecklist(Checklist checklist);
     // Flight Crew Bidding
-    public List<Pairing> getAllEligiblePairings(FlightCrew flightCrew);
+//    public List<Pairing> getAllEligiblePairings(FlightCrew flightCrew);
     public void placeBidForPairings(List<Pairing> pairings, FlightCrew flightCrew);
     public void updateBids(List<PairingFlightCrew> selectedPairings, FlightCrew flightCrew);
     public List<PairingFlightCrew> getFlightCrewBiddingHistory(FlightCrew flightCrew);
