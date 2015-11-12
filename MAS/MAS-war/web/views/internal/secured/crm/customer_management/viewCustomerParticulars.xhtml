@@ -38,9 +38,10 @@
                 </p:inplace>
 
                 <h:outputLabel value="Date of Birth:" />
-                <p:inplace id="dob" editor="true">
-                    <p:inputText value="#{customerManager.selectedCustomer.dob}" required="true" label="text" />
-                </p:inplace>
+                <p:outputLabel value="#{customerManager.selectedCustomer.dob}">
+                    <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
+
 
                 <h:outputLabel value="Nationality:" />
                 <p:inplace id="nationality" editor="true">
@@ -48,14 +49,14 @@
                 </p:inplace>
 
                 <h:outputLabel value="Passport Issue Date:" />
-                <p:inplace id="passportIssueDate" editor="true">
-                    <p:inputText value="#{customerManager.selectedCustomer.passportIssueDate}" required="true" label="text" />
-                </p:inplace>
-
+                <p:outputLabel value="#{customerManager.selectedCustomer.passportIssueDate}">
+                    <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
+    
                 <h:outputLabel value="Passport Expire Date:" />
-                <p:inplace id="passportExpDate" editor="true">
-                    <p:inputText value="#{customerManager.selectedCustomer.passportExpDate}" required="true" label="text" />
-                </p:inplace>
+                <p:outputLabel value="#{customerManager.selectedCustomer.passportExpDate}">
+                    <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
 
                 <f:facet name="footer">
                     <p:commandButton value="Back to customer list" action="#{customerManager.toViewCustomers()}"  />

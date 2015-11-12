@@ -92,11 +92,25 @@ public class CustomerManager implements Serializable {
         msgController.addErrorMessage("Please select an customer");
         return "";
     }
-    
-    public String toViewCustomers(){
+
+    public String toViewCustomers() {
+        cleanHelper();
         return crmNavController.redirectToViewCustomers();
+
     }
-        
+
+    public void cleanHelper() {
+        customers = getAllCustomers();
+        regCusts = customerSession.getAllRegCusts();
+        List<String> channels = new ArrayList<>();
+        channels.add("Call center");
+        channels.add("Customer service counter");
+        channels.add("email");
+        predefinedChannels = channels;
+        minAge = 0;
+        maxAge = 99;
+        nationalities = customerSession.getAllNationalities();
+    }
 
     public String toViewCustomerParticulars() {
         if (selectedCustomer != null) {
@@ -175,7 +189,7 @@ public class CustomerManager implements Serializable {
         membershipId = null;
 
     }
-    
+
     public void resetCustomer() {
         customers = getAllCustomers();
     }

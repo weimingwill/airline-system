@@ -23,7 +23,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import mas.util.helper.CopierHelper;
 
 /**
  *
@@ -190,7 +189,9 @@ public class CustomerSession implements CustomerSessionLocal {
         } catch (NoResultException ex) {
         }
 
-        Query query2 = em.createQuery("SELECT c FROM Customer c WHERE c.id = regCust.id");
+        Query query2 = em.createQuery("SELECT c FROM Customer c WHERE c.id = :id");
+        query2.setParameter("id", regCust.getId());
+
         List<Customer> customers = new ArrayList<>();
         try {
             customers = (List<Customer>) query.getResultList();

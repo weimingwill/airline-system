@@ -25,4 +25,6 @@ public interface CampaignSessionLocal {
     public List<CustomerList> getAllCustomerLists();
     
     public CustomerList getCustomerListById(Long id);
+    
+    public MktCampaign updateMktCampaign(MktCampaign mktCampaign, Date startTime, Date endTime, double budget);
 }

@@ -24,10 +24,10 @@ import javax.persistence.Query;
  */
 @Stateless
 public class CampaignSession implements CampaignSessionLocal {
-    
+
     @PersistenceContext
     private EntityManager em;
-    
+
     @Override
     public List<MktCampaign> getAllCampaigns() {
         Query query = em.createQuery("SELECT m FROM MktCampaign m");
@@ -42,7 +42,6 @@ public class CampaignSession implements CampaignSessionLocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-
     @Override
     public MktCampaign createCampaign(String campaignName, String campaignType, String campaignDescription, Date startTime, Date endTime, String budget, String promotionCode, List<String> promotionCodeTypes, String promotionCodeType, String promotionPercentage, String promotionValue, CustomerList customerList) {
         MktCampaign campaign = new MktCampaign();
@@ -52,14 +51,13 @@ public class CampaignSession implements CampaignSessionLocal {
         campaign.setStartTime(startTime);
         campaign.setEndTime(endTime);
         campaign.setBudget(Double.parseDouble(budget));
-        
-        
+
         PromotionCode pc = new PromotionCode();
         pc.setName(promotionCode);
         pc.setPercentage(Double.parseDouble(promotionPercentage));
         pc.setPromoValue(Double.parseDouble(promotionValue));
         pc.setMktCampaign(campaign);
-        
+
         List<PromotionCode> pcs = new ArrayList<>();
         pcs.add(pc);
         campaign.setPromotionCodes(pcs);
@@ -68,12 +66,12 @@ public class CampaignSession implements CampaignSessionLocal {
         campaign.setCustomerLists(customerLists);
         int size = customerLists.size();
         campaign.setAudienceSize(size);
-        
+
         em.persist(campaign);
         em.persist(pc);
-        
+
         return campaign;
-       
+
     }
 
     @Override
@@ -86,7 +84,6 @@ public class CampaignSession implements CampaignSessionLocal {
         }
         return customerLists;
 
-        
     }
 
     @Override
@@ -99,5 +96,19 @@ public class CampaignSession implements CampaignSessionLocal {
         } catch (NoResultException ex) {
         }
         return customerList;
+    }
+
+    @Override
+    public MktCampaign updateMktCampaign(MktCampaign mktCampaign, Date startTime, Date endTime, double budget) {
+        MktCampaign mc = new MktCampaign();
+        mc = em.find(MktCampaign.class, mktCampaign);
+        mc.setStartTime(startTime);
+        mc.setEndTime(endTime);
+        mc.setBudget(budget);
+
+        em.merge(mc);
+
+        return mc;
+
     }
 }

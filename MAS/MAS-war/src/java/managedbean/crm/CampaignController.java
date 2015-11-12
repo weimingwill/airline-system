@@ -111,6 +111,13 @@ public class CampaignController {
         }
 
     }
+    
+//    public void updateCampaign(){
+//        campaignSession.updateMktCampaign(selectedCampaign,selectedCampaign.getStartTime(),selectedCampaign.getEndTime(),selectedCampaign.getBudget());
+//        
+//    }
+        
+        
 
     //*******************getters & setters************************
     public MsgController getMsgController() {
