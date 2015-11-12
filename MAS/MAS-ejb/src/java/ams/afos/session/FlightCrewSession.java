@@ -14,6 +14,7 @@ import ams.afos.entity.SwappingRequest;
 import ams.afos.util.helper.BiddingSessionStatus;
 import ams.afos.util.helper.PairingCrewStatus;
 import ams.aps.util.exception.EmptyTableException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -62,6 +63,7 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
     @Override
     public void placeBidForPairings(List<Pairing> pairings, FlightCrew flightCrew) {
         Calendar cal = Calendar.getInstance();
+        List<PairingFlightCrew> pairingFlightCrews = new ArrayList();
         for (Pairing thisPairing : pairings) {
             System.out.println(flightCrew);
             System.out.println(thisPairing);
@@ -73,9 +75,19 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
             
             pairingFlightCrew.setFlightCrew(flightCrew);
             pairingFlightCrew.setPairing(thisPairing);
-//            em.persist(pairingFlightCrew);
-//            em.flush();
+            em.persist(pairingFlightCrew);
+            pairingFlightCrews.add(pairingFlightCrew);
         }
+        setPairingFlightCrewsToPairing(pairings, pairingFlightCrews);
+        
+    }
+    
+    private void setPairingFlightCrewsToPairing(List<Pairing> pairings, List<PairingFlightCrew> pairingFlightCrews){
+        for(Pairing pairing: pairings){
+            pairing.setPairingFlightCrews(pairingFlightCrews);
+            em.merge(pairing);
+        }
+        em.flush();
     }
 
     @Override
