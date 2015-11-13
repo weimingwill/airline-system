@@ -43,13 +43,13 @@ public class CabinClassTicketFamily implements Serializable {
 
     @Column(name = "SEATQTY")
     private Integer seatQty;
-    
+
     @Column(name = "PRICE")
     private Float price;
-    
+
     @Column(name = "PRICECOEFFICIENT")
     private Float priceCoefficient;
-    
+
     @Column(name = "DELETED")
     private Boolean deleted;
 
@@ -108,4 +108,5 @@ public class CabinClassTicketFamily implements Serializable {
     public void setPriceCoefficient(Float priceCoefficient) {
         this.priceCoefficient = priceCoefficient;
     }
+
 }

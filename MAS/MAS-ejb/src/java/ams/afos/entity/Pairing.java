@@ -8,15 +8,13 @@ package ams.afos.entity;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -28,45 +26,44 @@ public class Pairing implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long pairingId;
     private String pairingCode;
     private Integer cabinCrewQuota;
     private Integer cockpitCrewQuota;
     private Double layoverTime;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(joinColumns = @JoinColumn(name = "FLIGHTDUTYID"))
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<FlightDuty> flightDuties;
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<FlightCrew> cabinCrews;
+    private List<BiddingSession> biddingSessions;
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pairing")
+    private List<PairingFlightCrew> pairingFlightCrews;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<FlightCrew> cockpitCrews;
-
-    public Long getId() {
-        return id;
+    public Long getPairingId() {
+        return pairingId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPairingId(Long pairingId) {
+        this.pairingId = pairingId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (pairingId != null ? pairingId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the pairingId fields are not set
         if (!(object instanceof Pairing)) {
             return false;
         }
         Pairing other = (Pairing) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.pairingId == null && other.pairingId != null) || (this.pairingId != null && !this.pairingId.equals(other.pairingId))) {
             return false;
         }
         return true;
@@ -74,7 +71,7 @@ public class Pairing implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.afos.entity.Pairing[ id=" + id + " ]";
+        return "ams.afos.entity.Pairing[ pairingId=" + pairingId + " ]";
     }
 
     /**
@@ -148,31 +145,31 @@ public class Pairing implements Serializable {
     }
 
     /**
-     * @return the cabinCrews
+     * @return the biddingSessions
      */
-    public List<FlightCrew> getCabinCrews() {
-        return cabinCrews;
+    public List<BiddingSession> getBiddingSessions() {
+        return biddingSessions;
     }
 
     /**
-     * @param cabinCrews the cabinCrews to set
+     * @param biddingSessions the biddingSessions to set
      */
-    public void setCabinCrews(List<FlightCrew> cabinCrews) {
-        this.cabinCrews = cabinCrews;
+    public void setBiddingSessions(List<BiddingSession> biddingSessions) {
+        this.biddingSessions = biddingSessions;
     }
 
     /**
-     * @return the cockpitCrews
+     * @return the pairingFlightCrews
      */
-    public List<FlightCrew> getCockpitCrews() {
-        return cockpitCrews;
+    public List<PairingFlightCrew> getPairingFlightCrews() {
+        return pairingFlightCrews;
     }
 
     /**
-     * @param cockpitCrews the cockpitCrews to set
+     * @param pairingFlightCrews the pairingFlightCrews to set
      */
-    public void setCockpitCrews(List<FlightCrew> cockpitCrews) {
-        this.cockpitCrews = cockpitCrews;
+    public void setPairingFlightCrews(List<PairingFlightCrew> pairingFlightCrews) {
+        this.pairingFlightCrews = pairingFlightCrews;
     }
 
 }

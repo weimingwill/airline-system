@@ -27,7 +27,7 @@ public class ChecklistItem implements Serializable {
     private Double itemValue;
 
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date createTime;
+    private Date createdTime;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date lastUpdateTime;
 
@@ -74,20 +74,6 @@ public class ChecklistItem implements Serializable {
     }
 
     /**
-     * @return the createTime
-     */
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    /**
-     * @param createTime the createTime to set
-     */
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    /**
      * @return the lastUpdateTime
      */
     public Date getLastUpdateTime() {
@@ -99,6 +85,20 @@ public class ChecklistItem implements Serializable {
      */
     public void setLastUpdateTime(Date lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    /**
+     * @return the createdTime
+     */
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    /**
+     * @param createdTime the createdTime to set
+     */
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 
 }

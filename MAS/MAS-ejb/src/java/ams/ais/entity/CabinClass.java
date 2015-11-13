@@ -22,17 +22,26 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class CabinClass implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cabinClassId;
     private String type;
     private String name;
+    private Integer rank;
     private Boolean deleted;
     private String milePolicy;
     private Double percentage;
-            
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy="cabinClass")
+    private Double basePrice;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
+
+    public void create(String type, String name) {
+        this.setType(type);
+        this.setName(name);
+        this.setDeleted(false);
+    }
 
     public List<TicketFamily> getTicketFamilys() {
         return ticketFamilys;
@@ -41,7 +50,7 @@ public class CabinClass implements Serializable {
     public void setTicketFamilys(List<TicketFamily> ticketFamilys) {
         this.ticketFamilys = ticketFamilys;
     }
-    
+
     public Long getCabinClassId() {
         return cabinClassId;
     }
@@ -90,7 +99,6 @@ public class CabinClass implements Serializable {
         this.percentage = percentage;
     }
 
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -115,5 +123,26 @@ public class CabinClass implements Serializable {
     public String toString() {
         return "ams.ais.entity.CabinClass[ cabinClassId=" + cabinClassId + " ]";
     }
-    
+
+    /**
+     * @return the rank
+     */
+    public Integer getRank() {
+        return rank;
+    }
+
+    /**
+     * @param rank the rank to set
+     */
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public Double getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(Double basePrice) {
+        this.basePrice = basePrice;
+    }
 }

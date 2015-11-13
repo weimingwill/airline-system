@@ -5,19 +5,14 @@
  */
 package ams.ais.entity;
 
-import ams.ars_crm.entity.BookingClassChannel;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 /**
  *
@@ -31,9 +26,7 @@ public class BookingClass implements Serializable {
     private Long bookingClassId;
     private String name;
     private Boolean deleted;
-
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "bookingClass")
-    private List<BookingClassChannel> bookingClassChannels = new ArrayList<>();
+    private String channel;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private TicketFamily ticketFamily;
@@ -44,14 +37,6 @@ public class BookingClass implements Serializable {
 
     public void setTicketFamily(TicketFamily ticketFamily) {
         this.ticketFamily = ticketFamily;
-    }
-    
-    public List<BookingClassChannel> getBookingClassChannels() {
-        return bookingClassChannels;
-    }
-
-    public void setBookingClassChannels(List<BookingClassChannel> bookingClassChannels) {
-        this.bookingClassChannels = bookingClassChannels;
     }
 
     public Long getBookingClassId() {
@@ -101,6 +86,20 @@ public class BookingClass implements Serializable {
     @Override
     public String toString() {
         return "ams.ais.entity.BookingClass[ bookingClassId=" + bookingClassId + " ]";
+    }
+
+    /**
+     * @return the channel
+     */
+    public String getChannel() {
+        return channel;
+    }
+
+    /**
+     * @param channel the channel to set
+     */
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 
 }

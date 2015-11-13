@@ -7,6 +7,7 @@ package ams.ais.entity;
 
 import ams.ais.entity.helper.FlightScheduleBookingClassId;
 import ams.aps.entity.FlightSchedule;
+import ams.crm.entity.MktCampaign;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -39,22 +41,28 @@ public class FlightScheduleBookingClass implements Serializable {
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "BOOKINGCLASSID", referencedColumnName = "BOOKINGCLASSID")
     private BookingClass bookingClass;
-    
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<SeatAllocationHistory> seatAllocationHistory = new ArrayList<>();
-    
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<PhaseDemand> phaseDemands = new ArrayList<>();    
-    
+    private List<PhaseDemand> phaseDemands = new ArrayList<>();
+
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<MktCampaign> marketCampaigns = new ArrayList<>();
+
     @Column(name = "SEATQTY")
     private Integer seatQty;
-    
+
+    @Column(name = "SOLDSEATQTY")
+    private Integer soldSeatQty;
+
     @Column(name = "PRICE")
     private Float price;
-    
+
     @Column(name = "BASICPRICE")
     private Float basicPrice;
-    
+
     @Column(name = "PRICECOEFFICIENT")
     private Float priceCoefficient;
 
@@ -69,7 +77,10 @@ public class FlightScheduleBookingClass implements Serializable {
 
     @Column(name = "PRICED")
     private Boolean priced;
-    
+
+    @Column(name = "CLOSED")
+    private Boolean closed;
+
     public FlightScheduleBookingClassId getFlightScheduleBookingClassId() {
         return flightScheduleBookingClassId;
     }
@@ -100,6 +111,14 @@ public class FlightScheduleBookingClass implements Serializable {
 
     public void setSeatQty(Integer seatQty) {
         this.seatQty = seatQty;
+    }
+
+    public Integer getSoldSeatQty() {
+        return soldSeatQty;
+    }
+
+    public void setSoldSeatQty(Integer soldSeatQty) {
+        this.soldSeatQty = soldSeatQty;
     }
 
     public Float getPrice() {
@@ -172,5 +191,27 @@ public class FlightScheduleBookingClass implements Serializable {
 
     public void setPriced(Boolean priced) {
         this.priced = priced;
+    }
+
+    /**
+     * @return the marketCampaigns
+     */
+    public List<MktCampaign> getMarketCampaigns() {
+        return marketCampaigns;
+    }
+
+    /**
+     * @param marketCampaigns the marketCampaigns to set
+     */
+    public void setMarketCampaigns(List<MktCampaign> marketCampaigns) {
+        this.marketCampaigns = marketCampaigns;
+    }
+
+    public Boolean getClosed() {
+        return closed;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
     }
 }

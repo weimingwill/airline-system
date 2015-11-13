@@ -5,35 +5,33 @@
  */
 package ams.dcs.entity;
 
-import ams.ars_crm.entity.AddOn;
+import ams.ars.entity.AddOn;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 /**
  *
- * @author ChuningLiu
+ * @author Lewis
  */
 @Entity
 public class Luggage extends AddOn implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
-    private double weight;
+
+    private Double maxWeight;
 
     /**
-     * @return the weight
+     * @return the maxWeight
      */
-    public double getWeight() {
-        return weight;
+    public Double getMaxWeight() {
+        return maxWeight;
     }
 
     /**
-     * @param weight the weight to set
+     * @param maxWeight the maxWeight to set
      */
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setMaxWeight(Double maxWeight) {
+        this.maxWeight = maxWeight;
     }
-    
+
 }

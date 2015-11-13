@@ -5,42 +5,98 @@
  */
 package ams.afos.entity;
 
+import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
-import javax.persistence.Embeddable;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
  * @author Lewis
  */
-@Embeddable
-@Table(name = "PAIRING_FLIGHTDUTIES")
+@Entity
 public class FlightDuty implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @OneToOne
-    private FlightSchedule flightSchedule;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @OneToMany
+    private List<FlightSchedule> flightSchedules;
 
     private Double flyingDistInKm;
     private Double flyingTimeInHrs;
     private Double sitTimeInHrs;
-    private Integer dutySeq;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date reportTime;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date dismissTime;
+    private Integer cabinCrewQuota;
+    private Integer cockpitCrewQuota;
+    @Temporal(value = TemporalType.DATE)
+    private Date appliedPeriod;
+    
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Airport reportLoc;
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Airport dismissLoc;
 
-    /**
-     * @return the flightSchedule
-     */
-    public FlightSchedule getFlightSchedule() {
-        return flightSchedule;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof FlightDuty)) {
+            return false;
+        }
+        FlightDuty other = (FlightDuty) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ams.afos.entity.FlightDuty[ id=" + id + " ]";
     }
 
     /**
-     * @param flightSchedule the flightSchedule to set
+     * @return the flightSchedules
      */
-    public void setFlightSchedule(FlightSchedule flightSchedule) {
-        this.flightSchedule = flightSchedule;
+    public List<FlightSchedule> getFlightSchedules() {
+        return flightSchedules;
+    }
+
+    /**
+     * @param flightSchedules the flightSchedules to set
+     */
+    public void setFlightSchedules(List<FlightSchedule> flightSchedules) {
+        this.flightSchedules = flightSchedules;
     }
 
     /**
@@ -86,17 +142,101 @@ public class FlightDuty implements Serializable {
     }
 
     /**
-     * @return the dutySeq
+     * @return the cabinCrewQuota
      */
-    public Integer getDutySeq() {
-        return dutySeq;
+    public Integer getCabinCrewQuota() {
+        return cabinCrewQuota;
     }
 
     /**
-     * @param dutySeq the dutySeq to set
+     * @param cabinCrewQuota the cabinCrewQuota to set
      */
-    public void setDutySeq(Integer dutySeq) {
-        this.dutySeq = dutySeq;
+    public void setCabinCrewQuota(Integer cabinCrewQuota) {
+        this.cabinCrewQuota = cabinCrewQuota;
+    }
+
+    /**
+     * @return the cockpitCrewQuota
+     */
+    public Integer getCockpitCrewQuota() {
+        return cockpitCrewQuota;
+    }
+
+    /**
+     * @param cockpitCrewQuota the cockpitCrewQuota to set
+     */
+    public void setCockpitCrewQuota(Integer cockpitCrewQuota) {
+        this.cockpitCrewQuota = cockpitCrewQuota;
+    }
+
+    /**
+     * @return the appliedPeriod
+     */
+    public Date getAppliedPeriod() {
+        return appliedPeriod;
+    }
+
+    /**
+     * @param appliedPeriod the appliedPeriod to set
+     */
+    public void setAppliedPeriod(Date appliedPeriod) {
+        this.appliedPeriod = appliedPeriod;
+    }
+
+    /**
+     * @return the reportTime
+     */
+    public Date getReportTime() {
+        return reportTime;
+    }
+
+    /**
+     * @param reportTime the reportTime to set
+     */
+    public void setReportTime(Date reportTime) {
+        this.reportTime = reportTime;
+    }
+
+    /**
+     * @return the dismissTime
+     */
+    public Date getDismissTime() {
+        return dismissTime;
+    }
+
+    /**
+     * @param dismissTime the dismissTime to set
+     */
+    public void setDismissTime(Date dismissTime) {
+        this.dismissTime = dismissTime;
+    }
+
+    /**
+     * @return the reportLoc
+     */
+    public Airport getReportLoc() {
+        return reportLoc;
+    }
+
+    /**
+     * @param reportLoc the reportLoc to set
+     */
+    public void setReportLoc(Airport reportLoc) {
+        this.reportLoc = reportLoc;
+    }
+
+    /**
+     * @return the dismissLoc
+     */
+    public Airport getDismissLoc() {
+        return dismissLoc;
+    }
+
+    /**
+     * @param dismissLoc the dismissLoc to set
+     */
+    public void setDismissLoc(Airport dismissLoc) {
+        this.dismissLoc = dismissLoc;
     }
 
 }

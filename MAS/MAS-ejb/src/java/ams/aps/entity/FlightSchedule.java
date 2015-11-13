@@ -6,8 +6,6 @@
 package ams.aps.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
-import ams.ars_crm.entity.Booking;
-import ams.ars_crm.entity.MktCampaign;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,7 +16,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -54,6 +51,7 @@ public class FlightSchedule implements Serializable {
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdTime;
     private String status;
+    private Double turnoverTime;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
     private List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
@@ -64,11 +62,11 @@ public class FlightSchedule implements Serializable {
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Flight flight;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private FlightSchedule returnedFlightSchedule;
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedule")
-    private List<Booking> bookings = new ArrayList<>();
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "flightSchedules")
-    private List<MktCampaign> mktCampaigns = new ArrayList<>();
+    private FlightSchedule preFlightSched;
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private FlightSchedule nextFlightSched;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<FlightScheduleSeat> flightSchedSeats;
     
     public Long getFlightScheduleId() {
         return flightScheduleId;
@@ -265,20 +263,28 @@ public class FlightSchedule implements Serializable {
         this.createdTime = createdTime;
     }
 
-    public FlightSchedule getReturnedFlightSchedule() {
-        return returnedFlightSchedule;
+    public Double getTurnoverTime() {
+        return turnoverTime;
     }
 
-    public void setReturnedFlightSchedule(FlightSchedule returnedFlightSchedule) {
-        this.returnedFlightSchedule = returnedFlightSchedule;
+    public void setTurnoverTime(Double turnoverTime) {
+        this.turnoverTime = turnoverTime;
     }
 
-    public List<Booking> getBookings() {
-        return bookings;
+    public FlightSchedule getPreFlightSched() {
+        return preFlightSched;
     }
 
-    public void setBookings(List<Booking> bookings) {
-        this.bookings = bookings;
+    public void setPreFlightSched(FlightSchedule preFlightSched) {
+        this.preFlightSched = preFlightSched;
+    }
+
+    public FlightSchedule getNextFlightSched() {
+        return nextFlightSched;
+    }
+
+    public void setNextFlightSched(FlightSchedule nextFlightSched) {
+        this.nextFlightSched = nextFlightSched;
     }
 
     public String getStatus() {
@@ -289,12 +295,12 @@ public class FlightSchedule implements Serializable {
         this.status = status;
     }
 
-    public List<MktCampaign> getMktCampaigns() {
-        return mktCampaigns;
+    public List<FlightScheduleSeat> getFlightSchedSeats() {
+        return flightSchedSeats;
     }
 
-    public void setMktCampaigns(List<MktCampaign> mktCampaigns) {
-        this.mktCampaigns = mktCampaigns;
+    public void setFlightSchedSeats(List<FlightScheduleSeat> flightSchedSeats) {
+        this.flightSchedSeats = flightSchedSeats;
     }
 
     /**
@@ -324,4 +330,5 @@ public class FlightSchedule implements Serializable {
     public void setActualArrivalDate(Date actualArrivalDate) {
         this.actualArrivalDate = actualArrivalDate;
     }
+
 }
