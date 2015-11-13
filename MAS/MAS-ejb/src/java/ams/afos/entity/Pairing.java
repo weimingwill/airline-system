@@ -37,6 +37,9 @@ public class Pairing implements Serializable {
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<BiddingSession> biddingSessions;
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pairing")
+    private List<PairingFlightCrew> pairingFlightCrews;
 
     public Long getPairingId() {
         return pairingId;
@@ -153,6 +156,20 @@ public class Pairing implements Serializable {
      */
     public void setBiddingSessions(List<BiddingSession> biddingSessions) {
         this.biddingSessions = biddingSessions;
+    }
+
+    /**
+     * @return the pairingFlightCrews
+     */
+    public List<PairingFlightCrew> getPairingFlightCrews() {
+        return pairingFlightCrews;
+    }
+
+    /**
+     * @param pairingFlightCrews the pairingFlightCrews to set
+     */
+    public void setPairingFlightCrews(List<PairingFlightCrew> pairingFlightCrews) {
+        this.pairingFlightCrews = pairingFlightCrews;
     }
 
 }

@@ -36,7 +36,7 @@ public class CabinClass implements Serializable {
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "cabinClass")
     private List<TicketFamily> ticketFamilys = new ArrayList<>();
-
+    
     public void create(String type, String name) {
         this.setType(type);
         this.setName(name);
@@ -82,7 +82,7 @@ public class CabinClass implements Serializable {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
-
+    
     public String getMilePolicy() {
         return milePolicy;
     }

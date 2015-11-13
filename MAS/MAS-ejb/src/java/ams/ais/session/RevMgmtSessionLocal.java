@@ -42,9 +42,7 @@ public interface RevMgmtSessionLocal {
     public List<BookingClass> getAllBookingClasses();
 
     public BookingClass getBookingClassById(Long id) throws NoSuchBookingClassException;
-
-    public BookingClassHelper getBookingClassHelperById(Long Id) throws NoSuchBookingClassException;
-
+    
     public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId);
 
     public BookingClass createBookingClass(String name, TicketFamily ticketFamily, String channelName) throws ExistSuchBookingClassNameException;
@@ -67,8 +65,6 @@ public interface RevMgmtSessionLocal {
     public void priceBookingClasses(Long flightScheduleId, List<FlightSchCabinClsTicFamBookingClsHelper> flightSchCabinClsTicFamBookingClsHelpers, Map<Long, Float> priceMap)
             throws NoSuchFlightScheduleBookingClassException, DuplicatePriceException;
 
-//    public void setBookingClassDefaultPrice(Long flightScheduleId, Long ticketFamilyId, float ticketFamilyPrice)
-//            throws NoSuchFlightScheduleBookingClassException;
     public void updateBookingClass(Long bookingClassId, String bookingClassName) throws NoSuchBookingClassException, ExistSuchBookingClassNameException;
 
     public List<FlightSchedule> getAllFilghtSchedules() throws NoSuchFlightSchedulException;

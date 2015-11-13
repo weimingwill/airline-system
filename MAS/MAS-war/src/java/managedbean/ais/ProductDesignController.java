@@ -88,6 +88,7 @@ public class ProductDesignController implements Serializable {
             }
         } catch (NoSuchTicketFamilyException ex) {
         }
+        System.out.print("get ticket family" +ticketFamilys);
         return ticketFamilys;
     }
 

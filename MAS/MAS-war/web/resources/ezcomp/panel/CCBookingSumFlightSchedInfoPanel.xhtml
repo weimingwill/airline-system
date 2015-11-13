@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="flightSchedule" required="true"/>
+        <cc:attribute name="fbHelper" required="true"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set value="#{cc.attrs.flightSchedule}" var="flightSched"/>
+        <c:set value="#{cc.attrs.fbHelper}" var="fbHelper"/>
+        <p:panelGrid>
+            <p:row>
+                <p:column colspan="2">
+                    <p:outputLabel value="#{flightSched.departDate}">
+                        <f:convertDateTime pattern="dd MMM yyyy" timeZone="GMT+8" />
+                    </p:outputLabel>
+                </p:column>
+                <p:column><p:outputLabel value=""/></p:column>
+                <p:column colspan="2">
+                    <p:outputLabel value="#{flightSched.arrivalDate}">
+                        <f:convertDateTime pattern="dd MMM yyyy" timeZone="GMT+8" />
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column>
+                    <p:outputLabel value="#{fbHelper.cabinClass.name} #{fbHelper.ticketFamily.name}" />
+                </p:column>
+
+            </p:row>
+            <p:row>
+                <p:column rowspan="2">
+                    <p:outputLabel value="#{flightSched.departDate}">
+                        <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
+                    </p:outputLabel>
+                </p:column>
+                <p:column rowspan="2">
+                    <p:outputLabel value="#{flightSched.leg.departAirport.city.cityName}, #{flightSched.leg.departAirport.country.isoCode}" />
+                </p:column>
+                <p:column rowspan="2"><p:outputLabel styleClass="fa fa-arrow-right alignCenter" /></p:column>
+                <p:column rowspan="2">
+                    <p:outputLabel value="#{flightSched.arrivalDate}">
+                        <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
+                    </p:outputLabel>
+                </p:column>
+                <p:column rowspan="2">
+                    <p:outputLabel value=" #{flightSched.leg.arrivalAirport.city.cityName}, #{flightSched.leg.arrivalAirport.country.isoCode}" />
+                </p:column>
+
+                <p:column>
+                    <p:outputLabel value="#{flightSched.flight.flightNo}" />
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column><p:outputLabel value="Operated by Merlion Airline" /></p:column>
+            </p:row>
+        </p:panelGrid>
+    </cc:implementation>
+</html>

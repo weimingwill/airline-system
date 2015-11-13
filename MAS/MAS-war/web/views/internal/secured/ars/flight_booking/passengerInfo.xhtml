@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="./../../../../../template/ArsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel">
+
+    <ui:define name="title">
+        Personal data
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <h2>Enter passenger details</h2>
+            <h4>Personal details</h4>
+            
+            <p:accordionPanel style="width: 470px;">
+                <c:forEach items="#{bookingManager.bookingHelper.adults}" var="adult" varStatus="index">
+                    <p:tab title="Adult #{index.index + 1}">
+                        <pa:CCPassengerDetailPanel customer="#{adult}" />
+                    </p:tab>
+                </c:forEach>
+                <c:forEach items="#{bookingManager.bookingHelper.children}" var="child" varStatus="index" >
+                    <p:tab title="Children #{index.index + 1}">
+                        <p:panelGrid columns="2">
+                            <pa:CCPassengerDetailPanel customer="#{child}" />
+                        </p:panelGrid>
+                    </p:tab>
+                </c:forEach>
+            </p:accordionPanel>
+            <h4>Contact details</h4>
+            <p:panelGrid>
+                <p:row>
+                    <p:column colspan="1"><p:outputLabel for="phone" value="Phone Number"/></p:column>
+                    <p:column colspan="1">
+                        <p:selectOneMenu class="userProfileInput" value ="#{bookingManager.bookingHelper.booking.phoneNo.countryCode}"
+                                         style="width:120px" required="true" requiredMessage="Please select phone dial Code" >
+                            <f:selectItem itemLabel="Country Code" itemValue="" />
+                            <f:selectItems value="#{routeController.countries}" var="country" itemLabel="#{country.countryName}(#{country.dialingCode})" itemValue="#{country.dialingCode}" />
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column colspan="1">
+                        <p:inputText style="width:50px" class="userProfileInput" value="#{bookingManager.bookingHelper.booking.phoneNo.areaCode}" 
+                                     placeholder="area code"/> 
+                    </p:column>
+                    <p:column colspan="1">
+                        <p:inputText id="phone" style="width:100px" class="userProfileInput" value="#{bookingManager.bookingHelper.booking.phoneNo.number}" placeholder="phone number"
+                                     required="true"  requiredMessage="Please Input mobile phone number" /> 
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2"><p:outputLabel for="email" value="Email"/></p:column>
+                    <p:column colspan="2"><p:outputLabel for="confirmEmail" value="Confirm email"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:inputText id="email" value="#{bookingManager.bookingHelper.booking.email}" required="true" requiredMessage="Please enter contact email">
+<!--                            <f:validator validatorId="emailValidator" />
+                            <f:attribute name="confirmEmail" value="{confirmEmail}" />-->
+                            <p:ajax update="messages" event="blur" />
+                            <f:validateRegex
+                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                        </p:inputText>
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:inputText id="confirmEmail" binding="#{confirmEmail}" required="true" requiredMessage="Please confirm contact email" >
+                            <f:validateRegex
+                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                        </p:inputText>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:separator />
+            <p:panelGrid>
+                <p:row style="border: transparent">
+                    <p:column colspan="5" style="width: 90%">
+                        <p:commandButton value="Back to search flights" icon="fa fa-arrow-left" action="#{arsNavController.redirectToSearchFlightResult()}"/>
+                    </p:column>
+                    <p:column colspan="2" style="text-align: right;">
+                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{arsNavController.redirectToBookingSummary()}"/>
+                    </p:column>
+                </p:row>
+
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

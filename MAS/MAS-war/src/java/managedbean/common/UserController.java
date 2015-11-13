@@ -211,7 +211,7 @@ public class UserController implements Serializable {
         return systemUserSession.getSystemUserByEmail(email);
     }
 
-    public SystemUser getUserByUsername() throws NoSuchUsernameException {
+     public SystemUser getUserByUsername() throws NoSuchUsernameException {
         return systemUserSession.getSystemUserByName(username);
     }
 
