@@ -20,19 +20,19 @@ import javax.persistence.PrimaryKeyJoinColumn;
  * @author weiming
  */
 @Entity
-public class AirTicketPricingItem implements Serializable {
-    
+public class AirTicketAdditionalCharge implements Serializable {
+
     @EmbeddedId
     private AirTicketPricingItemId airTicketPricingItemId;
-    
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "AIRTICKETID", referencedColumnName = "ID")
     private AirTicket airTicket;
-    
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @PrimaryKeyJoinColumn(name = "PRICINGITEMID", referencedColumnName = "ID")
-    private PricingItem pricingItem;
-    
+    @PrimaryKeyJoinColumn(name = "ADDITIONALCHARGEID", referencedColumnName = "ID")
+    private AdditionalCharge additionalCharge;
+
     @Column(name = "PRICE")
     private Double price;
 
@@ -52,12 +52,12 @@ public class AirTicketPricingItem implements Serializable {
         this.airTicket = airTicket;
     }
 
-    public PricingItem getPricingItem() {
-        return pricingItem;
+    public AdditionalCharge getAdditionalCharge() {
+        return additionalCharge;
     }
- 
-    public void setPricingItem(PricingItem pricingItem) {
-        this.pricingItem = pricingItem;
+
+    public void setAdditionalCharge(AdditionalCharge additionalCharge) {
+        this.additionalCharge = additionalCharge;
     }
 
     public Double getPrice() {
@@ -67,6 +67,5 @@ public class AirTicketPricingItem implements Serializable {
     public void setPrice(Double price) {
         this.price = price;
     }
-    
+
 }
- 

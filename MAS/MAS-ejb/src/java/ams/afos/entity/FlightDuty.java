@@ -5,14 +5,18 @@
  */
 package ams.afos.entity;
 
+import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,6 +46,11 @@ public class FlightDuty implements Serializable {
     private Integer cockpitCrewQuota;
     @Temporal(value = TemporalType.DATE)
     private Date appliedPeriod;
+    
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Airport reportLoc;
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private Airport dismissLoc;
 
     public Long getId() {
         return id;
@@ -200,6 +209,34 @@ public class FlightDuty implements Serializable {
      */
     public void setDismissTime(Date dismissTime) {
         this.dismissTime = dismissTime;
+    }
+
+    /**
+     * @return the reportLoc
+     */
+    public Airport getReportLoc() {
+        return reportLoc;
+    }
+
+    /**
+     * @param reportLoc the reportLoc to set
+     */
+    public void setReportLoc(Airport reportLoc) {
+        this.reportLoc = reportLoc;
+    }
+
+    /**
+     * @return the dismissLoc
+     */
+    public Airport getDismissLoc() {
+        return dismissLoc;
+    }
+
+    /**
+     * @param dismissLoc the dismissLoc to set
+     */
+    public void setDismissLoc(Airport dismissLoc) {
+        this.dismissLoc = dismissLoc;
     }
 
 }
