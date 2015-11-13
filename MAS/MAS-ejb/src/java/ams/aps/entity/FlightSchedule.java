@@ -61,7 +61,9 @@ public class FlightSchedule implements Serializable {
     private FlightSchedule preFlightSched;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightSchedule nextFlightSched;
-
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<FlightScheduleSeat> flightSchedSeats;
+    
     public Long getFlightScheduleId() {
         return flightScheduleId;
     }
@@ -287,6 +289,14 @@ public class FlightSchedule implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<FlightScheduleSeat> getFlightSchedSeats() {
+        return flightSchedSeats;
+    }
+
+    public void setFlightSchedSeats(List<FlightScheduleSeat> flightSchedSeats) {
+        this.flightSchedSeats = flightSchedSeats;
     }
 
 }

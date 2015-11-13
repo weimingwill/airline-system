@@ -7,7 +7,6 @@ package ams.ais.entity;
 
 import ams.ais.entity.helper.FlightScheduleBookingClassId;
 import ams.aps.entity.FlightSchedule;
-import ams.ars.entity.Seat;
 import ams.crm.entity.MktCampaign;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,9 +50,6 @@ public class FlightScheduleBookingClass implements Serializable {
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<MktCampaign> marketCampaigns = new ArrayList<>();
-
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<Seat> seats;
 
     @Column(name = "SEATQTY")
     private Integer seatQty;
@@ -218,13 +214,4 @@ public class FlightScheduleBookingClass implements Serializable {
     public void setClosed(Boolean closed) {
         this.closed = closed;
     }
-
-    public List<Seat> getSeats() {
-        return seats;
-    }
-
-    public void setSeats(List<Seat> seats) {
-        this.seats = seats;
-    }
-
 }
