@@ -9,7 +9,10 @@
     </ui:define>
 
     <ui:define name="content">
-        <p:chart type="bar" model="#{analyticsController.barChartModel}" style="height:300px"/>
+        <p:chart type="bar" model="#{analyticsController.barChartModel}" style="height:300px;width:400px"/>
+
+        <p:chart type="pie" model="#{analyticsController.pieChartModel}" style="width:400px;height:300px" />
+
 
 
     </ui:define>
