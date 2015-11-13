@@ -6,28 +6,29 @@
 package ams.ars.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
  * @author Bowen
  */
 @Entity
-public class PricingItem implements Serializable {
+public class AdditionalCharge implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Double price;
     
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private AirTicket airTicket;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "additionalCharge")
+    private List<AirTicketAdditionalCharge> airTicketAdditionalCharges = new ArrayList<>();
     
     @Override
     public int hashCode() {
@@ -39,10 +40,10 @@ public class PricingItem implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PricingItem)) {
+        if (!(object instanceof AdditionalCharge)) {
             return false;
         }
-        PricingItem other = (PricingItem) object;
+        AdditionalCharge other = (AdditionalCharge) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -70,20 +71,12 @@ public class PricingItem implements Serializable {
         this.name = name;
     }
 
-    public Double getPrice() {
-        return price;
+    public List<AirTicketAdditionalCharge> getAirTicketAdditionalCharges() {
+        return airTicketAdditionalCharges;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public AirTicket getAirTicket() {
-        return airTicket;
-    }
-
-    public void setAirTicket(AirTicket airTicket) {
-        this.airTicket = airTicket;
+    public void setAirTicketAdditionalCharges(List<AirTicketAdditionalCharge> airTicketAdditionalCharges) {
+        this.airTicketAdditionalCharges = airTicketAdditionalCharges;
     }
     
 }
