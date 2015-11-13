@@ -12,7 +12,7 @@
 
     <ui:define name="content">
         <p:tabView>
-            <p:tab title="Account Summary">
+            <p:tab title="Account Summary"> 
                 <h:form id="accountSummary" style="width: 500px;text-align: center;" >
                     <p:panel header="Account Summary" styleClass="centeredPanel">
                         <p:panelGrid columns="2" styleClass="centered">
@@ -26,39 +26,39 @@
                             <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}"/>
 
                         </p:panelGrid>
-
-                        <p:panel header="Current Booking">
-
-                        </p:panel>
-
-                        <p:panel header="Feedbacks">
-                            <h:form>
-                                <p:dataTable value="#{customerController.feedbacks}" var="feedback" style="margin-bottom:40px" rows="5" tableStyleClass="table-small-font"
-                                             paginator="true"
-                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                             rowsPerPageTemplate="5,10,15">
-
-                                    <p:column headerText="Feedback Subject">
-                                        <p:outputLabel value="#{feedback.subject}"/>
-                                    </p:column>
-
-                                    <p:column headerText="Created Time">
-                                        <p:outputLabel value="#{feedback.createdTime}">
-                                            <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
-                                        </p:outputLabel>
-                                    </p:column>
-
-                                    <p:column headerText="View" style="width:32px;text-align: center">
-                                        <p:commandButton  oncomplete="PF('feedbackDialog').show()" icon="ui-icon-search" update="feedbackDialog">
-                                            <f:setPropertyActionListener value="#{feedback}" target="#{feedbackBacking.selectFeedback}" />
-                                        </p:commandButton>
-                                    </p:column>
-
-
-                                </p:dataTable> 
-                            </h:form>
-                        </p:panel>
                     </p:panel>
+                    <p:panel header="Current Booking" styleClass="centeredPanel">
+
+                    </p:panel>
+
+                    <p:panel header="Feedbacks" styleClass="centeredPanel">
+                        <h:form>
+                            <p:dataTable value="#{customerController.feedbacks}" var="feedback" style="margin-bottom:40px" rows="5" tableStyleClass="table-small-font"
+                                         paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15">
+
+                                <p:column headerText="Feedback Subject">
+                                    <p:outputLabel value="#{feedback.subject}"/>
+                                </p:column>
+
+                                <p:column headerText="Created Time">
+                                    <p:outputLabel value="#{feedback.createdTime}">
+                                        <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
+                                    </p:outputLabel>
+                                </p:column>
+
+                                <p:column headerText="View" style="width:32px;text-align: center">
+                                    <p:commandButton  oncomplete="PF('feedbackDialog').show()" icon="ui-icon-search" update="feedbackDialog">
+                                        <f:setPropertyActionListener value="#{feedback}" target="#{feedbackBacking.selectFeedback}" />
+                                    </p:commandButton>
+                                </p:column>
+
+
+                            </p:dataTable> 
+                        </h:form>
+                    </p:panel>
+
                 </h:form>
 
 
@@ -200,7 +200,7 @@
                 </h:form>
             </p:tab>
             <p:tab title="My Miles">
-                <h:form id="redeemPoint" style="width: 500px;text-align: center;" >
+                <h:form id="form" style="width: 500px;text-align: center;" >
                     <p:panel header="Redeem Points" styleClass="centeredPanel" >
                         <p:panelGrid columns="2" styleClass="centered">
                             <p:outputLabel value="Customer Name: "/>
@@ -214,41 +214,36 @@
 
                         </p:panelGrid>
 
-                        <p:panel header="Redemption Section">
-                            <p:dataTable value="#{redeemMilesController.milesRedemptions}" var="mileredeem" tableStyleClass="table-small-font" >
+                    </p:panel>
+                    <p:panel header="Redeem Section" styleClass="centeredPanel">
+                        <p:panelGrid style="width: 445px;">
 
-                                <p:row> 
-                                    <p:column colspan="1"><p:outputLabel for="deptLoc" value="From"/></p:column>
-                                    <p:column colspan="5">
-                                        <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
-                                                        value="#{bookingManager.deptAirport}" completeMethod="#{bookingManager.completeDeptAirport}"
-                                                        var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
-                                            <p:column>
-                                                <p:outputLabel value="#{airport.city.cityName}" />
-                                            </p:column>
+                            <!--Departure Airport-->
+                            <p:row> 
+                                <p:column colspan="1"><p:outputLabel for="deptLoc" value="From"/></p:column>
+                                <p:column colspan="5">
+                                    <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                                    value="#{bookingManager.deptAirport}" completeMethod="#{bookingManager.completeDeptAirport}"
+                                                    var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.city.cityName}" />
+                                        </p:column>
 
-                                            <p:column>
-                                                <p:outputLabel value="#{airport.airportName}" />
-                                            </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.airportName}" />
+                                        </p:column>
 
-                                            <p:column>
-                                                <p:outputLabel value="#{airport.iataCode}" />
-                                            </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.iataCode}" />
+                                        </p:column>
 
-                                            <p:column>
-                                                <p:outputLabel value="#{airport.country.countryName}" />
-                                            </p:column>
-                                        </p:autoComplete>
-                                    </p:column>
-                                </p:row>
-
-                                <p:column headerText="Redeem" style="width:45px;text-align: center">
-                                    <p:commandButton action="#{redeemMilesController.onRedeemBtnClick('redeemDialog')}" icon="ui-icon-script">
-                                        <f:setPropertyActionListener value="#{mileredeem}" target="#{redeemMilesController.selectedMilesRedemption}" />
-                                    </p:commandButton>
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.country.countryName}" />
+                                        </p:column>
+                                    </p:autoComplete>
                                 </p:column>
-                            </p:dataTable>
-                        </p:panel>
+                            </p:row>
+                        </p:panelGrid>
                     </p:panel>
                 </h:form>
 
