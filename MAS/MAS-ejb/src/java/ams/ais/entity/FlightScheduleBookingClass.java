@@ -7,7 +7,6 @@ package ams.ais.entity;
 
 import ams.ais.entity.helper.FlightScheduleBookingClassId;
 import ams.aps.entity.FlightSchedule;
-import ams.ars.entity.Seat;
 import ams.crm.entity.MktCampaign;
 import java.io.Serializable;
 import java.util.ArrayList;
