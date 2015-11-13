@@ -6,9 +6,18 @@
 package managedbean.dcs;
 
 import ams.aps.entity.FlightSchedule;
+import ams.dcs.session.CheckInSession;
+import ams.dcs.session.CheckInSessionLocal;
 import java.util.Date;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import managedbean.application.DcsNavController;
+import managedbean.application.MsgController;
+import org.primefaces.event.TabChangeEvent;
 
 /**
  *
@@ -18,33 +27,71 @@ import javax.faces.view.ViewScoped;
 @ViewScoped
 public class FlightBacking {
 
+    @Inject
+    private MsgController msgController;
+
+    @Inject
+    private DcsNavController dcsNavController;
+
+    @EJB
+    private CheckInSessionLocal checkInSession;
+
     /**
      * Creates a new instance of FlightBacking
      */
-    
     private FlightSchedule fs = new FlightSchedule();
     private String flightNo;
     private Date currentDate = new Date();
     private Date selectedDate = new Date();
-    
+
     private String boardingGate = "";
     private String flightStatus = "";
+
+    private List<FlightSchedule> flightsDepart;
+    private FlightSchedule departFlight;
+    private List<FlightSchedule> flightsArrival;
+    private FlightSchedule arrivalFlight;
+
+    private FlightSchedule selectedFlight;
     
-    public String updateFlightStatus(){
-        return "";
-    }
-    
-    public String changeBoardingGate(){
-        return "";
-    }
-    
-    private FlightSchedule searchFlightSchedule(String flightNo, Date flightDate){
-        return new FlightSchedule();
+    @PostConstruct
+    public void init() {
+        setFlightsDepart(getDepFlightSchedules());
+        setFlightsArrival(getArrFlightSchedules());
     }
     
     public FlightBacking() {
     }
+    
+    public String updateFlightStatus() {
+        return "";
+    }
 
+    public String changeBoardingGate() {
+        return "";
+    }
+
+    private FlightSchedule searchFlightSchedule(String flightNo, Date flightDate) {
+        return new FlightSchedule();
+    }
+
+    public void onTabChange(TabChangeEvent event) {
+        FacesMessage msg = new FacesMessage("Tab Changed", "Active Tab: " + event.getTab().getTitle());
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+    
+    public void onEditFlightBtnClick(){
+        
+    }
+    
+    private List<FlightSchedule> getDepFlightSchedules(){
+        return checkInSession.getFlightSchedulesForDeparture();
+    }
+    
+    private List<FlightSchedule> getArrFlightSchedules(){
+        return checkInSession.getFlightSchedulesForArrival();
+    }
+    
     /**
      * @return the fs
      */
@@ -128,7 +175,75 @@ public class FlightBacking {
     public void setFlightStatus(String flightStatus) {
         this.flightStatus = flightStatus;
     }
-    
-    
-    
+
+    /**
+     * @return the flightsDepart
+     */
+    public List<FlightSchedule> getFlightsDepart() {
+        return flightsDepart;
+    }
+
+    /**
+     * @param flightsDepart the flightsDepart to set
+     */
+    public void setFlightsDepart(List<FlightSchedule> flightsDepart) {
+        this.flightsDepart = flightsDepart;
+    }
+
+    /**
+     * @return the departFlight
+     */
+    public FlightSchedule getDepartFlight() {
+        return departFlight;
+    }
+
+    /**
+     * @param departFlight the departFlight to set
+     */
+    public void setDepartFlight(FlightSchedule departFlight) {
+        this.departFlight = departFlight;
+    }
+
+    /**
+     * @return the flightsArrival
+     */
+    public List<FlightSchedule> getFlightsArrival() {
+        return flightsArrival;
+    }
+
+    /**
+     * @param flightsArrival the flightsArrival to set
+     */
+    public void setFlightsArrival(List<FlightSchedule> flightsArrival) {
+        this.flightsArrival = flightsArrival;
+    }
+
+    /**
+     * @return the arrivalFlight
+     */
+    public FlightSchedule getArrivalFlight() {
+        return arrivalFlight;
+    }
+
+    /**
+     * @param arrivalFlight the arrivalFlight to set
+     */
+    public void setArrivalFlight(FlightSchedule arrivalFlight) {
+        this.arrivalFlight = arrivalFlight;
+    }
+
+    /**
+     * @return the selectedFlight
+     */
+    public FlightSchedule getSelectedFlight() {
+        return selectedFlight;
+    }
+
+    /**
+     * @param selectedFlight the selectedFlight to set
+     */
+    public void setSelectedFlight(FlightSchedule selectedFlight) {
+        this.selectedFlight = selectedFlight;
+    }
+
 }

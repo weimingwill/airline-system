@@ -49,15 +49,15 @@ public class FlightScheduleBookingClass implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<PhaseDemand> phaseDemands = new ArrayList<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<Seat> seats = new ArrayList<>();
-    
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<MktCampaign> marketCampaigns = new ArrayList<>();
 
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Seat> seats;
+
     @Column(name = "SEATQTY")
     private Integer seatQty;
-    
+
     @Column(name = "SOLDSEATQTY")
     private Integer soldSeatQty;
 
@@ -85,19 +85,6 @@ public class FlightScheduleBookingClass implements Serializable {
     @Column(name = "CLOSED")
     private Boolean closed;
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the bookingClassId fields are not set
-        if (!(object instanceof FlightScheduleBookingClass)) {
-            return false;
-        }
-        FlightScheduleBookingClass other = (FlightScheduleBookingClass) object;
-        if ((this.flightScheduleBookingClassId == null && other.flightScheduleBookingClassId != null) || (this.flightScheduleBookingClassId != null && !this.flightScheduleBookingClassId.equals(other.flightScheduleBookingClassId))) {
-            return false;
-        }
-        return true;
-    }
-    
     public FlightScheduleBookingClassId getFlightScheduleBookingClassId() {
         return flightScheduleBookingClassId;
     }
@@ -232,19 +219,12 @@ public class FlightScheduleBookingClass implements Serializable {
         this.closed = closed;
     }
 
-    /**
-     * @return the seats
-     */
     public List<Seat> getSeats() {
         return seats;
     }
 
-    /**
-     * @param seats the seats to set
-     */
     public void setSeats(List<Seat> seats) {
         this.seats = seats;
     }
-    
-    
+
 }

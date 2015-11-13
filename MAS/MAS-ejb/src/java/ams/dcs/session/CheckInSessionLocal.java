@@ -55,4 +55,8 @@ public interface CheckInSessionLocal {
     public List<Integer> getRowList();
     
     public List<String> getColList();
+    
+    public List<FlightSchedule> getFlightSchedulesForDeparture();
+    
+    public List<FlightSchedule> getFlightSchedulesForArrival();
 }

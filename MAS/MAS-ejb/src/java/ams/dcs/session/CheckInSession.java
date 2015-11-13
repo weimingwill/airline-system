@@ -5,9 +5,7 @@
  */
 package ams.dcs.session;
 
-import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.FlightSchedule;
-import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.AirTicketPricingItem;
 import ams.ars.entity.BoardingPass;
@@ -212,7 +210,7 @@ public class CheckInSession implements CheckInSessionLocal {
         Query q = em.createQuery("SELECT s FROM AirTicket a, IN(a.flightSchedBookingClass.seats) AS s WHERE a.id = :aid");
         q.setParameter("aid", airTicket.getId());
         try {
-            return (ArrayList<Seat>)q.getResultList();
+            return (ArrayList<Seat>) q.getResultList();
         } catch (Exception e) {
             return null;
         }
@@ -237,5 +235,44 @@ public class CheckInSession implements CheckInSessionLocal {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public List<FlightSchedule> getFlightSchedulesForDeparture() {
+        Date now = new Date();
+        Date aDay = getADateLater();
+
+        Query q = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.departDate BETWEEN :begin AND :end");
+        q.setParameter("begin", now);
+        q.setParameter("end", aDay);
+
+        try {
+            return q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<FlightSchedule> getFlightSchedulesForArrival() {
+        Date now = new Date();
+        Date aDay = getADateLater();
+
+        Query q = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.arrivalDate BETWEEN :begin AND :end");
+        q.setParameter("begin", now);
+        q.setParameter("end", aDay);
+
+        try {
+            return q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Date getADateLater() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.HOUR_OF_DAY, 24); // add 24 hours
+        return cal.getTime();
     }
 }

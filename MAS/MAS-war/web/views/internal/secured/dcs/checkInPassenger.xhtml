@@ -40,7 +40,9 @@
                 </p:column>
 
                 <p:column headerText="Departure Date" sortBy="#{ticket.flightSchedBookingClass.flightSchedule.departDate}">
-                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.departDate}" />
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.departDate}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                    </h:outputText>
                 </p:column>
 
                 <p:column headerText="Destination">
@@ -48,7 +50,9 @@
                 </p:column>
 
                 <p:column headerText="Arrival Date">
-                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.arrivalDate}" />
+                    <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.arrivalDate}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                    </h:outputText>
                 </p:column>
 
                 <p:column headerText="Seat">
