@@ -39,10 +39,14 @@ public class FlightSchedule implements Serializable {
     private String departGate;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date departDate;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date actualDepartDate;
     private String arrivalTerminal;
     private String arrivalGate;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date arrivalDate;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date actualArrivalDate;
     private Boolean deleted;
     private Boolean completed;
     private Boolean seatAllocated;
@@ -291,5 +295,33 @@ public class FlightSchedule implements Serializable {
 
     public void setMktCampaigns(List<MktCampaign> mktCampaigns) {
         this.mktCampaigns = mktCampaigns;
+    }
+
+    /**
+     * @return the actualDepartDate
+     */
+    public Date getActualDepartDate() {
+        return actualDepartDate;
+    }
+
+    /**
+     * @param actualDepartDate the actualDepartDate to set
+     */
+    public void setActualDepartDate(Date actualDepartDate) {
+        this.actualDepartDate = actualDepartDate;
+    }
+
+    /**
+     * @return the actualArrivalDate
+     */
+    public Date getActualArrivalDate() {
+        return actualArrivalDate;
+    }
+
+    /**
+     * @param actualArrivalDate the actualArrivalDate to set
+     */
+    public void setActualArrivalDate(Date actualArrivalDate) {
+        this.actualArrivalDate = actualArrivalDate;
     }
 }
