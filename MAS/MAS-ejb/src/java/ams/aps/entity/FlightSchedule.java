@@ -6,7 +6,6 @@
 package ams.aps.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
-import ams.ars.entity.Seat;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
