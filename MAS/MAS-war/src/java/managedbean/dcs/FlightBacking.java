@@ -12,11 +12,13 @@ import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.DcsNavController;
 import managedbean.application.MsgController;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
 
 /**
@@ -53,16 +55,20 @@ public class FlightBacking {
     private FlightSchedule arrivalFlight;
 
     private FlightSchedule selectedFlight;
+    private String arrivalGate;
+    private String arrivalTerminal;
+    private String departureGate;
+    private String departureTerminal;
     
     @PostConstruct
     public void init() {
         setFlightsDepart(getDepFlightSchedules());
         setFlightsArrival(getArrFlightSchedules());
     }
-    
+
     public FlightBacking() {
     }
-    
+
     public String updateFlightStatus() {
         return "";
     }
@@ -76,22 +82,35 @@ public class FlightBacking {
     }
 
     public void onTabChange(TabChangeEvent event) {
-        FacesMessage msg = new FacesMessage("Tab Changed", "Active Tab: " + event.getTab().getTitle());
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.update(":myForm:flight1");
+        context.update(":myForm:flight2");
+    }
+
+    public void onEditDFlightBtnClick() {
+        if (selectedFlight != null) {
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.update("depFlightInfoDlg");
+            context.execute("PF('depFlightInfoDlg').show();");
+        }
     }
     
-    public void onEditFlightBtnClick(){
-        
+    public void onEditAFlightBtnClick() {
+        if (selectedFlight != null) {
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.update("arrFlightInfoDlg");
+            context.execute("PF('arrFlightInfoDlg').show();");
+        }
     }
-    
-    private List<FlightSchedule> getDepFlightSchedules(){
+
+    private List<FlightSchedule> getDepFlightSchedules() {
         return checkInSession.getFlightSchedulesForDeparture();
     }
-    
-    private List<FlightSchedule> getArrFlightSchedules(){
+
+    private List<FlightSchedule> getArrFlightSchedules() {
         return checkInSession.getFlightSchedulesForArrival();
     }
-    
+
     /**
      * @return the fs
      */
@@ -244,6 +263,62 @@ public class FlightBacking {
      */
     public void setSelectedFlight(FlightSchedule selectedFlight) {
         this.selectedFlight = selectedFlight;
+    }
+
+    /**
+     * @return the arrivalGate
+     */
+    public String getArrivalGate() {
+        return arrivalGate;
+    }
+
+    /**
+     * @param arrivalGate the arrivalGate to set
+     */
+    public void setArrivalGate(String arrivalGate) {
+        this.arrivalGate = arrivalGate;
+    }
+
+    /**
+     * @return the arrivalTerminal
+     */
+    public String getArrivalTerminal() {
+        return arrivalTerminal;
+    }
+
+    /**
+     * @param arrivalTerminal the arrivalTerminal to set
+     */
+    public void setArrivalTerminal(String arrivalTerminal) {
+        this.arrivalTerminal = arrivalTerminal;
+    }
+
+    /**
+     * @return the departureGate
+     */
+    public String getDepartureGate() {
+        return departureGate;
+    }
+
+    /**
+     * @param departureGate the departureGate to set
+     */
+    public void setDepartureGate(String departureGate) {
+        this.departureGate = departureGate;
+    }
+
+    /**
+     * @return the departureTerminal
+     */
+    public String getDepartureTerminal() {
+        return departureTerminal;
+    }
+
+    /**
+     * @param departureTerminal the departureTerminal to set
+     */
+    public void setDepartureTerminal(String departureTerminal) {
+        this.departureTerminal = departureTerminal;
     }
 
 }
