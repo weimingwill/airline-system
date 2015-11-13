@@ -6,6 +6,7 @@
 package ams.aps.entity;
 
 import ams.ais.entity.FlightScheduleBookingClass;
+import ams.ars.entity.Seat;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,7 +62,9 @@ public class FlightSchedule implements Serializable {
     private FlightSchedule preFlightSched;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightSchedule nextFlightSched;
-
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<FlightScheduleSeat> flightSchedSeats;
+    
     public Long getFlightScheduleId() {
         return flightScheduleId;
     }
@@ -287,6 +290,14 @@ public class FlightSchedule implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<FlightScheduleSeat> getFlightSchedSeats() {
+        return flightSchedSeats;
+    }
+
+    public void setFlightSchedSeats(List<FlightScheduleSeat> flightSchedSeats) {
+        this.flightSchedSeats = flightSchedSeats;
     }
 
 }
