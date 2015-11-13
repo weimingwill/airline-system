@@ -31,7 +31,7 @@ import javax.persistence.Query;
  */
 @Stateless
 
-public class CustomerSession implements CustomerSessionLocal {
+public class CustomerExSession implements CustomerExSessionLocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
@@ -53,12 +53,12 @@ public class CustomerSession implements CustomerSessionLocal {
         try {
             regCust.setMembership(entityManager.find(Membership.class, getMembershipByName("Elite Bronze").getId()));
         } catch (NoSuchMembershipException ex) {
-            Logger.getLogger(CustomerSession.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CustomerExSession.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NullPointerException ex) {
             try {
                 System.out.println("getMembershipByName(\"Elite Bronze\"): " + getMembershipByName("Elite Bronze"));
             } catch (NoSuchMembershipException ex1) {
-                Logger.getLogger(CustomerSession.class.getName()).log(Level.SEVERE, null, ex1);
+                Logger.getLogger(CustomerExSession.class.getName()).log(Level.SEVERE, null, ex1);
             }
         }
         regCust.setMembershipId("MA" + 10000 + r.nextInt(20000));

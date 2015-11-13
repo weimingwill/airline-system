@@ -7,7 +7,7 @@ package managedbean.crm;
 
 import ams.crm.entity.Feedback;
 import ams.crm.entity.RegCust;
-import ams.crm.session.CustomerSessionLocal;
+import ams.crm.session.CustomerExSessionLocal;
 import ams.crm.session.FeedbackSessionLocal;
 import ams.crm.util.exception.NoSuchRegCustException;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class FeedbackController {
     @EJB
     private FeedbackSessionLocal feedbackSession;
     @EJB
-    private CustomerSessionLocal customerSession; 
+    private CustomerExSessionLocal customerSession; 
     
     private Feedback newFeedback=new Feedback();
     private String email;

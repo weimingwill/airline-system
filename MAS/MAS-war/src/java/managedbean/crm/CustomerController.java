@@ -8,7 +8,7 @@ package managedbean.crm;
 import ams.crm.entity.Feedback;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
-import ams.crm.session.CustomerSessionLocal;
+import ams.crm.session.CustomerExSessionLocal;
 import ams.crm.util.exception.ExistSuchRegCustException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import java.io.Serializable;
@@ -43,7 +43,7 @@ public class CustomerController implements Serializable {
     private RedeemMilesBacking redeemMilesBacking;
  
     @EJB
-    private CustomerSessionLocal customerSession;
+    private CustomerExSessionLocal customerSession;
    
     private String email;
     private String password;

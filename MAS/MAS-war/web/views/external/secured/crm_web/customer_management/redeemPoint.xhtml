@@ -13,47 +13,47 @@
 
     <ui:define name="content">
         <h:form id="redeemPoint" style="width: 500px;text-align: center;" >
-            <p:panel header="Redeem Points" styleClass="centeredPanel" >
-                <p:panelGrid columns="2" styleClass="centered">
-                    <p:outputLabel value="Customer Name: "/>
-                    <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
+                    <p:panel header="Redeem Points" styleClass="centeredPanel" >
+                        <p:panelGrid columns="2" styleClass="centered">
+                            <p:outputLabel value="Customer Name: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
 
-                    <p:outputLabel value="Current Login Email: "/>
-                    <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
+                            <p:outputLabel value="Current Login Email: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
 
-                    <p:outputLabel value="Accumulated Miles: "/>
-                    <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}"/>
+                            <p:outputLabel value="Accumulated Miles: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}"/>
 
-                </p:panelGrid>
+                        </p:panelGrid>
 
-                <p:panel header="General Redemption Rules">
-                    <p:dataTable value="#{redeemMilesController.milesRedemptions}" var="mileredeem" tableStyleClass="table-small-font" >
+                        <p:panel header="General Redemption Rules">
+                            <p:dataTable value="#{redeemMilesController.milesRedemptions}" var="mileredeem" tableStyleClass="table-small-font" >
 
-                        <p:column headerText="Origin">
-                            <p:outputLabel value="#{mileredeem.origin}"/>
-                        </p:column>
+                                <p:column headerText="Origin">
+                                    <p:outputLabel value="#{mileredeem.origin}"/>
+                                </p:column>
 
-                        <p:column headerText="Destination">
-                            <p:outputLabel value="#{mileredeem.destination}" />
-                        </p:column>
+                                <p:column headerText="Destination">
+                                    <p:outputLabel value="#{mileredeem.destination}" />
+                                </p:column>
 
-                        <p:column headerText="Miles">
-                            <p:outputLabel value="#{mileredeem.miles}" />
-                        </p:column>
+                                <p:column headerText="Redemption Miles">
+                                    <p:outputLabel value="#{mileredeem.miles}" />
+                                </p:column>
 
-                        <p:column headerText="Promotion Code">
-                            <p:outputLabel value="#{mileredeem.promoCode}" />
-                        </p:column>
+                                <p:column headerText="Promotion Code">
+                                    <p:outputLabel value="#{mileredeem.promoCode}" />
+                                </p:column>
 
-                        <p:column headerText="Redeem" style="width:45px;text-align: center">
-                            <p:commandButton action="#{redeemMilesController.onRedeemBtnClick('redeemDialog')}" icon="ui-icon-script">
-                                <f:setPropertyActionListener value="#{mileredeem}" target="#{redeemMilesController.selectedMilesRedemption}" />
-                            </p:commandButton>
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
-            </p:panel>
-        </h:form>
+                                <p:column headerText="Redeem" style="width:45px;text-align: center">
+                                    <p:commandButton action="#{redeemMilesController.onRedeemBtnClick('redeemDialog')}" icon="ui-icon-script">
+                                        <f:setPropertyActionListener value="#{mileredeem}" target="#{redeemMilesController.selectedMilesRedemption}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:panel>
+                </h:form>
         <p:dialog id="redeemDialog"  header="Are you sure you want to redeem this air ticket?" widgetVar="redeemDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form>
                 <p:panel id="redemptionDetail">
