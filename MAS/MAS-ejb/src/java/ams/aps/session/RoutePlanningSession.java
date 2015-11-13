@@ -125,7 +125,6 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
     @Override
     public List<City> getCityListByCountry(String countryCode) {
         Country country = getCountryByCode(countryCode);
-        System.out.println("RoutePlanningSession: getCityListByCountry():" + countryCode);
         return (List<City>) country.getCities();
     }
 
@@ -491,7 +490,6 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public Airport getAirportByICAOCode(String code) {
-        System.out.println("RoutePlanningSession: getAirportByICAOCode(): " + code);
         Query query = em.createQuery("SELECT a FROM Airport a WHERE a.icaoCode = :inCode");
         query.setParameter("inCode", code);
         Airport airport = null;

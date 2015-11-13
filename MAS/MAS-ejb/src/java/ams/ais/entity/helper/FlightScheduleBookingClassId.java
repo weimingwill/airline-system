@@ -6,6 +6,7 @@
 package ams.ais.entity.helper;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -47,9 +48,9 @@ public class FlightScheduleBookingClassId implements Serializable{
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the flightScheduleId fields are not set
-    if (object instanceof CabinClassTicketFamilyId) {
+    if (object instanceof FlightScheduleBookingClassId) {
       FlightScheduleBookingClassId otherId = (FlightScheduleBookingClassId) object;
-      return (otherId.bookingClassId == this.bookingClassId) && (otherId.flightScheduleId == this.flightScheduleId);
+      return (Objects.equals(otherId.bookingClassId, this.bookingClassId)) && (Objects.equals(otherId.flightScheduleId, this.flightScheduleId));
     }
     return false;
     }

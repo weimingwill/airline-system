@@ -6,15 +6,11 @@
 package managedbean.crm;
 
 import ams.ais.entity.Rule;
-import ams.ais.entity.TicketFamily;
 import ams.crm.session.GeneralInformationSessionLocal;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import managedbean.application.MsgController;
-import managedbean.application.NavigationController;
 
 /**
  *
@@ -23,10 +19,6 @@ import managedbean.application.NavigationController;
 @Named(value = "generalInformationController")
 @RequestScoped
 public class GeneralInformationController {
-    @Inject
-    private NavigationController navigationController;
-    @Inject
-    private MsgController msgController;
 
     @EJB
     private GeneralInformationSessionLocal generalInformationSession;

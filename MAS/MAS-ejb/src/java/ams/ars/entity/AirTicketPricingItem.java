@@ -21,6 +21,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
  */
 @Entity
 public class AirTicketPricingItem implements Serializable {
+    
     @EmbeddedId
     private AirTicketPricingItemId airTicketPricingItemId;
     
@@ -54,7 +55,7 @@ public class AirTicketPricingItem implements Serializable {
     public PricingItem getPricingItem() {
         return pricingItem;
     }
-
+ 
     public void setPricingItem(PricingItem pricingItem) {
         this.pricingItem = pricingItem;
     }
@@ -68,3 +69,4 @@ public class AirTicketPricingItem implements Serializable {
     }
     
 }
+ 

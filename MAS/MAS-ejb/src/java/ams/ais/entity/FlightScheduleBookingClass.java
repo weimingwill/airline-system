@@ -81,6 +81,19 @@ public class FlightScheduleBookingClass implements Serializable {
     @Column(name = "CLOSED")
     private Boolean closed;
 
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the bookingClassId fields are not set
+        if (!(object instanceof FlightScheduleBookingClass)) {
+            return false;
+        }
+        FlightScheduleBookingClass other = (FlightScheduleBookingClass) object;
+        if ((this.flightScheduleBookingClassId == null && other.flightScheduleBookingClassId != null) || (this.flightScheduleBookingClassId != null && !this.flightScheduleBookingClassId.equals(other.flightScheduleBookingClassId))) {
+            return false;
+        }
+        return true;
+    }
+    
     public FlightScheduleBookingClassId getFlightScheduleBookingClassId() {
         return flightScheduleBookingClassId;
     }

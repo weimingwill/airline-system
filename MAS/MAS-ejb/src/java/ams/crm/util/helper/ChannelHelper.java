@@ -16,4 +16,4 @@ public class ChannelHelper {
     
     public static final String STATUS_OPEN = "open";
     public static final String STATUS_CLOSE = "close";
- }
+  }
