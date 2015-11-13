@@ -6,13 +6,11 @@
 package managedbean.dcs;
 
 import ams.aps.entity.FlightSchedule;
-import ams.dcs.session.CheckInSession;
 import ams.dcs.session.CheckInSessionLocal;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -57,6 +55,8 @@ public class FlightBacking {
     private FlightSchedule selectedFlight;
     private String arrivalGate;
     private String arrivalTerminal;
+    private Date acctualArrivalDate;
+    private Date acctualDepartureDate;
     private String departureGate;
     private String departureTerminal;
     
@@ -319,6 +319,34 @@ public class FlightBacking {
      */
     public void setDepartureTerminal(String departureTerminal) {
         this.departureTerminal = departureTerminal;
+    }
+
+    /**
+     * @return the acctualArrivalDate
+     */
+    public Date getAcctualArrivalDate() {
+        return acctualArrivalDate;
+    }
+
+    /**
+     * @param acctualArrivalDate the acctualArrivalDate to set
+     */
+    public void setAcctualArrivalDate(Date acctualArrivalDate) {
+        this.acctualArrivalDate = acctualArrivalDate;
+    }
+
+    /**
+     * @return the acctualDepartureDate
+     */
+    public Date getAcctualDepartureDate() {
+        return acctualDepartureDate;
+    }
+
+    /**
+     * @param acctualDepartureDate the acctualDepartureDate to set
+     */
+    public void setAcctualDepartureDate(Date acctualDepartureDate) {
+        this.acctualDepartureDate = acctualDepartureDate;
     }
 
 }

@@ -119,10 +119,16 @@
                 <p:panelGrid columns="2" style="margin-top:2px">
                     <p:outputLabel value="Depature Terminal:"/>
                     <p:inputText value="#{flightBacking.departureTerminal}" label="ter"/>
-                    
+
                     <p:outputLabel value="Depature Gate:"/>
                     <p:inputText value="#{flightBacking.departureGate}" label="gate"/>
-                    
+
+                    <p:outputLabel value="Accatual Departure Time:" for="datetime"/>
+                    <p:calendar id="datetime" value="#{flightBacking.acctualDepartureDate}" pattern="MM/dd/yyyy HH:mm" />
+
+                    <p:separator/>
+                    <p:commandButton type="submit" icon="ui-icon-check" value="Confirm update" update="myForm:flight1" oncomplete="PF('myForm:depFlightInfoDlg').hide()"/>
+                
                 </p:panelGrid>
             </p:dialog>
 
@@ -130,13 +136,19 @@
                 <p:panelGrid columns="2" style="margin-top:2px">
                     <p:outputLabel value="Arrival Terminal:"/>
                     <p:inputText value="#{flightBacking.arrivalTerminal}" label="ter"/>
-                    
+
                     <p:outputLabel value="Arrival Gate:"/>
                     <p:inputText value="#{flightBacking.arrivalGate}" label="gate"/>
-                    
+
+                    <p:outputLabel value="Accatual Arrival Time:" for="datetime"/>
+                    <p:calendar id="datetime" value="#{flightBacking.acctualArrivalDate}" pattern="MM/dd/yyyy HH:mm" />
+
+                    <p:separator/>
+                    <p:commandButton type="submit" icon="ui-icon-check" value="Confirm update" update="myForm:flight2" oncomplete="PF('myForm:arrFlightInfoDlg').hide()"/>
+                
                 </p:panelGrid>
             </p:dialog>
-
+            
         </h:form>
     </ui:define>
 </ui:composition>
