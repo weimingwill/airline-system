@@ -52,9 +52,6 @@ public class FlightScheduleBookingClass implements Serializable {
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<MktCampaign> marketCampaigns = new ArrayList<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<Seat> seats;
-
     @Column(name = "SEATQTY")
     private Integer seatQty;
 
@@ -218,13 +215,4 @@ public class FlightScheduleBookingClass implements Serializable {
     public void setClosed(Boolean closed) {
         this.closed = closed;
     }
-
-    public List<Seat> getSeats() {
-        return seats;
-    }
-
-    public void setSeats(List<Seat> seats) {
-        this.seats = seats;
-    }
-
 }
