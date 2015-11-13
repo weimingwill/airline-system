@@ -13,7 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 /**
@@ -35,8 +35,11 @@ public class Pairing implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<FlightDuty> flightDuties;
 
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private BiddingSession biddingSession;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<BiddingSession> biddingSessions;
+    
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "pairing")
+    private List<PairingFlightCrew> pairingFlightCrews;
 
     public Long getPairingId() {
         return pairingId;
@@ -142,17 +145,31 @@ public class Pairing implements Serializable {
     }
 
     /**
-     * @return the biddingSession
+     * @return the biddingSessions
      */
-    public BiddingSession getBiddingSession() {
-        return biddingSession;
+    public List<BiddingSession> getBiddingSessions() {
+        return biddingSessions;
     }
 
     /**
-     * @param biddingSession the biddingSession to set
+     * @param biddingSessions the biddingSessions to set
      */
-    public void setBiddingSession(BiddingSession biddingSession) {
-        this.biddingSession = biddingSession;
+    public void setBiddingSessions(List<BiddingSession> biddingSessions) {
+        this.biddingSessions = biddingSessions;
+    }
+
+    /**
+     * @return the pairingFlightCrews
+     */
+    public List<PairingFlightCrew> getPairingFlightCrews() {
+        return pairingFlightCrews;
+    }
+
+    /**
+     * @param pairingFlightCrews the pairingFlightCrews to set
+     */
+    public void setPairingFlightCrews(List<PairingFlightCrew> pairingFlightCrews) {
+        this.pairingFlightCrews = pairingFlightCrews;
     }
 
 }
