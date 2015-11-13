@@ -214,24 +214,33 @@
 
                         </p:panelGrid>
 
-                        <p:panel header="General Redemption Rules">
+                        <p:panel header="Redemption Section">
                             <p:dataTable value="#{redeemMilesController.milesRedemptions}" var="mileredeem" tableStyleClass="table-small-font" >
 
-                                <p:column headerText="Origin">
-                                    <p:outputLabel value="#{mileredeem.origin}"/>
-                                </p:column>
+                                <p:row> 
+                                    <p:column colspan="1"><p:outputLabel for="deptLoc" value="From"/></p:column>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                                        value="#{bookingManager.deptAirport}" completeMethod="#{bookingManager.completeDeptAirport}"
+                                                        var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                                            <p:column>
+                                                <p:outputLabel value="#{airport.city.cityName}" />
+                                            </p:column>
 
-                                <p:column headerText="Destination">
-                                    <p:outputLabel value="#{mileredeem.destination}" />
-                                </p:column>
+                                            <p:column>
+                                                <p:outputLabel value="#{airport.airportName}" />
+                                            </p:column>
 
-                                <p:column headerText="Redemption Miles">
-                                    <p:outputLabel value="#{mileredeem.miles}" />
-                                </p:column>
+                                            <p:column>
+                                                <p:outputLabel value="#{airport.iataCode}" />
+                                            </p:column>
 
-                                <p:column headerText="Promotion Code">
-                                    <p:outputLabel value="#{mileredeem.promoCode}" />
-                                </p:column>
+                                            <p:column>
+                                                <p:outputLabel value="#{airport.country.countryName}" />
+                                            </p:column>
+                                        </p:autoComplete>
+                                    </p:column>
+                                </p:row>
 
                                 <p:column headerText="Redeem" style="width:45px;text-align: center">
                                     <p:commandButton action="#{redeemMilesController.onRedeemBtnClick('redeemDialog')}" icon="ui-icon-script">
