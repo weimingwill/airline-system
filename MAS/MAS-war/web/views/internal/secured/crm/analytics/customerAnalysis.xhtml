@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Customer Analysis
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+
+            <f:facet name="header">
+                Customer Stats Dashboard
+            </f:facet>
+            <p:growl id="msgs" showDetail="true" />
+
+            <p:dashboard id="board" model="#{analyticsController.customerDashboard}">
+                <p:ajax event="reorder" listener="#{analyticsController.handleReorder}" update="msgs" />
+
+                <p:panel id="customerStats" header="Customer Stats">
+                    <h:outputText value="Customer Stats" />
+                </p:panel>
+
+                <p:panel id="genderDistribution" header="Gender Distribution">
+                    <h:outputText value="Gender Distribution" />
+                </p:panel>
+
+                <p:panel id="ageDistribution" header="Age Distribution">
+                    <h:outputText value="Age Distribution"  />
+                </p:panel>
+
+                <p:panel id="locationDistribution" header="(Member) Location Distribution">
+                    <h:outputText value="(Member) Location Distribution" />
+                </p:panel>
+
+                <p:panel id="loyaltyStatus" header="(Member) Loyalty Stats">
+                    <h:outputText value="(Member) Loyalty Stats" />
+                </p:panel>
+
+                <p:panel id="misc" header="Miscellaneous">
+                    <h:outputText value="Miscellaneous" />
+                </p:panel>
+
+            </p:dashboard>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>
