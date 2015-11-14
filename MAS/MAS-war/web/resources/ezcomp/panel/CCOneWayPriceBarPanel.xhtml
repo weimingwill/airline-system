@@ -8,6 +8,7 @@
 
     <!-- INTERFACE -->
     <cc:interface>
+        <cc:attribute name="flightSchedule" required="true" />
         <cc:attribute name="flightSchedBookingClsHelper" required="true" />
     </cc:interface>
 
@@ -15,7 +16,7 @@
     <cc:implementation>
         <c:set value="#{cc.attrs.flightSchedBookingClsHelper}" var="fbHelper" />
         <c:set value="#{cc.attrs.flightSchedBookingClsHelper.flightSchedBookingCls}" var="fb" />
-        <c:set value="#{cc.attrs.flightSchedBookingClsHelper.flightSchedBookingCls.flightSchedule}" var="flightSchedule" />
+        <c:set value="#{cc.attrs.flightSchedule}" var="flightSchedule" />
         <p:panelGrid>
 
             <p:row>
@@ -56,7 +57,7 @@
                 <p:column></p:column>
                 <p:column rowspan="2">
                     <p:outputLabel value="S$" />
-                    <p:outputLabel value="#{fb.price}" >
+                    <p:outputLabel value="#{fbHelper.price}" >
                         <f:convertNumber maxFractionDigits="1" />
                     </p:outputLabel>
                 </p:column>

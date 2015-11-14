@@ -4,6 +4,33 @@ SET SQL_SAFE_UPDATES = 0;
 -- Admin User
 INSERT INTO `mas`.`SYSTEMUSER`(`USERNAME`,`PASSWORD`,`EMAIL`,`ACTIVATED`,`DTYPE`,`DEPARTMENT`) VALUES('admin', 'f5e98b4132faecbdb14f171504c3e185','a0119405@u.nus.edu',1,'SystemUser','Administration');
 
+INSERT INTO `mas`.`PRICINGITEM`(`NAME`,`PRICE`) VALUES('Airport / Government taxes','0.05');
+INSERT INTO `mas`.`PRICINGITEM`(`NAME`,`PRICE`) VALUES('Airline Insurance','0.02');
+
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Extra Luggage','Luggage',30,'Add on luggage');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Extra Luggage','Luggage',55,'Add on luggage');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Extra Luggage','Luggage',80,'Add on luggage');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Extra Luggage','Luggage',100,'Add on luggage');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Extra Luggage','Luggage',150,'Add on luggage');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Extra Luggage','Luggage',200,'Add on luggage');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Extra Luggage','Luggage',250,'Add on luggage');
+
+INSERT INTO `mas`.`LUGGAGE`(`ID`,`MAXWEIGHT`) VALUES('1','5');
+INSERT INTO `mas`.`LUGGAGE`(`ID`,`MAXWEIGHT`) VALUES('2','10');
+INSERT INTO `mas`.`LUGGAGE`(`ID`,`MAXWEIGHT`) VALUES('3','15');
+INSERT INTO `mas`.`LUGGAGE`(`ID`,`MAXWEIGHT`) VALUES('4','20');
+INSERT INTO `mas`.`LUGGAGE`(`ID`,`MAXWEIGHT`) VALUES('5','30');
+INSERT INTO `mas`.`LUGGAGE`(`ID`,`MAXWEIGHT`) VALUES('6','40');
+
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Meal','AddOn',0,'Halal meal');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Meal','AddOn',0,'Low calorie meal');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Meal','AddOn',0,'Vegetarian meal');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Meal','AddOn',0,'Kosher meal');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Meal','AddOn',0,'Western meal');
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Meal','AddOn',0,'Chinese meal');
+
+INSERT INTO `mas`.`ADDON`(`NAME`,`DTYPE`,`PRICE`,`DESCRIPTION`) VALUES('Travel Insurance','AddOn',50,'Travel insurance for the trip');
+
 
 -- Test Roles
 INSERT INTO `mas`.`SYSTEMROLE`(`ROLENAME`) VALUES('IT Staff');

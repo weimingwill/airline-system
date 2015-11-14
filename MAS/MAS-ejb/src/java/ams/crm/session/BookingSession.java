@@ -20,10 +20,14 @@ import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.aps.util.exception.NoSuchFlightScheduleBookingClassException;
 import ams.aps.util.helper.ApsMsg;
 import ams.aps.util.helper.FlightSchedStatus;
+import ams.ars.entity.AddOn;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.Booking;
+import ams.ars.entity.PricingItem;
+import ams.ars.util.helper.AddOnHelper;
 import ams.crm.entity.Customer;
 import ams.crm.util.helper.BookingHelper;
+import ams.dcs.entity.Luggage;
 import ams.dcs.util.helper.AirTicketStatus;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -276,7 +280,7 @@ public class BookingSession implements BookingSessionLocal {
     @Override
     public void bookingFlight(BookingHelper bookingHelper) {
         List<Customer> customers = new ArrayList<>();
-        
+
         for (Customer customer : bookingHelper.getAdults()) {
             System.out.println("Customer: " + customer.getFirstName());
         }
@@ -379,4 +383,67 @@ public class BookingSession implements BookingSessionLocal {
         return cust;
     }
 
+    @Override
+    public List<AddOn> getMeals() {
+        Query query = em.createQuery("SELECT a FROM AddOn a WHERE a.name = :name");
+        query.setParameter("name", AddOnHelper.MEAL);
+        List<AddOn> addOns = new ArrayList<>();
+        try {
+            addOns = (List<AddOn>) query.getResultList();
+        } catch (Exception e) {
+        }
+        return addOns;
+    }
+
+    @Override
+    public List<Luggage> getLuggages() {
+        Query query = em.createQuery("SELECT l FROM Luggage l WHERE a.name = :name");
+        query.setParameter("name", AddOnHelper.LUGGAGE);
+        List<Luggage> luggages = new ArrayList<>();
+        try {
+            luggages = (List<Luggage>) query.getResultList();
+        } catch (Exception e) {
+        }
+        return luggages;
+    }
+
+    @Override
+    public AddOn getTravelInsurance() {
+        Query query = em.createQuery("SELECT a FROM AddOn a WHERE a.name = :name");
+        query.setParameter("name", AddOnHelper.INSURANCE);
+        AddOn addOn = new AddOn();
+        try {
+            addOn = (AddOn) query.getSingleResult();
+        } catch (Exception e) {
+        }
+        return addOn;
+    }
+
+    @Override
+    public List<PricingItem> getPricingItems() {
+        Query query = em.createQuery("SELECT p FROM PricingItem p");
+        List<PricingItem> pricingItems = new ArrayList<>();
+        try {
+            pricingItems = (List<PricingItem>) query.getResultList();
+        } catch (Exception e) {
+        }
+        return pricingItems;
+    }
+
+    @Override
+    public AddOn getAddOnById(long id) {
+        return em.find(AddOn.class, id);
+    }
+
+    @Override
+    public Luggage getLuggageById(long id) {
+        return em.find(Luggage.class, id);
+    }
+
+    @Override
+    public PricingItem getPricingItemById(long id) {
+        return em.find(PricingItem.class, id);
+    }
+
+    
 }

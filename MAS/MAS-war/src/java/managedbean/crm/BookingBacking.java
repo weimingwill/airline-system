@@ -7,10 +7,15 @@ package managedbean.crm;
 
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.aps.entity.FlightSchedule;
+import ams.ars.entity.AddOn;
+import ams.ars.entity.PricingItem;
+import ams.crm.session.BookingSessionLocal;
+import ams.dcs.entity.Luggage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 
@@ -22,12 +27,21 @@ import javax.faces.view.ViewScoped;
 @ViewScoped
 public class BookingBacking implements Serializable {
     
+    @EJB
+    private BookingSessionLocal bookingSession;
+    
     private FlightSchedule flightSchedule;
     private FlightScheduleBookingClass selectedFlightSchedBookignCls;
 
     //Passenger details
     private List<String> titles = new ArrayList<>();
     private List<String> genders = new ArrayList<>();
+    
+    //Add On
+    private List<AddOn> meals = new ArrayList<>();
+    private List<Luggage> luggages = new ArrayList<>();
+    
+    private List<PricingItem> pricingItems = new ArrayList<>();
     /**
      * Creates a new instance of BookingBacking
      */
@@ -35,12 +49,15 @@ public class BookingBacking implements Serializable {
     public void init() {
         setTitleList();
         setGenders();
+        setMeals();
+        setLuggages();
+        setPricingItems(pricingItems);
     }
     
     public BookingBacking() {
     }
 
-    public void setTitleList() {
+    private void setTitleList() {
         titles.add("Ms");
         titles.add("Mrs");
         titles.add("Mr");
@@ -50,9 +67,21 @@ public class BookingBacking implements Serializable {
         titles.add("Mr Prof.");
     }
 
-    public void setGenders() {
+    private void setGenders() {
         genders.add("Male");
         genders.add("Female");
+    }
+    
+    private void setMeals() {
+        meals = bookingSession.getMeals();
+    }
+    
+    private void setLuggages() {
+        luggages = bookingSession.getLuggages();
+    }
+    
+    private void setPricingItems() {
+        pricingItems = bookingSession.getPricingItems();
     }
     
     public FlightSchedule getFlightSchedule() {
@@ -86,6 +115,31 @@ public class BookingBacking implements Serializable {
     public void setGenders(List<String> genders) {
         this.genders = genders;
     }
+
+    public List<AddOn> getMeals() {
+        return meals;
+    }
+
+    public void setMeals(List<AddOn> meals) {
+        this.meals = meals;
+    }
+
+    public List<PricingItem> getPricingItems() {
+        return pricingItems;
+    }
+
+    public void setPricingItems(List<PricingItem> pricingItems) {
+        this.pricingItems = pricingItems;
+    }
+
+    public List<Luggage> getLuggages() {
+        return luggages;
+    }
+
+    public void setLuggages(List<Luggage> luggages) {
+        this.luggages = luggages;
+    }
+    
     
     
 }
