@@ -48,7 +48,7 @@ public class AirTicket implements Serializable {
     private List<CheckInLuggage> luggages = new ArrayList<>();
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "airTicket")
-    private List<AirTicketPricingItem> airTicketPricingItems = new ArrayList<>();
+    private List<AirTicketAdditionalCharge> airTicketAdditionalCharges = new ArrayList<>();
 
     @OneToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private Seat seat;
@@ -61,6 +61,9 @@ public class AirTicket implements Serializable {
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightScheduleBookingClass flightSchedBookingClass;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "airTicket")
+    private List<PricingItem> pricingItems = new ArrayList<>();
 
     @Override
     public int hashCode() {
@@ -111,12 +114,12 @@ public class AirTicket implements Serializable {
         this.addOns = addOns;
     }
 
-    public List<AirTicketPricingItem> getAirTicketPricingItems() {
-        return airTicketPricingItems;
+    public List<AirTicketAdditionalCharge> getAirTicketAdditionalCharges() {
+        return airTicketAdditionalCharges;
     }
 
-    public void setAirTicketPricingItems(List<AirTicketPricingItem> airTicketPricingItems) {
-        this.airTicketPricingItems = airTicketPricingItems;
+    public void setAirTicketAdditionalCharges(List<AirTicketAdditionalCharge> airTicketAdditionalCharges) {
+        this.airTicketAdditionalCharges = airTicketAdditionalCharges;
     }
 
     public Seat getSeat() {
@@ -193,4 +196,13 @@ public class AirTicket implements Serializable {
         this.purchasedLuggage = purchasedLuggage;
     }
 
+    public List<PricingItem> getPricingItems() {
+        return pricingItems;
+    }
+
+    public void setPricingItems(List<PricingItem> pricingItems) {
+        this.pricingItems = pricingItems;
+    }
+
+    
 }
