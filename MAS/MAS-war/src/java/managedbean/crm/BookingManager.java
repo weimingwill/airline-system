@@ -15,13 +15,16 @@ import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
+import ams.ars.entity.AddOn;
 import ams.ars.entity.Booking;
+import ams.ars.entity.PricingItem;
 import ams.crm.entity.Customer;
 import ams.crm.entity.helper.Phone;
 import ams.crm.session.BookingSessionLocal;
 import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.ChannelHelper;
 import ams.crm.util.helper.FlightSchedHelper;
+import ams.dcs.entity.Luggage;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -329,7 +332,9 @@ public class BookingManager implements Serializable {
     }
 
     public FlightSchedule getSelectedFlightSched() throws NoSuchFlightSchedulException {
-        FlightSchedule f = new FlightSchedule();
+        if (selectedFb.getFlightSchedule() == null) {
+            return new FlightSchedule();
+        }
         return revMgmtSession.getFlightScheduleById(selectedFb.getFlightSchedule().getFlightScheduleId());
     }
 

@@ -1,1 +1,3 @@
-FlightScheduleBookingClass -> Seat (One to Many)
+FlightSchedule -> FlightScheduleSeat -> Seat (One to Many, One to Many)
+Delete AirticketPricingItem, add itemValue to PricingItem
+Add entity: AdditionalCharge, AirTicketAdditonalCharge join table. 
