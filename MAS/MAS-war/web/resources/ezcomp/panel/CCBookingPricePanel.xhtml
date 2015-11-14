@@ -79,6 +79,25 @@
                 </p:column>
             </p:row>
 
+            <f:facet name="options">
+                <p:row><p:column>Options</p:column></p:row>
+            </f:facet>
+
+            <p:row>
+                <p:column rowspan="2">
+                    <p:outputLabel value="fa fa-plane bookingIcon" />
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="Meal(s)"/>
+                </p:column>
+                <p:column></p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="#{bookingManager.bookingHelper.meal.description}" />
+                </p:column>
+            </p:row>
+
             <f:facet name="totalPrice">
                 <p:column><p:outputLabel value="Grant total"/></p:column>
                 <p:column colspan="2">
