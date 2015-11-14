@@ -10,10 +10,13 @@ import ams.afos.entity.Checklist;
 import ams.afos.entity.FlightCrew;
 import ams.afos.entity.FlightDuty;
 import ams.afos.entity.Pairing;
+import ams.afos.entity.PairingFlightCrew;
 import ams.afos.util.exception.BiddingSessionConflictException;
 import ams.afos.util.exception.FlightDutyConflictException;
 import ams.afos.util.exception.PairingConflictException;
 import ams.afos.util.helper.BiddingSessionStatus;
+import ams.afos.util.helper.CrewType;
+import ams.afos.util.helper.PairingCrewStatus;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
@@ -45,7 +48,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     private final double msToHrCoe = 2.77778e-7;
 
     @Override
-    public void generatePairings() throws PairingConflictException{
+    public void generatePairings() throws PairingConflictException {
         List<FlightDuty> nextMonthFlightDuties = getNextMonthFlightDuties();
         ArrayList<Long> flightDutyIdList = new ArrayList();
         checkFlightPairingExist(nextMonthFlightDuties);
@@ -209,7 +212,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
             }
         }
     }
-    
+
     private void checkFlightPairingExist(List<FlightDuty> nextMonthFlightDutys) throws PairingConflictException {
         Query q;
         for (FlightDuty fd : nextMonthFlightDutys) {
@@ -221,16 +224,16 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
             }
         }
     }
-    
+
     private void checkBiddingSessionExist(List<Pairing> pairings, FlightCrew crew) throws BiddingSessionConflictException {
         Query q;
-        for (Pairing p: pairings) {
+        for (Pairing p : pairings) {
             q = em.createQuery("SELECT bs FROM BiddingSession bs WHERE (:p MEMBER OF (bs.pairings)) AND (:c MEMBER OF (bs.flightCrews))");
             q.setParameter("p", p);
             q.setParameter("c", crew);
             if (!q.getResultList().isEmpty()) {
-                System.out.println("Bidding session for "+crew.getPosition().getType()+" has already bean generated");
-                throw new BiddingSessionConflictException("Bidding session for "+crew.getPosition().getType()+" has already bean generated");
+                System.out.println("Bidding session for " + crew.getPosition().getType() + " has already bean generated");
+                throw new BiddingSessionConflictException("Bidding session for " + crew.getPosition().getType() + " has already bean generated");
             }
         }
     }
@@ -358,7 +361,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     }
 
     @Override
-    public void generateBiddingSession(String target) throws BiddingSessionConflictException{
+    public void generateBiddingSession(String target) throws BiddingSessionConflictException {
         List<Pairing> nextMonthPairings = getNextMonthPairings();
         List<FlightCrew> flightCrews = getCrews(target);
         checkBiddingSessionExist(nextMonthPairings, flightCrews.get(0));
@@ -367,22 +370,21 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         createTime = Calendar.getInstance();
         startTime = Calendar.getInstance(); // should change to the first of last week of each month.
         Double remainingHrs = 7 * 24.0;
-        
-        
+
         newBiddingSession.setStartTime(startTime.getTime());
         newBiddingSession.setCreatedTime(createTime.getTime());
         newBiddingSession.setRemainingHrs(remainingHrs);
-        
+
         newBiddingSession.setStatus(BiddingSessionStatus.CREATED);
         printBiddingSession(newBiddingSession);
         em.persist(newBiddingSession);
-        for(Pairing pairing: nextMonthPairings){
+        for (Pairing pairing : nextMonthPairings) {
             List<BiddingSession> biddingSessions = pairing.getBiddingSessions();
             biddingSessions.add(newBiddingSession);
             pairing.setBiddingSessions(biddingSessions);
             em.merge(pairing);
         }
-        for(FlightCrew crew: flightCrews){
+        for (FlightCrew crew : flightCrews) {
             List<BiddingSession> biddingSessions = crew.getBiddingSessions();
             biddingSessions.add(newBiddingSession);
             crew.setBiddingSessions(biddingSessions);
@@ -404,10 +406,41 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     }
 
     @Override
-    public void assignPairingsToCrew(FlightCrew thisCrew) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void closeBiddingSession(BiddingSession session) {
+        Query query = em.createQuery("SELECT DISTINCT(p) FROM PairingFlightCrew pfc, Pairing p WHERE (:session MEMBER OF p.biddingSessions) AND pfc.pairing.pairingId = P.pairingId AND pfc.status = :status");
+        query.setParameter("session", session);
+        query.setParameter("status", PairingCrewStatus.PENDING);
+        List<Pairing> pairings = query.getResultList();
+        List<FlightCrew> orderedCabinCrews, orderedCockpitCrews;
+        for (Pairing thisPairing : pairings) {
+            System.out.print("closeBiddingSession(): thisPairing");
+            printPairing(thisPairing);
+            orderedCabinCrews = getOrderedFlightCrews(CrewType.FLIGHT_ATTENDENT,thisPairing);
+            orderedCockpitCrews = getOrderedFlightCrews(CrewType.PILOT,thisPairing);
+            assignPairingsToCrew(CrewType.FLIGHT_ATTENDENT, thisPairing, orderedCabinCrews);
+            assignPairingsToCrew(CrewType.PILOT,thisPairing, orderedCockpitCrews);
+        }
     }
 
+    @Override
+    public void assignPairingsToCrew(String type, Pairing pairingWithBids, List<FlightCrew> orderedFlightCrew) {
+        List<PairingFlightCrew> pairingFlightCrews;
+        pairingFlightCrews = pairingWithBids.getPairingFlightCrews();
+        if(!orderedFlightCrew.isEmpty()){
+            //        for(int i = 0 ; i < pairingWithBids.getCabinCrewQuota())
+            // TODO: Based on crew type and crew quota to assign pairing to crew
+        }
+    }
+
+    private List<FlightCrew> getOrderedFlightCrews(String type, Pairing thisPairing){
+        Query query = em.createQuery("SELECT pfc.flightCrew FROM PairingFlightCrew pfc WHERE pfc.pairing.pairingId = :inPairingId AND pfc.status = :status AND pfc.flightCrew.position.type = :type ORDER BY pfc.lastUpdateTime ASC, pfc.flightCrew.position.rank DESC, pfc.flightCrew.dateJoined ASC");
+        query.setParameter("inPairingId", thisPairing.getPairingId());
+        query.setParameter("status", PairingCrewStatus.PENDING);
+        query.setParameter("type", type);
+        return (List<FlightCrew>) query.getResultList();
+    }   
+    
+    
     @Override
     public void createFlightDutyChecklist(Checklist checklist) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

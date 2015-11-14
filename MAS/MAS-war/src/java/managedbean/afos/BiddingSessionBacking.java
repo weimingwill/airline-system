@@ -65,18 +65,6 @@ public class BiddingSessionBacking implements Serializable {
         getAllBiddingSession();
     }
 
-    private void getAllBiddingSession() {
-        setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
-    }
-
-    private void getFutureFlightDuties() {
-        setFlightDuties(flightCrewMgmtSession.getNextMonthFlightDuties());
-    }
-
-    private void getFuturePairings() {
-        setPairings(flightCrewMgmtSession.getNextMonthPairings());
-    }
-
     public void generatePairings() {
         try {
             flightCrewMgmtSession.generatePairings();
@@ -91,7 +79,7 @@ public class BiddingSessionBacking implements Serializable {
         try {
             flightCrewMgmtSession.generateBiddingSession(target);
             setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
-            msgController.addMessage("Bidding seesion of next month for "+ target +" generated succesfully");
+            msgController.addMessage("Bidding seesion of next month for " + target + " generated succesfully");
         } catch (BiddingSessionConflictException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
@@ -107,6 +95,22 @@ public class BiddingSessionBacking implements Serializable {
         }
     }
 
+    public void closeBiddingSession(){
+        flightCrewMgmtSession.closeBiddingSession(selectedBiddingSession);
+    }
+    
+    private void getAllBiddingSession() {
+        setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
+    }
+
+    private void getFutureFlightDuties() {
+        setFlightDuties(flightCrewMgmtSession.getNextMonthFlightDuties());
+    }
+
+    private void getFuturePairings() {
+        setPairings(flightCrewMgmtSession.getNextMonthPairings());
+    }
+
     //    public boolean getOnOffValue(BiddingSession session) {
 //        switch (session.getStatus()) {
 //            case BiddingSessionStatus.CLOSED:
@@ -117,6 +121,7 @@ public class BiddingSessionBacking implements Serializable {
 //                return false;
 //        }
 //    }
+
     /**
      * @return the flightDuties
      */

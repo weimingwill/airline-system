@@ -32,8 +32,9 @@ public interface FlightCrewMgmtSessionLocal {
     
     public void startBiddingSession(BiddingSession session);
     public void suspendBiddingSession(BiddingSession session);
+    public void closeBiddingSession(BiddingSession session);
     public List<BiddingSession> getAllBiddingSession();
-    public void assignPairingsToCrew(FlightCrew thisCrew);
+    public void assignPairingsToCrew(String type, Pairing pairingWithBids, List<FlightCrew> orderedFlightCrew);
     public void createFlightDutyChecklist(Checklist checklist);
     public void updateFlightDutyChecklist(Checklist checklist);
     public void updateAttendance(List<FlightCrew> flightCrews);
