@@ -40,7 +40,7 @@ public class CustomerController implements Serializable {
     private MsgController msgController;
     
     @Inject
-    private RedeemMilesBacking redeemMilesBacking;
+    private MilesRedemptionBacking milesRedemptionBacking;
  
     @EJB
     private CustomerExSessionLocal customerSession;
@@ -105,12 +105,12 @@ public class CustomerController implements Serializable {
     }
     
     public String updateMiles() throws NoSuchRegCustException{
-        customerSession.updateMiles(email,accMiles-redeemMilesBacking.getSelectedMilesRedemption().getMiles());
+        customerSession.updateMiles(email,accMiles-milesRedemptionBacking.getCalculatedMiles());
         return navigationController.redirectToCurrentPage();
     }
     
     public String claimMiles() throws NoSuchRegCustException{
-        customerSession.updateMiles(email,accMiles+redeemMilesBacking.getSelectedMilesRedemption().getMiles());
+        customerSession.updateMiles(email,accMiles+milesRedemptionBacking.getCalculatedMiles());
         return navigationController.redirectToCurrentPage();
     }
     public void initializeCustomer() {

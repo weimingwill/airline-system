@@ -216,14 +216,14 @@
 
                     </p:panel>
                     <p:panel header="Redeem Section" styleClass="centeredPanel">
-                        <p:panelGrid style="width: 445px;">
+                        <p:panelGrid style="width: 500px;">
 
                             <!--Departure Airport-->
                             <p:row> 
                                 <p:column colspan="1"><p:outputLabel for="deptLoc" value="From"/></p:column>
                                 <p:column colspan="5">
                                     <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
-                                                    value="#{bookingManager.deptAirport}" completeMethod="#{bookingManager.completeDeptAirport}"
+                                                    value="#{milesRedemptionBacking.deptAirport}" completeMethod="#{milesRedemptionBacking.completeDeptAirport}"
                                                     var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
                                         <p:column>
                                             <p:outputLabel value="#{airport.city.cityName}" />
@@ -241,6 +241,47 @@
                                             <p:outputLabel value="#{airport.country.countryName}" />
                                         </p:column>
                                     </p:autoComplete>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>  
+                                <p:column colspan="1"><p:outputLabel for="arriveLoc" value="To"/></p:column>
+                                <p:column colspan="5">
+                                    <p:autoComplete id="arriveLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                                    value="#{milesRedemptionBacking.arrAirport}" completeMethod="#{milesRedemptionBacking.completeArrAirport}"
+                                                    var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.city.cityName}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.airportName}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.iataCode}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.country.countryName}" />
+                                        </p:column>
+                                    </p:autoComplete>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column ><p:outputLabel value="Cabin Class: "/></p:column>
+                                <p:column colspan="5">
+                                    <p:selectOneMenu  value="#{milesRedemptionBacking.selectedCabinCls}" converter="cabinClassConverter" style="width:200px">
+                                        <f:selectItems value="#{milesRedemptionBacking.cabinClses}" var="cabinCls" itemLabel="#{cabinCls.name}" itemValue="#{cabinCls}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" headerText="Calculate" style="width:45px;text-align: center">
+                                    <p:commandButton value="Calculate" update="messages,redeemDialog" actionListener="#{milesRedemptionBacking.mileCalculation()}" oncomplete="PF('redeemDialog').show()" icon="ui-icon-calculator"/>
+<!--                                        <f:setPropertyActionListener value="{mileredeem}" target="{redeemMilesController.selectedMilesRedemption}" />-->
+                                    
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -347,42 +388,41 @@
             </h:form>
         </p:dialog>
 
-        <p:dialog id="redeemDialog"  header="Are you sure you want to redeem this air ticket?" widgetVar="redeemDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+        <p:dialog id="redeemDialog"  header="The total points you need for this selection is" widgetVar="redeemDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form>
                 <p:panel id="redemptionDetail">
+                    
                     <p:panelGrid>
                         <!--<ui:repeat var="cc" value="{cabinClassController.selectedCabinClass}" >-->
                         <p:row> 
                             <p:column>
-                                <p:outputLabel value="Origin: " />
+                                <p:outputLabel value="Actual Miles (in miles) " />
                             </p:column>
+                           
                             <p:column>
-                                <h:outputText value="#{redeemMilesController.selectedMilesRedemption.origin}" >
-                                </h:outputText>
+                                <h:outputLabel value="#{milesRedemptionBacking.calculatedMiles}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </h:outputLabel>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>  
+                            <p:column>
+                                <p:outputLabel value="Miles Needed for Redemption (in miles) " />
+                            </p:column>
+                            
+                            <p:column>
+                                <h:outputLabel value="#{milesRedemptionBacking.actualPointNeed}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </h:outputLabel>
                             </p:column>
                         </p:row>
 
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Destination: " />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{redeemMilesController.selectedMilesRedemption.destination}" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Miles Deduction " />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{redeemMilesController.selectedMilesRedemption.miles}" />
-                            </p:column>
-                        </p:row>
                         <!--</ui:repeat>-->
                     </p:panelGrid>
                 </p:panel>
                 <p:commandButton value="Redeem" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{redeemMilesController.mileRedemption()}" oncomplete="PF('redeemDialog').hide()" update="messages"/>
+           
             </h:form>
         </p:dialog>
     </ui:define>
