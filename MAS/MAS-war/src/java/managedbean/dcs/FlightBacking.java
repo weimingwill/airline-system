@@ -63,8 +63,14 @@ public class FlightBacking {
 
     @PostConstruct
     public void init() {
-        setFlightsDepart(getDepFlightSchedules());
-        setFlightsArrival(getArrFlightSchedules());
+        List<FlightSchedule> dfs = getDepFlightSchedules();
+        List<FlightSchedule> afs = getArrFlightSchedules();
+        if (dfs != null) {
+            setFlightsDepart(dfs);
+        }
+        if (afs != null) {
+            setFlightsArrival(afs);
+        }
     }
 
     public FlightBacking() {

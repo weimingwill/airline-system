@@ -152,12 +152,13 @@ public class PassengerManager implements Serializable {
             if (pass == null) {
                 msgController.addErrorMessage("Check-in error!");
             } else {
+                System.out.println("haha");
                 msgController.addMessage("Check in completed!");
                 boardingDate = pass.getBoardingTime();
                 HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
                 RequestContext context = RequestContext.getCurrentInstance();
                 context.update(":myForm:ticket");
-                context.execute("PF('luggageDlg').show()");
+//                context.execute("PF('luggageDlg').show()");
                 context.execute("window.open('" + request.getContextPath() + dcsNavController.toBoardingPass() + "', '_blank')");
             }
         }

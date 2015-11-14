@@ -85,58 +85,11 @@
                         </c:forEach>
 
 
-                        <ui:remove>
-                            <p:subTable value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(tf.ticketFamilyId)}" var="tfRule" class="table-small">
-                                <f:facet name="header">
-                                    <p:outputLabel value="#{tf.getCabinClass().name} - #{tf.name}" />
-                                </f:facet>
-                                <p:column>
-                                    <p:outputLabel value="#{tfRule.rule.name}:#{tfRule.rule.description}" />
-                                </p:column>
-                                <p:column>
-                                    <p:outputLabel value="#{tfRule.ruleValue}" >
-                                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
-                                    </p:outputLabel>
-                                </p:column>
-                            </p:subTable>
-                        </ui:remove>
+                        
                     </p:dataTable>
                 </p:panel>
                 
-                <ui:remove>
-                    <p:panelGrid id="ticketFamilyRule2">
-                        <f:facet name="ticketFamilyRules">
-                            <p:row>
-                                <p:column colspan="3">Ticket Family Rules</p:column>
-                            </p:row>
-                            <p:row>
-                                <p:column colspan="1">Cabin Class - Ticket Family</p:column>
-                                <p:column colspan="1">Rule</p:column>
-                                <p:column colspan="1">Value</p:column>
-                            </p:row>
-                        </f:facet>
-                        <ui:repeat value="#{productDesignController.aircraftTicketFamilys}" var="tf" >
-                            <!--<c:forEach items="{productDesignController.cabinClassTicketFamilyHelpers}" var="ctf">-->
-                            <p:row>
-                                <p:column>#{tf.getCabinClass().name} Class - #{tf.name}</p:column>
-                                <p:column>
-                                    <p:dataTable value="#{ticketFamilyController.getTicketFamilyRuleByTicketFamilyId(tf.ticketFamilyId)}" var="tfRule">
-                                        <p:column>
-                                            <p:outputLabel value="#{tfRule.rule.name}:#{tfRule.rule.description}" />
-                                        </p:column>
-                                        <p:column>
-                                            <p:outputLabel value="#{tfRule.ruleValue}" >
-                                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
-                                            </p:outputLabel>
-                                        </p:column>
-                                    </p:dataTable> 
-                                </p:column>
-                            </p:row>
-                            <!--</c:forEach>-->
-                        </ui:repeat>                           
-
-                    </p:panelGrid>
-                </ui:remove>
+                
             </p:panelGrid>
             <p:separator/>
             <p:commandButton value="Save" action="#{productDesignController.assignAircraftTicketFamily()}" update="messages" />
