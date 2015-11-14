@@ -6,15 +6,16 @@
 package ams.dcs.session;
 
 import ams.aps.entity.FlightSchedule;
+import ams.ars.entity.AdditionalCharge;
 import ams.ars.entity.AirTicket;
-import ams.ars.entity.AirTicketPricingItem;
+import ams.ars.entity.AirTicketAdditionalCharge;
 import ams.ars.entity.BoardingPass;
-import ams.ars.entity.PricingItem;
 import ams.ars.entity.Seat;
 import ams.crm.entity.Customer;
 import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.entity.Luggage;
 import ams.dcs.util.exception.BoardingErrorException;
+import ams.dcs.util.exception.FlightScheduleNotUpdatedException;
 import ams.dcs.util.exception.NoSuchBoardingPassException;
 import ams.dcs.util.exception.NoSuchPNRException;
 import java.util.ArrayList;
@@ -113,20 +114,22 @@ public class CheckInSession implements CheckInSessionLocal {
                 lug.add(c);
             }
 
-            PricingItem pricingItem = em.find(PricingItem.class, "Excess Luggage"); //Pre-defined name;
+            AdditionalCharge additionalCharge = em.find(AdditionalCharge.class, "Excess Luggage"); //Pre-defined name;
 
-            AirTicketPricingItem atpi = new AirTicketPricingItem();
+            AirTicketAdditionalCharge atpi = new AirTicketAdditionalCharge();
             atpi.setAirTicket(airticket);
             atpi.setPrice(price);
-            atpi.setPricingItem(pricingItem);
+            atpi.setAdditionalCharge(additionalCharge);
             em.persist(atpi);
             em.flush();
 
             AirTicket at = em.find(AirTicket.class, airticket.getId());
-            List<AirTicketPricingItem> atpiList = at.getAirTicketPricingItems();
+            List<AirTicketAdditionalCharge> atpiList = at.getAirTicketAdditionalCharges();
             atpiList.add(atpi);
-            at.setAirTicketPricingItems(atpiList);
+            at.setAirTicketAdditionalCharges(atpiList);
             at.setLuggages(lug);
+            em.merge(at);
+            
             return true;
         } catch (Exception ex) {
             return false;
@@ -274,5 +277,22 @@ public class CheckInSession implements CheckInSessionLocal {
         cal.setTime(new Date());
         cal.add(Calendar.HOUR_OF_DAY, 24); // add 24 hours
         return cal.getTime();
+    }
+
+    @Override
+    public void updateFlightSchedule(FlightSchedule fs) throws FlightScheduleNotUpdatedException {
+        try {
+            FlightSchedule origin = em.find(FlightSchedule.class, fs.getFlightScheduleId());
+            origin.setActualArrivalDate(fs.getActualArrivalDate());
+            origin.setActualDepartDate(fs.getActualDepartDate());
+            origin.setArrivalGate(fs.getArrivalGate());
+            origin.setArrivalTerminal(fs.getArrivalTerminal());
+            origin.setDepartGate(fs.getDepartGate());
+            origin.setDepartTerminal(fs.getDepartTerminal());
+
+            em.merge(origin);
+        } catch (Exception e) {
+            throw new FlightScheduleNotUpdatedException();
+        }
     }
 }

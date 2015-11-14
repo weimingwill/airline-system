@@ -63,4 +63,8 @@ public class DcsNavController {
     public String toSearchCheckedInPNR(){
         return DCS_URL + "searchCheckedInPNR.xhtml" + REDIRECT;
     }
+    
+    public String toViewFlightInfo(){
+        return DCS_URL + "viewFlightInfo.xhtml" + REDIRECT;
+    }
 }

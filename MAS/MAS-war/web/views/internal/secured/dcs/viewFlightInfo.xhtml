@@ -13,10 +13,10 @@
 
         <h:form id="myForm">
             <p:tabView>
-                <p:ajax event="tabChange" listener="#{flightBacking.onTabChange}" update=":myForm:flight1, :myForm:flight2"/>
+                <p:ajax event="tabChange" listener="#{flightBacking.onTabChange}" update="myForm"/>
 
-                <p:tab title="Departure Within 24h">
-                    <p:dataTable id="flight1" var="flight" value="#{flightBacking.flightsDepart}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
+                <p:tab id="flight1" title="Departure Within 24h">
+                    <p:dataTable var="flight" value="#{flightBacking.flightsDepart}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
                                  selection="#{flightBacking.departFlight}" rowKey="#{departFlight.id}"
                                  paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
                         <f:facet name="header">
@@ -27,25 +27,18 @@
                             <h:outputText value="#{flight.flight.flightNo}" />
                         </p:column>
 
+                        <p:column headerText="From" sortBy="#{flight.leg.departAirport.airportName}">
+                            <h:outputText value="#{flight.leg.departAirport.airportName}" />
+                        </p:column>
+                        
+                        <p:column headerText="To" sortBy="#{flight.leg.arrivalAirport.airportName}">
+                            <h:outputText value="#{flight.leg.arrivalAirport.airportName}" />
+                        </p:column>
+                        
                         <p:column headerText="Departure Time" sortBy="#{flight.departDate}">
                             <h:outputText value="#{flight.departDate}" >
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
                             </h:outputText>
-                        </p:column>
-
-                        <p:column headerText="From" sortBy="#{flight.leg.departAirport.airportName}">
-                            <h:outputText value="#{flight.leg.departAirport.airportName}" />
-                        </p:column>
-
-
-                        <p:column headerText="Arrival Time" sortBy="#{flight.arrivalDate}">
-                            <h:outputText value="#{flight.arrivalDate}" >
-                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
-                            </h:outputText>
-                        </p:column>
-
-                        <p:column headerText="To" sortBy="#{flight.leg.arrivalAirport.airportName}">
-                            <h:outputText value="#{flight.leg.arrivalAirport.airportName}" />
                         </p:column>
 
                         <p:column headerText="Departure Terminal" sortBy="#{flight.departTerminal}">
@@ -77,32 +70,26 @@
                             <h:outputText value="#{flight.flight.flightNo}" />
                         </p:column>
 
-                        <p:column headerText="Departure Time" sortBy="#{flight.departDate}">
-                            <h:outputText value="#{flight.departDate}" >
-                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
-                            </h:outputText>
-                        </p:column>
-
                         <p:column headerText="From" sortBy="">
                             <h:outputText value="#{flight.leg.departAirport.airportName}" />
-                        </p:column>
-
-                        <p:column headerText="Arrival Time" sortBy="#{flight.arrivalDate}">
-                            <h:outputText value="#{flight.arrivalDate}" >
-                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
-                            </h:outputText>
                         </p:column>
 
                         <p:column headerText="To" sortBy="#{flight.leg.arrivalAirport.airportName}">
                             <h:outputText value="#{flight.leg.arrivalAirport.airportName}" />
                         </p:column>
-
-                        <p:column headerText="Arrival Terminal" sortBy="#{flight.departTerminal}">
-                            <h:outputText value="#{flight.departTerminal}" />
+                        
+                        <p:column headerText="Arrival Time" sortBy="#{flight.arrivalDate}">
+                            <h:outputText value="#{flight.arrivalDate}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Arrival Terminal" sortBy="#{flight.arrivalTerminal}">
+                            <h:outputText value="#{flight.arrivalTerminal}" />
                         </p:column>
 
-                        <p:column headerText="Arrival Gate" sortBy="#{flight.departGate}">
-                            <h:outputText value="#{flight.departGate}" />
+                        <p:column headerText="Arrival Gate" sortBy="#{flight.arrivalGate}">
+                            <h:outputText value="#{flight.arrivalGate}" />
                         </p:column>
 
                         <p:column style="width:32px;text-align: center">
@@ -115,7 +102,7 @@
                 </p:tab>
             </p:tabView>
 
-            <p:dialog id="depFlightInfoDlg" modal="true" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="depFlightInfoDlg" resizable="false">
+            <p:dialog id="depFlightInfoDlg" modal="true" appendTo="@(body)" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="depFlightInfoDlg" resizable="false">
                 <p:panelGrid columns="2" style="margin-top:2px">
                     <p:outputLabel value="Depature Terminal:"/>
                     <p:inputText value="#{flightBacking.departureTerminal}" label="ter"/>
@@ -123,16 +110,16 @@
                     <p:outputLabel value="Depature Gate:"/>
                     <p:inputText value="#{flightBacking.departureGate}" label="gate"/>
 
-                    <p:outputLabel value="Accatual Departure Time:" for="datetime"/>
-                    <p:calendar id="datetime" value="#{flightBacking.acctualDepartureDate}" pattern="MM/dd/yyyy HH:mm" />
+                    <p:outputLabel value="Accatual Departure Time:" for="datetimeD"/>
+                    <p:calendar id="datetimeD" value="#{flightBacking.acctualDepartureDate}" pattern="MM/dd/yyyy HH:mm" />
 
                     <p:separator/>
-                    <p:commandButton type="submit" icon="ui-icon-check" value="Confirm update" update="myForm:flight1" oncomplete="PF('myForm:depFlightInfoDlg').hide()"/>
+                    <p:commandButton type="submit" action="#{flightBacking.updateDepFlight()}" icon="ui-icon-check" value="Confirm update" update="myForm" oncomplete="PF('myForm:depFlightInfoDlg').hide()"/>
                 
                 </p:panelGrid>
             </p:dialog>
 
-            <p:dialog id="arrFlightInfoDlg" modal="true" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="arrFlightInfoDlg" resizable="false">
+            <p:dialog id="arrFlightInfoDlg" modal="true" appendTo="@(body)" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="arrFlightInfoDlg" resizable="false">
                 <p:panelGrid columns="2" style="margin-top:2px">
                     <p:outputLabel value="Arrival Terminal:"/>
                     <p:inputText value="#{flightBacking.arrivalTerminal}" label="ter"/>
@@ -140,11 +127,11 @@
                     <p:outputLabel value="Arrival Gate:"/>
                     <p:inputText value="#{flightBacking.arrivalGate}" label="gate"/>
 
-                    <p:outputLabel value="Accatual Arrival Time:" for="datetime"/>
-                    <p:calendar id="datetime" value="#{flightBacking.acctualArrivalDate}" pattern="MM/dd/yyyy HH:mm" />
+                    <p:outputLabel value="Accatual Arrival Time:" for="datetimeA"/>
+                    <p:calendar id="datetimeA" value="#{flightBacking.acctualArrivalDate}" pattern="MM/dd/yyyy HH:mm" />
 
                     <p:separator/>
-                    <p:commandButton type="submit" icon="ui-icon-check" value="Confirm update" update="myForm:flight2" oncomplete="PF('myForm:arrFlightInfoDlg').hide()"/>
+                    <p:commandButton type="submit" action="#{flightBacking.updateArrFlight()}" icon="ui-icon-check" value="Confirm update" update="myForm" oncomplete="PF('myForm:arrFlightInfoDlg').hide()"/>
                 
                 </p:panelGrid>
             </p:dialog>

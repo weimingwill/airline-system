@@ -7,6 +7,7 @@ package managedbean.dcs;
 
 import ams.aps.entity.FlightSchedule;
 import ams.dcs.session.CheckInSessionLocal;
+import ams.dcs.util.exception.FlightScheduleNotUpdatedException;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -59,7 +60,7 @@ public class FlightBacking {
     private Date acctualDepartureDate;
     private String departureGate;
     private String departureTerminal;
-    
+
     @PostConstruct
     public void init() {
         setFlightsDepart(getDepFlightSchedules());
@@ -69,12 +70,47 @@ public class FlightBacking {
     public FlightBacking() {
     }
 
-    public String updateFlightStatus() {
-        return "";
+    public String updateDepFlight() {
+        
+        if (departureGate != null) {
+            selectedFlight.setDepartGate(departureGate);
+        }
+        if (departureTerminal != null) {
+            selectedFlight.setDepartTerminal(departureTerminal);
+        }
+        if (acctualDepartureDate != null) {
+            selectedFlight.setActualDepartDate(acctualDepartureDate);
+        }
+        try {
+            checkInSession.updateFlightSchedule(selectedFlight);
+            msgController.addMessage("Update flight info successfully!");
+            return dcsNavController.toViewFlightInfo();
+
+        } catch (FlightScheduleNotUpdatedException e) {
+            msgController.addErrorMessage("Flight info failed to be updated!");
+            return "";
+        }
     }
 
-    public String changeBoardingGate() {
-        return "";
+    public String updateArrFlight() {
+        if (arrivalGate != null) {
+            selectedFlight.setArrivalGate(arrivalGate);
+        }
+        if (arrivalTerminal != null) {
+            selectedFlight.setArrivalTerminal(arrivalTerminal);
+        }
+        if (acctualArrivalDate != null) {
+            selectedFlight.setActualArrivalDate(acctualArrivalDate);
+        }
+        try {
+            checkInSession.updateFlightSchedule(selectedFlight);
+            msgController.addMessage("Update flight info successfully!");
+            return dcsNavController.toViewFlightInfo();
+
+        } catch (FlightScheduleNotUpdatedException e) {
+            msgController.addErrorMessage("Flight info failed to be updated!");
+            return "";
+        }
     }
 
     private FlightSchedule searchFlightSchedule(String flightNo, Date flightDate) {
@@ -89,12 +125,13 @@ public class FlightBacking {
 
     public void onEditDFlightBtnClick() {
         if (selectedFlight != null) {
+            System.out.println("selectedFlight: "+ selectedFlight.getFlightScheduleId());
             RequestContext context = RequestContext.getCurrentInstance();
             context.update("depFlightInfoDlg");
             context.execute("PF('depFlightInfoDlg').show();");
         }
     }
-    
+
     public void onEditAFlightBtnClick() {
         if (selectedFlight != null) {
             RequestContext context = RequestContext.getCurrentInstance();

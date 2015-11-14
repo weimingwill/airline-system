@@ -15,6 +15,7 @@ import ams.crm.entity.Customer;
 import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.entity.Luggage;
 import ams.dcs.util.exception.BoardingErrorException;
+import ams.dcs.util.exception.FlightScheduleNotUpdatedException;
 import ams.dcs.util.exception.NoSuchBoardingPassException;
 import ams.dcs.util.exception.NoSuchPNRException;
 import java.util.Date;
@@ -46,7 +47,7 @@ public interface CheckInSessionLocal {
 
     public void boardPassenger(AirTicket airTicket) throws BoardingErrorException;
     
-    public AirTicket searchTicketByID(long ticketID)throws NoSuchPNRException;
+    public AirTicket searchTicketByID(long ticketID) throws NoSuchPNRException;
     
     public List<Seat> getSeatsByTicket(AirTicket airTicket);
     
@@ -56,7 +57,10 @@ public interface CheckInSessionLocal {
     
     public List<String> getColList();
     
+    public void updateFlightSchedule(FlightSchedule fs) throws FlightScheduleNotUpdatedException;
+    
     public List<FlightSchedule> getFlightSchedulesForDeparture();
     
     public List<FlightSchedule> getFlightSchedulesForArrival();
+    
 }
