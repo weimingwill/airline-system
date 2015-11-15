@@ -15,16 +15,14 @@ import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
-import ams.ars.entity.AddOn;
 import ams.ars.entity.Booking;
-import ams.ars.entity.PricingItem;
 import ams.crm.entity.Customer;
 import ams.crm.entity.helper.Phone;
 import ams.crm.session.BookingSessionLocal;
 import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.ChannelHelper;
+import ams.crm.util.helper.CustomerHelper;
 import ams.crm.util.helper.FlightSchedHelper;
-import ams.dcs.entity.Luggage;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -297,29 +295,34 @@ public class BookingManager implements Serializable {
 
     public String toEnterPassengerDetails() {
         setBookingHelper();
-        System.out.println("bookingHelper Adult: " + bookingHelper.getAdults().isEmpty());
         return crmExNavController.redirectToPassengerInfo();
     }
 
     private void setBookingHelper() {
         bookingHelper = new BookingHelper();
-        List<Customer> adults = new ArrayList<>();
+        List<CustomerHelper> adults = new ArrayList<>();
         for (int i = 0; i < adultNo; i++) {
+            CustomerHelper customerHelper = new CustomerHelper();
             Customer customer = new Customer();
             customer.setIsAdult(true);
-            adults.add(customer);
+            customerHelper.setId(i);
+            customerHelper.setCustomer(new Customer());
+            adults.add(customerHelper);
         }
-        List<Customer> children = new ArrayList<>();
+        List<CustomerHelper> children = new ArrayList<>();
         for (int i = 0; i < childrenNo; i++) {
+            CustomerHelper customerHelper = new CustomerHelper();
             Customer customer = new Customer();
-            customer.setIsAdult(false);
-            children.add(customer);
+            customer.setIsAdult(true);
+            customerHelper.setId(i+1);
+            customerHelper.setCustomer(new Customer());
+            adults.add(customerHelper);
         }
         Booking booking = new Booking();
         Phone phone = new Phone();
         booking.setPhoneNo(phone);
         bookingHelper.setBooking(booking);
-        bookingHelper.setAdults(adults);
+        bookingHelper.setCustomers(adults);
         bookingHelper.setChildren(children);
         bookingHelper.setChannel(ChannelHelper.ARS);
         List<FlightScheduleBookingClass> fbs = new ArrayList<>();
@@ -338,10 +341,14 @@ public class BookingManager implements Serializable {
         return revMgmtSession.getFlightScheduleById(selectedFb.getFlightSchedule().getFlightScheduleId());
     }
 
+    public String toSelectAddOn() {
+        List<CustomerHelper> customerHelpers = bookingHelper.getCustomers();
+        customerHelpers.addAll(bookingHelper.getChildren());
+        bookingHelper.setCustomers(customerHelpers);
+        return crmExNavController.redirectToAddOnServices();
+    }
+    
     public String bookingFlight() {
-        System.out.println("Booking Helper email: " + bookingHelper.getBooking().getEmail());
-        System.out.println("Booking Helper phone No: " + bookingHelper.getBooking().getPhoneNo().getCountryCode() + " " + bookingHelper.getBooking().getPhoneNo().getAreaCode() + " " + bookingHelper.getBooking().getPhoneNo().getNumber());
-        System.out.println("Booking Helper customers: " + bookingHelper.getAdults().get(0).getFirstName());
         bookingSession.bookingFlight(bookingHelper);
 
         msgController.addMessage("Booking flight successfully!");

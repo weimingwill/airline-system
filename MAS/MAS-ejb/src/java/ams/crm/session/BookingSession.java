@@ -27,6 +27,7 @@ import ams.ars.entity.PricingItem;
 import ams.ars.util.helper.AddOnHelper;
 import ams.crm.entity.Customer;
 import ams.crm.util.helper.BookingHelper;
+import ams.crm.util.helper.CustomerHelper;
 import ams.dcs.entity.Luggage;
 import ams.dcs.util.helper.AirTicketStatus;
 import java.util.ArrayList;
@@ -279,15 +280,6 @@ public class BookingSession implements BookingSessionLocal {
 //    }
     @Override
     public void bookingFlight(BookingHelper bookingHelper) {
-        List<Customer> customers = new ArrayList<>();
-
-        for (Customer customer : bookingHelper.getAdults()) {
-            System.out.println("Customer: " + customer.getFirstName());
-        }
-        //Customer
-        customers.addAll(createCustomers(bookingHelper.getAdults()));
-        customers.addAll(createCustomers(bookingHelper.getChildren()));
-
         //create booking
         Booking booking = bookingHelper.getBooking();
         System.out.println("Booking: " + booking.getEmail());
@@ -305,8 +297,12 @@ public class BookingSession implements BookingSessionLocal {
         em.persist(booking);
         em.flush();
 
+        List<CustomerHelper> customerHelpers = new ArrayList<>();
+        //Customer
+        customerHelpers.addAll(bookingHelper.getCustomers());
+
         //Airticket
-        List<AirTicket> airTickets = createAirTickets(fbs, customers, booking);
+        List<AirTicket> airTickets = createAirTickets(fbs, customerHelpers, booking);
 
         String eTicketNo = "MLA";
         eTicketNo += NumberGenerator.airTicketFormNumber();
@@ -323,13 +319,22 @@ public class BookingSession implements BookingSessionLocal {
         //Generate pnr
     }
 
-    private List<AirTicket> createAirTickets(List<FlightScheduleBookingClass> fbs, List<Customer> customers, Booking booking) {
+    private List<AirTicket> createAirTickets(List<FlightScheduleBookingClass> fbs, List<CustomerHelper> customerHelpers, Booking booking) {
         List<AirTicket> airTickets = new ArrayList<>();
-        for (Customer customer : customers) {
+        for (CustomerHelper customerHelper : customerHelpers) {
             List<AirTicket> custAirTickets = new ArrayList<>();
+            
+            List<AddOn> addOns = new ArrayList<>();
+            addOns.add(getAddOnByDescription(customerHelper.getMeal().getDescription()));
+            if (customerHelper.isInsurance()) {
+                addOns.add(getTravelInsurance());
+            }
+            Luggage luggage = getLuggageByMaxWeight(customerHelper.getLuggage().getMaxWeight());
+            
+            Customer customer = createCustomer(customerHelper);
             for (FlightScheduleBookingClass fb : fbs) {
                 fb = updateFlightSchedBookingCls(fb);
-                AirTicket airTicket = createAirTicket(fb, customer, booking);
+                AirTicket airTicket = createAirTicket(fb, customer, booking, addOns, luggage);
                 airTickets.add(airTicket);
                 custAirTickets.add(airTicket);
             }
@@ -338,30 +343,29 @@ public class BookingSession implements BookingSessionLocal {
         return airTickets;
     }
 
-    private AirTicket createAirTicket(FlightScheduleBookingClass fb, Customer customer, Booking booking) {
+    private AirTicket createAirTicket(FlightScheduleBookingClass fb, Customer customer, Booking booking, List<AddOn> addOn, Luggage luggage) {
         AirTicket airTicket = new AirTicket();
         airTicket.setStatus(AirTicketStatus.PAID);
         airTicket.setCustomer(customer);
         airTicket.setBooking(booking);
         airTicket.setFlightSchedBookingClass(fb);
+        airTicket.setAddOns(addOn);
+        airTicket.setPurchasedLuggage(luggage);
+        airTicket.setPricingItems(getPricingItems());
         em.persist(airTicket);
         em.flush();
         return airTicket;
     }
 
-    private List<Customer> createCustomers(List<Customer> customers) {
-        List<Customer> customerList = new ArrayList<>();
-        for (Customer customer : customers) {
-            Customer cust = verifyCustomerExistence(customer);
-            if (cust == null) {
-                em.persist(customer);
-                em.flush();
-                customerList.add(customer);
-            } else {
-                customerList.add(cust);
-            }
+    private Customer createCustomer(CustomerHelper customerHelper) {
+        Customer cust = verifyCustomerExistence(customerHelper.getCustomer());
+        if (cust == null) {
+            em.persist(customerHelper.getCustomer());
+            em.flush();
+            return customerHelper.getCustomer();
+        } else {
+            return cust;
         }
-        return customerList;
     }
 
     private FlightScheduleBookingClass updateFlightSchedBookingCls(FlightScheduleBookingClass flightSchedBookingCls) {
@@ -445,5 +449,26 @@ public class BookingSession implements BookingSessionLocal {
         return em.find(PricingItem.class, id);
     }
 
-    
+    private AddOn getAddOnByDescription(String description) {
+        Query query = em.createQuery("SELECT a FROM AddOn a WHERE a.description = :description");
+        query.setParameter("description", description);
+        AddOn addOn = new AddOn();
+        try {
+            addOn = (AddOn) query.getSingleResult();
+        } catch (Exception e) {
+        }
+        return addOn;
+    }
+
+    private Luggage getLuggageByMaxWeight(double maxWeight) {
+        Query query = em.createQuery("SELECT l FROM Luggage l WHERE l.maxWeight = :maxWeight");
+        query.setParameter("maxWeight", maxWeight);
+        Luggage luggage = new Luggage();
+        try {
+            luggage = (Luggage) query.getSingleResult();
+        } catch (Exception e) {
+        }
+        return luggage;
+    }
+
 }

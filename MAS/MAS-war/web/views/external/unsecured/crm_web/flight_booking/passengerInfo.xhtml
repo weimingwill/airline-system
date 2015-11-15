@@ -21,13 +21,13 @@
             <p:accordionPanel style="width: 470px;">
                 <c:forEach items="#{bookingManager.bookingHelper.adults}" var="adult" varStatus="index">
                     <p:tab title="Adult #{index.index + 1}">
-                        <pa:CCPassengerDetailPanel customer="#{adult}" />
+                        <pa:CCPassengerDetailPanel customerHelper="#{adult}" />
                     </p:tab>
                 </c:forEach>
                 <c:forEach items="#{bookingManager.bookingHelper.children}" var="child" varStatus="index" >
                     <p:tab title="Children #{index.index + 1}">
                         <p:panelGrid columns="2">
-                            <pa:CCPassengerDetailPanel customer="#{child}" />
+                            <pa:CCPassengerDetailPanel customerHelper="#{child}" />
                         </p:panelGrid>
                     </p:tab>
                 </c:forEach>
@@ -81,7 +81,7 @@
                         <p:commandButton value="Back to search flights" icon="fa fa-arrow-left" action="#{crmExNavController.redirectToSearchFlightResult()}"/>
                     </p:column>
                     <p:column colspan="2" style="text-align: right;">
-                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{crmExNavController.redirectToAddOnServices()}" update="messages"/>
+                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{bookingManager.toSelectAddOn()}" update="messages"/>
                     </p:column>
                 </p:row>
 

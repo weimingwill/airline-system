@@ -12,25 +12,63 @@
     </ui:define>
 
     <ui:define name="content">
-        <p:panelGrid columns="2">
-            <p:outputLabel id="meal" value="Special Meal" />
-            <p:selectOneMenu value="#{bookingManager.bookingHelper.meal}" converter="addOnConverter" >
-                <f:selectItems value="#{bookingBacking.meals}" />
-            </p:selectOneMenu>
-            
-            <p:outputLabel id="luggage" value="Extra luggage" />
-            <p:selectOneMenu value="#{bookingManager.bookingHelper.luggage}" converter="luggageConverter" >
-                <f:selectItems value="#{bookingBacking.meals}" />
-            </p:selectOneMenu>
-            
-            <p:outputLabel id="insurance" value="Travel insurance" />
-            <p:selectBooleanCheckbox value="#{bookingManager.bookingHelper.insurance}" >
-                <p:ajax update="messages"/>
-            </p:selectBooleanCheckbox>
-        </p:panelGrid>
-        
+
+        <p:panel header="Special Meal">
+            <p:panelGrid>
+                <c:forEach items="#{bookingManager.bookingHelper.customers}" var="custHelper">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="fa fa-user" />
+                            <p:outputLabel value="#{custHelper.customer.lastName}" />
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{custHelper.meal}" converter="addOnConverter" >
+                                <f:selectItems value="#{bookingBacking.meals}" />
+                            </p:selectOneMenu>                            
+                        </p:column>
+                    </p:row>
+                </c:forEach>
+            </p:panelGrid>
+        </p:panel>
+
+        <p:panel header="Extra luggage">
+            <p:panelGrid>
+                <c:forEach items="#{bookingManager.bookingHelper.customers}" var="custHelper">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="fa fa-user" />
+                            <p:outputLabel value="#{custHelper.customer.lastName}" />
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{custHelper.luggage}" converter="luggageConverter" >
+                                <f:selectItems value="#{bookingBacking.luggages}" />
+                            </p:selectOneMenu>                            
+                        </p:column>
+                    </p:row>
+                </c:forEach>
+            </p:panelGrid>
+        </p:panel>
+
+        <p:panel header="Travel insurance">
+            <p:panelGrid>
+                <c:forEach items="#{bookingManager.bookingHelper.customers}" var="custHelper">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="fa fa-user" />
+                            <p:outputLabel value="#{custHelper.customer.lastName}" />
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox value="#{custHelper.insurance}" >
+                                <p:ajax update="messages"/>
+                            </p:selectBooleanCheckbox>                         
+                        </p:column>
+                    </p:row>
+                </c:forEach>
+            </p:panelGrid>
+        </p:panel>
+
         <p:separator />
-        
+
         <p:panelGrid>
             <p:row style="border: transparent">
                 <p:column colspan="5" style="width: 90%">
