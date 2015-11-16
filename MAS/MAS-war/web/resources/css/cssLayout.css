@@ -499,6 +499,10 @@ div.timeline-event-selected {
     vertical-align: top !important;
 }
 
+.alignMiddle {
+    vertical-align: central !important;
+}
+
 .alignCenter {
     text-align: center !important;
 }
@@ -523,4 +527,11 @@ div.timeline-event-selected {
     margin-right: 5px;
     /*margin-top: .625rem;*/
     color: #007cc0;
+}
+
+.bookingSummaryIcon {
+    font-size: 15px !important;
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
 }

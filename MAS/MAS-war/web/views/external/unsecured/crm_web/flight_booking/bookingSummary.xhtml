@@ -14,9 +14,9 @@
     <ui:define name="content">
         <h2>Booking Summary</h2>
         <p:panelGrid>
-            <p:row>
+            <p:row styleClass="ui-widget-header">
                 <p:column>
-                    <p:outputLabel styleClass="fa fa-plane"/>
+                    <p:outputLabel styleClass="fa fa-plane bookingSummaryIcon"/>
                     <p:outputLabel value="Outbound Flight" />
                 </p:column>
             </p:row>
@@ -26,14 +26,28 @@
                                    #{bookingManager.arrAirport.city.cityName} (#{bookingManager.arrAirport.iataCode})" />
                 </p:column>
             </p:row>
+
             <p:row>
-                <p:column>
-                    <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.selectedFlightSched}" fbHelper="#{bookingManager.selectedFbHelper}"/>
+                <p:column>       
+                    <p:panelGrid style="width:100%">
+                        <p:row styleClass="ui-widget-header">
+                            <p:column>Flight</p:column>
+                            <p:column colspan="2">From</p:column>
+                            <p:column></p:column>
+                            <p:column colspan="2">To</p:column>
+                            <p:column>Aircraft</p:column>
+                            <p:column>Cabin Class</p:column>
+                        </p:row>
+                        <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.selectedFlightSched}" fb="#{bookingManager.selectedFb}"/>
+                        <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}" fb="#{bookingManager.selectedFb}"
+                                                             rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>
+                    </p:panelGrid>
+
                 </p:column>
             </p:row>
-            <p:row rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}">
+            <p:row >
                 <p:column>
-                    <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}" fbHelper="#{bookingManager.selectedFbHelper}"/>
+
                 </p:column>
             </p:row>
         </p:panelGrid>

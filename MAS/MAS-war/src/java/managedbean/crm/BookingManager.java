@@ -15,7 +15,10 @@ import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
+import ams.ars.entity.AddOn;
+import ams.ars.entity.AirTicket;
 import ams.ars.entity.Booking;
+import ams.ars.util.helper.AddOnHelper;
 import ams.crm.entity.Customer;
 import ams.crm.entity.helper.Phone;
 import ams.crm.session.BookingSessionLocal;
@@ -106,10 +109,18 @@ public class BookingManager implements Serializable {
     private BookingHelper bookingHelper;
 
     //AddOn
-    private Map<String, Integer> selectedMeals = new HashMap<>();
-    private Map<Double, Integer> selectedLuggages = new HashMap<>();
+    private List<String> selectedMeals;
+    private Map<String, Integer> selectedMealMap = new HashMap<>();
+    private List<Double> selectedLuggages;
+    private Map<Double, Integer> selectedLuggageMap = new HashMap<>();
     private int selectedNumOfInsurance;
-    private double luggagePrice = 0;
+    private double selectedIsurancePrice;
+    private double insurancePrice;
+    private double luggagePrice;
+
+    //Itinerary
+    private Booking booking;
+    private List<CustomerHelper> custHelpers;
 
     /**
      * Creates a new instance of bookingManager
@@ -121,6 +132,7 @@ public class BookingManager implements Serializable {
         deptAirport = routePlanningSession.getAirportByICAOCode("WSSS");
         choice = "return";
         arrDateShow = true;
+        insurancePrice = bookingSession.getTravelInsurance().getPrice();
         initialDate();
     }
 
@@ -341,6 +353,7 @@ public class BookingManager implements Serializable {
             fbs.add(nextFb);
         }
         bookingHelper.setFlightSchedBookingClses(fbs);
+        setBookingHelperTotalPrice();
     }
 
     public FlightSchedule getSelectedFlightSched() throws NoSuchFlightSchedulException {
@@ -352,35 +365,89 @@ public class BookingManager implements Serializable {
 
     //Selected AddOn
     public void onMealSelected() {
-        List<String> meals = new ArrayList<>();
+        selectedMeals = new ArrayList<>();
         for (CustomerHelper customerHelper : bookingHelper.getCustomers()) {
             String meal = customerHelper.getMeal().getDescription();
-            if (meals.contains(meal)) {
-                selectedMeals.put(meal, selectedMeals.get(meal) + 1);
+            if (selectedMeals.contains(meal)) {
+                selectedMealMap.put(meal, selectedMealMap.get(meal) + 1);
             } else {
-                meals.add(meal);
-                selectedMeals.put(meal, 1);
+                selectedMeals.add(meal);
+                selectedMealMap.put(meal, 1);
             }
         }
     }
 
     public void onLuggageSelected() {
-        List<Double> luggages = new ArrayList<>();
+        luggagePrice = 0;
+        selectedLuggages = new ArrayList<>();
         for (CustomerHelper customerHelper : bookingHelper.getCustomers()) {
             Double luggageWeight = customerHelper.getLuggage().getMaxWeight();
-            if (luggages.contains(luggageWeight)) {
-                selectedLuggages.put(luggageWeight, selectedLuggages.get(luggageWeight) + 1);
+            if (selectedLuggages.contains(luggageWeight)) {
+                selectedLuggageMap.put(luggageWeight, selectedLuggageMap.get(luggageWeight) + 1);
             } else {
-                luggages.add(luggagePrice);
-                selectedLuggages.put(luggageWeight, 1);
+                selectedLuggages.add(luggageWeight);
+                selectedLuggageMap.put(luggageWeight, 1);
             }
             luggagePrice += bookingBacking.getLuggageWeightPriceMap().get(luggageWeight);
         }
+        setBookingHelperTotalPrice();
+    }
+
+    public void onInsuranceSelected() {
+        selectedNumOfInsurance = 0;
+        for (CustomerHelper customerHelper : bookingHelper.getCustomers()) {
+            if (customerHelper.isInsurance()) {
+                selectedNumOfInsurance++;
+            }
+        }
+        selectedIsurancePrice = selectedNumOfInsurance * insurancePrice;
+        setBookingHelperTotalPrice();
+    }
+
+    private void setBookingHelperTotalPrice() {
+        double price = 0;
+        for (FlightScheduleBookingClass fb : bookingHelper.getFlightSchedBookingClses()) {
+            price += fb.getPrice() * (adultNo + childrenNo);
+        }
+        price = price + luggagePrice + selectedIsurancePrice;
+        bookingHelper.setTotalPrice(price);
     }
 
     public String bookingFlight() {
+        booking = bookingSession.bookingFlight(bookingHelper);
+        setCustomerHelpers();
         msgController.addMessage("Booking flight successfully!");
-        return navigationController.redirectToCurrentPage();
+        return crmExNavController.redirectToItinerary();
+    }
+
+    private void setCustomerHelpers() {
+        custHelpers = new ArrayList<>();
+        for (AirTicket airTicket : booking.getAirTickets()) {
+            Customer customer = airTicket.getCustomer();
+            CustomerHelper custHelper = new CustomerHelper();
+            boolean exist = false;
+            for (CustomerHelper customerHelper : custHelpers) {
+                if (customer.getPassportNo().equals(customerHelper.getCustomer().getPassportNo())) {
+                    exist = true;
+                }
+            }
+            if (!exist) {
+                custHelper.setCustomer(customer);
+                for (AddOn addOn : airTicket.getAddOns()) {
+                    if (addOn.getName().equals(AddOnHelper.MEAL)) {
+                        custHelper.setMeal(addOn);
+                    } else if (addOn.getName().equals(AddOnHelper.INSURANCE)) {
+                        if (addOn.getPrice() > 0) {
+                            custHelper.setInsurance(true);
+                        } else {
+                            custHelper.setInsurance(false);
+                        }
+                    }
+                }
+                custHelper.setLuggage(airTicket.getPurchasedLuggage());
+                custHelpers.add(custHelper);
+            }
+        }
     }
 
     //
@@ -552,6 +619,78 @@ public class BookingManager implements Serializable {
 
     public void setTixFams(List<TicketFamily> tixFams) {
         this.tixFams = tixFams;
+    }
+
+    public List<String> getSelectedMeals() {
+        return selectedMeals;
+    }
+
+    public void setSelectedMeals(List<String> selectedMeals) {
+        this.selectedMeals = selectedMeals;
+    }
+
+    public Map<String, Integer> getSelectedMealMap() {
+        return selectedMealMap;
+    }
+
+    public void setSelectedMealMap(Map<String, Integer> selectedMealMap) {
+        this.selectedMealMap = selectedMealMap;
+    }
+
+    public List<Double> getSelectedLuggages() {
+        return selectedLuggages;
+    }
+
+    public void setSelectedLuggages(List<Double> selectedLuggages) {
+        this.selectedLuggages = selectedLuggages;
+    }
+
+    public Map<Double, Integer> getSelectedLuggageMap() {
+        return selectedLuggageMap;
+    }
+
+    public void setSelectedLuggageMap(Map<Double, Integer> selectedLuggageMap) {
+        this.selectedLuggageMap = selectedLuggageMap;
+    }
+
+    public int getSelectedNumOfInsurance() {
+        return selectedNumOfInsurance;
+    }
+
+    public void setSelectedNumOfInsurance(int selectedNumOfInsurance) {
+        this.selectedNumOfInsurance = selectedNumOfInsurance;
+    }
+
+    public double getLuggagePrice() {
+        return luggagePrice;
+    }
+
+    public void setLuggagePrice(double luggagePrice) {
+        this.luggagePrice = luggagePrice;
+    }
+
+    public double getSelectedIsurancePrice() {
+        return selectedIsurancePrice;
+    }
+
+    public void setSelectedIsurancePrice(double selectedIsurancePrice) {
+        this.selectedIsurancePrice = selectedIsurancePrice;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
+
+    public List<CustomerHelper> getCustHelpers() {
+        return custHelpers;
+    }
+
+    public void setCustHelpers(List<CustomerHelper> custHelpers) {
+        this.custHelpers = custHelpers;
     }
 
 }

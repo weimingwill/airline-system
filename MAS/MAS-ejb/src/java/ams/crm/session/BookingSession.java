@@ -279,7 +279,7 @@ public class BookingSession implements BookingSessionLocal {
 //        return tixFams;
 //    }
     @Override
-    public void bookingFlight(BookingHelper bookingHelper) {
+    public Booking bookingFlight(BookingHelper bookingHelper) {
         //create booking
         Booking booking = bookingHelper.getBooking();
         System.out.println("Booking: " + booking.getEmail());
@@ -288,12 +288,7 @@ public class BookingSession implements BookingSessionLocal {
         booking.setPaid(true);
 
         //Update flightSchedule booking class
-        List<FlightScheduleBookingClass> fbs = bookingHelper.getFlightSchedBookingClses();
-        float price = 0;
-        for (FlightScheduleBookingClass fb : fbs) {
-            price += fb.getPrice();
-        }
-        booking.setPrice((double) price);
+        booking.setPrice(bookingHelper.getTotalPrice());
         em.persist(booking);
         em.flush();
 
@@ -302,7 +297,7 @@ public class BookingSession implements BookingSessionLocal {
         customerHelpers.addAll(bookingHelper.getCustomers());
 
         //Airticket
-        List<AirTicket> airTickets = createAirTickets(fbs, customerHelpers, booking);
+        List<AirTicket> airTickets = createAirTickets(bookingHelper.getFlightSchedBookingClses(), customerHelpers, booking);
 
         String eTicketNo = "MLA";
         eTicketNo += NumberGenerator.airTicketFormNumber();
@@ -315,8 +310,8 @@ public class BookingSession implements BookingSessionLocal {
         em.merge(booking);
         em.flush();
         //Select seat
-        //Select add on
         //Generate pnr
+        return booking;
     }
 
     private List<AirTicket> createAirTickets(List<FlightScheduleBookingClass> fbs, List<CustomerHelper> customerHelpers, Booking booking) {
@@ -471,4 +466,9 @@ public class BookingSession implements BookingSessionLocal {
         return luggage;
     }
 
+    public Booking getBookingByBookingRefString(String bookingRef) {
+        Booking booking = new Booking();
+        return booking;
+    }
+    
 }

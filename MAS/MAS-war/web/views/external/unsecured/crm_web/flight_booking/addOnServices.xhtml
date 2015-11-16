@@ -23,6 +23,8 @@
                             </p:column>
                             <p:column>
                                 <p:selectOneMenu value="#{custHelper.meal}" converter="addOnConverter" >
+                                    <p:ajax listener="#{bookingManager.onMealSelected()}" update=":summary:summaryForm" />
+                                    <f:selectItem itemLabel="Select meal" itemValue=""  noSelectionOption="true" />
                                     <f:selectItems value="#{bookingBacking.meals}" var="meal" itemValue="#{meal}" itemLabel="#{meal.description}" />
                                 </p:selectOneMenu>                            
                             </p:column>
@@ -41,6 +43,8 @@
                             </p:column>
                             <p:column>
                                 <p:selectOneMenu value="#{custHelper.luggage}" converter="luggageConverter" >
+                                    <p:ajax listener="#{bookingManager.onLuggageSelected()}" update=":summary:summaryForm" />
+                                    <f:selectItem itemLabel="Select extra luggage" itemValue="" noSelectionOption="true" />
                                     <f:selectItems value="#{bookingBacking.luggages}" var="luggage" itemValue="#{luggage}" itemLabel="Extra #{luggage.maxWeight}kg, price: S$#{luggage.price}"  />
                                 </p:selectOneMenu>
                             </p:column>
@@ -57,8 +61,9 @@
                                 <p:outputLabel styleClass="fa fa-user bookingIcon" />
                                 <p:outputLabel value="#{custHelper.customer.lastName} #{custHelper.customer.firstName}" />
                             </p:column>
-                            <p:column>
+                            <p:column styleClass="alignMiddle">
                                 <p:selectBooleanCheckbox value="#{custHelper.insurance}" >
+                                    <p:ajax listener="#{bookingManager.onInsuranceSelected()}" update=":summary:summaryForm" />
                                     <p:ajax update="messages"/>
                                 </p:selectBooleanCheckbox>
                                 <p:outputLabel value="Buy travel insurance with only S$#{bookingBacking.travelInsurance.price}" />

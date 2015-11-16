@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmExTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="title">
+        Itinerary
+    </ui:define>
+
+    <ui:define name="content">
+        <p:panelGrid>
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="8" >Itinerary</p:column>
+                </p:row>
+            </f:facet>
+            <p:row>
+                <p:column>YOUR BOOKING NUMBER: </p:column>
+                <p:column>#{bookingManager.booking.referenceNo}</p:column>
+            </p:row>
+            <p:row>
+                <p:column>YOUR E-TICKET NUMBER: </p:column>
+                <p:column>#{bookingManager.booking.geteTicketNo()}</p:column>
+            </p:row>
+            <p:row styleClass="ui-widget-header">
+                <p:column>Flight</p:column>
+                <p:column colspan="2">From</p:column>
+                <p:column></p:column>
+                <p:column colspan="2">To</p:column>
+                <p:column>Aircraft</p:column>
+                <p:column>Cabin Class</p:column>
+            </p:row>
+            <c:forEach items="#{bookingManager.booking.airTickets}" var="airticket">
+                <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{airticket.flightSchedBookingClass.flightSchedule}" fb="#{airticket.flightSchedBookingClass}"/>
+            </c:forEach>
+
+            <p:row styleClass="ui-widget-header">
+                <p:column colspan="2" rowspan="2">Passenger Name</p:column>
+                <p:column colspan="6" styleClass="alignCenter">Special Needs</p:column>
+            </p:row>
+            <p:row styleClass="ui-widget-header">
+                <p:column colspan="2">Meal(s)</p:column>
+                <p:column colspan="2">Extra Luggage(s)</p:column>
+                <p:column colspan="2">Travel Insurance</p:column>
+            </p:row>
+            <c:forEach items="#{bookingManager.custHelpers}" var="customerHelper">
+                <p:row>
+                    <p:column colspan="2">#{customerHelper.customer.firstName} #{customerHelper.customer.lastName}</p:column>
+                        <p:column colspan="2">#{customerHelper.meal.description}</p:column>
+                        <p:column colspan="2">Extra luggage #{customerHelper.luggage.maxWeight} kg</p:column>
+                        <p:column colspan="2">                    
+                            <p:outputLabel styleClass="fa fa-check" rendered="#{customerHelper.insurance}" />
+                            <p:outputLabel styleClass="fa fa-remove" rendered="#{not customerHelper.insurance}" />
+                        </p:column>
+                </p:row>
+            </c:forEach>
+
+            <p:row styleClass="ui-widget-header">
+                <p:column colspan="4">Purchase description</p:column>
+                <p:column colspan="2">Price(S$)</p:column>
+            </p:row>
+
+
+            <c:forEach items="#{bookingManager.custHelpers}" var="customerHelper">
+                <p:row rendered="#{customerHelper.insurance}">
+                    <p:column colspan="4">Travel insurance</p:column>
+                    <p:column colspan="2" styleClass="alignRight">#{bookingBacking.travelInsurance.price}</p:column>  
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">Extra luggage #{customerHelper.luggage.maxWeight} kg</p:column>
+                    <p:column colspan="2" styleClass="alignRight">#{customerHelper.luggage.price}</p:column>  
+                </p:row>
+            </c:forEach>
+
+
+            <c:forEach items="#{bookingBacking.pricingItems}" var="pricingItem">
+                <p:row>
+                    <p:column colspan="4">#{pricingItem.name}</p:column>
+                    <p:column colspan="2" styleClass="alignRight">#{pricingItem.price}</p:column>   
+                </p:row>
+            </c:forEach>
+
+            <p:row>
+                <p:column colspan="4">TOTAL FARE</p:column>
+                <p:column colspan="2" styleClass="alignRight">#{bookingManager.booking.price}</p:column>
+            </p:row>
+        </p:panelGrid>
+    </ui:define>
+
+</ui:composition>

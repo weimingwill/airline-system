@@ -13,6 +13,7 @@ import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.ars.entity.AddOn;
+import ams.ars.entity.Booking;
 import ams.ars.entity.PricingItem;
 import ams.crm.util.helper.BookingHelper;
 import ams.dcs.entity.Luggage;
@@ -39,7 +40,7 @@ public interface BookingSessionLocal {
 //
 //     public Map<String, FlightSchedBookingClsHelper> getFlightSchedBookingClsHelperMaps
 //        (List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, String channelName, int numOfTix);
-        public void bookingFlight(BookingHelper bookingHelper);
+        public Booking bookingFlight(BookingHelper bookingHelper);
         
         public List<AddOn> getMeals();
         
