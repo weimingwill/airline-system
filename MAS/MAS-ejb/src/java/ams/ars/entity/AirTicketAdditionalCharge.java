@@ -5,7 +5,7 @@
  */
 package ams.ars.entity;
 
-import ams.ars.entity.helper.AirTicketPricingItemId;
+import ams.ars.entity.helper.AirTicketAdditionalChargeId;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,7 +23,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 public class AirTicketAdditionalCharge implements Serializable {
 
     @EmbeddedId
-    private AirTicketPricingItemId airTicketPricingItemId;
+    private AirTicketAdditionalChargeId airTicketAdditonalChargeId;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "AIRTICKETID", referencedColumnName = "ID")
@@ -36,12 +36,12 @@ public class AirTicketAdditionalCharge implements Serializable {
     @Column(name = "PRICE")
     private Double price;
 
-    public AirTicketPricingItemId getAirTicketPricingItemId() {
-        return airTicketPricingItemId;
+    public AirTicketAdditionalChargeId getAirTicketAdditonalChargeId() {
+        return airTicketAdditonalChargeId;
     }
 
-    public void setAirTicketPricingItemId(AirTicketPricingItemId airTicketPricingItemId) {
-        this.airTicketPricingItemId = airTicketPricingItemId;
+    public void setAirTicketAdditonalChargeId(AirTicketAdditionalChargeId airTicketAdditonalChargeId) {
+        this.airTicketAdditonalChargeId = airTicketAdditonalChargeId;
     }
 
     public AirTicket getAirTicket() {
