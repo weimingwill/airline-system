@@ -13,7 +13,9 @@ import ams.crm.session.BookingSessionLocal;
 import ams.dcs.entity.Luggage;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -26,22 +28,25 @@ import javax.faces.view.ViewScoped;
 @Named(value = "bookingBacking")
 @ViewScoped
 public class BookingBacking implements Serializable {
-    
+
     @EJB
     private BookingSessionLocal bookingSession;
-    
+
     private FlightSchedule flightSchedule;
     private FlightScheduleBookingClass selectedFlightSchedBookignCls;
 
     //Passenger details
     private List<String> titles = new ArrayList<>();
     private List<String> genders = new ArrayList<>();
-    
+
     //Add On
     private List<AddOn> meals = new ArrayList<>();
     private List<Luggage> luggages = new ArrayList<>();
-    
+    private Map<Double,Double> luggageWeightPriceMap = new HashMap<>();
+
     private List<PricingItem> pricingItems = new ArrayList<>();
+    private AddOn travelInsurance;
+
     /**
      * Creates a new instance of BookingBacking
      */
@@ -49,11 +54,10 @@ public class BookingBacking implements Serializable {
     public void init() {
         setTitleList();
         setGenders();
-        setMeals();
-        setLuggages();
-        setPricingItems(pricingItems);
+        setAddOns();
+        setPricingItems();
     }
-    
+
     public BookingBacking() {
     }
 
@@ -71,19 +75,24 @@ public class BookingBacking implements Serializable {
         genders.add("Male");
         genders.add("Female");
     }
-    
-    private void setMeals() {
+
+    private void setAddOns() {
         meals = bookingSession.getMeals();
-    }
-    
-    private void setLuggages() {
         luggages = bookingSession.getLuggages();
+        for (Luggage luggage : luggages) {
+            luggageWeightPriceMap.put(luggage.getMaxWeight(), luggage.getPrice());
+        }
+        travelInsurance = bookingSession.getTravelInsurance();
     }
-    
+
     private void setPricingItems() {
         pricingItems = bookingSession.getPricingItems();
     }
+
     
+    //
+    //Getter nad Setter
+    //
     public FlightSchedule getFlightSchedule() {
         return flightSchedule;
     }
@@ -139,7 +148,21 @@ public class BookingBacking implements Serializable {
     public void setLuggages(List<Luggage> luggages) {
         this.luggages = luggages;
     }
-    
-    
+
+    public AddOn getTravelInsurance() {
+        return travelInsurance;
+    }
+
+    public void setTravelInsurance(AddOn travelInsurance) {
+        this.travelInsurance = travelInsurance;
+    }
+
+    public Map<Double, Double> getLuggageWeightPriceMap() {
+        return luggageWeightPriceMap;
+    }
+
+    public void setLuggageWeightPriceMap(Map<Double, Double> luggageWeightPriceMap) {
+        this.luggageWeightPriceMap = luggageWeightPriceMap;
+    }
     
 }

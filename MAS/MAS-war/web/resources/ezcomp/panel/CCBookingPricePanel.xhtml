@@ -3,7 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -11,102 +14,115 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <p:panelGrid>
-            <f:facet name="header">
-                <p:row><p:column colspan="3">Your selection</p:column></p:row>
-            </f:facet>
-            <f:facet name="flights">
-                <p:row><p:column>Flights</p:column></p:row>
-            </f:facet>
-            <p:row>
-                <p:column rowspan="2">
-                    <p:outputLabel value="fa fa-plane bookingIcon" />
-                </p:column>
-                <p:column>
-                    <p:outputLabel value="#{bookingManager.deptAirport.city.cityName} - #{bookingManager.arrAirport.city.cityName}"/>
-                </p:column>
-                <p:column></p:column>
-            </p:row>
-            <p:row>
-                <p:column>
-                    <p:outputLabel value="#{bookingManager.deptDate}">
-                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8" />
-                    </p:outputLabel>
-                </p:column>
-            </p:row>
+        <h:form>
+            <p:panelGrid style="width: 100%;">
+                <f:facet name="header">
+                    <p:row><p:column colspan="4">Your selection</p:column></p:row>
+                    <p:row><p:column colspan="4">Flights</p:column></p:row>
+                </f:facet>
+                <p:row>
+                    <p:column rowspan="2">
+                        <p:outputLabel styleClass="fa fa-plane bookingIcon" />
+                    </p:column>
+                    <p:column colspan="3">
+                        <p:outputLabel value="#{bookingManager.deptAirport.city.cityName} - #{bookingManager.arrAirport.city.cityName}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        <p:outputLabel value="#{bookingManager.deptDate}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8" />
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
 
-            <p:row>
-                <p:column>
-                    <p:outputLabel value="fa fa-user bookingIcon" />
-                </p:column>
-                <p:column>
-                    <p:outputLabel value="Adult(s)"/>
-                </p:column>
-                <p:column>#{bookingManager.adultNo}</p:column>
-            </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel styleClass="fa fa-user bookingIcon" />
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Adult(s)"/>
+                    </p:column>
+                    <p:column styleClass="alignRight">#{bookingManager.adultNo}</p:column>
+                </p:row>
 
-            <p:row rendered="#{not empty bookingManager.bookingHelper.children}">
-                <p:column>
-                    <p:outputLabel value="fa fa-user bookingIcon" />
-                </p:column>
-                <p:column>
-                    <p:outputLabel value="Children"/>
-                </p:column>
-                <p:column>#{bookingManager.childrenNo}</p:column>
-            </p:row>
+                <p:row rendered="#{not empty bookingManager.bookingHelper.children}">
+                    <p:column>
+                        <p:outputLabel styleClass="fa fa-user bookingIcon" />
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Children"/>
+                    </p:column>
+                    <p:column styleClass="alignRight">#{bookingManager.childrenNo}</p:column>
+                </p:row>
 
-            <p:row>
-                <p:column colspan="3">
-                    <p:outputLabel value="fa fa-caret-right" />
-                    <p:commandLink value="Show details" />
-                </p:column>
-            </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        <p:outputLabel styleClass="fa fa-caret-right" />
+                        <p:commandLink value="Show details" />
+                    </p:column>
+                </p:row>
 
-            <p:row>
-                <p:column colspan="3">
-                    <p:outputLabel value="fa fa-caret-right" />
-                    <p:commandLink value="Baggage informations" />
-                </p:column>
-            </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        <p:outputLabel styleClass="fa fa-caret-right" />
+                        <p:commandLink value="Baggage informations" />
+                    </p:column>
+                </p:row>
 
-            <p:row>
-                <p:column><p:outputLabel value="Price"/></p:column>
-                <p:column colspan="2">
-                    <p:outputLabel value="S$" />
-                    <p:outputLabel value="#{bookingManager.selectedFbHelper.price}">
-                        <f:convertNumber maxFractionDigits="2"/>
-                    </p:outputLabel>
-                </p:column>
-            </p:row>
+                <p:row>
+                    <p:column colspan="2"><p:outputLabel value="Price"/></p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="S$" />
+                        <p:outputLabel value="#{bookingManager.selectedFbHelper.price}">
+                            <f:convertNumber maxFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
 
-            <f:facet name="options">
-                <p:row><p:column>Options</p:column></p:row>
-            </f:facet>
+                <ui:remove>
+                    <p:row styleClass="ui-widget-header"><p:column colspan="4">Options</p:column></p:row>
 
-            <p:row>
-                <p:column rowspan="2">
-                    <p:outputLabel value="fa fa-plane bookingIcon" />
-                </p:column>
-                <p:column>
-                    <p:outputLabel value="Meal(s)"/>
-                </p:column>
-                <p:column></p:column>
-            </p:row>
-            <p:row>
-                <p:column>
-                    <p:outputLabel value="#{bookingManager.bookingHelper.meal.description}" />
-                </p:column>
-            </p:row>
-
-            <f:facet name="totalPrice">
-                <p:column><p:outputLabel value="Grant total"/></p:column>
-                <p:column colspan="2">
-                    <p:outputLabel value="S$" />
-                    <p:outputLabel value="#{bookingManager.bookingHelper.totalPrice}">
-                        <f:convertNumber maxFractionDigits="2"/>
-                    </p:outputLabel>
-                </p:column>
-            </f:facet>
-        </p:panelGrid>
+                    <c:forEach items="#{bookingManager.bookingHelper.customers}" var="customer">
+                        <p:row rendered="#{not empty customer.meal}">
+                            <p:column rowspan="2">
+                                <p:outputLabel styleClass="fa fa-coffee bookingIcon" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="Meal(s)"/>
+                            </p:column>
+                            <p:column></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column  colspan="2">
+                                <p:outputLabel value="#{bookingManager.bookingHelper}" />
+                            </p:column>
+                        </p:row>
+                    </c:forEach>
+                </ui:remove>
+                <p:row>
+                    <p:column colspan="2"><p:outputLabel value="Price"/></p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="S$" />
+                        <p:outputLabel value="#{bookingManager.selectedFbHelper.price}">
+                            <f:convertNumber maxFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+                
+                
+                <f:facet name="footer">
+                    <p:row>
+                        <p:column colspan="2"><p:outputLabel value="Grant total"/></p:column>
+                        <p:column colspan="2" styleClass="alignRight">
+                            <p:outputLabel value="S$" />
+                            <p:outputLabel value="#{bookingManager.bookingHelper.totalPrice}">
+                                <f:convertNumber maxFractionDigits="2"/>
+                            </p:outputLabel>
+                        </p:column>
+                    </p:row>
+                </f:facet>
+            </p:panelGrid>
+        </h:form>
     </cc:implementation>
 </html>

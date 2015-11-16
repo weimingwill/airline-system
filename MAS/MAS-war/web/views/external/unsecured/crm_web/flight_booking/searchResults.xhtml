@@ -35,7 +35,7 @@
                 </c:forEach>
             </p:tabMenu>
 
-            <p:panelGrid>
+            <p:panelGrid id="flights">
                 <!--Header-->
                 <p:row>
                     <p:column colspan="3" rowspan="2">
@@ -87,7 +87,7 @@
                             <p:dataGrid styleClass="alignCenter" value="#{flightSchedHelper.fbHelpers}" var="fbHelper" columns="#{bookingManager.tixFams.size()}" rowIndexVar="index">
                                 <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFb}" converter="flightSchedBookingClsConverter" layout="custom">
                                     <!--<p:ajax event="change" update="form,barForm" onstart="PF('bar').hide();" oncomplete="PF('bar').show();" listener="{bookingManager.onFlightSchedRadioSelected()}"/>-->
-                                    <p:ajax event="change" update="form,barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
+                                    <p:ajax event="change" update=":form:flights,barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
                                     <f:selectItems value="#{flightSchedHelper.flightSchedBookingClses}"/>
 
                                 </p:selectOneRadio>

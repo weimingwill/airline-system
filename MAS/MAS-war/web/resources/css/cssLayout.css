@@ -515,3 +515,12 @@ div.timeline-event-selected {
 .notificationBar {
     display: block;
 }
+
+.bookingIcon {
+    font-size: 15px !important;
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+    /*margin-top: .625rem;*/
+    color: #007cc0;
+}

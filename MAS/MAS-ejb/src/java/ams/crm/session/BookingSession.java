@@ -401,7 +401,7 @@ public class BookingSession implements BookingSessionLocal {
 
     @Override
     public List<Luggage> getLuggages() {
-        Query query = em.createQuery("SELECT l FROM Luggage l WHERE a.name = :name");
+        Query query = em.createQuery("SELECT l FROM Luggage l WHERE l.name = :name");
         query.setParameter("name", AddOnHelper.LUGGAGE);
         List<Luggage> luggages = new ArrayList<>();
         try {

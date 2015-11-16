@@ -18,6 +18,7 @@ import java.util.List;
 public class BookingHelper implements Serializable{
     private Booking booking;
     private List<CustomerHelper> customers;
+    private List<CustomerHelper> adults;
     private List<CustomerHelper> children;
     private String channel;
     private List<FlightScheduleBookingClass> flightSchedBookingClses;
@@ -82,5 +83,12 @@ public class BookingHelper implements Serializable{
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
-   
+
+    public List<CustomerHelper> getAdults() {
+        return adults;
+    }
+
+    public void setAdults(List<CustomerHelper> adults) {
+        this.adults = adults;
+    }
 }

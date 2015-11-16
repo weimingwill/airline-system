@@ -59,6 +59,8 @@ public class BookingManager implements Serializable {
     MsgController msgController;
     @Inject
     NavigationController navigationController;
+    @Inject
+    BookingBacking bookingBacking;
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
@@ -102,6 +104,12 @@ public class BookingManager implements Serializable {
 
     //Passenger details
     private BookingHelper bookingHelper;
+
+    //AddOn
+    private Map<String, Integer> selectedMeals = new HashMap<>();
+    private Map<Double, Integer> selectedLuggages = new HashMap<>();
+    private int selectedNumOfInsurance;
+    private double luggagePrice = 0;
 
     /**
      * Creates a new instance of bookingManager
@@ -183,7 +191,6 @@ public class BookingManager implements Serializable {
     public String searchFlights() {
         searchDeptDate = DateHelper.convertDateTime(deptDate);
         searchArrDate = DateHelper.convertDateTime(arrDate);
-
         try {
             if (choice.equals("oneway")) {
                 searchForOneWayFlights();
@@ -288,9 +295,7 @@ public class BookingManager implements Serializable {
     }
 
     public void onFlightSchedRadioSelected() throws NoSuchFlightSchedulException {
-        System.out.println("Selected FB: " + selectedFb);
         selectedFbHelper = fbHelperMaps.get(selectedFb.getFlightScheduleBookingClassId().toString());
-        System.out.println("selectedFbHelper: " + selectedFbHelper);
     }
 
     public String toEnterPassengerDetails() {
@@ -305,7 +310,7 @@ public class BookingManager implements Serializable {
             CustomerHelper customerHelper = new CustomerHelper();
             Customer customer = new Customer();
             customer.setIsAdult(true);
-            customerHelper.setId(i);
+            customerHelper.setId(i + 1);
             customerHelper.setCustomer(new Customer());
             adults.add(customerHelper);
         }
@@ -314,16 +319,20 @@ public class BookingManager implements Serializable {
             CustomerHelper customerHelper = new CustomerHelper();
             Customer customer = new Customer();
             customer.setIsAdult(true);
-            customerHelper.setId(i+1);
+            customerHelper.setId(i + 1);
             customerHelper.setCustomer(new Customer());
-            adults.add(customerHelper);
+            children.add(customerHelper);
         }
         Booking booking = new Booking();
         Phone phone = new Phone();
         booking.setPhoneNo(phone);
         bookingHelper.setBooking(booking);
-        bookingHelper.setCustomers(adults);
+        bookingHelper.setAdults(adults);
         bookingHelper.setChildren(children);
+        List<CustomerHelper> customerHelpers = new ArrayList<>();
+        customerHelpers.addAll(adults);
+        customerHelpers.addAll(children);
+        bookingHelper.setCustomers(customerHelpers);
         bookingHelper.setChannel(ChannelHelper.ARS);
         List<FlightScheduleBookingClass> fbs = new ArrayList<>();
         fbs.add(selectedFb);
@@ -341,19 +350,37 @@ public class BookingManager implements Serializable {
         return revMgmtSession.getFlightScheduleById(selectedFb.getFlightSchedule().getFlightScheduleId());
     }
 
-    public String toSelectAddOn() {
-        List<CustomerHelper> customerHelpers = bookingHelper.getCustomers();
-        customerHelpers.addAll(bookingHelper.getChildren());
-        bookingHelper.setCustomers(customerHelpers);
-        return crmExNavController.redirectToAddOnServices();
+    //Selected AddOn
+    public void onMealSelected() {
+        List<String> meals = new ArrayList<>();
+        for (CustomerHelper customerHelper : bookingHelper.getCustomers()) {
+            String meal = customerHelper.getMeal().getDescription();
+            if (meals.contains(meal)) {
+                selectedMeals.put(meal, selectedMeals.get(meal) + 1);
+            } else {
+                meals.add(meal);
+                selectedMeals.put(meal, 1);
+            }
+        }
     }
-    
-    public String bookingFlight() {
-        bookingSession.bookingFlight(bookingHelper);
 
+    public void onLuggageSelected() {
+        List<Double> luggages = new ArrayList<>();
+        for (CustomerHelper customerHelper : bookingHelper.getCustomers()) {
+            Double luggageWeight = customerHelper.getLuggage().getMaxWeight();
+            if (luggages.contains(luggageWeight)) {
+                selectedLuggages.put(luggageWeight, selectedLuggages.get(luggageWeight) + 1);
+            } else {
+                luggages.add(luggagePrice);
+                selectedLuggages.put(luggageWeight, 1);
+            }
+            luggagePrice += bookingBacking.getLuggageWeightPriceMap().get(luggageWeight);
+        }
+    }
+
+    public String bookingFlight() {
         msgController.addMessage("Booking flight successfully!");
         return navigationController.redirectToCurrentPage();
-
     }
 
     //
