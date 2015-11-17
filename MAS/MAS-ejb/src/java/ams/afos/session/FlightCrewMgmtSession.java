@@ -315,7 +315,6 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
             dp.setCockpitCrewQuota(numCockpitCrew);
             System.out.println("setCrewQuota(): \n\tNumber of Passengers = " + totalPassenger + "\n\tNumber of Cabin Crew = " + numCabinCrew + "\n\tNumber of Cockpit Crew = " + numCockpitCrew);
         }
-
     }
 
     private List<FlightSchedule> getNextMonthFlightSchedule() {
@@ -336,28 +335,6 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         } catch (Exception ex) {
             return new ArrayList();
         }
-    }
-
-    private Date getNextMonthFirstDay() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 1);
-        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
-        calendar.set(Calendar.MINUTE, calendar.getActualMinimum(Calendar.MINUTE));
-        calendar.set(Calendar.SECOND, calendar.getActualMinimum(Calendar.SECOND));
-        calendar.set(Calendar.MILLISECOND, calendar.getActualMinimum(Calendar.MILLISECOND));
-        return calendar.getTime();
-    }
-
-    private Date getNextMonthLastDay() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 1);
-        calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMaximum(Calendar.HOUR_OF_DAY));
-        calendar.set(Calendar.MINUTE, calendar.getActualMaximum(Calendar.MINUTE));
-        calendar.set(Calendar.SECOND, calendar.getActualMaximum(Calendar.SECOND));
-        calendar.set(Calendar.MILLISECOND, calendar.getActualMaximum(Calendar.MILLISECOND));
-        return calendar.getTime();
     }
 
     @Override
@@ -415,65 +392,134 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         for (Pairing thisPairing : pairings) {
             System.out.print("closeBiddingSession(): thisPairing");
             printPairing(thisPairing);
-            orderedCabinCrews = getOrderedFlightCrews(CrewType.FLIGHT_ATTENDENT,thisPairing);
-            orderedCockpitCrews = getOrderedFlightCrews(CrewType.PILOT,thisPairing);
+            orderedCabinCrews = getOrderedFlightCrews(CrewType.FLIGHT_ATTENDENT, thisPairing);
+            orderedCockpitCrews = getOrderedFlightCrews(CrewType.PILOT, thisPairing);
             assignPairingsToCrew(CrewType.FLIGHT_ATTENDENT, thisPairing, orderedCabinCrews);
-            assignPairingsToCrew(CrewType.PILOT,thisPairing, orderedCockpitCrews);
+            assignPairingsToCrew(CrewType.PILOT, thisPairing, orderedCockpitCrews);
         }
+
+//        for (Pairing thisPairing : getPairingsWithMinCrews(CrewType.FLIGHT_ATTENDENT)) {
+//            System.out.println("pairingsWithMinCrews: ");
+//            printPairing(thisPairing);
+//        }
     }
 
     @Override
     public void assignPairingsToCrew(String type, Pairing pairingWithBids, List<FlightCrew> orderedFlightCrew) {
         List<PairingFlightCrew> pairingFlightCrews;
         pairingFlightCrews = pairingWithBids.getPairingFlightCrews();
-        if(!orderedFlightCrew.isEmpty()){
-            //        for(int i = 0 ; i < pairingWithBids.getCabinCrewQuota())
-            // TODO: Based on crew type and crew quota to assign pairing to crew
+        int quota = 0;
+        switch (type) {
+            case CrewType.FLIGHT_ATTENDENT:
+                quota = pairingWithBids.getCabinCrewQuota();
+                break;
+            case CrewType.PILOT:
+                quota = pairingWithBids.getCockpitCrewQuota();
+                break;
         }
+        int remainingQuota = quota;
+        if (!orderedFlightCrew.isEmpty()) {
+            // Based on crew type and crew quota to assign pairing to crew
+            PairingFlightCrew thisPairingFlightCrew;
+            String status;
+            System.out.println("orderedFlightCrew.size() " + orderedFlightCrew.size());
+            for (int i = 0; i < orderedFlightCrew.size(); i++) {
+                printFlightCrew(orderedFlightCrew.get(i));
+                thisPairingFlightCrew = getPairingFlightCrewByCrew(pairingFlightCrews, orderedFlightCrew.get(i));
+                System.out.println("thisPairingFlightCrew: " + thisPairingFlightCrew);
+                if (thisPairingFlightCrew != null) {
+                    if (i < quota) {
+                        status = PairingCrewStatus.SUCCESS;
+                        remainingQuota--;
+                    } else {
+                        status = PairingCrewStatus.FAIL;
+                    }
+                    thisPairingFlightCrew.setStatus(status);
+                    em.merge(thisPairingFlightCrew);
+
+                    em.flush();
+                }
+            }
+        }
+        switch (type) {
+            case CrewType.FLIGHT_ATTENDENT:
+                pairingWithBids.setCabinCrewQuota(remainingQuota);
+                break;
+            case CrewType.PILOT:
+                pairingWithBids.setCockpitCrewQuota(remainingQuota);
+                break;
+        }
+        em.merge(pairingWithBids);
     }
 
-    private List<FlightCrew> getOrderedFlightCrews(String type, Pairing thisPairing){
+    // NOT VERY IDEAL
+    // TODO: 
+    // Directly assign crew pairings based on crew's maximum flying time
+    // Prioritize to assign crew to pairings with minimum filled in crews
+//    private List<Pairing> getFailedPairings() {
+//        Date nextMonthFirstDay = getNextMonthFirstDay();
+//        Date nextMonthLastDay = getNextMonthLastDay();
+//        Calendar temp = Calendar.getInstance();
+//
+//        Query query = em.createQuery("SELECT pfc.pairing FROM PairingFlightCrew pfc WHERE pfc.status = :status AND pfc.lastUpdateTime BETWEEN :thisMonthFirstDay AND :thisMonthLastDay");
+//        query.setParameter("status", PairingCrewStatus.FAIL);
+//        temp.setTime(nextMonthFirstDay);
+//        temp.add(Calendar.MONTH, -1);
+//        query.setParameter("thisMonthFirstDay", temp.getTime());
+//        temp.setTime(nextMonthLastDay);
+//        temp.add(Calendar.MONTH, -1);
+//        query.setParameter("thisMonthLastDay", temp.getTime());
+//        return (List<Pairing>) query.getResultList();
+//    }
+    // TODO: get pairings with min crews
+    private List<Pairing> getPairingsWithMinCrews(String type) {
+//        Query query;
+//        switch (type) {
+//            case CrewType.FLIGHT_ATTENDENT:
+//                query = em.createQuery("SELECT p FROM Pairing p WHERE");
+//                query.setParameter("fcpStatus", PairingCrewStatus.SUCCESS);
+//                return (List<Pairing>) query.getResultList();
+//            default:
+//                return null;
+//        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+    }
+
+    // TODO: get crews with min pairings and order by crew seniority low - high (DSC) and crew position ranking low - high (ASC)
+    private List<FlightCrew> getCrewWithMinPairings(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    // TODO: assign remaining pairings to crew
+    // 1. check crew flying requirement
+    // 2. check pairing remaining quota
+    // 3. check crew pairing clashes (i.e. if the crew has been assigned the same pairing)
+    // 4. assign pairings to crew
+    private void assignRemainingPairingsToCrew(List<Pairing> pairings, List<FlightCrew> crews) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    // Find target flight crew from a list of PairingFlightCrews
+    private PairingFlightCrew getPairingFlightCrewByCrew(List<PairingFlightCrew> pairingFlightCrews, FlightCrew flightCrew) {
+        for (PairingFlightCrew pfc : pairingFlightCrews) {
+            if (pfc.getFlightCrew().getSystemUserId().equals(flightCrew.getSystemUserId())) {
+                return pfc;
+            }
+        }
+        return null;
+    }
+
+    // Get flight crews who bid for thisPairing in order
+    // 1. FCFS -> lastUpdateTime ASC
+    // 3. Position high to low -> crew positionRank DSC
+    // 2. Seniority high to low -> crew joinedDate ASC
+    private List<FlightCrew> getOrderedFlightCrews(String type, Pairing thisPairing) {
         Query query = em.createQuery("SELECT pfc.flightCrew FROM PairingFlightCrew pfc WHERE pfc.pairing.pairingId = :inPairingId AND pfc.status = :status AND pfc.flightCrew.position.type = :type ORDER BY pfc.lastUpdateTime ASC, pfc.flightCrew.position.rank DESC, pfc.flightCrew.dateJoined ASC");
         query.setParameter("inPairingId", thisPairing.getPairingId());
         query.setParameter("status", PairingCrewStatus.PENDING);
         query.setParameter("type", type);
         return (List<FlightCrew>) query.getResultList();
-    }   
-    
-    
-    @Override
-    public void createFlightDutyChecklist(Checklist checklist) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateFlightDutyChecklist(Checklist checklist) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateAttendance(List<FlightCrew> flightCrews) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<FlightCrew> getOnDutyCrews(FlightSchedule flightSchedule) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Checklist> getFlightDutyChecklist(FlightSchedule flightSchedule) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Checklist> getChecklistTemplates(String type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Checklist> getPostFlightReport(FlightSchedule flightSchedule) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -509,6 +555,64 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         return (List<FlightCrew>) query.getResultList();
     }
 
+    @Override
+    public void createFlightDutyChecklist(Checklist checklist) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateFlightDutyChecklist(Checklist checklist) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateAttendance(List<FlightCrew> flightCrews) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<FlightCrew> getOnDutyCrews(FlightSchedule flightSchedule) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Checklist> getFlightDutyChecklist(FlightSchedule flightSchedule) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Checklist> getChecklistTemplates(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Checklist> getPostFlightReport(FlightSchedule flightSchedule) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    // helper function
+    private Date getNextMonthFirstDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, calendar.getActualMinimum(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, calendar.getActualMinimum(Calendar.SECOND));
+        calendar.set(Calendar.MILLISECOND, calendar.getActualMinimum(Calendar.MILLISECOND));
+        return calendar.getTime();
+    }
+
+    private Date getNextMonthLastDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMaximum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, calendar.getActualMaximum(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, calendar.getActualMaximum(Calendar.SECOND));
+        calendar.set(Calendar.MILLISECOND, calendar.getActualMaximum(Calendar.MILLISECOND));
+        return calendar.getTime();
+    }
+
     // for debug purposes
     private void printFlightDuty(FlightDuty duty) {
         System.out.println("printFlightDuty(): "
@@ -533,10 +637,11 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
 
     private void printPairing(Pairing pairing) {
         System.out.println("printPairing(): "
+                + "\n\tPairing ID" + pairing.getPairingId()
                 + "\n\tPairing Code: " + pairing.getPairingCode()
                 + "\n\tLayover Time: " + pairing.getLayoverTime()
                 + "\n\tCabin Crew Quota: " + pairing.getCabinCrewQuota()
-                + "\n\tCockpit Crew Quota: " + pairing.getLayoverTime()
+                + "\n\tCockpit Crew Quota: " + pairing.getCockpitCrewQuota()
         );
     }
 
@@ -548,6 +653,17 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
                 + "\n\tRemaining Hours: " + session.getRemainingHrs()
                 + "\n\tPairings: " + session.getPairings()
                 + "\n\tCrews: " + session.getFlightCrews()
+        );
+    }
+
+    private void printFlightCrew(FlightCrew fc) {
+        System.out.println("printFlightCrew(): "
+                + "\n\tFlight Crew ID: " + fc.getFlightCrewID()
+                + "\n\tFlight Crew Name: " + fc.getName()
+                + "\n\tFlight Crew Position Type: " + fc.getPosition().getType()
+                + "\n\tFlight Crew Position Name: " + fc.getPosition().getName()
+                + "\n\tFlight Crew Position Rank: " + fc.getPosition().getRank()
+                + "\n\tFlight Crew Joined Date: " + fc.getDateJoined()
         );
     }
 

@@ -11,7 +11,8 @@ package ams.afos.util.helper;
  */
 public class PairingCrewStatus {
     public static final String PENDING = "In Progress";
-    public static final String CONFIRMED = "Confirmed";
+    public static final String SUCCESS = "Success";
+    public static final String FAIL = "Failed";
     public static final String PRESENT = "Present";
     public static final String ABSENCE = "Absence";
     public static final String COMPLETED = "Completed";

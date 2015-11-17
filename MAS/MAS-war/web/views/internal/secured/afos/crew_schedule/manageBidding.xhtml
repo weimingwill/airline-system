@@ -161,6 +161,7 @@
 
                         <f:facet name="footer">
                             <p:commandButton value="Generate FA Bidding Session" actionListener="#{biddingSessionBacking.generateBiddingSession('FA')}" update="bidding-session-table"/>
+                            <p:commandButton value="Close Session" actionListener="#{biddingSessionBacking.closeBiddingSession()}" update="bidding-session-table"/>
                         </f:facet>
                     </p:dataTable>
                     <!--<p:commandButton value="Generate PL Bidding Session" actionListener="{biddingSessionBacking.generateBiddingSession('PL')}"/>-->
