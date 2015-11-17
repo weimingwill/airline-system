@@ -50,12 +50,12 @@
             <c:forEach items="#{bookingManager.custHelpers}" var="customerHelper">
                 <p:row>
                     <p:column colspan="2">#{customerHelper.customer.firstName} #{customerHelper.customer.lastName}</p:column>
-                        <p:column colspan="2">#{customerHelper.meal.description}</p:column>
-                        <p:column colspan="2">Extra luggage #{customerHelper.luggage.maxWeight} kg</p:column>
-                        <p:column colspan="2">                    
-                            <p:outputLabel styleClass="fa fa-check" rendered="#{customerHelper.insurance}" />
-                            <p:outputLabel styleClass="fa fa-remove" rendered="#{not customerHelper.insurance}" />
-                        </p:column>
+                    <p:column colspan="2">#{customerHelper.meal.description}</p:column>
+                    <p:column colspan="2">Extra luggage #{customerHelper.luggage.maxWeight} kg</p:column>
+                    <p:column colspan="2">                    
+                        <p:outputLabel styleClass="fa fa-check" rendered="#{customerHelper.insurance}" />
+                        <p:outputLabel styleClass="fa fa-remove" rendered="#{not customerHelper.insurance}" />
+                    </p:column>
                 </p:row>
             </c:forEach>
 
@@ -64,6 +64,10 @@
                 <p:column colspan="2">Price(S$)</p:column>
             </p:row>
 
+            <c:forEach items="#{bookingManager.booking.airTickets}" var="airticket" varStatus="index">
+                <p:column colspan="4">Fare fee #{index.index + 1}</p:column>
+                <p:column colspan="2" styleClass="alignRight">#{airticket.flightSchedBookingClass.price}</p:column>
+            </c:forEach>
 
             <c:forEach items="#{bookingManager.custHelpers}" var="customerHelper">
                 <p:row rendered="#{customerHelper.insurance}">

@@ -309,6 +309,7 @@ public class BookingSession implements BookingSessionLocal {
         booking.setAirTickets(airTickets);
         em.merge(booking);
         em.flush();
+        //Customer value calc
         //Select seat
         //Generate pnr
         return booking;

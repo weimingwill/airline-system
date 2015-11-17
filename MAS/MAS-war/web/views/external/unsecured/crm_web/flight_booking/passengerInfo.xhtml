@@ -17,10 +17,13 @@
         <h:form id="form">
             <h2>Enter passenger details</h2>
             <h4>Personal details</h4>
-            
+
             <p:accordionPanel style="width: 470px;">
                 <c:forEach items="#{bookingManager.bookingHelper.adults}" var="adult" varStatus="index">
                     <p:tab title="Adult #{index.index + 1}">
+                        <pa:CCPassengerDetailPanel customerHelper="#{adult}" />
+                    </p:tab>
+                    <p:tab title="Adult #{index.index + 2}" rendered="#{customerLoginManager.loggedIn}">
                         <pa:CCPassengerDetailPanel customerHelper="#{adult}" />
                     </p:tab>
                 </c:forEach>
@@ -59,8 +62,8 @@
                 <p:row>
                     <p:column colspan="2">
                         <p:inputText id="email" value="#{bookingManager.bookingHelper.booking.email}" required="true" requiredMessage="Please enter contact email">
-<!--                            <f:validator validatorId="emailValidator" />
-                            <f:attribute name="confirmEmail" value="{confirmEmail}" />-->
+                            <!--                            <f:validator validatorId="emailValidator" />
+                                                        <f:attribute name="confirmEmail" value="{confirmEmail}" />-->
                             <p:ajax update="messages" event="blur" />
                             <f:validateRegex
                                 pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />

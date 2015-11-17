@@ -20,8 +20,11 @@ import ams.ars.entity.AirTicket;
 import ams.ars.entity.Booking;
 import ams.ars.util.helper.AddOnHelper;
 import ams.crm.entity.Customer;
+import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
 import ams.crm.session.BookingSessionLocal;
+import ams.crm.session.CustomerExSessionLocal;
+import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.ChannelHelper;
 import ams.crm.util.helper.CustomerHelper;
@@ -40,6 +43,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -64,6 +68,8 @@ public class BookingManager implements Serializable {
     NavigationController navigationController;
     @Inject
     BookingBacking bookingBacking;
+    @Inject
+    CustomerLoginManager customerLoginManager;
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
@@ -73,6 +79,8 @@ public class BookingManager implements Serializable {
     private ProductDesignSessionLocal productDesignSession;
     @EJB
     private RevMgmtSessionLocal revMgmtSession;
+    @EJB
+    private CustomerExSessionLocal customerExSession;
 
     //Search conditions
     private int adultNo;
@@ -318,11 +326,32 @@ public class BookingManager implements Serializable {
     private void setBookingHelper() {
         bookingHelper = new BookingHelper();
         List<CustomerHelper> adults = new ArrayList<>();
+        Booking booking = new Booking();
+        Phone phone = new Phone();
+
+        //If customer is loggedIn, put his/her personal information to passenger detail
+        if (customerLoginManager.isLoggedIn()) {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            Map<String, Object> sessionMap = externalContext.getSessionMap();
+            String email = (String) sessionMap.get("email");
+             RegCust regCust = new RegCust();
+            try {
+                regCust = customerExSession.getRegCustByEmail(email);
+            } catch (NoSuchRegCustException ex) {
+            }
+            CustomerHelper customerHelper = new CustomerHelper();
+            Customer customer = setRegCustToCustomer(regCust);
+            customerHelper.setCustomer(customer);
+            customerHelper.setRegCust(regCust);
+            adults.add(customerHelper);
+            booking.setEmail(regCust.getEmail());
+            phone = regCust.getPhone();
+        }
+
         for (int i = 0; i < adultNo; i++) {
             CustomerHelper customerHelper = new CustomerHelper();
             Customer customer = new Customer();
             customer.setIsAdult(true);
-            customerHelper.setId(i + 1);
             customerHelper.setCustomer(new Customer());
             adults.add(customerHelper);
         }
@@ -331,12 +360,10 @@ public class BookingManager implements Serializable {
             CustomerHelper customerHelper = new CustomerHelper();
             Customer customer = new Customer();
             customer.setIsAdult(true);
-            customerHelper.setId(i + 1);
             customerHelper.setCustomer(new Customer());
             children.add(customerHelper);
         }
-        Booking booking = new Booking();
-        Phone phone = new Phone();
+
         booking.setPhoneNo(phone);
         bookingHelper.setBooking(booking);
         bookingHelper.setAdults(adults);
@@ -354,6 +381,21 @@ public class BookingManager implements Serializable {
         }
         bookingHelper.setFlightSchedBookingClses(fbs);
         setBookingHelperTotalPrice();
+    }
+
+    private Customer setRegCustToCustomer(RegCust regCust) {
+        Customer customer = new Customer();
+        customer.setTitle(regCust.getTitle());
+        customer.setFirstName(regCust.getFirstName());
+        customer.setLastName(regCust.getLastName());
+        customer.setGender(regCust.getGender());
+        customer.setIsAdult(true);
+        customer.setNationality(regCust.getNationality());
+        customer.setPassportNo(regCust.getPassportNo());
+        customer.setPassportExpDate(regCust.getPassportExpDate());
+        customer.setPassportIssueDate(regCust.getPassportIssueDate());
+        customer.setDob(regCust.getDob());
+        return customer;
     }
 
     public FlightSchedule getSelectedFlightSched() throws NoSuchFlightSchedulException {

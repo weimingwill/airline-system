@@ -7,6 +7,7 @@ package ams.crm.util.helper;
 
 import ams.ars.entity.AddOn;
 import ams.crm.entity.Customer;
+import ams.crm.entity.RegCust;
 import ams.dcs.entity.Luggage;
 
 /**
@@ -14,8 +15,8 @@ import ams.dcs.entity.Luggage;
  * @author weiming
  */
 public class CustomerHelper {
-    private long id;
     private Customer customer;
+    private RegCust regCust;
     private AddOn meal;
     private boolean insurance;
     private Luggage luggage;
@@ -52,13 +53,11 @@ public class CustomerHelper {
         this.luggage = luggage;
     }
 
-    public long getId() {
-        return id;
+    public RegCust getRegCust() {
+        return regCust;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setRegCust(RegCust regCust) {
+        this.regCust = regCust;
     }
-    
-    
 }
