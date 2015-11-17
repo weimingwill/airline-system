@@ -6,6 +6,7 @@
 package managedbean.crm;
 
 import ams.crm.entity.Feedback;
+import ams.crm.entity.Membership;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
 import ams.crm.session.CustomerExSessionLocal;
@@ -40,7 +41,7 @@ public class CustomerController implements Serializable {
     private MsgController msgController;
     
     @Inject
-    private RedeemMilesBacking redeemMilesBacking;
+    private MilesRedemptionBacking milesRedemptionBacking;
  
     @EJB
     private CustomerExSessionLocal customerSession;
@@ -79,6 +80,9 @@ public class CustomerController implements Serializable {
     @Temporal(value = TemporalType.DATE)
     private Date passportIssueDate;
     private List<Feedback> feedbacks;
+    private Membership membership;
+
+    
     
     public CustomerController() {
     }
@@ -105,12 +109,12 @@ public class CustomerController implements Serializable {
     }
     
     public String updateMiles() throws NoSuchRegCustException{
-        customerSession.updateMiles(email,accMiles-redeemMilesBacking.getSelectedMilesRedemption().getMiles());
+        customerSession.updateMiles(email,accMiles-milesRedemptionBacking.getCalculatedMiles());
         return navigationController.redirectToCurrentPage();
     }
     
     public String claimMiles() throws NoSuchRegCustException{
-        customerSession.updateMiles(email,accMiles+redeemMilesBacking.getSelectedMilesRedemption().getMiles());
+        customerSession.updateMiles(email,accMiles+milesRedemptionBacking.getCalculatedMiles());
         return navigationController.redirectToCurrentPage();
     }
     public void initializeCustomer() {
@@ -147,6 +151,7 @@ public class CustomerController implements Serializable {
             numofFlights=regCust.getNumOfFlights();
             membershipId=regCust.getMembershipId();
             feedbacks=regCust.getFeedbacks();
+            membership=regCust.getMembership();
             
             
         } catch (NoSuchRegCustException ex) {
@@ -177,6 +182,7 @@ public class CustomerController implements Serializable {
             numofFlights=null;
             membershipId=null;
             feedbacks=null;
+            membership=null;
         }
     }
     
@@ -416,5 +422,12 @@ public class CustomerController implements Serializable {
 
     public void setFeedbacks(List<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
+    }
+    public Membership getMembership() {
+        return membership;
+    }
+
+    public void setMembership(Membership membership) {
+        this.membership = membership;
     }
 }

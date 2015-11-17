@@ -177,6 +177,23 @@ public class CustomerExSession implements CustomerExSessionLocal {
             }
         }
     }
+    @Override
+    public void checkAccountUpgrade(String email) throws NoSuchRegCustException, NoSuchMembershipException {
+        RegCust r = getRegCustByEmail(email);
+        if (r == null) {
+            throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
+        } else {
+            if (r.getCustValue() >= 4000) {
+                r.setMembership(entityManager.find(Membership.class, getMembershipByName("Elite Silver").getId()));
+            } else if (r.getCustValue() >= 8000) {
+                r.setMembership(entityManager.find(Membership.class, getMembershipByName("Elite Gold").getId()));
+
+            }
+            entityManager.merge(r);
+            entityManager.flush();
+
+        }
+    }
 
     @Override
     public void updateMiles(String email, Double accMiles) throws NoSuchRegCustException {

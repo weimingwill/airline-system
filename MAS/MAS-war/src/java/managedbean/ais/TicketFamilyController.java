@@ -172,7 +172,10 @@ public class TicketFamilyController implements Serializable {
     }
 
     public String getTicketFamilyRuleValue(Long tfId, Long ruleid) {
-        double value = getTicketFamilyRuleById(tfId, ruleid).getRuleValue();
+        System.out.println("tfId = " + tfId + " ruleId = " + ruleid);
+        System.out.println("getTicketFamilyRuleById(tfId, ruleid): " + getTicketFamilyRuleById(tfId, ruleid));
+        TicketFamilyRule rule = getTicketFamilyRuleById(tfId, ruleid);
+        double value = rule.getRuleValue();
         if(value < 0){
             return "Not Applicable";
         }

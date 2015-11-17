@@ -12,7 +12,7 @@
 
     <ui:define name="content">
         <p:tabView>
-            <p:tab title="Account Summary">
+            <p:tab title="Account Summary"> 
                 <h:form id="accountSummary" style="width: 500px;text-align: center;" >
                     <p:panel header="Account Summary" styleClass="centeredPanel">
                         <p:panelGrid columns="2" styleClass="centered">
@@ -23,42 +23,43 @@
                             <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
 
                             <p:outputLabel value="Accumulated Miles: "/>
-                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}"/>
-
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
                         </p:panelGrid>
-
-                        <p:panel header="Current Booking">
-
-                        </p:panel>
-
-                        <p:panel header="Feedbacks">
-                            <h:form>
-                                <p:dataTable value="#{customerController.feedbacks}" var="feedback" style="margin-bottom:40px" rows="5" tableStyleClass="table-small-font"
-                                             paginator="true"
-                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                             rowsPerPageTemplate="5,10,15">
-
-                                    <p:column headerText="Feedback Subject">
-                                        <p:outputLabel value="#{feedback.subject}"/>
-                                    </p:column>
-
-                                    <p:column headerText="Created Time">
-                                        <p:outputLabel value="#{feedback.createdTime}">
-                                            <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
-                                        </p:outputLabel>
-                                    </p:column>
-
-                                    <p:column headerText="View" style="width:32px;text-align: center">
-                                        <p:commandButton  oncomplete="PF('feedbackDialog').show()" icon="ui-icon-search" update="feedbackDialog">
-                                            <f:setPropertyActionListener value="#{feedback}" target="#{feedbackBacking.selectFeedback}" />
-                                        </p:commandButton>
-                                    </p:column>
-
-
-                                </p:dataTable> 
-                            </h:form>
-                        </p:panel>
                     </p:panel>
+                    <p:panel header="Current Booking" styleClass="centeredPanel">
+
+                    </p:panel>
+
+                    <p:panel header="Feedbacks" styleClass="centeredPanel">
+                        <h:form>
+                            <p:dataTable value="#{customerController.feedbacks}" var="feedback" style="margin-bottom:40px" rows="5" tableStyleClass="table-small-font"
+                                         paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15">
+
+                                <p:column headerText="Feedback Subject">
+                                    <p:outputLabel value="#{feedback.subject}"/>
+                                </p:column>
+
+                                <p:column headerText="Created Time">
+                                    <p:outputLabel value="#{feedback.createdTime}">
+                                        <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
+                                    </p:outputLabel>
+                                </p:column>
+
+                                <p:column headerText="View" style="width:32px;text-align: center">
+                                    <p:commandButton  oncomplete="PF('feedbackDialog').show()" icon="ui-icon-search" update="feedbackDialog">
+                                        <f:setPropertyActionListener value="#{feedback}" target="#{feedbackBacking.selectFeedback}" />
+                                    </p:commandButton>
+                                </p:column>
+
+
+                            </p:dataTable> 
+                        </h:form>
+                    </p:panel>
+
                 </h:form>
 
 
@@ -200,57 +201,124 @@
                 </h:form>
             </p:tab>
             <p:tab title="My Miles">
-                <h:form id="redeemPoint" style="width: 500px;text-align: center;" >
-            <p:panel header="Redeem Points" styleClass="centeredPanel" >
-                <p:panelGrid columns="2" styleClass="centered">
-                    <p:outputLabel value="Customer Name: "/>
-                    <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
+                <h:form id="form" style="width: 500px;text-align: center;" >
+                    <p:panel header="Redeem Points" styleClass="centeredPanel" >
+                        <p:panelGrid columns="2" styleClass="centered">
+                            <p:outputLabel value="Customer Name: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
 
-                    <p:outputLabel value="Current Login Email: "/>
-                    <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
+                            <p:outputLabel value="Current Login Email: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
 
-                    <p:outputLabel value="Accumulated Miles: "/>
-                    <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}"/>
+                            <p:outputLabel value="Accumulated Miles: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
+                            
+                            <p:outputLabel value="Membership Level "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
+                        </p:panelGrid>
 
-                </p:panelGrid>
+                    </p:panel>
+                    <p:panel header="Redeem Section" styleClass="centeredPanel">
+                        <p:panelGrid style="width: 500px;">
 
-                <p:panel header="General Redemption Rules">
-                    <p:dataTable value="#{redeemMilesController.milesRedemptions}" var="mileredeem" tableStyleClass="table-small-font" >
+                            <!--Departure Airport-->
+                            <p:row> 
+                                <p:column colspan="1"><p:outputLabel for="deptLoc" value="From"/></p:column>
+                                <p:column colspan="5">
+                                    <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                                    value="#{milesRedemptionBacking.deptAirport}" completeMethod="#{milesRedemptionBacking.completeDeptAirport}"
+                                                    var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.city.cityName}" />
+                                        </p:column>
 
-                        <p:column headerText="Origin">
-                            <p:outputLabel value="#{mileredeem.origin}"/>
-                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.airportName}" />
+                                        </p:column>
 
-                        <p:column headerText="Destination">
-                            <p:outputLabel value="#{mileredeem.destination}" />
-                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.iataCode}" />
+                                        </p:column>
 
-                        <p:column headerText="Redemption Miles">
-                            <p:outputLabel value="#{mileredeem.miles}" />
-                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.country.countryName}" />
+                                        </p:column>
+                                    </p:autoComplete>
+                                </p:column>
+                            </p:row>
 
-                        <p:column headerText="Promotion Code">
-                            <p:outputLabel value="#{mileredeem.promoCode}" />
-                        </p:column>
+                            <p:row>  
+                                <p:column colspan="1"><p:outputLabel for="arriveLoc" value="To"/></p:column>
+                                <p:column colspan="5">
+                                    <p:autoComplete id="arriveLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                                    value="#{milesRedemptionBacking.arrAirport}" completeMethod="#{milesRedemptionBacking.completeArrAirport}"
+                                                    var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.city.cityName}" />
+                                        </p:column>
 
-                        <p:column headerText="Redeem" style="width:45px;text-align: center">
-                            <p:commandButton action="#{redeemMilesController.onRedeemBtnClick('redeemDialog')}" icon="ui-icon-script">
-                                <f:setPropertyActionListener value="#{mileredeem}" target="#{redeemMilesController.selectedMilesRedemption}" />
-                            </p:commandButton>
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
-            </p:panel>
-        </h:form>
-        
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.airportName}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.iataCode}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <p:outputLabel value="#{airport.country.countryName}" />
+                                        </p:column>
+                                    </p:autoComplete>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column ><p:outputLabel value="Cabin Class: "/></p:column>
+                                <p:column colspan="5">
+                                    <p:selectOneMenu  value="#{milesRedemptionBacking.selectedCabinCls}" converter="cabinClassConverter" style="width:200px">
+                                        <f:selectItems value="#{milesRedemptionBacking.cabinClses}" var="cabinCls" itemLabel="#{cabinCls.name}" itemValue="#{cabinCls}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" headerText="Calculate" style="width:45px;text-align: center">
+                                    <p:commandButton value="Calculate" update="messages,redeemDialog" actionListener="#{milesRedemptionBacking.mileCalculation()}" oncomplete="PF('redeemDialog').show()" icon="ui-icon-calculator"/>
+<!--                                        <f:setPropertyActionListener value="{mileredeem}" target="{redeemMilesController.selectedMilesRedemption}" />-->
+                                    
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                </h:form>
+
             </p:tab>
-            
+
             <p:tab title="My Bookings">
-                <h:panelGrid columns="2" cellpadding="10">
+               
+                    <h:form id="form" style="width: 500px;text-align: center;" >
+                    <p:panel header="Redeem Points" styleClass="centeredPanel" >
+                        <p:panelGrid columns="2" styleClass="centered">
+                            <p:outputLabel value="Customer Name: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
 
-                </h:panelGrid>
+                            <p:outputLabel value="Current Login Email: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
+
+                            <p:outputLabel value="Accumulated Miles: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
+                            
+                            <p:outputLabel value="Membership Level "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
+                        </p:panelGrid>
+
+                    </p:panel>
+                    </h:form>
             </p:tab>
-            
+
             <p:tab title="Book a flight">
 
             </p:tab>
@@ -342,43 +410,42 @@
 
             </h:form>
         </p:dialog>
-        
-        <p:dialog id="redeemDialog"  header="Are you sure you want to redeem this air ticket?" widgetVar="redeemDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+
+        <p:dialog id="redeemDialog"  header="The total points you need for this selection is" widgetVar="redeemDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form>
                 <p:panel id="redemptionDetail">
+                    
                     <p:panelGrid>
                         <!--<ui:repeat var="cc" value="{cabinClassController.selectedCabinClass}" >-->
                         <p:row> 
                             <p:column>
-                                <p:outputLabel value="Origin: " />
+                                <p:outputLabel value="Actual Miles (in miles) " />
                             </p:column>
+                           
                             <p:column>
-                                <h:outputText value="#{redeemMilesController.selectedMilesRedemption.origin}" >
-                                </h:outputText>
+                                <h:outputLabel value="#{milesRedemptionBacking.calculatedMiles}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </h:outputLabel>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>  
+                            <p:column>
+                                <p:outputLabel value="Miles Needed for Redemption (in miles) " />
+                            </p:column>
+                            
+                            <p:column>
+                                <h:outputLabel value="#{milesRedemptionBacking.actualPointNeed}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </h:outputLabel>
                             </p:column>
                         </p:row>
 
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Destination: " />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{redeemMilesController.selectedMilesRedemption.destination}" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Miles Deduction " />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{redeemMilesController.selectedMilesRedemption.miles}" />
-                            </p:column>
-                        </p:row>
                         <!--</ui:repeat>-->
                     </p:panelGrid>
                 </p:panel>
-                <p:commandButton value="Redeem" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{redeemMilesController.mileRedemption()}" oncomplete="PF('redeemDialog').hide()" update="messages"/>
+                <p:commandButton value="Redeem" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{milesRedemptionBacking.mileRedemption()}" oncomplete="PF('redeemDialog').hide()" update="messages"/>
+           
             </h:form>
         </p:dialog>
     </ui:define>
