@@ -30,17 +30,27 @@
                         <p:column headerText="From" sortBy="#{flight.leg.departAirport.airportName}">
                             <h:outputText value="#{flight.leg.departAirport.airportName}" />
                         </p:column>
-                        
+
                         <p:column headerText="To" sortBy="#{flight.leg.arrivalAirport.airportName}">
                             <h:outputText value="#{flight.leg.arrivalAirport.airportName}" />
                         </p:column>
-                        
+
                         <p:column headerText="Departure Time" sortBy="#{flight.departDate}">
                             <h:outputText value="#{flight.departDate}" >
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
                             </h:outputText>
                         </p:column>
+                        
+                        <p:column headerText="Actual Departure Time" sortBy="#{flight.actualDepartDate}">
+                            <h:outputText value="#{flight.actualDepartDate}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
 
+                        <p:column headerText="Status" sortBy="#{flightBacking.getFlightStatus(flight.departDate, flight.actualDepartDate)}">
+                            <h:outputText value="#{flightBacking.getFlightStatus(flight.departDate, flight.actualDepartDate)}" />
+                        </p:column>
+                        
                         <p:column headerText="Departure Terminal" sortBy="#{flight.departTerminal}">
                             <h:outputText value="#{flight.departTerminal}" />
                         </p:column>
@@ -50,7 +60,7 @@
                         </p:column>
 
                         <p:column style="width:32px;text-align: center">
-                            <p:commandButton action="#{flightBacking.onEditDFlightBtnClick()}" icon="fa fa-pencil-square-o" title="Update Flight Information">
+                            <p:commandButton action="#{flightBacking.onEditDFlightBtnClick()}" update="depFlightInfoDlg" icon="fa fa-pencil-square-o" title="Update Flight Information">
                                 <f:setPropertyActionListener value="#{flight}" target="#{flightBacking.selectedFlight}" />
                             </p:commandButton>
                         </p:column>
@@ -77,11 +87,22 @@
                         <p:column headerText="To" sortBy="#{flight.leg.arrivalAirport.airportName}">
                             <h:outputText value="#{flight.leg.arrivalAirport.airportName}" />
                         </p:column>
-                        
+
                         <p:column headerText="Arrival Time" sortBy="#{flight.arrivalDate}">
                             <h:outputText value="#{flight.arrivalDate}" >
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
                             </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Actual Arrival Time" sortBy="#{flight.actualArrivalDate}">
+                            <h:outputText value="#{flight.actualArrivalDate}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
+
+                        
+                        <p:column headerText="Status" sortBy="#{flightBacking.getFlightStatus(flight.arrivalDate, flight.actualArrivalDate)}">
+                            <h:outputText value="#{flightBacking.getFlightStatus(flight.arrivalDate, flight.actualArrivalDate)}" />
                         </p:column>
                         
                         <p:column headerText="Arrival Terminal" sortBy="#{flight.arrivalTerminal}">
@@ -93,7 +114,7 @@
                         </p:column>
 
                         <p:column style="width:32px;text-align: center">
-                            <p:commandButton action="#{flightBacking.onEditAFlightBtnClick()}" icon="fa fa-pencil-square-o" title="Update Flight Information">
+                            <p:commandButton action="#{flightBacking.onEditAFlightBtnClick()}" update="arrFlightInfoDlg" icon="fa fa-pencil-square-o" title="Update Flight Information">
                                 <f:setPropertyActionListener value="#{flight}" target="#{flightBacking.selectedFlight}" />
                             </p:commandButton>
                         </p:column>
@@ -102,7 +123,14 @@
                 </p:tab>
             </p:tabView>
 
-            <p:dialog id="depFlightInfoDlg" modal="true" appendTo="@(body)" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="depFlightInfoDlg" resizable="false">
+
+
+
+
+        </h:form>
+
+        <p:dialog id="depFlightInfoDlg" modal="true" appendTo="@(body)" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="depFlightInfoDlg" resizable="false">
+            <h:form>
                 <p:panelGrid columns="2" style="margin-top:2px">
                     <p:outputLabel value="Depature Terminal:"/>
                     <p:inputText value="#{flightBacking.departureTerminal}" label="ter"/>
@@ -115,11 +143,11 @@
 
                     <p:separator/>
                     <p:commandButton type="submit" action="#{flightBacking.updateDepFlight()}" icon="ui-icon-check" value="Confirm update" update="myForm" oncomplete="PF('myForm:depFlightInfoDlg').hide()"/>
-                
-                </p:panelGrid>
-            </p:dialog>
 
-            <p:dialog id="arrFlightInfoDlg" modal="true" appendTo="@(body)" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="arrFlightInfoDlg" resizable="false">
+                </p:panelGrid></h:form>
+        </p:dialog>
+        <p:dialog id="arrFlightInfoDlg" modal="true" appendTo="@(body)" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="arrFlightInfoDlg" resizable="false">
+            <h:form>    
                 <p:panelGrid columns="2" style="margin-top:2px">
                     <p:outputLabel value="Arrival Terminal:"/>
                     <p:inputText value="#{flightBacking.arrivalTerminal}" label="ter"/>
@@ -132,10 +160,9 @@
 
                     <p:separator/>
                     <p:commandButton type="submit" action="#{flightBacking.updateArrFlight()}" icon="ui-icon-check" value="Confirm update" update="myForm" oncomplete="PF('myForm:arrFlightInfoDlg').hide()"/>
-                
+
                 </p:panelGrid>
-            </p:dialog>
-            
-        </h:form>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>

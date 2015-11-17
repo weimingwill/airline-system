@@ -86,6 +86,7 @@ public class PassengerManager implements Serializable {
             return "";
         } else {
             setAirtickets(checkInSession.getFSforCheckin(passportNo));
+            setAirticketsUpdated(new ArrayList());
             if (!airtickets.isEmpty()) {
 
                 Calendar cal = Calendar.getInstance();
@@ -199,7 +200,6 @@ public class PassengerManager implements Serializable {
     }
 
     private void cleanSession() {
-
         setAirTicketsSelected(new ArrayList());
         setAirtickets(new ArrayList());
         setAirticketsUpdated(new ArrayList());
@@ -209,7 +209,7 @@ public class PassengerManager implements Serializable {
         setAirTicket(new AirTicket());
         setBoardingDate(new Date());
     }
-
+    
     public Seat getSeatbyID(long id) {
         Seat temp = checkInSession.getSeatByID(id);
         if (temp == null) {

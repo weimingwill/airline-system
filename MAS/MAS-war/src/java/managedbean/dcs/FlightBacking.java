@@ -8,6 +8,8 @@ package managedbean.dcs;
 import ams.aps.entity.FlightSchedule;
 import ams.dcs.session.CheckInSessionLocal;
 import ams.dcs.util.exception.FlightScheduleNotUpdatedException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -26,7 +28,7 @@ import org.primefaces.event.TabChangeEvent;
  */
 @Named(value = "flightBacking")
 @ViewScoped
-public class FlightBacking {
+public class FlightBacking implements Serializable {
 
     @Inject
     private MsgController msgController;
@@ -77,11 +79,11 @@ public class FlightBacking {
     }
 
     public String updateDepFlight() {
-        
-        if (departureGate != null) {
+
+        if (departureGate != null && !departureGate.equals("")) {
             selectedFlight.setDepartGate(departureGate);
         }
-        if (departureTerminal != null) {
+        if (departureTerminal != null && !departureTerminal.equals("")) {
             selectedFlight.setDepartTerminal(departureTerminal);
         }
         if (acctualDepartureDate != null) {
@@ -90,6 +92,7 @@ public class FlightBacking {
         try {
             checkInSession.updateFlightSchedule(selectedFlight);
             msgController.addMessage("Update flight info successfully!");
+            cleanView();
             return dcsNavController.toViewFlightInfo();
 
         } catch (FlightScheduleNotUpdatedException e) {
@@ -99,10 +102,10 @@ public class FlightBacking {
     }
 
     public String updateArrFlight() {
-        if (arrivalGate != null) {
+        if (arrivalGate != null && !arrivalGate.equals("")) {
             selectedFlight.setArrivalGate(arrivalGate);
         }
-        if (arrivalTerminal != null) {
+        if (arrivalTerminal != null && !arrivalTerminal.equals("")) {
             selectedFlight.setArrivalTerminal(arrivalTerminal);
         }
         if (acctualArrivalDate != null) {
@@ -111,6 +114,7 @@ public class FlightBacking {
         try {
             checkInSession.updateFlightSchedule(selectedFlight);
             msgController.addMessage("Update flight info successfully!");
+            cleanView();
             return dcsNavController.toViewFlightInfo();
 
         } catch (FlightScheduleNotUpdatedException e) {
@@ -119,6 +123,16 @@ public class FlightBacking {
         }
     }
 
+    public String getFlightStatus(Date expectDate, Date actualDate){
+        if (actualDate != null && actualDate.before(expectDate)) {
+            return "Early";
+        }else if(actualDate != null && actualDate.after(expectDate)){
+            return "Delay";
+        }else{
+            return "On Time";
+        }
+    }
+            
     private FlightSchedule searchFlightSchedule(String flightNo, Date flightDate) {
         return new FlightSchedule();
     }
@@ -131,7 +145,7 @@ public class FlightBacking {
 
     public void onEditDFlightBtnClick() {
         if (selectedFlight != null) {
-            System.out.println("selectedFlight: "+ selectedFlight.getFlightScheduleId());
+            System.out.println("selectedFlight: " + selectedFlight.getFlightScheduleId());
             RequestContext context = RequestContext.getCurrentInstance();
             context.update("depFlightInfoDlg");
             context.execute("PF('depFlightInfoDlg').show();");
@@ -152,6 +166,26 @@ public class FlightBacking {
 
     private List<FlightSchedule> getArrFlightSchedules() {
         return checkInSession.getFlightSchedulesForArrival();
+    }
+
+    private void cleanView() {
+        setAcctualArrivalDate(null);
+        setAcctualDepartureDate(null);
+        setArrivalFlight(null);
+        setArrivalGate("");
+        setArrivalTerminal("");
+        setBoardingGate("");
+        setCurrentDate(new Date());
+        setDepartFlight(null);
+        setDepartureTerminal("");
+        setDepartureGate("");
+        setFlightNo("");
+        setFlightStatus("");
+        setFlightsArrival(new ArrayList<>());
+        setFlightsDepart(new ArrayList<>());
+        setFs(null);
+        setSelectedDate(null);
+        setSelectedFlight(null);
     }
 
     /**
