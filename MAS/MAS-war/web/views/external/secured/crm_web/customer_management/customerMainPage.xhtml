@@ -23,8 +23,9 @@
                             <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
 
                             <p:outputLabel value="Accumulated Miles: "/>
-                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}"/>
-
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
                         </p:panelGrid>
                     </p:panel>
                     <p:panel header="Current Booking" styleClass="centeredPanel">
@@ -210,8 +211,12 @@
                             <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
 
                             <p:outputLabel value="Accumulated Miles: "/>
-                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}"/>
-
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
+                            
+                            <p:outputLabel value="Membership Level "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
                         </p:panelGrid>
 
                     </p:panel>
@@ -291,9 +296,27 @@
             </p:tab>
 
             <p:tab title="My Bookings">
-                <h:panelGrid columns="2" cellpadding="10">
+               
+                    <h:form id="form" style="width: 500px;text-align: center;" >
+                    <p:panel header="Redeem Points" styleClass="centeredPanel" >
+                        <p:panelGrid columns="2" styleClass="centered">
+                            <p:outputLabel value="Customer Name: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
 
-                </h:panelGrid>
+                            <p:outputLabel value="Current Login Email: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
+
+                            <p:outputLabel value="Accumulated Miles: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
+                            
+                            <p:outputLabel value="Membership Level "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
+                        </p:panelGrid>
+
+                    </p:panel>
+                    </h:form>
             </p:tab>
 
             <p:tab title="Book a flight">
@@ -421,7 +444,7 @@
                         <!--</ui:repeat>-->
                     </p:panelGrid>
                 </p:panel>
-                <p:commandButton value="Redeem" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{redeemMilesController.mileRedemption()}" oncomplete="PF('redeemDialog').hide()" update="messages"/>
+                <p:commandButton value="Redeem" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{milesRedemptionBacking.mileRedemption()}" oncomplete="PF('redeemDialog').hide()" update="messages"/>
            
             </h:form>
         </p:dialog>

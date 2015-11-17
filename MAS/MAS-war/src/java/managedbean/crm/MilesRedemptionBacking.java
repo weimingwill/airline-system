@@ -104,7 +104,7 @@ public class MilesRedemptionBacking implements Serializable {
     }
     public void mileRedemption() {
 
-        if (customerController.getAccMiles() < calculatedMiles) {
+        if (customerController.getAccMiles() < actualPointNeed) {
 
             msgController.addErrorMessage("Sorry, you don't have enough points");
 
