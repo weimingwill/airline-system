@@ -44,7 +44,8 @@ public class Booking implements Serializable {
     private Double price;
     private Boolean paid;
     private String channel;
-
+    private Boolean claimed;
+    
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private BookingTrans bookingTrans;
 
@@ -176,5 +177,13 @@ public class Booking implements Serializable {
      */
     public void seteTicketNo(String eTicketNo) {
         this.eTicketNo = eTicketNo;
+    }
+
+    public Boolean getClaimed() {
+        return claimed;
+    }
+
+    public void setClaimed(Boolean claimed) {
+        this.claimed = claimed;
     }
 }
