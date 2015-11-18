@@ -136,9 +136,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
 
     private String generatePairingCode(FlightDuty thisFlightDuty, FlightDuty nextFlightDuty) {
         Calendar firstRpTime = Calendar.getInstance();
-//                ,lastDmTime = Calendar.getInstance();
         firstRpTime.setTime(thisFlightDuty.getReportTime());
-//        lastDmTime.setTime(nextFlightDuty.getDismissTime());
         String firstFN = thisFlightDuty.getFlightSchedules().get(0).getFlight().getFlightNo(), lastFN, pairingCode;
         firstFN = firstFN.split("MA")[1];
         if (nextFlightDuty != null) {
@@ -527,13 +525,13 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
             for (Iterator<FlightCrew> crewIter = crewWithMinPairings.iterator(); crewIter.hasNext();) {
                 FlightCrew thisCrew = crewIter.next();
                 /* for debugging */
-                System.out.println("start assigning remaining pairing to crew");
-                printPairing(thisPairing);
-                printFlightCrew(thisCrew); 
+//                System.out.println("start assigning remaining pairing to crew");
+//                printPairing(thisPairing);
+//                printFlightCrew(thisCrew); 
                 /* for debugging */
                 // If crew reaches its max requirement, add crew to list for removal
                 if (reachMaxCrewRequirement(minDutyTime, thisCrew, session)) {
-                    System.err.println("Crew: " + thisCrew.getSystemUserId()+ " reaches his max requirement");
+                    System.err.println("Crew " + thisCrew.getUsername()+ " reaches his max requirement");
                     crewsReachMaxRqmt.add(thisCrew);
                 } else if (pairingWithinCrewRequirement(thisPairing, thisCrew, session) && !crewPairingClash(thisPairing, thisCrew) && remainingQuota > 0) {
                     pairingFlightCrew = new PairingFlightCrew();
