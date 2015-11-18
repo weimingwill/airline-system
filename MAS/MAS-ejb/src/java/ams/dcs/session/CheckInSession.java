@@ -16,6 +16,8 @@ import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.entity.Luggage;
 import ams.dcs.util.exception.BoardingErrorException;
 import ams.dcs.util.exception.FlightScheduleNotUpdatedException;
+import ams.dcs.util.exception.LuggageNotRomovedException;
+import ams.dcs.util.exception.NoSuchAirTicketException;
 import ams.dcs.util.exception.NoSuchBoardingPassException;
 import ams.dcs.util.exception.NoSuchPNRException;
 import java.util.ArrayList;
@@ -38,10 +40,10 @@ public class CheckInSession implements CheckInSessionLocal {
     @PersistenceContext
     EntityManager em;
 
-    private final int WEIGHT_LEVEL_1 = 15;
-    private final int WEIGHT_LEVEL_2 = 30;
-    private final int LUGGAGE_PRICE_1 = 25;
-    private final int LUGGAGE_PRICE_2 = 35;
+    private final double WEIGHT_LEVEL_1 = 15.0;
+    private final double WEIGHT_LEVEL_2 = 30.0;
+    private final double LUGGAGE_PRICE_1 = 25.0;
+    private final double LUGGAGE_PRICE_2 = 35.0;
 
     @Override
     public List<AirTicket> getFSforCheckin(String passport) {
@@ -60,8 +62,13 @@ public class CheckInSession implements CheckInSessionLocal {
 
     @Override
     public boolean selectSeat(long ticketNo, Seat seat) {
+        Query q = em.createQuery("SELECT s FROM AirTicket a, IN(a.flightSchedBookingClass.flightSchedule.flightSchedSeats) fss, IN(fss.seats) s WHERE a.id = :aid AND s.colNo = :col AND s.rowNo = :row");
+        q.setParameter("aid", ticketNo);
+        q.setParameter("row", seat.getRowNo());
+        q.setParameter("col", seat.getColNo());
+        
         try {
-            Seat s = em.find(Seat.class, seat.getId());
+            Seat s = (Seat)q.getSingleResult();
             AirTicket a = em.find(AirTicket.class, ticketNo);
 
             s.setReserved(Boolean.TRUE);
@@ -72,6 +79,7 @@ public class CheckInSession implements CheckInSessionLocal {
 
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -113,13 +121,16 @@ public class CheckInSession implements CheckInSessionLocal {
                 em.flush();
                 lug.add(c);
             }
+            
+            Query q = em.createQuery("SELECT ac FROM AdditionalCharge ac WHERE ac.name = :name");
+            q.setParameter("name", "Excessive Luggage");
 
-            AdditionalCharge additionalCharge = em.find(AdditionalCharge.class, "Excess Luggage"); //Pre-defined name;
-
+            AdditionalCharge ac = (AdditionalCharge)q.getSingleResult();
+            
             AirTicketAdditionalCharge atpi = new AirTicketAdditionalCharge();
             atpi.setAirTicket(airticket);
             atpi.setPrice(price);
-            atpi.setAdditionalCharge(additionalCharge);
+            atpi.setAdditionalCharge(ac);
             em.persist(atpi);
             em.flush();
 
@@ -129,7 +140,7 @@ public class CheckInSession implements CheckInSessionLocal {
             at.setAirTicketAdditionalCharges(atpiList);
             at.setLuggages(lug);
             em.merge(at);
-            
+
             return true;
         } catch (Exception ex) {
             return false;
@@ -164,7 +175,7 @@ public class CheckInSession implements CheckInSessionLocal {
                 } else if (ex <= WEIGHT_LEVEL_2) {
                     price += LUGGAGE_PRICE_2 * (ex - WEIGHT_LEVEL_1) + LUGGAGE_PRICE_1 * WEIGHT_LEVEL_1;
                 } else {
-                    price += 0;
+                    price += 0.0;
                 }
             }
         }
@@ -175,14 +186,12 @@ public class CheckInSession implements CheckInSessionLocal {
     public AirTicket getAirTicketByPassID(long passID) throws NoSuchBoardingPassException {
         Query q = em.createQuery("SELECT a FROM AirTicket a WHERE a.boardingPass.id =:pass");
         q.setParameter("pass", passID);
-        AirTicket a = new AirTicket();
 
         try {
-            a = (AirTicket) q.getSingleResult();
+            return (AirTicket) q.getSingleResult();
         } catch (NoResultException e) {
             throw new NoSuchBoardingPassException();
         }
-        return a;
     }
 
     @Override
@@ -210,11 +219,12 @@ public class CheckInSession implements CheckInSessionLocal {
 
     @Override
     public List<Seat> getSeatsByTicket(AirTicket airTicket) {
-        Query q = em.createQuery("SELECT s FROM AirTicket a, IN(a.flightSchedBookingClass.seats) AS s WHERE a.id = :aid");
+        Query q = em.createQuery("SELECT s FROM AirTicket a, IN(a.flightSchedBookingClass.flightSchedule.flightSchedSeats) fss, IN(fss.seats) s WHERE a.id = :aid");
         q.setParameter("aid", airTicket.getId());
         try {
-            return (ArrayList<Seat>) q.getResultList();
+            return (List<Seat>) q.getResultList();
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -293,6 +303,36 @@ public class CheckInSession implements CheckInSessionLocal {
             em.merge(origin);
         } catch (Exception e) {
             throw new FlightScheduleNotUpdatedException();
+        }
+    }
+
+    @Override
+    public AirTicket getAirTicketByID(long ticketID) throws NoSuchAirTicketException {
+        Query q = em.createQuery("SELECT a FROM AirTicket a WHERE a.id = :tID");
+        q.setParameter("tID", ticketID);
+        try {
+            return (AirTicket) q.getSingleResult();
+        } catch (Exception e) {
+            throw new NoSuchAirTicketException();
+        }
+    }
+
+    @Override
+    public void removeLuggage(AirTicket airTicket, List<CheckInLuggage> luggages) throws LuggageNotRomovedException {
+        try {
+            AirTicket a = em.find(AirTicket.class, airTicket.getId());
+            List<CheckInLuggage> lugList = a.getLuggages();
+
+            for (CheckInLuggage l : lugList) {
+                if (luggages.contains(l)) {
+                    lugList.remove(l);
+                }
+            }
+            
+            a.setLuggages(lugList);
+            em.merge(a);
+        } catch (Exception e) {
+            throw new LuggageNotRomovedException();
         }
     }
 }

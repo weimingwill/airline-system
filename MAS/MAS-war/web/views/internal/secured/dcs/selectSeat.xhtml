@@ -12,15 +12,20 @@
         </f:facet>
         <h:form id="myForm">
             <p:panelGrid columns="2" style="margin-bottom:10px">
-                <p:outputLabel for="seat" value="Select from avaliable seats: " />
-                <p:selectOneMenu id="seat" value="#{passengerManger.seats}" converter="seatConverter" style="width:200px" filter="true" filterMatchMode="contains">
-                    <f:selectItem itemLabel="Select" itemValue="" noSelectionOption="false"/>
-                    <f:selectItems value="#{passengerManger.seat}" var="seat" itemLabel="#{seat}" itemValue="#{seat}" />
+                <p:outputLabel for="row" value="Select Row: " />
+                <p:selectOneMenu id="row" value="#{passengerManager.row}" style="width:200px" filter="true" filterMatchMode="contains">
+                    <p:ajax listener="#{passengerManager.onRowChange}" update="col"/>
+                    <f:selectItems value="#{passengerManager.rows}" var="row" itemLabel="#{row}" itemValue="#{row}" />
                 </p:selectOneMenu>
                 
+                <p:outputLabel for="col" value="Select Column: " />
+                <p:selectOneMenu id="col" value="#{passengerManager.col}" style="width:200px" filter="true" filterMatchMode="contains">
+                    <f:selectItems value="#{passengerManager.cols}" var="col" itemLabel="#{col}" itemValue="#{col}" />
+                </p:selectOneMenu>
             </p:panelGrid>
+            
             <p:separator/>
-            <p:commandButton value="Seat Confirmed" update="messages" action="#{dcsNavController.toCheckInPassenger()}" actionListener="#{passengerManager.selectSeat}" icon="ui-icon-check"/>
+            <p:commandButton value="Seat Confirmed" update="messages" action="#{dcsNavController.toCheckInPassenger()}" actionListener="#{passengerManager.selectSeat()}" icon="ui-icon-check"/>
 
         </h:form>
     </ui:define>

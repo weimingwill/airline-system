@@ -16,6 +16,8 @@ import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.entity.Luggage;
 import ams.dcs.util.exception.BoardingErrorException;
 import ams.dcs.util.exception.FlightScheduleNotUpdatedException;
+import ams.dcs.util.exception.LuggageNotRomovedException;
+import ams.dcs.util.exception.NoSuchAirTicketException;
 import ams.dcs.util.exception.NoSuchBoardingPassException;
 import ams.dcs.util.exception.NoSuchPNRException;
 import java.util.Date;
@@ -44,6 +46,8 @@ public interface CheckInSessionLocal {
     public boolean checkInLuggage(AirTicket airticket, List<CheckInLuggage> luggageList, Double price);
 
     public AirTicket getAirTicketByPassID(long passID) throws NoSuchBoardingPassException;
+    
+    public AirTicket getAirTicketByID(long ticketID) throws NoSuchAirTicketException;
 
     public void boardPassenger(AirTicket airTicket) throws BoardingErrorException;
     
@@ -62,5 +66,7 @@ public interface CheckInSessionLocal {
     public List<FlightSchedule> getFlightSchedulesForDeparture();
     
     public List<FlightSchedule> getFlightSchedulesForArrival();
+    
+    public void removeLuggage(AirTicket airTicket, List<CheckInLuggage> luggages) throws LuggageNotRomovedException;
     
 }

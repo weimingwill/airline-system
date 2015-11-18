@@ -5,26 +5,26 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
-
     <ui:define name="content">
+
         <f:facet name="header">
-            Confirm Boarding
+            View Luggage By Air Ticket or Boarding Pass
         </f:facet>
 
         <h:form>
             <p:panelGrid columns="2" style="margin: 0 auto">
-                <p:outputLabel value="Boarding Pass ID: " />
-                <p:outputLabel value="#{passengerManager.pass.id}" />
+                <p:outputLabel value="Reference No.: *" />
+                <p:selectOneRadio id="reference" value="#{luggageManager.idMethod}">
+                    <f:selectItem itemLabel="Air Ticket" itemValue="ticket" />
+                    <f:selectItem itemLabel="Boarding Pass" itemValue="pass" />
+                </p:selectOneRadio>
 
-                <p:outputLabel value="Passenger Name: " />
-                <p:outputLabel value="#{passengerManager.passenger.firstName}/#{passengerManager.passenger.lastName}" />
-
-                <p:outputLabel value="Passport Number: " />
-                <p:outputLabel value="#{passengerManager.passenger.passportNo}" />
-
-                <p:commandButton value="Board passenger" update="messages" action="#{passengerManager.confirmBoarding()}" style="margin: 0 auto"/>
-                <p:outputLabel value="" />
+                <p:outputLabel value="Enter Boarding Pass No.: *" />
+                <p:inputText value="#{luggageManager.reference}" required="true" label="pass"/>
             </p:panelGrid>
+
+            <p:commandButton value="Search for luggage" update="messages" action="#{luggageManager.getLuggages()}"/>
         </h:form>
     </ui:define>
+
 </ui:composition>
