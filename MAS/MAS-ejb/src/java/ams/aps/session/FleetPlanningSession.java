@@ -31,7 +31,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -48,7 +50,7 @@ import mas.common.util.helper.MySQLConnection;
  */
 @Stateless
 public class FleetPlanningSession implements FleetPlanningSessionLocal {
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -184,7 +186,7 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
             entityManager.persist(thisAircraftCabinClass);
             entityManager.flush();
             addCabinClassTickeFamily(thisAircraftCabinClass);
-            addAircraftCabinClassSeat(thisAircraftCabinClass);
+            addAircraftCabinClassSeat(thisAircraftCabinClass, newAircraftCabinClassHelpers);
             if (!aircraftCabinClassList.add(thisAircraftCabinClass)) {
                 return false;
             }
@@ -194,17 +196,19 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
         entityManager.flush();
         return true;
     }
-    
-    private void addAircraftCabinClassSeat(AircraftCabinClass aircraftCabinClass){
-        List<String> columns = new ArrayList(Arrays.asList("A","B","C","D","E","F","G","H"));
+
+    private void addAircraftCabinClassSeat(AircraftCabinClass aircraftCabinClass, List<AircraftCabinClassHelper> aircraftCabinClassHelpers) {
+        List<String> columns = new ArrayList(Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H"));
         List<Seat> seats = new ArrayList();
         int row = aircraftCabinClass.getNumRows();
         int col = aircraftCabinClass.getNumCols();
-        for(int i = 0; i < row; i ++){
-            for(int j = 0; j < col; j++){
+
+        int startRowNo = calcStartRowNo(aircraftCabinClass, aircraftCabinClassHelpers);
+        for (int i = startRowNo; i < startRowNo + row; i++) {
+            for (int j = 0; j < col; j++) {
                 Seat newSeat = new Seat();
                 newSeat.setReserved(Boolean.FALSE);
-                newSeat.setRowNo(i+1);
+                newSeat.setRowNo(i);
                 newSeat.setColNo(columns.get(j));
                 entityManager.persist(newSeat);
                 entityManager.flush();
@@ -215,11 +219,37 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
         entityManager.merge(aircraftCabinClass);
         entityManager.flush();
     }
-    
+
+    private int calcStartRowNo(AircraftCabinClass aircraftCabinClass, List<AircraftCabinClassHelper> aircraftCabinClassHelpers) {
+        int rank = aircraftCabinClass.getCabinClass().getRank() == null ? 0 : aircraftCabinClass.getCabinClass().getRank();
+        int startRowNo = 1;
+        Query q = entityManager.createQuery("SELECT c.name, c.rank FROM CabinClass c ORDER BY c.rank ASC");
+        List<Object[]> resultList = q.getResultList();
+        Map<Integer, String> cabinClassRankMap = new HashMap<Integer, String>(resultList.size());
+        for (Object[] result : resultList) {
+            cabinClassRankMap.put((Integer) result[1], (String) result[0]);
+        }
+
+        for (int i = 0; i < rank; i++) {
+            startRowNo += findCabinClassNumOfRow(cabinClassRankMap.get(i), aircraftCabinClassHelpers);
+        }
+        System.out.println("startRowNo for " + aircraftCabinClass.getCabinClass().getName() + " is " + startRowNo);
+        return startRowNo;
+    }
+
+    private int findCabinClassNumOfRow(String cabinClassName, List<AircraftCabinClassHelper> aircraftCabinClassHelpers) {
+        for (AircraftCabinClassHelper helper : aircraftCabinClassHelpers) {
+            if (helper.getName().equals(cabinClassName)) {
+                return helper.getNumOfRow();
+            }
+        }
+        return 0;
+    }
+
     //Set all ticket familys under cabin class to aircraft as default.
     private boolean addCabinClassTickeFamily(AircraftCabinClass aircraftCabinClass) {
         List<CabinClassTicketFamily> cabinClassTixFams = new ArrayList<>();
-        try { 
+        try {
             AircraftCabinClass aircraftCabinCls = productDesignSession.getAircraftCabinClassById(aircraftCabinClass.getAircraftId(), aircraftCabinClass.getCabinClassId());
             AircraftCabinClassId aircraftCabinClassId = new AircraftCabinClassId(aircraftCabinCls.getAircraftId(), aircraftCabinCls.getCabinClassId());
             List<TicketFamily> ticketFamilys = getCabinClassTicketFamily(aircraftCabinCls.getCabinClassId());
@@ -247,14 +277,14 @@ public class FleetPlanningSession implements FleetPlanningSessionLocal {
         }
         return true;
     }
-    
+
     private int calcSeatQty(int index, int numOfTixFam, int totalSeatQty) {
         if (index == numOfTixFam - 1) {
-            return totalSeatQty - totalSeatQty/numOfTixFam * (numOfTixFam - 1);
+            return totalSeatQty - totalSeatQty / numOfTixFam * (numOfTixFam - 1);
         } else {
-            return totalSeatQty/numOfTixFam;
+            return totalSeatQty / numOfTixFam;
         }
-        
+
 //        System.out.println("index: " + index + " .numOfRemainedTixFam: " + numOfRemainedTixFam + " .totalSeatQty" + totalSeatQty);
 //        if (index <= 0) {
 //            return totalSeatQty/numOfRemainedTixFam;

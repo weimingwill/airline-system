@@ -16,10 +16,12 @@ import ams.ais.util.exception.ExistSuchBookingClassNameException;
 import ams.ais.util.exception.NoSuchCabinClassTicketFamilyException;
 import ams.ais.util.helper.BookingClassHelper;
 import ams.aps.entity.Aircraft;
+import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.AircraftType;
 import ams.aps.entity.Airport;
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
+import ams.aps.entity.FlightScheduleSeat;
 import ams.aps.entity.Leg;
 import ams.aps.entity.Route;
 import ams.aps.util.exception.DeleteFailedException;
@@ -469,6 +471,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             flightSched.setCompleted(false);
             flightSched.setTurnoverTime(legHelper.getTurnaroundTime());
             flightSched.setStatus(FlightSchedStatus.RELEASE);
+            flightSched.setFlightSchedSeats(getFlightSchedSeats(aircraft));
             em.persist(flightSched);
             em.flush();
 
@@ -500,6 +503,19 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
             completeOneFlightSchedule(flight);
         }
         return dept;
+    }
+
+    private List<FlightScheduleSeat> getFlightSchedSeats(Aircraft aircraft) {
+        List<FlightScheduleSeat> seatList = new ArrayList<>();
+        for (AircraftCabinClass aircraftCabinClass : aircraft.getAircraftCabinClasses()) {
+            FlightScheduleSeat flightSchedSeat = new FlightScheduleSeat();
+            flightSchedSeat.setRank(aircraftCabinClass.getCabinClass().getRank());
+            flightSchedSeat.setSeats(aircraftCabinClass.getSeats());
+            seatList.add(flightSchedSeat);
+            em.persist(flightSchedSeat);
+            em.flush();
+        }
+        return seatList;
     }
 
     //Set default one booking class to each ticket family
