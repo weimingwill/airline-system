@@ -65,18 +65,32 @@
             </p:row>
 
             <c:forEach items="#{bookingManager.booking.airTickets}" var="airticket" varStatus="index">
-                <p:column colspan="4">Fare fee #{index.index + 1}</p:column>
-                <p:column colspan="2" styleClass="alignRight">#{airticket.flightSchedBookingClass.price}</p:column>
+                <p:row>
+                    <p:column colspan="4">Fare fee #{index.index + 1}</p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="#{airticket.flightSchedBookingClass.price}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
             </c:forEach>
 
             <c:forEach items="#{bookingManager.custHelpers}" var="customerHelper">
                 <p:row rendered="#{customerHelper.insurance}">
                     <p:column colspan="4">Travel insurance</p:column>
-                    <p:column colspan="2" styleClass="alignRight">#{bookingBacking.travelInsurance.price}</p:column>  
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="#{bookingBacking.travelInsurance.price}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>  
                 </p:row>
                 <p:row>
                     <p:column colspan="4">Extra luggage #{customerHelper.luggage.maxWeight} kg</p:column>
-                    <p:column colspan="2" styleClass="alignRight">#{customerHelper.luggage.price}</p:column>  
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="#{customerHelper.luggage.price}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>  
                 </p:row>
             </c:forEach>
 
@@ -84,13 +98,21 @@
             <c:forEach items="#{bookingBacking.pricingItems}" var="pricingItem">
                 <p:row>
                     <p:column colspan="4">#{pricingItem.name}</p:column>
-                    <p:column colspan="2" styleClass="alignRight">#{pricingItem.price}</p:column>   
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="#{pricingItem.price}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>   
                 </p:row>
             </c:forEach>
 
             <p:row>
                 <p:column colspan="4">TOTAL FARE</p:column>
-                <p:column colspan="2" styleClass="alignRight">#{bookingManager.booking.price}</p:column>
+                <p:column colspan="2" styleClass="alignRight">
+                    <p:outputLabel value="#{bookingManager.booking.price}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                    </p:outputLabel>
+                </p:column>
             </p:row>
         </p:panelGrid>
     </ui:define>

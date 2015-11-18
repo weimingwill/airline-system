@@ -23,9 +23,6 @@
                     <p:tab title="Adult #{index.index + 1}">
                         <pa:CCPassengerDetailPanel customerHelper="#{adult}" />
                     </p:tab>
-                    <p:tab title="Adult #{index.index + 2}" rendered="#{customerLoginManager.loggedIn}">
-                        <pa:CCPassengerDetailPanel customerHelper="#{adult}" />
-                    </p:tab>
                 </c:forEach>
                 <c:forEach items="#{bookingManager.bookingHelper.children}" var="child" varStatus="index" >
                     <p:tab title="Children #{index.index + 1}">

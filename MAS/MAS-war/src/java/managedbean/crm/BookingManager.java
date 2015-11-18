@@ -328,13 +328,13 @@ public class BookingManager implements Serializable {
         List<CustomerHelper> adults = new ArrayList<>();
         Booking booking = new Booking();
         Phone phone = new Phone();
-
+        int newAdultNo = adultNo;
         //If customer is loggedIn, put his/her personal information to passenger detail
         if (customerLoginManager.isLoggedIn()) {
             ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
             Map<String, Object> sessionMap = externalContext.getSessionMap();
             String email = (String) sessionMap.get("email");
-             RegCust regCust = new RegCust();
+            RegCust regCust = new RegCust();
             try {
                 regCust = customerExSession.getRegCustByEmail(email);
             } catch (NoSuchRegCustException ex) {
@@ -346,9 +346,10 @@ public class BookingManager implements Serializable {
             adults.add(customerHelper);
             booking.setEmail(regCust.getEmail());
             phone = regCust.getPhone();
+            newAdultNo--;
         }
 
-        for (int i = 0; i < adultNo; i++) {
+        for (int i = 0; i < newAdultNo; i++) {
             CustomerHelper customerHelper = new CustomerHelper();
             Customer customer = new Customer();
             customer.setIsAdult(true);
@@ -380,6 +381,8 @@ public class BookingManager implements Serializable {
             fbs.add(nextFb);
         }
         bookingHelper.setFlightSchedBookingClses(fbs);
+        //PromoCode = "" if nothing entered
+        bookingHelper.setPromoCode(promoCode);
         setBookingHelperTotalPrice();
     }
 

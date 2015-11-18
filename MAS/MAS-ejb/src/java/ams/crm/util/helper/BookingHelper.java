@@ -26,6 +26,7 @@ public class BookingHelper implements Serializable{
     private List<PricingItem> pricingItems;
 
     private double totalPrice;
+    private String promoCode;
     
     public Booking getBooking() {
         return booking;
@@ -90,5 +91,13 @@ public class BookingHelper implements Serializable{
 
     public void setAdults(List<CustomerHelper> adults) {
         this.adults = adults;
+    }
+
+    public String getPromoCode() {
+        return promoCode;
+    }
+
+    public void setPromoCode(String promoCode) {
+        this.promoCode = promoCode;
     }
 }

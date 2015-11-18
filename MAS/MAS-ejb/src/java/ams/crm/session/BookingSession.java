@@ -26,6 +26,9 @@ import ams.ars.entity.Booking;
 import ams.ars.entity.PricingItem;
 import ams.ars.util.helper.AddOnHelper;
 import ams.crm.entity.Customer;
+import ams.crm.entity.MktCampaign;
+import ams.crm.entity.PromotionCode;
+import ams.crm.entity.RegCust;
 import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.CustomerHelper;
 import ams.dcs.entity.Luggage;
@@ -309,24 +312,49 @@ public class BookingSession implements BookingSessionLocal {
         booking.setAirTickets(airTickets);
         em.merge(booking);
         em.flush();
+
         //Customer value calc
         //Select seat
+        
+        //Promotion: 1. for all users, no need login. 2. for specific users, need login.
+        PromotionCode promoCode = getPromotionCodeByName(bookingHelper.getPromoCode());
+        MktCampaign mktCampaign = promoCode.getMktCampaign();
+        if (mktCampaign.getCustomerLists() == null) {
+            
+        }
+
+        
         //Generate pnr
         return booking;
+    }
+
+    private boolean verifyPromoCodeUsability(PromotionCode promoCode, RegCust regCust) {
+        return false;
+    }
+
+    private PromotionCode getPromotionCodeByName(String name) {
+        Query query = em.createQuery("SELECT p FROM PromotionCode p WHERE p.name = :name");
+        query.setParameter("name", name);
+        PromotionCode promotionCode = null;
+        try {
+            promotionCode = (PromotionCode) query.getSingleResult();
+        } catch (Exception e) {
+        }
+        return promotionCode;
     }
 
     private List<AirTicket> createAirTickets(List<FlightScheduleBookingClass> fbs, List<CustomerHelper> customerHelpers, Booking booking) {
         List<AirTicket> airTickets = new ArrayList<>();
         for (CustomerHelper customerHelper : customerHelpers) {
             List<AirTicket> custAirTickets = new ArrayList<>();
-            
+
             List<AddOn> addOns = new ArrayList<>();
             addOns.add(getAddOnByDescription(customerHelper.getMeal().getDescription()));
             if (customerHelper.isInsurance()) {
                 addOns.add(getTravelInsurance());
             }
             Luggage luggage = getLuggageByMaxWeight(customerHelper.getLuggage().getMaxWeight());
-            
+
             Customer customer = createCustomer(customerHelper);
             for (FlightScheduleBookingClass fb : fbs) {
                 fb = updateFlightSchedBookingCls(fb);
@@ -471,5 +499,5 @@ public class BookingSession implements BookingSessionLocal {
         Booking booking = new Booking();
         return booking;
     }
-    
+
 }
