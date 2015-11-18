@@ -42,6 +42,7 @@ public class Booking implements Serializable {
     @Embedded
     private Phone phoneNo;
     private Double price;
+    private Double promoPrice;
     private Boolean paid;
     private String channel;
     private Boolean claimed;
@@ -185,5 +186,13 @@ public class Booking implements Serializable {
 
     public void setClaimed(Boolean claimed) {
         this.claimed = claimed;
+    }
+
+    public Double getPromoPrice() {
+        return promoPrice;
+    }
+
+    public void setPromoPrice(Double promoPrice) {
+        this.promoPrice = promoPrice;
     }
 }
