@@ -140,7 +140,7 @@
                     <p:growl showDetail="true" autoUpdate="true"/>
                     <p:dataTable id="bidding-session-table" widgetVar="biddingSessionTable" var="biddingSession" value="#{biddingSessionBacking.biddingSessions}" rows="5" tableStyleClass="table-small-font" rowKey="#{biddingSession.id}"
                                  paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15"
-                                 selectionMode="single" selection="#{biddingSessionBacking.selectedBiddingSession}">
+                                 selection="#{biddingSessionBacking.selectedBiddingSession}">
                         <p:column selectionMode="single" style="width:16px;text-align:center"/>
                         <p:column headerText="Session ID">
                             <h:outputText value="#{biddingSession.id}"/>

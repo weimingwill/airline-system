@@ -821,7 +821,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
 
     private List<FlightSchedule> setRouteFlightSchedules(List<FlightSchedule> inFlightScheds) {
         List<FlightSchedule> outFlightScheds = new ArrayList<>();
-        for (FlightSchedule flightSchedule : inFlightScheds) {   
+        for (FlightSchedule flightSchedule : inFlightScheds) {
             if (flightSchedule.getPreFlightSched() == null) {
                 setRouteFlightSchedule(flightSchedule);
                 outFlightScheds.add(flightSchedule);
@@ -1033,5 +1033,19 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         } catch (NoResultException e) {
         }
         return aircrafts;
+    }
+
+    @Override
+    public List<FlightSchedule> getThisFlightFlightSchedules(Flight thisFlight) {
+        Query q = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightNo = :flightNo OR fs.flight.flightNo = :returnFlightNo AND fs.departDate > CURRENT_TIMESTAMP AND fs.deleted = FALSE ORDER BY fs.departDate");
+        q.setParameter("flightNo", thisFlight.getFlightNo());
+        q.setParameter("returnFlightNo", thisFlight.getReturnedFlight().getFlightNo());
+        return (List<FlightSchedule>) q.getResultList();
+    }
+
+    @Override
+    public List<Flight> getScheduledFlights() {
+        Query q = em.createQuery("SELECT DISTINCT fs.flight FROM FlightSchedule fs WHERE fs.deleted = FALSE GROUP BY fs.flight");
+        return (List<Flight>) q.getResultList();
     }
 }

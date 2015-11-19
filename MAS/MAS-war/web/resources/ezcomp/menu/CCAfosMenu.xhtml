@@ -23,7 +23,7 @@
                 <p:submenu label="Flight Crew Management" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(flightCrewManager)}">
                     <p:submenu label="Flight Crew Regulation" expanded="true">
                         <p:menuitem value="Crew Profile" action="#{afosNavController.toViewCrewProfile()}"/>
-                        <p:menuitem value="Crew Checklist"/>
+                        <p:menuitem value="Crew Checklist" action="#{afosNavController.toSelectChecklist()}"/>
                         <p:menuitem value="Crew Reporting"/>
                     </p:submenu>
                     <p:submenu label="Flight Crew Scheduling" expanded="true">

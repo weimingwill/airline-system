@@ -491,3 +491,7 @@ div.timeline-event-selected {
 .alignTop {
     vertical-align: top !important;
 }
+
+.hide-column-names table thead tr {
+    display: none;
+}

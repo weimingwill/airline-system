@@ -47,8 +47,16 @@ public class AfosNavController {
     public String toBidPairings() {
         return AFOS_URL + "crew_schedule/bidPairings.xhtml" + REDIRECT;
     }
-    
-    public String toViewBidHist(){
+
+    public String toViewBidHist() {
         return AFOS_URL + "crew_schedule/viewBidHist.xhtml" + REDIRECT;
+    }
+
+    public String toSelectChecklist() {
+        return AFOS_URL + "crew_regulation/selectChecklistType.xhtml" + REDIRECT;
+    }
+    
+    public String toCreateChecklist() {
+        return AFOS_URL + "crew_regulation/createChecklist.xhtml" + REDIRECT;
     }
 }

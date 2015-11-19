@@ -13,6 +13,7 @@ import ams.afos.entity.Pairing;
 import ams.afos.util.exception.BiddingSessionConflictException;
 import ams.afos.util.exception.FlightDutyConflictException;
 import ams.afos.util.exception.PairingConflictException;
+import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import java.util.List;
 import javax.ejb.Local;
@@ -35,11 +36,11 @@ public interface FlightCrewMgmtSessionLocal {
     public void closeBiddingSession(BiddingSession session);
     public List<BiddingSession> getAllBiddingSession();
     public void assignPairingsToCrew(String type, Pairing pairingWithBids, List<FlightCrew> orderedFlightCrew);
-    public void createFlightDutyChecklist(Checklist checklist);
-    public void updateFlightDutyChecklist(Checklist checklist);
+    public void createFlightDutyChecklist(Checklist checklist, Flight flight); // combine create and update together
     public void updateAttendance(List<FlightCrew> flightCrews);
     public List<FlightCrew> getOnDutyCrews(FlightSchedule flightSchedule);
-    public List<Checklist> getFlightDutyChecklist(FlightSchedule flightSchedule);
+    public List<Checklist> getFlightDutyChecklist(FlightSchedule FlightSchedule, String type);
+    public Checklist getFlightChecklist(Flight thisFlight, String type);
     public List<Checklist> getChecklistTemplates(String type);
     public List<Checklist> getPostFlightReport(FlightSchedule flightSchedule);
     

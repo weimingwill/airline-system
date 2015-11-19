@@ -20,7 +20,9 @@ import ams.afos.util.helper.CrewType;
 import ams.afos.util.helper.PairingCrewStatus;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.Airport;
+import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
+import ams.aps.session.FlightSchedulingSessionLocal;
 import ams.aps.session.RoutePlanningSessionLocal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +42,9 @@ import javax.persistence.Query;
  */
 @Stateless
 public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
+
+    @EJB
+    private FlightSchedulingSessionLocal flightSchedulingSession;
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
@@ -179,8 +184,8 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         for (FlightSchedule thisSchedule : nextMonthFlights) {
             System.out.print("generateFlightDuties(): Start create new FlightDuty\n");
             System.out.println("FlightSchedule: "
-                    + "\n\tFlightNo:" + thisSchedule.getFlight().getFlightNo() 
-                    + "\n\tFrom - To: " + thisSchedule.getLeg().getDepartAirport().getCity().getCityName()+ " - " + thisSchedule.getLeg().getArrivalAirport().getCity().getCityName()
+                    + "\n\tFlightNo:" + thisSchedule.getFlight().getFlightNo()
+                    + "\n\tFrom - To: " + thisSchedule.getLeg().getDepartAirport().getCity().getCityName() + " - " + thisSchedule.getLeg().getArrivalAirport().getCity().getCityName()
                     + "\n\tTime: " + thisSchedule.getDepartDate() + " - " + thisSchedule.getArrivalDate()
             );
             if (thisSchedule.getPreFlightSched() == null
@@ -519,7 +524,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         int quota, remainingQuota;
         PairingFlightCrew pairingFlightCrew;
         List<FlightCrew> crewsReachMaxRqmt;
-        
+
         for (Iterator<Pairing> pairingIter = remainingPairings.iterator(); pairingIter.hasNext() && !crewWithMinPairings.isEmpty();) {
             Pairing thisPairing = pairingIter.next();
             quota = getPairngCrewQuota(type, thisPairing);
@@ -535,7 +540,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
                 /* for debugging */
                 // If crew reaches its max requirement, add crew to list for removal
                 if (reachMaxCrewRequirement(minDutyTime, thisCrew, session)) {
-                    System.err.println("Crew " + thisCrew.getUsername()+ " reaches his max requirement");
+                    System.err.println("Crew " + thisCrew.getUsername() + " reaches his max requirement");
                     crewsReachMaxRqmt.add(thisCrew);
                 } else if (pairingWithinCrewRequirement(thisPairing, thisCrew, session) && !crewPairingClash(thisPairing, thisCrew) && remainingQuota > 0) {
                     pairingFlightCrew = new PairingFlightCrew();
@@ -553,7 +558,7 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
             }
             // remove crews who reach max requirement from the list
             crewWithMinPairings.removeAll(crewsReachMaxRqmt);
-            
+
             setPairingCrewQuota(type, thisPairing, remainingQuota);
             // if there is no remaining quota, remove the pairing from list
             if (remainingQuota == 0) {
@@ -713,13 +718,37 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     }
 
     @Override
-    public void createFlightDutyChecklist(Checklist checklist) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateFlightDutyChecklist(Checklist checklist) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void createFlightDutyChecklist(Checklist checklist, Flight flight) {
+        List<Checklist> fsChecklists;
+        boolean foundExistingChecklist = false;
+        List<FlightSchedule> flightSchedules = flightSchedulingSession.getThisFlightFlightSchedules(flight);
+        for (FlightSchedule fs : flightSchedules) {
+            if (fs.getChecklists() == null) {
+                // if flight schedule does not have any checklist, create a new checklist and add it to flight schedule
+                em.persist(checklist);
+                fsChecklists = new ArrayList();
+                fsChecklists.add(checklist);
+                fs.setChecklists(fsChecklists);
+                em.merge(fs);
+            } else {
+                // if flight schedule has some checklist, check if there exists same type checklist
+                fsChecklists = fs.getChecklists();
+                for (Checklist cl : fsChecklists) {
+                    if (cl.getType().equals(checklist.getType())) {
+                        // if found same type checklist
+                        cl.setChecklistItems(checklist.getChecklistItems());
+                        foundExistingChecklist = true;
+                        break;
+                    }
+                }
+                if (!foundExistingChecklist) {
+                    // if not found then add the checklist to flight schedule checklists
+                    em.persist(checklist);
+                    fs.getChecklists().add(checklist);
+                }
+                em.merge(fs);
+            }
+        }
     }
 
     @Override
@@ -733,13 +762,30 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     }
 
     @Override
-    public List<Checklist> getFlightDutyChecklist(FlightSchedule flightSchedule) {
+    public List<Checklist> getFlightDutyChecklist(FlightSchedule FlightSchedule, String type) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+    }
+
+    @Override
+    public Checklist getFlightChecklist(Flight thisFlight, String type) {
+        Query q = em.createQuery("SELECT DISTINCT c FROM FlightSchedule fs, IN(fs.checklists) c WHERE c.deleted=FALSE AND c.type = :type AND fs.flight.flightNo = :flightNo");
+        q.setMaxResults(1);
+        q.setParameter("type", type);
+        q.setParameter("flightNo", thisFlight.getFlightNo());
+        List<Checklist> outputResult = (List<Checklist>) q.getResultList();
+        if (outputResult.isEmpty()) {
+            return null;
+        } else {
+            return outputResult.get(0);
+        }
     }
 
     @Override
     public List<Checklist> getChecklistTemplates(String type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Query q = em.createQuery("SELECT c FROM Checklist c WHERE c.deleted = FALSE AND c.type =:type AND c.isTemplate = TRUE");
+        q.setParameter("type", type);
+        return (List<Checklist>) q.getResultList();
     }
 
     @Override
