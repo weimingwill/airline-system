@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package managedbean.crm;
+package managedbean.ars_crm;
 
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.aps.entity.FlightSchedule;

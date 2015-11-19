@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package managedbean.crm;
+package managedbean.ars_crm;
 
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.FlightScheduleBookingClass;
@@ -15,6 +15,7 @@ import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.RoutePlanningSessionLocal;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
+import ams.aps.util.helper.FlightSchedStatus;
 import ams.ars.entity.AddOn;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.Booking;
@@ -24,6 +25,7 @@ import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
 import ams.crm.session.BookingSessionLocal;
 import ams.crm.session.CustomerExSessionLocal;
+import ams.crm.util.exception.InvalidPromoCodeException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.ChannelHelper;
@@ -50,6 +52,7 @@ import javax.inject.Inject;
 import managedbean.application.CrmExNavController;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
+import managedbean.crm.CustomerLoginManager;
 import mas.util.helper.DateHelper;
 
 /**
@@ -99,7 +102,6 @@ public class BookingManager implements Serializable {
 
     //Search Results
     private List<FlightSchedule> flightScheds = new ArrayList<>();
-    private List<FlightSchedule> inDirectFlightScheds = new ArrayList<>();
     private List<TicketFamily> tixFams;
     private Map<Long, FlightSchedule> inDirectFlightSchedMaps = new HashMap<>();
     private Map<String, FlightSchedBookingClsHelper> fbHelperMaps = new HashMap<>();
@@ -110,7 +112,7 @@ public class BookingManager implements Serializable {
     private String searchArrDate;
 
     private FlightSchedBookingClsHelper selectedFbHelper;
-    private FlightScheduleBookingClass selectedFb = new FlightScheduleBookingClass();
+    private FlightScheduleBookingClass selectedFb;
     private List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
 
     //Passenger details
@@ -209,26 +211,43 @@ public class BookingManager implements Serializable {
     }
 
     public String searchFlights() {
+        selectedFbHelper = null;
         searchDeptDate = DateHelper.convertDateTime(deptDate);
         searchArrDate = DateHelper.convertDateTime(arrDate);
         try {
+            RegCust regCust = getRegCustIfLoggined();
+            bookingSession.verifyPromoCodeUsability(promoCode, regCust);
             if (choice.equals("oneway")) {
                 searchForOneWayFlights();
             } else if (choice.equals("return")) {
                 searchForReturnFlights();
             }
             return crmExNavController.redirectToSearchFlightResult();
-        } catch (NoSuchFlightSchedulException e) {
+        } catch (NoSuchFlightSchedulException | InvalidPromoCodeException e) {
             msgController.addErrorMessage(e.getMessage());
             return "";
         }
+    }
+
+    private RegCust getRegCustIfLoggined() {
+        RegCust regCust = null;
+        if (customerLoginManager.isLoggedIn()) {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            Map<String, Object> sessionMap = externalContext.getSessionMap();
+            String email = (String) sessionMap.get("email");
+            try {
+                regCust = customerExSession.getRegCustByEmail(email);
+            } catch (NoSuchRegCustException ex) {
+            }
+        }
+        return regCust;
     }
 
     public void searchForOneWayFlights() throws NoSuchFlightSchedulException {
         System.out.println("searchForOneWayFlights");
         flightSchedHelpers = new ArrayList<>();
         inDirectFlightSchedMaps = new HashMap<>();
-        flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, inDirectFlightSchedMaps);
+        flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, inDirectFlightSchedMaps, FlightSchedStatus.RELEASE);
         getFlightSchedLowestTixFams();
         getAllFlightSchedBookingClsHelpers();
 
@@ -330,15 +349,8 @@ public class BookingManager implements Serializable {
         Phone phone = new Phone();
         int newAdultNo = adultNo;
         //If customer is loggedIn, put his/her personal information to passenger detail
-        if (customerLoginManager.isLoggedIn()) {
-            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-            Map<String, Object> sessionMap = externalContext.getSessionMap();
-            String email = (String) sessionMap.get("email");
-            RegCust regCust = new RegCust();
-            try {
-                regCust = customerExSession.getRegCustByEmail(email);
-            } catch (NoSuchRegCustException ex) {
-            }
+        RegCust regCust = getRegCustIfLoggined();
+        if (regCust != null) {
             CustomerHelper customerHelper = new CustomerHelper();
             Customer customer = setRegCustToCustomer(regCust);
             customerHelper.setCustomer(customer);
@@ -459,10 +471,15 @@ public class BookingManager implements Serializable {
     }
 
     public String bookingFlight() {
-        booking = bookingSession.bookingFlight(bookingHelper);
-        setCustomerHelpers();
-        msgController.addMessage("Booking flight successfully!");
-        return crmExNavController.redirectToItinerary();
+        try {
+            booking = bookingSession.bookingFlight(bookingHelper);
+            setCustomerHelpers();
+            msgController.addMessage("Booking flight successfully!");
+            return crmExNavController.redirectToItinerary();
+        } catch (InvalidPromoCodeException e) {
+            msgController.addErrorMessage(e.getMessage());
+            return "";
+        }
     }
 
     private void setCustomerHelpers() {
@@ -624,14 +641,6 @@ public class BookingManager implements Serializable {
 
     public void setSelectedFbHelper(FlightSchedBookingClsHelper selectedFbHelper) {
         this.selectedFbHelper = selectedFbHelper;
-    }
-
-    public List<FlightSchedule> getInDirectFlightScheds() {
-        return inDirectFlightScheds;
-    }
-
-    public void setInDirectFlightScheds(List<FlightSchedule> inDirectFlightScheds) {
-        this.inDirectFlightScheds = inDirectFlightScheds;
     }
 
     public FlightScheduleBookingClass getSelectedFb() {

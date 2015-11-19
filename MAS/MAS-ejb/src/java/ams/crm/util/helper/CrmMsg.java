@@ -18,4 +18,7 @@ public class CrmMsg {
     public static final String LOGIN_SUCCESS_MSG = "Login Successful!";
     public static final String NO_SUCH_FEEDBACK_ERROR = "There is no such feedback";
     public static final String NO_ENOUGH_POINT_ERROR = "You don't have enough point to redeem this ticket.";
+    public static final String PROMOCODE_EXPIRE_ERROR = "Sorry, your promotion code has expired.";
+    public static final String PROMOCODE_WITHOUT_LOGIN_ERROR = "Sorry, you need to login to use this promotion code.";
+    public static final String PROMOCODE_UNAUTHORISED_ERROR = "Sorry, you do not have the right to use this promotion code";
 }  

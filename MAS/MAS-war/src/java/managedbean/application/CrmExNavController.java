@@ -55,6 +55,11 @@ public class CrmExNavController implements Serializable {
         return CRM_URL + "flight_booking/itinerary.xhtml" + REDIRECT;
     }
     
+    //Flight status
+    public String redirectToSearchFlightStatus() {
+        return CRM_URL + "flight_status/searchResults.xhtml" + REDIRECT;
+    }
+    
     // External CRM
     public String redirectToCustomerLogin(){
         return CRM_EX_SECURED_URL + "customerLogin.xhtml" +REDIRECT;

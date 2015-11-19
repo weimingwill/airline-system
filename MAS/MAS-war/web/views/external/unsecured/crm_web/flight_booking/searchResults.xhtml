@@ -145,10 +145,12 @@
             </p:dialog>
         </h:form>
         <h:form id="barForm">
-            <pa:CCOneWayPriceBarPanel flightSchedule="#{bookingManager.selectedFlightSched}" flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" 
-                                      rendered="#{empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>
-            <pa:CCOneWayPriceBarPanel flightSchedule="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}" flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" 
-                                      rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>
+            <p:panel rendered="#{not empty bookingManager.selectedFbHelper}">
+                <pa:CCOneWayPriceBarPanel flightSchedule="#{bookingManager.selectedFlightSched}" flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" 
+                                          rendered="#{empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>
+                <pa:CCOneWayPriceBarPanel flightSchedule="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}" flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" 
+                                          rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>
+            </p:panel>
             <ui:remove>
                 <p:notificationBar id="bar" position="bottom" effect="slide" styleClass="notificationBar" widgetVar="bar">
                     <pa:CCOneWayPriceBarPanel flightSchedule="#{bookingManager.selectedFlightSched}" flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" />

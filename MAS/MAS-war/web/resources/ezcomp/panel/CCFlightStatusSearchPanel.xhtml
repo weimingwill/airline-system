@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:panelGrid>
+            <!--Flight number-->
+            <p:row>
+                <p:column rendered="#{not flightStatusBacking.selecteRoute}">
+                    <p:inputText placeholder="Flight number" styleClass="fullWidth" id="flightNo" value="#{flightStatusBacking.flightNo}" />
+                </p:column>
+
+                <!--Departure or Arrival-->
+                <p:column  rendered="#{not flightStatusBacking.selecteRoute}">
+                    <p:selectOneRadio id="scheduleChoice" styleClass="radioChoice" value="#{flightStatusBacking.scheduleChoice}">
+                        <p:ajax update="flightStatusForm"/>
+                        <f:selectItem itemLabel="Depart" itemValue="depart" />
+                        <f:selectItem itemLabel="Arrive" itemValue="arrive" />
+                    </p:selectOneRadio>
+                </p:column>
+
+                <!--Departure Airport-->
+                <p:column rendered="#{flightStatusBacking.selecteRoute or flightStatusBacking.scheduleChoice eq 'depart'}">
+                    <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport" placeholder="From"
+                                    value="#{flightStatusBacking.deptAirport}" completeMethod="#{flightStatusBacking.completeDeptAirport}"
+                                    var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                        <p:column>
+                            <p:outputLabel value="#{airport.city.cityName}" />
+                        </p:column>
+
+                        <p:column>
+                            <p:outputLabel value="#{airport.airportName}" />
+                        </p:column>
+
+                        <p:column>
+                            <p:outputLabel value="#{airport.iataCode}" />
+                        </p:column>
+
+                        <p:column>
+                            <p:outputLabel value="#{airport.country.countryName}" />
+                        </p:column>
+                    </p:autoComplete>
+                </p:column>
+
+                <!--Arrival Airport-->
+                <p:column rendered="#{flightStatusBacking.selecteRoute or flightStatusBacking.scheduleChoice eq 'arrive'}">
+                    <p:autoComplete id="arriveLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport" placeholder="To"
+                                    value="#{flightStatusBacking.arrAirport}" completeMethod="#{flightStatusBacking.completeArrAirport}"
+                                    var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                        <p:column>
+                            <p:outputLabel value="#{airport.city.cityName}" />
+                        </p:column>
+
+                        <p:column>
+                            <p:outputLabel value="#{airport.airportName}" />
+                        </p:column>
+
+                        <p:column>
+                            <p:outputLabel value="#{airport.iataCode}" />
+                        </p:column>
+
+                        <p:column>
+                            <p:outputLabel value="#{airport.country.countryName}" />
+                        </p:column>
+                    </p:autoComplete>
+                </p:column>
+
+                <!--Date-->
+                <p:column>
+                    <p:calendar style="width: 200px;" styleClass="fullWidth" id="date" pattern="dd/MM/yyyy" timeZone="GMT+8" value="#{flightStatusBacking.date}" placeholder="date" />
+                </p:column>
+
+                <!--Button-->
+                <p:column>
+                    <p:commandButton value='search' style="width: 100%;" />
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+    </cc:implementation>
+</html>

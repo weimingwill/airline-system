@@ -535,3 +535,11 @@ div.timeline-event-selected {
     width: 15px;
     margin-right: 5px;
 }
+
+.fullWidth{
+    width: 100% !important;
+}
+
+.fullWidth>.ui-inputfield {
+    width: 100% !important;    
+}

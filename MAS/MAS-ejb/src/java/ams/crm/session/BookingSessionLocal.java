@@ -15,6 +15,8 @@ import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.ars.entity.AddOn;
 import ams.ars.entity.Booking;
 import ams.ars.entity.PricingItem;
+import ams.crm.entity.RegCust;
+import ams.crm.util.exception.InvalidPromoCodeException;
 import ams.crm.util.helper.BookingHelper;
 import ams.dcs.entity.Luggage;
 import java.util.Date;
@@ -29,30 +31,31 @@ import javax.ejb.Local;
 @Local
 public interface BookingSessionLocal {
 
-    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long,FlightSchedule> flightSchedMaps) throws NoSuchFlightSchedulException;
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps, String status) throws NoSuchFlightSchedulException;
 
     public List<TicketFamily> getFlightSchedLowestTixFams(List<FlightSchedule> flightScheds, CabinClass cabinClass);
 
 //    public List<FlightSchedBookingClsHelper> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix);
-    
-    public List<FlightSchedBookingClsHelper> getAllFlightSchedBookingClses
-        (List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps);
+    public List<FlightSchedBookingClsHelper> getAllFlightSchedBookingClses(List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps);
 //
 //     public Map<String, FlightSchedBookingClsHelper> getFlightSchedBookingClsHelperMaps
 //        (List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, String channelName, int numOfTix);
-        public Booking bookingFlight(BookingHelper bookingHelper);
-        
-        public List<AddOn> getMeals();
-        
-        public List<Luggage> getLuggages();
-        
-        public AddOn getTravelInsurance();
-        
-        public List<PricingItem> getPricingItems();
 
-        public AddOn getAddOnById(long id);
-        
-        public Luggage getLuggageById(long id);
-        
-        public PricingItem getPricingItemById(long id);
+    public Booking bookingFlight(BookingHelper bookingHelper) throws InvalidPromoCodeException ;
+
+    public List<AddOn> getMeals();
+
+    public List<Luggage> getLuggages();
+
+    public AddOn getTravelInsurance();
+
+    public List<PricingItem> getPricingItems();
+
+    public AddOn getAddOnById(long id);
+
+    public Luggage getLuggageById(long id);
+
+    public PricingItem getPricingItemById(long id);
+
+    public void verifyPromoCodeUsability(String promoCodeName, RegCust regCust) throws InvalidPromoCodeException;
 }

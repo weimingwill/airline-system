@@ -26,14 +26,19 @@ import ams.ars.entity.Booking;
 import ams.ars.entity.PricingItem;
 import ams.ars.util.helper.AddOnHelper;
 import ams.crm.entity.Customer;
+import ams.crm.entity.CustomerList;
 import ams.crm.entity.MktCampaign;
 import ams.crm.entity.PromotionCode;
 import ams.crm.entity.RegCust;
+import ams.crm.entity.SelectedCust;
+import ams.crm.util.exception.InvalidPromoCodeException;
 import ams.crm.util.helper.BookingHelper;
+import ams.crm.util.helper.CrmMsg;
 import ams.crm.util.helper.CustomerHelper;
 import ams.dcs.entity.Luggage;
 import ams.dcs.util.helper.AirTicketStatus;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -65,16 +70,15 @@ public class BookingSession implements BookingSessionLocal {
     private ProductDesignSessionLocal productDesignSession;
 
     @Override
-    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps) throws NoSuchFlightSchedulException {
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps, String status) throws NoSuchFlightSchedulException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(deptDate);
         DateHelper.setToStartOfDay(calendar);
         Date date = calendar.getTime();
         DateHelper.setToEndOfDay(calendar);
         Date nextDate = calendar.getTime();
-
-        List<FlightSchedule> directFlightScheds = searchForDirectFlights(deptAirport, arrAirport, date, nextDate);
-        List<FlightSchedule> inDirectFlightScheds = searchForInDirectFlights(deptAirport, arrAirport, date, nextDate);
+        List<FlightSchedule> directFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, true, status);
+        List<FlightSchedule> inDirectFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, false, status);
 
         if (directFlightScheds.isEmpty() && inDirectFlightScheds.isEmpty()) {
             throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
@@ -89,24 +93,22 @@ public class BookingSession implements BookingSessionLocal {
         return flightSchedules;
     }
 
-    private List<FlightSchedule> searchForDirectFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate) {
-        Query query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f.status = :inStatus");
-        query.setParameter("inStatus", FlightSchedStatus.RELEASE);
-        query.setParameter("inDeptAirport", deptAirport.getAirportName());
-        query.setParameter("inArrAirport", arrAirport.getAirportName());
-        query.setParameter("inDate", date);
-        query.setParameter("inNextDate", nextDate);
-        List<FlightSchedule> directFlightScheds = new ArrayList<>();
-        try {
-            directFlightScheds = (List<FlightSchedule>) query.getResultList();
-        } catch (NoResultException e) {
+    private List<FlightSchedule> getFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate, boolean isDirect, String status) {
+        Query query;
+        if (FlightSchedStatus.RELEASE.equals(status)) {
+            if (isDirect) {
+                query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f.status = :inStatus");
+            } else {
+                query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2 WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE AND f.status = :inStatus");
+            }
+        } else {
+            if (isDirect) {
+                query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f.status <> :inStatus");
+            } else {
+                query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2 WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE AND f.status <> :inStatus");
+            }
         }
-        return directFlightScheds;
-    }
-
-    private List<FlightSchedule> searchForInDirectFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate) {
-        Query query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2 WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE AND f.status = :inStatus");
-        query.setParameter("inStatus", FlightSchedStatus.RELEASE);
+        query.setParameter("inStatus", status);
         query.setParameter("inDeptAirport", deptAirport.getAirportName());
         query.setParameter("inArrAirport", arrAirport.getAirportName());
         query.setParameter("inDate", date);
@@ -282,7 +284,7 @@ public class BookingSession implements BookingSessionLocal {
 //        return tixFams;
 //    }
     @Override
-    public Booking bookingFlight(BookingHelper bookingHelper) {
+    public Booking bookingFlight(BookingHelper bookingHelper) throws InvalidPromoCodeException {
         //create booking
         Booking booking = bookingHelper.getBooking();
         System.out.println("Booking: " + booking.getEmail());
@@ -310,26 +312,78 @@ public class BookingSession implements BookingSessionLocal {
         booking.seteTicketNo(eTicketNo);
         booking.setReferenceNo(NumberGenerator.bookingReference());
         booking.setAirTickets(airTickets);
-        em.merge(booking);
-        em.flush();
 
         //Customer value calc
         //Select seat
-        
         //Promotion: 1. for all users, no need login. 2. for specific users, need login.
-        PromotionCode promoCode = getPromotionCodeByName(bookingHelper.getPromoCode());
-        MktCampaign mktCampaign = promoCode.getMktCampaign();
-        if (mktCampaign.getCustomerLists() == null) {
-            
-        }
+        String promoCodeName = bookingHelper.getPromoCode();
 
-        
+        booking.setPromoPrice(0.0);
+        if (!promoCodeName.equals("")) {
+            RegCust regCust = bookingHelper.getCustomers().get(0).getRegCust();
+            verifyPromoCodeUsability(promoCodeName, regCust);
+            PromotionCode promoCode = getPromotionCodeByName(promoCodeName);
+            //Use the promoCode, set promoPrice and deduct from total price.
+            double promodePrice = promoCode.getPromoValue();
+            booking.setPromoPrice(promodePrice);
+            booking.setPrice(booking.getPrice() - promodePrice);
+
+            //Remove customer from customer lists
+            updateMktCampaignCustomerList(promoCode.getMktCampaign(), regCust);
+        }
+        em.merge(booking);
+        em.flush();
+
         //Generate pnr
         return booking;
     }
 
-    private boolean verifyPromoCodeUsability(PromotionCode promoCode, RegCust regCust) {
-        return false;
+    @Override
+    public void verifyPromoCodeUsability(String promoCodeName, RegCust regCust) throws InvalidPromoCodeException {
+        if (!"".equals(promoCodeName)) {
+            PromotionCode promoCode = getPromotionCodeByName(promoCodeName);
+            MktCampaign mktCampaign = promoCode.getMktCampaign();
+            if (mktCampaign.getEndTime().before(new Date())) {
+                throw new InvalidPromoCodeException(CrmMsg.PROMOCODE_EXPIRE_ERROR);
+            }
+            if (mktCampaign.getCustomerLists() != null && regCust == null) {
+                throw new InvalidPromoCodeException(CrmMsg.PROMOCODE_WITHOUT_LOGIN_ERROR);
+            }
+            if (mktCampaign.getCustomerLists() != null && regCust != null) {
+                boolean hasRight = false;
+                for (CustomerList customerList : mktCampaign.getCustomerLists()) {
+                    for (SelectedCust selectedCust : customerList.getSelectedCusts()) {
+                        if (regCust.getEmail().equals(selectedCust.getEmail())) {
+                            hasRight = true;
+                            break;
+                        }
+                    }
+                }
+                if (!hasRight) {
+                    throw new InvalidPromoCodeException(CrmMsg.PROMOCODE_UNAUTHORISED_ERROR);
+                }
+            }
+        } else {
+        }
+    }
+
+    private void updateMktCampaignCustomerList(MktCampaign mktCampaign, RegCust regCust) {
+        mktCampaign = em.find(MktCampaign.class, mktCampaign.getId());
+        List<CustomerList> newCustomerLists = new ArrayList<>();
+        List<CustomerList> customerLists = mktCampaign.getCustomerLists();
+        for (CustomerList customerList : customerLists) {
+            List<SelectedCust> selectedCusts = customerList.getSelectedCusts();
+            for (SelectedCust selectedCust : customerList.getSelectedCusts()) {
+                if (regCust.getEmail().equals(selectedCust.getEmail())) {
+                    selectedCusts.remove(selectedCust);
+                }
+            }
+            customerList.setSelectedCusts(selectedCusts);
+            newCustomerLists.add(customerList);
+        }
+        mktCampaign.setCustomerLists(newCustomerLists);
+        em.merge(mktCampaign);
+        em.flush();
     }
 
     private PromotionCode getPromotionCodeByName(String name) {

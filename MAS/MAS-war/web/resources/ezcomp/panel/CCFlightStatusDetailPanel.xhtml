@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="flightSched" required="true"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set var="flightSched" value="#{cc.attrs.flightSched}" />
+        <c:set var="nextFlightSched" value="#{flightStatusBacking.inDirectFlightSchedMaps.get(flightSched)}" />
+        <p:row>
+            <p:column>#{flightSched.flight.flightNo}</p:column>
+            <p:column>#{flightSched.status}</p:column>
+            <p:column></p:column>
+            <p:column></p:column>
+            <p:column></p:column>
+        </p:row>
+        <p:row>
+            <p:column>Depart: #{flightSched.leg.departAirport.city.cityName}(#{flightSched.leg.departAirport.country.isoCode}) - Terminal #{flightSched.departTerminal}</p:column>
+            <p:column></p:column>
+            <p:column></p:column>
+            <p:column>
+                <p:outputLabel value="#{flightSched.departDate}" >
+                    <f:convertDateTime pattern="HH:mm - dd MMM(EE)" timeZone="GMT+8" />
+                </p:outputLabel> 
+            </p:column>
+            <p:column rendered="#{not empty flightSched.actualDepartDate}">#{flightSched.actualDepartDate}</p:column>
+            <p:column rendered="#{empty flightSched.actualDepartDate}">-</p:column>
+        </p:row>
+        <p:row>
+            <p:column>Arrive: #{flightSched.leg.arrivalAirport.city.cityName}(#{flightSched.leg.arrivalAirport.country.isoCode}) - Terminal #{flightSched.arrivalTerminal}</p:column>
+            <p:column></p:column>
+            <p:column>
+                <p:outputLabel value="#{flightSched.arrivalDate}" >
+                    <f:convertDateTime pattern="HH:mm - dd MMM(EE)" timeZone="GMT+8" />
+                </p:outputLabel> 
+            </p:column>
+            <p:column rendered="#{not empty flightSched.actualArrivalDate}">#{flightSched.actualArrivalDate}</p:column>
+            <p:column rendered="#{empty flightSched.actualArrivalDate}">-</p:column>
+        </p:row>
+
+        <p:separator />
+
+        <p:row rendered="#{not empty nextFlightSched}">
+            <p:column>#{nextFlightSched.flight.flightNo}</p:column>
+            <p:column>#{nextFlightSched.status}</p:column>
+            <p:column></p:column>
+            <p:column></p:column>
+            <p:column></p:column>
+        </p:row>
+        <p:row rendered="#{not empty nextFlightSched}">
+            <p:column>Depart: #{nextFlightSched.leg.departAirport.city.cityName}(#{nextFlightSched.leg.departAirport.country.isoCode}) - Terminal #{nextFlightSched.departTerminal}</p:column>
+            <p:column></p:column>
+            <p:column></p:column>
+            <p:column>
+                <p:outputLabel value="#{nextFlightSched.departDate}" >
+                    <f:convertDateTime pattern="HH:mm - dd MMM(EE)" timeZone="GMT+8" />
+                </p:outputLabel> 
+            </p:column>
+            <p:column rendered="#{not empty nextFlightSched.actualDepartDate}">#{nextFlightSched.actualDepartDate}</p:column>
+            <p:column rendered="#{empty nextFlightSched.actualDepartDate}">-</p:column>
+        </p:row>
+        <p:row rendered="#{not empty nextFlightSched}">
+            <p:column>Arrive: #{nextFlightSched.leg.arrivalAirport.city.cityName}(#{nextFlightSched.leg.arrivalAirport.country.isoCode}) - Terminal #{nextFlightSched.arrivalTerminal}</p:column>
+            <p:column></p:column>
+            <p:column>
+                <p:outputLabel value="#{nextFlightSched.arrivalDate}" >
+                    <f:convertDateTime pattern="HH:mm - dd MMM(EE)" timeZone="GMT+8" />
+                </p:outputLabel> 
+            </p:column>
+            <p:column rendered="#{not empty flightSched.actualArrivalDate}">#{flightSched.actualArrivalDate}</p:column>
+            <p:column rendered="#{empty flightSched.actualArrivalDate}">-</p:column>
+        </p:row>
+    </cc:implementation>
+</html>
