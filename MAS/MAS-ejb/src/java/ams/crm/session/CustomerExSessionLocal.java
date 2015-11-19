@@ -29,6 +29,7 @@ public interface CustomerExSessionLocal {
     public List<RegCust> getAllRegCusts();
 
     public void updateMiles(String email, Double accMiles) throws NoSuchRegCustException;
+    public void updateValue(String email, Double customerValue) throws NoSuchRegCustException;
 
     public void checkAccountUpgrade(String email) throws NoSuchRegCustException, NoSuchMembershipException;
 

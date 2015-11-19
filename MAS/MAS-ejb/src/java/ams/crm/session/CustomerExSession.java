@@ -45,7 +45,7 @@ public class CustomerExSession implements CustomerExSessionLocal {
         Random r = new Random(System.currentTimeMillis());
         verifyRegCustExistence(regCust.getPassportNo());
         verifyEmailExistence(regCust.getEmail());
-        regCust.setAccMiles(28563.0);
+        regCust.setAccMiles(0.0);
         regCust.setCustValue(0.0);
         regCust.setNumOfFlights(0);
         regCust.setActivated(true);
@@ -207,6 +207,23 @@ public class CustomerExSession implements CustomerExSessionLocal {
 
         }
     }
+    
+    @Override
+     public void updateValue(String email, Double customerValue) throws NoSuchRegCustException{
+        RegCust r = getRegCustByEmail(email);
+        if (r == null) {
+            throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
+        } else {
+            r.setCustValue(customerValue);
+            entityManager.merge(r);
+            entityManager.flush();
+            try {
+                checkAccountUpgrade(email);
+            } catch (NoSuchMembershipException ex) {
+                Logger.getLogger(CustomerExSession.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+     }
 
     @Override
     public void updateProfile(Long customerId, String passportNo, Date passportIssueDate, Date passportExpDate, String nationality, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone phone, String securQuest, String securAns, Boolean newsLetterPref, Boolean promoPref) throws ExistSuchRegCustException, NoSuchRegCustException {

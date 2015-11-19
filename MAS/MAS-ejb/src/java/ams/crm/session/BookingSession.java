@@ -36,6 +36,10 @@ import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.CrmMsg;
 import ams.crm.util.helper.CustomerHelper;
 import ams.dcs.entity.Luggage;
+import ams.crm.util.exception.NoSuchBookingReferenceException;
+import ams.crm.util.exception.NoSuchRegCustException;
+import ams.crm.util.helper.BookingHelper;
+import ams.crm.util.helper.CrmMsg;
 import ams.dcs.util.helper.AirTicketStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +72,69 @@ public class BookingSession implements BookingSessionLocal {
     private RevMgmtSessionLocal revMgmtSession;
     @EJB
     private ProductDesignSessionLocal productDesignSession;
+
+    @Override
+    public List<Booking> getBookingsByEmail(String email) {
+
+        Query query = em.createQuery("SELECT c FROM Booking c WHERE c.email=:inemail");
+        query.setParameter("inemail", email);
+        List<Booking> bookings = new ArrayList<>();
+        try {
+            bookings = (List<Booking>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+        return bookings;
+    }
+
+    @Override
+    public List<Booking> getCurrentBookingsByEmail(String email) {
+        Query query = em.createQuery("SELECT DISTINCT b FROM Booking b, IN(b.airTickets) at WHERE b.email=:inemail AND at.flightSchedBookingClass.flightSchedule.departDate > CURRENT_TIMESTAMP ORDER BY at.flightSchedBookingClass.flightSchedule.departDate");
+        query.setParameter("inemail", email);
+        List<Booking> bookings = new ArrayList<>();
+        try {
+            bookings = (List<Booking>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+        System.out.print("select current bookings" + bookings);
+        return bookings;
+    }
+
+    @Override
+    public List<Booking> getUnClaimedBookingsByEmail(String email) {
+        Query query = em.createQuery("SELECT c FROM Booking c WHERE c.email=:inemail AND c.claimed=FALSE");
+        query.setParameter("inemail", email);
+        List<Booking> bookings = new ArrayList<>();
+        try {
+            bookings = (List<Booking>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+        return bookings;
+    }
+
+    @Override
+    public void updateBooking(String bookingRef) throws NoSuchBookingReferenceException {
+        Booking b = getBookingByBookingRef(bookingRef);
+        if (b == null) {
+            throw new NoSuchBookingReferenceException(CrmMsg.NO_SUCH_BOOKING_REFERENCE_ERROR);
+        } else {
+            b.setClaimed(true);
+            em.merge(b);
+            em.flush();
+        }
+    }
+
+    @Override
+    public Booking getBookingByBookingRef(String bookingRef) throws NoSuchBookingReferenceException {
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.referenceNo = :bookingRef AND b.claimed=FALSE");
+        query.setParameter("bookingRef", bookingRef);
+        Booking r = null;
+        try {
+            r = (Booking) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new NoSuchBookingReferenceException(CrmMsg.NO_SUCH_BOOKING_REFERENCE_ERROR);
+        }
+        return r;
+    }
 
     @Override
     public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps, String status) throws NoSuchFlightSchedulException {
@@ -285,6 +352,7 @@ public class BookingSession implements BookingSessionLocal {
 //    }
     @Override
     public Booking bookingFlight(BookingHelper bookingHelper) throws InvalidPromoCodeException {
+
         //create booking
         Booking booking = bookingHelper.getBooking();
         System.out.println("Booking: " + booking.getEmail());

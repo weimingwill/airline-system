@@ -21,4 +21,5 @@ public class CrmMsg {
     public static final String PROMOCODE_EXPIRE_ERROR = "Sorry, your promotion code has expired.";
     public static final String PROMOCODE_WITHOUT_LOGIN_ERROR = "Sorry, you need to login to use this promotion code.";
     public static final String PROMOCODE_UNAUTHORISED_ERROR = "Sorry, you do not have the right to use this promotion code";
+    public static final String NO_SUCH_BOOKING_REFERENCE_ERROR = "This is invalid booking reference.";
 }  

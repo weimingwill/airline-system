@@ -24,40 +24,74 @@
 
                             <p:outputLabel value="Accumulated Miles: "/>
                             <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
-                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                             </p:outputLabel>
+
+                            <p:outputLabel value="Membership Level "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
                         </p:panelGrid>
                     </p:panel>
-                    <p:panel header="Current Booking" styleClass="centeredPanel">
 
-                    </p:panel>
+                    <p:dataTable value="#{viewBookingBacking.currentBookingByEmail}" styleClass="centeredPanel" var="booking" tableStyleClass="table-small-font" >
+                        <f:facet name="header">
+                            My Current Booking History
+                        </f:facet>
+                        <p:column headerText="Created Time">
+                            <p:outputLabel value="#{booking.createdTime}">
+                                <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="ETicket No.">
+                            <p:outputLabel value="#{booking.eTicketNo}" />
+                        </p:column>
+
+                        <p:column headerText="Reference No.">
+                            <p:outputLabel value="#{booking.referenceNo}" />
+                        </p:column>
+
+                        <p:column headerText="Price">
+                            <p:outputLabel value="#{booking.price}">
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="Paid" >
+                            <p:outputLabel  value="Yes" rendered="#{booking.paid}" />
+                            <p:outputLabel  value="Not Paid" rendered="#{not booking.paid}" />
+
+                        </p:column>
+
+                    </p:dataTable>
+
 
                     <p:panel header="Feedbacks" styleClass="centeredPanel">
-                        <h:form>
-                            <p:dataTable value="#{customerController.feedbacks}" var="feedback" style="margin-bottom:40px" rows="5" tableStyleClass="table-small-font"
-                                         paginator="true"
-                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                         rowsPerPageTemplate="5,10,15">
+                        <!--                        <h:form>-->
+                        <p:dataTable value="#{customerController.feedbacks}" var="feedback" style="margin-bottom:40px" rows="5" tableStyleClass="table-small-font">
+                            <!--                                         paginator="true"
+                                                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                     rowsPerPageTemplate="5,10,15">-->
 
-                                <p:column headerText="Feedback Subject">
-                                    <p:outputLabel value="#{feedback.subject}"/>
-                                </p:column>
+                            <p:column headerText="Feedback Subject">
+                                <p:outputLabel value="#{feedback.subject}"/>
+                            </p:column>
 
-                                <p:column headerText="Created Time">
-                                    <p:outputLabel value="#{feedback.createdTime}">
-                                        <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
-                                    </p:outputLabel>
-                                </p:column>
+                            <p:column headerText="Created Time">
+                                <p:outputLabel value="#{feedback.createdTime}">
+                                    <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
+                                </p:outputLabel>
+                            </p:column>
 
-                                <p:column headerText="View" style="width:32px;text-align: center">
-                                    <p:commandButton  oncomplete="PF('feedbackDialog').show()" icon="ui-icon-search" update="feedbackDialog">
-                                        <f:setPropertyActionListener value="#{feedback}" target="#{feedbackBacking.selectFeedback}" />
-                                    </p:commandButton>
-                                </p:column>
+                            <p:column headerText="View" style="width:32px;text-align: center">
+                                <p:commandButton  oncomplete="PF('feedbackDialog').show()" icon="ui-icon-search" update="feedbackDialog">
+                                    <f:setPropertyActionListener value="#{feedback}" target="#{feedbackBacking.selectFeedback}" />
+                                </p:commandButton>
+                            </p:column>
 
 
-                            </p:dataTable> 
-                        </h:form>
+                        </p:dataTable> 
+
+                        <!--                        </h:form>-->
                     </p:panel>
 
                 </h:form>
@@ -212,9 +246,9 @@
 
                             <p:outputLabel value="Accumulated Miles: "/>
                             <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
-                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                             </p:outputLabel>
-                            
+
                             <p:outputLabel value="Membership Level "/>
                             <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
                         </p:panelGrid>
@@ -284,9 +318,9 @@
                             </p:row>
                             <p:row>
                                 <p:column colspan="2" headerText="Calculate" style="width:45px;text-align: center">
-                                    <p:commandButton value="Calculate" update="messages,redeemDialog" actionListener="#{milesRedemptionBacking.mileCalculation()}" oncomplete="PF('redeemDialog').show()" icon="ui-icon-calculator"/>
-<!--                                        <f:setPropertyActionListener value="{mileredeem}" target="{redeemMilesController.selectedMilesRedemption}" />-->
-                                    
+                                    <p:commandButton value="Calculate" update="redeemDialog" actionListener="#{milesRedemptionBacking.mileCalculation()}" oncomplete="PF('redeemDialog').show()" icon="ui-icon-calculator"/>
+                                    <!--                                        <f:setPropertyActionListener value="{mileredeem}" target="{redeemMilesController.selectedMilesRedemption}" />-->
+
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -296,9 +330,9 @@
             </p:tab>
 
             <p:tab title="My Bookings">
-               
-                    <h:form id="bookingform" style="width: 500px;text-align: center;" >
-                    <p:panel header="Redeem Points" styleClass="centeredPanel" >
+
+                <h:form id="bookingform" style="width: 500px;text-align: center;" >
+                    <p:panel header="My Information" styleClass="centeredPanel" >
                         <p:panelGrid columns="2" styleClass="centered">
                             <p:outputLabel value="Customer Name: "/>
                             <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
@@ -308,15 +342,47 @@
 
                             <p:outputLabel value="Accumulated Miles: "/>
                             <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
-                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                             </p:outputLabel>
-                            
+
                             <p:outputLabel value="Membership Level "/>
                             <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
                         </p:panelGrid>
 
                     </p:panel>
-                    </h:form>
+
+                    <p:dataTable value="#{viewBookingBacking.bookingByEmail}" styleClass="centeredPanel" var="booking" tableStyleClass="table-small-font" >
+                        <f:facet name="header">
+                            My Booking History
+                        </f:facet>
+                        <p:column headerText="Created Time">
+                            <p:outputLabel value="#{booking.createdTime}">
+                                <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="ETicket No.">
+                            <p:outputLabel value="#{booking.eTicketNo}" />
+                        </p:column>
+
+                        <p:column headerText="Reference No.">
+                            <p:outputLabel value="#{booking.referenceNo}" />
+                        </p:column>
+
+                        <p:column headerText="Price">
+                            <p:outputLabel value="#{booking.price}">
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="Paid" >
+                            <p:outputLabel  value="Yes" rendered="#{booking.paid}" />
+                            <p:outputLabel  value="Not Paid" rendered="#{not booking.paid}" />
+
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form>
             </p:tab>
 
             <p:tab title="Book a flight">
@@ -368,10 +434,103 @@
                 </h:form>
             </p:tab>
             <p:tab title="Claim Miles">
+                <h:form id="claimMilesForm" style="width: 500px;text-align: center;" >     
+                    <p:panel header="My Information" styleClass="centeredPanel" >
+                        <p:panelGrid columns="2" styleClass="centered">
+                            <p:outputLabel value="Customer Name: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
 
+                            <p:outputLabel value="Current Login Email: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
+
+                            <p:outputLabel value="Accumulated Miles: "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                            </p:outputLabel>
+
+                            <p:outputLabel value="Membership Level "/>
+                            <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <p:panel header="Claim Section" styleClass="centeredPanel">
+                        <p:panelGrid columns="2" >
+                            <p:outputLabel for="bookingRefenceNo" value="Booking Reference No."/>
+                            <p:inputText id="bookingRefenceNo" class="userProfileInput"  value="#{viewBookingBacking.bookingReferenceNo}"  placeholder="Refence No."/>
+
+                        </p:panelGrid>
+                        <p:column headerText="Check" style="width:45px;text-align: center">
+                            <p:commandButton value="Check" update="claimDialog,messages" actionListener="#{viewBookingBacking.checkBookingReference()}" oncomplete="PF('claimDialog').show()" icon="ui-icon-calculator"/>
+                        </p:column>
+                    </p:panel>
+                </h:form> 
             </p:tab>
         </p:tabView>
 
+        <p:dialog id="claimDialog" header="Claim Booking:  #{viewBookingBacking.bookingReferenceNo}"  widgetVar="claimDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+
+            <h:form>
+                <p:panel id="claimDetail">
+                    <p:panelGrid>
+
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Booking Created Time: " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewBookingBacking.selectedBooking.createdTime}" >
+                                    <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Booking Reference No. " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewBookingBacking.selectedBooking.referenceNo}" >
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Booking Price " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewBookingBacking.selectedBooking.price}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Flying Distance: " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewBookingBacking.actualDistance}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Claim Points " />
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{viewBookingBacking.actualPointClaim}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </h:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <!--</ui:repeat>-->
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton value="Claim" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{viewBookingBacking.claimMiles()}" oncomplete="PF('claimDialog').hide()" update="messages"/>
+
+            </h:form>
+        </p:dialog>
         <p:dialog id="feedbackDialog" header="View Feedback:  #{feedbackBacking.selectFeedback.subject}"  widgetVar="feedbackDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
 
             <h:form>
@@ -401,9 +560,10 @@
                                 <p:outputLabel value="Feedback Content: " />
                             </p:column>
                             <p:column>
-                                <p:outputLabel value="#{feedbackBacking.selectFeedback.content}" />
+                                <h:outputText escape="false" value="#{feedbackBacking.selectFeedback.content}" />
                             </p:column>
                         </p:row>
+
                         <!--</ui:repeat>-->
                     </p:panelGrid>
                 </p:panel>
@@ -414,26 +574,26 @@
         <p:dialog id="redeemDialog"  header="The total points you need for this selection is" widgetVar="redeemDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form>
                 <p:panel id="redemptionDetail">
-                    
+
                     <p:panelGrid>
                         <!--<ui:repeat var="cc" value="{cabinClassController.selectedCabinClass}" >-->
                         <p:row> 
                             <p:column>
                                 <p:outputLabel value="Actual Miles (in miles) " />
                             </p:column>
-                           
+
                             <p:column>
                                 <h:outputLabel value="#{milesRedemptionBacking.calculatedMiles}" >
                                     <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                                 </h:outputLabel>
                             </p:column>
                         </p:row>
-                        
+
                         <p:row>  
                             <p:column>
                                 <p:outputLabel value="Miles Needed for Redemption (in miles) " />
                             </p:column>
-                            
+
                             <p:column>
                                 <h:outputLabel value="#{milesRedemptionBacking.actualPointNeed}" >
                                     <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
@@ -445,7 +605,7 @@
                     </p:panelGrid>
                 </p:panel>
                 <p:commandButton value="Redeem" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{milesRedemptionBacking.mileRedemption()}" oncomplete="PF('redeemDialog').hide()" update="messages"/>
-           
+
             </h:form>
         </p:dialog>
     </ui:define>

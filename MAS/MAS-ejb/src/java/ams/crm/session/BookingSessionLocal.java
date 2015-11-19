@@ -13,10 +13,11 @@ import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
 import ams.ars.entity.AddOn;
-import ams.ars.entity.Booking;
 import ams.ars.entity.PricingItem;
 import ams.crm.entity.RegCust;
 import ams.crm.util.exception.InvalidPromoCodeException;
+import ams.ars.entity.Booking;
+import ams.crm.util.exception.NoSuchBookingReferenceException;
 import ams.crm.util.helper.BookingHelper;
 import ams.dcs.entity.Luggage;
 import java.util.Date;
@@ -41,7 +42,7 @@ public interface BookingSessionLocal {
 //     public Map<String, FlightSchedBookingClsHelper> getFlightSchedBookingClsHelperMaps
 //        (List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, String channelName, int numOfTix);
 
-    public Booking bookingFlight(BookingHelper bookingHelper) throws InvalidPromoCodeException ;
+    public Booking bookingFlight(BookingHelper bookingHelper) throws InvalidPromoCodeException;
 
     public List<AddOn> getMeals();
 
@@ -58,4 +59,15 @@ public interface BookingSessionLocal {
     public PricingItem getPricingItemById(long id);
 
     public void verifyPromoCodeUsability(String promoCodeName, RegCust regCust) throws InvalidPromoCodeException;
+
+    public List<Booking> getBookingsByEmail(String email);
+
+    public List<Booking> getUnClaimedBookingsByEmail(String email);
+
+    public List<Booking> getCurrentBookingsByEmail(String email);
+
+    public Booking getBookingByBookingRef(String bookingRef) throws NoSuchBookingReferenceException;
+
+    public void updateBooking(String bookingRef) throws NoSuchBookingReferenceException;
+
 }
