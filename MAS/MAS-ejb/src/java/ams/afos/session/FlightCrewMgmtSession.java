@@ -178,7 +178,11 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         List<FlightDuty> outputList = new ArrayList();
         for (FlightSchedule thisSchedule : nextMonthFlights) {
             System.out.print("generateFlightDuties(): Start create new FlightDuty\n");
-
+            System.out.println("FlightSchedule: "
+                    + "\n\tFlightNo:" + thisSchedule.getFlight().getFlightNo() 
+                    + "\n\tFrom - To: " + thisSchedule.getLeg().getDepartAirport().getCity().getCityName()+ " - " + thisSchedule.getLeg().getArrivalAirport().getCity().getCityName()
+                    + "\n\tTime: " + thisSchedule.getDepartDate() + " - " + thisSchedule.getArrivalDate()
+            );
             if (thisSchedule.getPreFlightSched() == null
                     || (thisSchedule.getPreFlightSched() != null && !thisSchedule.getFlight().getFlightNo().equals(thisSchedule.getPreFlightSched().getFlight().getFlightNo()))) {
                 //if first flight segment of flight
