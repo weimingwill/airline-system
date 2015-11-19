@@ -90,6 +90,7 @@
 
 
                         </p:dataTable> 
+
                         <!--                        </h:form>-->
                     </p:panel>
 
@@ -456,11 +457,11 @@
                         <p:panelGrid columns="2" >
                             <p:outputLabel for="bookingRefenceNo" value="Booking Reference No."/>
                             <p:inputText id="bookingRefenceNo" class="userProfileInput"  value="#{viewBookingBacking.bookingReferenceNo}"  placeholder="Refence No."/>
-                           
+
                         </p:panelGrid>
-                         <p:column headerText="Check" style="width:45px;text-align: center">
-                             <p:commandButton value="Check" update="claimDialog,messages" actionListener="#{viewBookingBacking.checkBookingReference()}" oncomplete="PF('claimDialog').show()" icon="ui-icon-calculator"/>
-                            </p:column>
+                        <p:column headerText="Check" style="width:45px;text-align: center">
+                            <p:commandButton value="Check" update="claimDialog,messages" actionListener="#{viewBookingBacking.checkBookingReference()}" oncomplete="PF('claimDialog').show()" icon="ui-icon-calculator"/>
+                        </p:column>
                     </p:panel>
                 </h:form> 
             </p:tab>
@@ -559,9 +560,10 @@
                                 <p:outputLabel value="Feedback Content: " />
                             </p:column>
                             <p:column>
-                                <p:outputLabel value="#{feedbackBacking.selectFeedback.content}" />
+                                <h:outputText escape="false" value="#{feedbackBacking.selectFeedback.content}" />
                             </p:column>
                         </p:row>
+
                         <!--</ui:repeat>-->
                     </p:panelGrid>
                 </p:panel>

@@ -15,6 +15,7 @@ import ams.crm.util.exception.NoSuchBookingReferenceException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.CrmMsg;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -99,8 +100,10 @@ public class ViewBookingBacking implements Serializable {
             Logger.getLogger(RedeemMilesBacking.class.getName()).log(Level.SEVERE, null, ex);
         }
         msgController.addMessage("Congratulations! You have successfully claim your points!");
+        DecimalFormat fm = new DecimalFormat();
+        fm.setMaximumFractionDigits(2);
         String subject = "[Important] Merlion Airline Receive your redemption Code";
-        String mailContent = "Dear Customer: You have successfully received "+actualPointClaim +" on your accounts. \n For more information, Please visit our website.\n\n Hope we can see you again! \n\n Best Regards,\n Merlion Airline";
+        String mailContent = "Dear Customer:\n\n You have successfully received "+fm.format(actualPointClaim) +" points on your accounts. \n For more information, Please visit our website.\n\n Hope we can see you again! \n\n Best Regards,\n Merlion Airline";
         String receiver = customerController.getEmail();
         emailController.sendEmail(subject, mailContent, receiver);
 

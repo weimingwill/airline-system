@@ -35,7 +35,7 @@ public class CustomerLoginManager implements Serializable {
     @Inject
     private MsgController msgController;
     @Inject
-    private CrmExNavController CrmExNavController;
+    private CrmExNavController crmExNavController;
 
     @EJB
     private CustomerExSessionLocal customerSession;
@@ -84,7 +84,7 @@ public class CustomerLoginManager implements Serializable {
         
         email = null;
         msgController.addMessage(UserMsg.LOGIN_OUT_MSG);
-        return CrmExNavController.redirectToCustomerLogin();
+        return crmExNavController.redirectToCustomerLogin();
     }
     public String doLogin() throws NoSuchRegCustException, InvalidPasswordException, InterruptedException {
 //        CountdownHelper countdownHelper = new CountdownHelper(registrationSession);
@@ -99,12 +99,13 @@ public class CustomerLoginManager implements Serializable {
 
         } catch (NoSuchRegCustException | InvalidPasswordException ex) {
             msgController.addErrorMessage(ex.getMessage());
+            return navigationController.redirectToCurrentPage();
         }
         
         Map<String, Object> sessionMap = externalContext.getSessionMap();
         sessionMap.put("email", email);
         externalContext.getFlash().setKeepMessages(true);
-        return navigationController.redirectToCurrentPage();
+        return crmExNavController.redirectToMainPage();
 //        try {
 //
 //            if (!customerSession.getRegCustByEmail(email).getActivated()) {
