@@ -9,8 +9,11 @@ import ams.crm.entity.Feedback;
 import ams.crm.entity.Membership;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
+import ams.crm.session.BookingSession;
+import ams.crm.session.BookingSessionLocal;
 import ams.crm.session.CustomerExSessionLocal;
 import ams.crm.util.exception.ExistSuchRegCustException;
+import ams.crm.util.exception.NoSuchBookingReferenceException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import java.io.Serializable;
 import java.util.Date;
@@ -42,9 +45,14 @@ public class CustomerController implements Serializable {
     
     @Inject
     private MilesRedemptionBacking milesRedemptionBacking;
+    
+    @Inject
+    private ViewBookingBacking viewBookingBacking;
  
     @EJB
     private CustomerExSessionLocal customerSession;
+    @EJB
+    private BookingSessionLocal bookingSession;
    
     private String email;
     private String password;
@@ -109,12 +117,15 @@ public class CustomerController implements Serializable {
     }
     
     public String updateMiles() throws NoSuchRegCustException{
-        customerSession.updateMiles(email,accMiles-milesRedemptionBacking.getCalculatedMiles());
+        customerSession.updateMiles(email,accMiles-milesRedemptionBacking.getActualPointNeed());
+        System.out.print("actualmiles deduct"+milesRedemptionBacking.getActualPointNeed());
         return navigationController.redirectToCurrentPage();
     }
     
-    public String claimMiles() throws NoSuchRegCustException{
-        customerSession.updateMiles(email,accMiles+milesRedemptionBacking.getCalculatedMiles());
+     public String claimMiles() throws NoSuchRegCustException, NoSuchBookingReferenceException{
+        customerSession.updateMiles(email,accMiles+viewBookingBacking.getActualPointClaim());
+        customerSession.updateValue(email,custValue+viewBookingBacking.getActualPointClaim());
+        bookingSession.updateBooking(viewBookingBacking.getBookingReferenceNo()); 
         return navigationController.redirectToCurrentPage();
     }
     public void initializeCustomer() {

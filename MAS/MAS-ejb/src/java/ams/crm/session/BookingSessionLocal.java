@@ -8,10 +8,14 @@ package ams.crm.session;
 import ams.ais.entity.CabinClass;
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ais.entity.TicketFamily;
+import ams.ais.util.exception.NoSuchBookingClassException;
 import ams.ais.util.helper.FlightSchedBookingClsHelper;
 import ams.aps.entity.Airport;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.util.exception.NoSuchFlightSchedulException;
+import ams.ars.entity.Booking;
+import ams.crm.util.exception.NoSuchBookingReferenceException;
+import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.BookingHelper;
 import java.util.Date;
 import java.util.List;
@@ -25,16 +29,21 @@ import javax.ejb.Local;
 @Local
 public interface BookingSessionLocal {
 
-    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long,FlightSchedule> flightSchedMaps) throws NoSuchFlightSchedulException;
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps) throws NoSuchFlightSchedulException;
 
     public List<TicketFamily> getFlightSchedLowestTixFams(List<FlightSchedule> flightScheds, CabinClass cabinClass);
 
 //    public List<FlightSchedBookingClsHelper> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix);
-    
-    public List<FlightSchedBookingClsHelper> getAllFlightSchedBookingClses
-        (List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps);
+    public List<FlightSchedBookingClsHelper> getAllFlightSchedBookingClses(List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps);
 //
 //     public Map<String, FlightSchedBookingClsHelper> getFlightSchedBookingClsHelperMaps
 //        (List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, String channelName, int numOfTix);
-        public void bookingFlight(BookingHelper bookingHelper);
+
+    public void bookingFlight(BookingHelper bookingHelper);
+    public List<Booking> getBookingsByEmail(String email);
+    public List<Booking> getUnClaimedBookingsByEmail(String email);
+    public List<Booking> getCurrentBookingsByEmail(String email);
+    public Booking getBookingByBookingRef(String bookingRef) throws NoSuchBookingReferenceException;
+    public void updateBooking(String bookingRef) throws NoSuchBookingReferenceException;
+    
 }
