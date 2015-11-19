@@ -358,6 +358,7 @@ public class FlightScheduleManager implements Serializable {
     public void verifyApplyFlightSchedCollision() {
         collidedFlightScheds = flightSchedulingSession.verifyApplyFlightSchedCollision(availableAircrafts, schedStartDate, schedEndDate, calendarMinDate, calendarMaxDate);
         if (!collidedFlightScheds.isEmpty()) {
+            System.out.println("verifyApplyFlightSchedCollision(): No Collision");
             RequestContext context = RequestContext.getCurrentInstance();
             context.update(":collidedFlightSchedForm:collidedFlightSchedTable");
             context.execute("PF('collidedFlightSchedDialog').show()");
@@ -368,7 +369,7 @@ public class FlightScheduleManager implements Serializable {
 
     public void applyFlightSchedulesToPeriod() {
         flightSchedulingSession.applyFlightSchedulesToPeriod(availableAircrafts, schedStartDate, schedEndDate, calendarMinDate, calendarMaxDate);
-        msgController.addMessage("Apply flight schedule successfuly!");
+        msgController.addMessage("applyFlightSchedulesToPeriod(): Apply flight schedule successfuly!");
     }
     
     // 
