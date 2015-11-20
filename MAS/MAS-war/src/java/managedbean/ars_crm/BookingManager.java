@@ -247,7 +247,7 @@ public class BookingManager implements Serializable {
         System.out.println("searchForOneWayFlights");
         flightSchedHelpers = new ArrayList<>();
         inDirectFlightSchedMaps = new HashMap<>();
-        flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, inDirectFlightSchedMaps, FlightSchedStatus.RELEASE);
+        flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, inDirectFlightSchedMaps, FlightSchedStatus.METHOD_FLIGHT_STATUS);
         getFlightSchedLowestTixFams();
         getAllFlightSchedBookingClsHelpers();
 

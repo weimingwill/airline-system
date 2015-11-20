@@ -32,17 +32,13 @@ import ams.crm.entity.PromotionCode;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.SelectedCust;
 import ams.crm.util.exception.InvalidPromoCodeException;
-import ams.crm.util.helper.BookingHelper;
-import ams.crm.util.helper.CrmMsg;
 import ams.crm.util.helper.CustomerHelper;
 import ams.dcs.entity.Luggage;
 import ams.crm.util.exception.NoSuchBookingReferenceException;
-import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.CrmMsg;
 import ams.dcs.util.helper.AirTicketStatus;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -137,15 +133,16 @@ public class BookingSession implements BookingSessionLocal {
     }
 
     @Override
-    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps, String status) throws NoSuchFlightSchedulException {
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps, String method)
+            throws NoSuchFlightSchedulException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(deptDate);
         DateHelper.setToStartOfDay(calendar);
         Date date = calendar.getTime();
         DateHelper.setToEndOfDay(calendar);
         Date nextDate = calendar.getTime();
-        List<FlightSchedule> directFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, true, status);
-        List<FlightSchedule> inDirectFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, false, status);
+        List<FlightSchedule> directFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, true, method);
+        List<FlightSchedule> inDirectFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, false, method);
 
         if (directFlightScheds.isEmpty() && inDirectFlightScheds.isEmpty()) {
             throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
@@ -160,22 +157,22 @@ public class BookingSession implements BookingSessionLocal {
         return flightSchedules;
     }
 
-    private List<FlightSchedule> getFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate, boolean isDirect, String status) {
+    private List<FlightSchedule> getFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate, boolean isDirect, String method) {
         Query query;
-        if (FlightSchedStatus.RELEASE.equals(status)) {
-            if (isDirect) {
-                query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f.status = :inStatus");
-            } else {
-                query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2 WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE AND f.status = :inStatus");
-            }
-        } else {
+        if (FlightSchedStatus.METHOD_BOOKING.equals(method)) {
             if (isDirect) {
                 query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f.status <> :inStatus");
             } else {
-                query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2 WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE AND f.status <> :inStatus");
+                query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2 WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE AND f.status = :inStatus");
+            }
+            query.setParameter("inStatus", FlightSchedStatus.ARRIVE);
+        } else {
+            if (isDirect) {
+                query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE");
+            } else {
+                query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2 WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE");
             }
         }
-        query.setParameter("inStatus", status);
         query.setParameter("inDeptAirport", deptAirport.getAirportName());
         query.setParameter("inArrAirport", arrAirport.getAirportName());
         query.setParameter("inDate", date);
@@ -620,6 +617,58 @@ public class BookingSession implements BookingSessionLocal {
     public Booking getBookingByBookingRefString(String bookingRef) {
         Booking booking = new Booking();
         return booking;
+    }
+
+    @Override
+    public List<FlightSchedule> searchFlightStatusByFlightNo(String flightNo, Date date, Airport airport, String choice, Map<Long, FlightSchedule> flightSchedMaps)
+            throws NoSuchFlightSchedulException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        DateHelper.setToStartOfDay(calendar);
+        date = calendar.getTime();
+        DateHelper.setToEndOfDay(calendar);
+        Date nextDate = calendar.getTime();
+        Query query;
+        if ("depart".equals(choice)) {
+            query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.flight.flightNo = :flightNo AND f.leg.departAirport.icaoCode = :airport AND f.departDate BETWEEN :date AND :nextDate AND f.deleted = FALSE");
+        } else {
+            query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.flight.flightNo = :flightNo AND f.leg.arrivalAirport.icaoCode = :airport AND f.arrivalDate BETWEEN :date AND :nextDate AND f.deleted = FALSE");
+        }
+        query.setParameter("flightNo", flightNo);
+        query.setParameter("airport", airport.getIcaoCode());
+        query.setParameter("date", date);
+        query.setParameter("nextDate", nextDate);
+
+        List<FlightSchedule> flightSchedules = new ArrayList<>();
+        try {
+            flightSchedules = (List<FlightSchedule>) query.getResultList();
+        } catch (NoResultException e) {
+            throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
+        }
+
+        if ("depart".equals(choice)) {
+            for (FlightSchedule flightSchedule : flightSchedules) {
+                if (flightSchedule.getNextFlightSched() != null) {
+                    if (!flightSchedule.getLeg().getDepartAirport().getIcaoCode().equals(flightSchedule.getNextFlightSched().getLeg().getArrivalAirport().getIcaoCode())) {
+                        flightSchedMaps.put(flightSchedule.getFlightScheduleId(), flightSchedule.getNextFlightSched());
+                    }
+                }
+            }
+        } else {
+            List<FlightSchedule> newFlightSchedules = new ArrayList<>();
+            for (FlightSchedule flightSchedule : flightSchedules) {
+                if (flightSchedule.getPreFlightSched() != null) {
+                    if (!flightSchedule.getPreFlightSched().getLeg().getDepartAirport().getIcaoCode().equals(flightSchedule.getLeg().getArrivalAirport().getIcaoCode())) {
+                        newFlightSchedules.add(flightSchedule.getPreFlightSched());
+                        flightSchedMaps.put(flightSchedule.getPreFlightSched().getFlightScheduleId(), flightSchedule);
+                    }
+                } else {
+                    newFlightSchedules.add(flightSchedule);
+                }
+            }
+            flightSchedules = newFlightSchedules;
+        }
+        return flightSchedules;
     }
 
 }

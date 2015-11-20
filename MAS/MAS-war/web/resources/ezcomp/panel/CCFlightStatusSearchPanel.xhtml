@@ -11,26 +11,26 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <p:panelGrid>
+        <p:panelGrid id="flightStatusSearchPanel" style="width: 100%;">
             <!--Flight number-->
             <p:row>
-                <p:column rendered="#{not flightStatusBacking.selecteRoute}">
-                    <p:inputText placeholder="Flight number" styleClass="fullWidth" id="flightNo" value="#{flightStatusBacking.flightNo}" />
+                <p:column rendered="#{not flightStatusManager.selecteRoute}">
+                    <p:inputText placeholder="Flight number" styleClass="fullWidth" id="flightNo" value="#{flightStatusManager.flightNo}" />
                 </p:column>
 
                 <!--Departure or Arrival-->
-                <p:column  rendered="#{not flightStatusBacking.selecteRoute}">
-                    <p:selectOneRadio id="scheduleChoice" styleClass="radioChoice" value="#{flightStatusBacking.scheduleChoice}">
-                        <p:ajax update="flightStatusForm"/>
+                <p:column  rendered="#{not flightStatusManager.selecteRoute}">
+                    <p:selectOneRadio id="scheduleChoice" styleClass="radioChoice" value="#{flightStatusManager.scheduleChoice}">
+                        <p:ajax update="flightStatusSearchPanel"/>
                         <f:selectItem itemLabel="Depart" itemValue="depart" />
                         <f:selectItem itemLabel="Arrive" itemValue="arrive" />
                     </p:selectOneRadio>
                 </p:column>
 
                 <!--Departure Airport-->
-                <p:column rendered="#{flightStatusBacking.selecteRoute or flightStatusBacking.scheduleChoice eq 'depart'}">
+                <p:column rendered="#{flightStatusManager.selecteRoute or flightStatusManager.scheduleChoice eq 'depart'}">
                     <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport" placeholder="From"
-                                    value="#{flightStatusBacking.deptAirport}" completeMethod="#{flightStatusBacking.completeDeptAirport}"
+                                    value="#{flightStatusManager.deptAirport}" completeMethod="#{flightStatusManager.completeDeptAirport}"
                                     var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
                         <p:column>
                             <p:outputLabel value="#{airport.city.cityName}" />
@@ -51,9 +51,9 @@
                 </p:column>
 
                 <!--Arrival Airport-->
-                <p:column rendered="#{flightStatusBacking.selecteRoute or flightStatusBacking.scheduleChoice eq 'arrive'}">
+                <p:column rendered="#{flightStatusManager.selecteRoute or flightStatusManager.scheduleChoice eq 'arrive'}">
                     <p:autoComplete id="arriveLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport" placeholder="To"
-                                    value="#{flightStatusBacking.arrAirport}" completeMethod="#{flightStatusBacking.completeArrAirport}"
+                                    value="#{flightStatusManager.arrAirport}" completeMethod="#{flightStatusManager.completeArrAirport}"
                                     var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
                         <p:column>
                             <p:outputLabel value="#{airport.city.cityName}" />
@@ -75,12 +75,12 @@
 
                 <!--Date-->
                 <p:column>
-                    <p:calendar style="width: 200px;" styleClass="fullWidth" id="date" pattern="dd/MM/yyyy" timeZone="GMT+8" value="#{flightStatusBacking.date}" placeholder="date" />
+                    <p:calendar style="width: 200px;" styleClass="fullWidth" id="date" pattern="dd/MM/yyyy" timeZone="GMT+8" value="#{flightStatusManager.date}" placeholder="date" />
                 </p:column>
 
                 <!--Button-->
                 <p:column>
-                    <p:commandButton value='search' style="width: 100%;" />
+                    <p:commandButton value='search' action="#{flightStatusManager.searchForFlights()}" style="width: 100%;" />
                 </p:column>
             </p:row>
         </p:panelGrid>

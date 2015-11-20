@@ -22,19 +22,21 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import managedbean.application.CrmExNavController;
 import managedbean.application.MsgController;
+import managedbean.application.NavigationController;
 
 /**
  *
  * @author weiming
  */
-@Named(value = "flightStatusBacking")
-@ViewScoped
-public class FlightStatusBacking implements Serializable {
+@Named(value = "flightStatusManager")
+@SessionScoped
+public class FlightStatusManager implements Serializable {
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
@@ -45,6 +47,8 @@ public class FlightStatusBacking implements Serializable {
     MsgController msgController;
     @Inject
     CrmExNavController crmExNavController;
+    @Inject
+    NavigationController navigationController;
 
     private List<Airport> allAirports = new ArrayList<>();
 
@@ -58,18 +62,17 @@ public class FlightStatusBacking implements Serializable {
     private Airport arrAirport;
 
     //Search by fligth number
-    private Airport airport;
     private String flightNo;
 
     //Search results;
     private List<FlightSchedHelper> flightSchedHelpers;
-    private List<FlightSchedule> flightScheds = new ArrayList<>();
+    private List<FlightSchedule> flightScheds;
     private Map<Long, FlightSchedule> inDirectFlightSchedMaps = new HashMap<>();
 
     /**
-     * Creates a new instance of FlightStatusBacking
+     * Creates a new instance of flightStatusManager
      */
-    public FlightStatusBacking() {
+    public FlightStatusManager() {
     }
 
     @PostConstruct
@@ -77,6 +80,7 @@ public class FlightStatusBacking implements Serializable {
         allAirports = routePlanningSession.getAllAirports();
         searchBy = "route";
         scheduleChoice = "depart";
+//        clearVariables();
     }
 
     //Auto complete departure airport when typing in.
@@ -124,11 +128,42 @@ public class FlightStatusBacking implements Serializable {
         }
     }
 
+    public String onSearchByClicked() {
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        String index = params.get("i");
+        if ("0".equals(index)) {
+            searchBy = "route";
+            selecteRoute = true;
+        } else {
+            searchBy = "flightNo";
+            selecteRoute = false;
+        }
+        return navigationController.redirectToCurrentPage();
+    }
+
+    private void clearVariables() {
+        date = null;
+        deptAirport = null;
+        arrAirport = null;
+        flightNo = null;
+        flightSchedHelpers = null;
+        flightScheds = null;
+        inDirectFlightSchedMaps = new HashMap<>();
+    }
+
     public String searchForFlights() {
         try {
             flightSchedHelpers = new ArrayList<>();
             inDirectFlightSchedMaps = new HashMap<>();
-            flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, date, inDirectFlightSchedMaps, FlightSchedStatus.RELEASE);
+            if (selecteRoute) {
+                flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, date, inDirectFlightSchedMaps, FlightSchedStatus.METHOD_FLIGHT_STATUS);
+            } else {
+                if ("depart".equals(scheduleChoice)) {
+                    flightScheds = bookingSession.searchFlightStatusByFlightNo(flightNo, date, deptAirport, scheduleChoice, inDirectFlightSchedMaps);
+                } else {
+                    flightScheds = bookingSession.searchFlightStatusByFlightNo(flightNo, date, arrAirport, scheduleChoice, inDirectFlightSchedMaps);
+                }
+            }
             for (FlightSchedule flightSched : flightScheds) {
                 FlightSchedHelper flightSchedHelper = new FlightSchedHelper();
                 flightSchedHelper.setFlightSched(flightSched);
@@ -139,14 +174,18 @@ public class FlightStatusBacking implements Serializable {
                 flightSchedHelpers.add(flightSchedHelper);
             }
             if (selecteRoute) {
-                return crmExNavController.redirectToSearchFlightStatus() + "?i=0";
+                return crmExNavController.redirectToSearchFlightStatus() + "i=0";
             } else {
-                return crmExNavController.redirectToSearchFlightStatus() + "?i=1";
+                return crmExNavController.redirectToSearchFlightStatus() + "i=1";
             }
         } catch (NoSuchFlightSchedulException e) {
             msgController.addErrorMessage(e.getMessage());
         }
         return "";
+    }
+
+    public FlightSchedule getMappedFlightSched(FlightSchedule flightSchedule) {
+        return inDirectFlightSchedMaps.get(flightSchedule.getFlightScheduleId());
     }
 
     //
@@ -190,14 +229,6 @@ public class FlightStatusBacking implements Serializable {
 
     public void setArrAirport(Airport arrAirport) {
         this.arrAirport = arrAirport;
-    }
-
-    public Airport getAirport() {
-        return airport;
-    }
-
-    public void setAirport(Airport airport) {
-        this.airport = airport;
     }
 
     public String getFlightNo() {

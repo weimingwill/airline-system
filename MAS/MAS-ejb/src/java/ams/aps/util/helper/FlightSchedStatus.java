@@ -14,4 +14,9 @@ public class FlightSchedStatus {
     public static final String RELEASE = "Release";
     public static final String ON_SCHEDULE = "On schedule";
     public static final String ARRIVE = "Arrive";
+    
+    //Methods
+    public static final String METHOD_BOOKING = "booking";
+    public static final String METHOD_FLIGHT_STATUS = "flightStatus";
+    
 }

@@ -13,33 +13,36 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form>
+        <h:form id="flightStatusForm" style="text-align: center;">
+            <p:panel style="width: 70%;">
             <p:tabMenu activeIndex="#{param.i}" >
-                <p:menuitem value="Search by route" outcome="#{navigationController.redirectToCurrentPage()}" >
+                <p:menuitem value="Search by route" outcome="#{flightStatusManager.onSearchByClicked()}" >
                     <f:param name="i" value="0" />
                 </p:menuitem>
-                <p:menuitem value="Search by flight number" outcome="#{navigationController.redirectToCurrentPage()}">
+                <p:menuitem value="Search by flight number" outcome="#{flightStatusManager.onSearchByClicked()}">
                     <f:param name="i" value="1" />
                 </p:menuitem>
             </p:tabMenu>
-            <pa:CCFlightStatusSearchPanel />
+            
+            <pa:CCFlightStatusSearchPanel/>
 
-            <p:panelGrid>
+            <p:panelGrid style="width: 102%; margin-top: 50px;" rendered="#{not empty flightStatusManager.flightScheds}">
                 <f:facet name="header">
                     <p:row>
                         <p:column>Flight</p:column>
                         <p:column>Status</p:column>
                         <p:column>Scheduled</p:column>
-                        <p:column>Estimated</p:column>
                         <p:column>Actual</p:column>
                     </p:row>
                 </f:facet>
-                <c:forEach items="#{flightStatusBacking.flightScheds}" var="flightSched" >
-                    <pa:CCFlightStatusDetailPanel flightSched="#{flightSched.arr}" />
+                <c:forEach items="#{flightStatusManager.flightScheds}" var="flightSched" >
+                    <pa:CCFlightStatusDetailPanel flightSched="#{flightSched}" />
+                    <pa:CCFlightStatusDetailPanel flightSched="#{flightStatusManager.getMappedFlightSched(flightSched)}" 
+                                                  rendered="#{not empty flightStatusManager.getMappedFlightSched(flightSched)}" />
                 </c:forEach>
 
             </p:panelGrid>
-
+            </p:panel>
         </h:form>
     </ui:define>
 

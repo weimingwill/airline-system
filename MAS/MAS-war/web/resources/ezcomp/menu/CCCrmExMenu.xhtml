@@ -21,6 +21,7 @@
                         <p:graphicImage value="/resources/images/logo.png" height="45px" width="auto"/>
                     </p:commandLink>
                 </p:menuitem>
+                <p:menuitem value="General Information" url="#{crmExNavController.redirectToGeneralInformation()}" icon="ui-icon-document"  styleClass="navBtn"/>
 
 
                 <f:facet name="options">
@@ -30,8 +31,6 @@
                                      action="#{crmExNavController.redirectToCustomerLogin()}" rendered="#{not customerLoginManager.loggedIn}" />
                     <p:commandButton value="Logout"  icon="ui-icon-extlink" styleClass="navBtn" actionListener="#{customerLoginManager.doLogout()}" 
                                      action="#{crmExNavController.redirectToCustomerLogin()}" rendered="#{customerLoginManager.loggedIn}" />
-                    <p:commandButton value="General Information"  icon="ui-icon-document" styleClass="navBtn" 
-                                     action="#{crmExNavController.redirectToGeneralInformation()}" />
                 </f:facet>
             </p:menubar>
         </h:form>        
