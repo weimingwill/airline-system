@@ -128,6 +128,24 @@ public class CustomerExSession implements CustomerExSessionLocal {
     }
 
     @Override
+    public void upgradeMembership(String email, String membershipName) throws NoSuchRegCustException {
+        RegCust r = getRegCustByEmail(email);
+        try {
+            r.setMembership(entityManager.find(Membership.class, getMembershipByName(membershipName).getId()));
+        } catch (NoSuchMembershipException ex) {
+            Logger.getLogger(CustomerExSession.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException ex) {
+            try {
+                System.out.println("getMembershipByName(\"Elite Bronze\"): " + getMembershipByName("Elite Bronze"));
+            } catch (NoSuchMembershipException ex1) {
+                Logger.getLogger(CustomerExSession.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        }
+        entityManager.merge(r);
+        entityManager.flush();
+    }
+
+    @Override
     public List<RegCust> getAllRegCusts() {
         Query query = entityManager.createQuery("SELECT r FROM RegCust r");
         return query.getResultList();
@@ -177,15 +195,16 @@ public class CustomerExSession implements CustomerExSessionLocal {
             }
         }
     }
+
     @Override
     public void checkAccountUpgrade(String email) throws NoSuchRegCustException, NoSuchMembershipException {
         RegCust r = getRegCustByEmail(email);
         if (r == null) {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
         } else {
-            if (r.getCustValue() >= 4000) {
+            if (r.getCustValue() >= 50000) {
                 r.setMembership(entityManager.find(Membership.class, getMembershipByName("Elite Silver").getId()));
-            } else if (r.getCustValue() >= 8000) {
+            } else if (r.getCustValue() >= 100000) {
                 r.setMembership(entityManager.find(Membership.class, getMembershipByName("Elite Gold").getId()));
 
             }
@@ -207,9 +226,9 @@ public class CustomerExSession implements CustomerExSessionLocal {
 
         }
     }
-    
+
     @Override
-     public void updateValue(String email, Double customerValue) throws NoSuchRegCustException{
+    public void updateValue(String email, Double customerValue) throws NoSuchRegCustException {
         RegCust r = getRegCustByEmail(email);
         if (r == null) {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
@@ -222,8 +241,8 @@ public class CustomerExSession implements CustomerExSessionLocal {
             } catch (NoSuchMembershipException ex) {
                 Logger.getLogger(CustomerExSession.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } 
-     }
+        }
+    }
 
     @Override
     public void updateProfile(Long customerId, String passportNo, Date passportIssueDate, Date passportExpDate, String nationality, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone phone, String securQuest, String securAns, Boolean newsLetterPref, Boolean promoPref) throws ExistSuchRegCustException, NoSuchRegCustException {

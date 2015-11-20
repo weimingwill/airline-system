@@ -32,6 +32,8 @@ public interface CustomerExSessionLocal {
     public void updateValue(String email, Double customerValue) throws NoSuchRegCustException;
 
     public void checkAccountUpgrade(String email) throws NoSuchRegCustException, NoSuchMembershipException;
+    
+    public void upgradeMembership(String email, String membershipName)throws NoSuchRegCustException;
 
     public void createRegCust(RegCust regCust) throws ExistSuchRegCustException;
 

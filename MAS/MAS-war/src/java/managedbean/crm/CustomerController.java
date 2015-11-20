@@ -89,6 +89,15 @@ public class CustomerController implements Serializable {
     private Date passportIssueDate;
     private List<Feedback> feedbacks;
     private Membership membership;
+    private String membershipName;
+
+    public String getMembershipName() {
+        return membershipName;
+    }
+
+    public void setMembershipName(String membershipName) {
+        this.membershipName = membershipName;
+    }
 
     
     
@@ -122,12 +131,24 @@ public class CustomerController implements Serializable {
         return navigationController.redirectToCurrentPage();
     }
     
+    
      public String claimMiles() throws NoSuchRegCustException, NoSuchBookingReferenceException{
         customerSession.updateMiles(email,accMiles+viewBookingBacking.getActualPointClaim());
         customerSession.updateValue(email,custValue+viewBookingBacking.getActualPointClaim());
         bookingSession.updateBooking(viewBookingBacking.getBookingReferenceNo()); 
         return navigationController.redirectToCurrentPage();
     }
+     
+     public String updateSilverMembership() throws NoSuchRegCustException{
+         membershipName="Elite Silver";
+         customerSession.upgradeMembership(email,membershipName);
+         return navigationController.redirectToCurrentPage();
+     }
+     public String updateGoldMembership() throws NoSuchRegCustException{
+          membershipName="Elite Gold";
+         customerSession.upgradeMembership(email,membershipName);
+         return navigationController.redirectToCurrentPage();
+     }
     public void initializeCustomer() {
         try {
             RegCust regCust = getRegCustByEmail();
