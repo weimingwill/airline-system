@@ -14,6 +14,7 @@ import ams.aps.entity.FlightSchedule;
 import ams.aps.session.FlightSchedulingSessionLocal;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import managedbean.application.AfosNavController;
 import managedbean.application.MsgController;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -53,9 +54,11 @@ public class FlightDutyBacking implements Serializable {
     private Checklist selectedTemplate;
     private Checklist flightChecklist;
     private String selectedType;
+    private String selectedTypeForChlt;
     private List<Flight> scheduledFlights;
     private List<Flight> selectedFlights;
     private Flight selectedFlight;
+    private Flight selectedFlightForChlt;
     private List<FlightSchedule> futureFlightSchedules;
     private ChecklistItem selectedChecklistItem;
     private ChecklistItem newChecklistItem = new ChecklistItem();
@@ -73,9 +76,9 @@ public class FlightDutyBacking implements Serializable {
         String uri = request.getRequestURI();
         uri = uri.substring(uri.lastIndexOf("/") + 1, uri.indexOf('.', uri.lastIndexOf("/")));
         System.out.println("FlightDutyBacking: init() uri = " + uri);
+        setScheduledFlights(getFlightsWithFlightSchedules());
         switch (uri) {
             case "selectChecklistType":
-                setScheduledFlights(getFlightsWithFlightSchedules());
                 setChecklistTypes((List<String>) new ArrayList());
                 getChecklistTypes().add(ChecklistType.PRE_FLIGHT);
                 getChecklistTypes().add(ChecklistType.POST_FLIGHT);
@@ -93,17 +96,39 @@ public class FlightDutyBacking implements Serializable {
                     }
                     setFlightChecklist(newflightChecklist);
                 }
+                removeSelectedFlightFromFlightList();
+                break;
+            default:
         }
-
     }
 
-    public String createNewChecklist() {
+    private void removeSelectedFlightFromFlightList() {
+        scheduledFlights.remove(selectedFlight);
+        scheduledFlights.remove(selectedFlight.getReturnedFlight());
+    }
+
+    public String applyTmpToOtherFlights() {
+        for (Flight thisFlight : selectedFlights) {
+            createNewChecklist(new Checklist(), thisFlight);
+        }
+        createNewChecklist(flightChecklist, selectedFlight);
+        return afosNavController.toSelectChecklist();
+    }
+
+    public String createNewChecklist(Checklist checklist, Flight thisFlight) {
         flightChecklist.setIsTemplate(isTemplate);
         System.out.println("isTemplate = " + isTemplate);
         flightChecklist.setType(selectedType);
         flightChecklist.setDeleted(false);
-        flightCrewMgmtSession.createFlightDutyChecklist(flightChecklist, selectedFlight);
-        msgController.addMessage("Create " + selectedType + " Checklist for Flight" + selectedFlight.getFlightNo() + "/" + selectedFlight.getReturnedFlight().getFlightNo());
+        if (checklist.getChecklistItems() == null || checklist.getChecklistItems().isEmpty()) {
+            // if checklist if a new checklist -> case: apply checklist to other flight
+            checklist.setChecklistItems(flightChecklist.getChecklistItems());
+            checklist.setDeleted(flightChecklist.getDeleted());
+            checklist.setIsTemplate(false);
+            checklist.setType(flightChecklist.getType());
+        }
+        flightCrewMgmtSession.createFlightDutyChecklist(checklist, thisFlight);
+        msgController.addMessage("Create " + selectedType + " Checklist for Flight" + thisFlight.getFlightNo() + "/" + thisFlight.getReturnedFlight().getFlightNo());
         return afosNavController.toSelectChecklist();
     }
 
@@ -166,6 +191,8 @@ public class FlightDutyBacking implements Serializable {
 
     public void onAddItemBtnClick() {
         List<ChecklistItem> checklistItems = flightChecklist.getChecklistItems();
+        newChecklistItem.setCreatedTime(Calendar.getInstance().getTime());
+        newChecklistItem.setLastUpdateTime(Calendar.getInstance().getTime());
         if (checklistItems == null) {
             checklistItems = new ArrayList();
             checklistItems.add(newChecklistItem);
@@ -176,13 +203,43 @@ public class FlightDutyBacking implements Serializable {
         System.out.println("New Item: \n\tTitle: " + newChecklistItem.getName() + "\n\tDescription: " + newChecklistItem.getDescription());
     }
 
+    public void onCellEdit(CellEditEvent event) {
+        int rowIndex = event.getRowIndex();
+        ChecklistItem oldItem = flightChecklist.getChecklistItems().get(rowIndex);
+        ChecklistItem newItem = new ChecklistItem();
+        newItem.setCreatedTime(oldItem.getCreatedTime());
+        newItem.setDescription(oldItem.getDescription());
+        newItem.setLastUpdateTime(Calendar.getInstance().getTime());
+        newItem.setName(oldItem.getName());
+        flightChecklist.getChecklistItems().remove(oldItem);
+        flightChecklist.getChecklistItems().add(rowIndex, newItem);
+    }
+
     public void onDeleteBtnClick() {
         flightChecklist.getChecklistItems().remove(selectedChecklistItem);
     }
 
     public void setAsTemplate() {
         isTemplate = true;
-        createNewChecklist();
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.execute("PF('applyTemplateDlg').show();");
+    }
+
+    public void onViewPreBtnClick() {
+        setSelectedTypeForChlt(ChecklistType.PRE_FLIGHT);
+        getFlightCheckist();
+    }
+
+    public void onViewPostBtnClick() {
+        setSelectedTypeForChlt(ChecklistType.POST_FLIGHT);
+        getFlightCheckist();
+    }
+
+    private void getFlightCheckist() {
+        setFlightChecklist(flightCrewMgmtSession.getFlightChecklist(selectedFlightForChlt, selectedTypeForChlt));
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.update("checklistDlg");
+        context.execute("PF('checklistDlg').show();");
     }
 
     /**
@@ -337,6 +394,34 @@ public class FlightDutyBacking implements Serializable {
      */
     public void setNewChecklistItem(ChecklistItem newChecklistItem) {
         this.newChecklistItem = newChecklistItem;
+    }
+
+    /**
+     * @return the selectedFlightForChlt
+     */
+    public Flight getSelectedFlightForChlt() {
+        return selectedFlightForChlt;
+    }
+
+    /**
+     * @param selectedFlightForChlt the selectedFlightForChlt to set
+     */
+    public void setSelectedFlightForChlt(Flight selectedFlightForChlt) {
+        this.selectedFlightForChlt = selectedFlightForChlt;
+    }
+
+    /**
+     * @return the selectedTypeForChlt
+     */
+    public String getSelectedTypeForChlt() {
+        return selectedTypeForChlt;
+    }
+
+    /**
+     * @param selectedTypeForChlt the selectedTypeForChlt to set
+     */
+    public void setSelectedTypeForChlt(String selectedTypeForChlt) {
+        this.selectedTypeForChlt = selectedTypeForChlt;
     }
 
 }

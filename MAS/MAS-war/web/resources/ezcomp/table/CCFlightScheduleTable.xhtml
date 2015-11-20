@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dataTable id="flight-schedule" var="flightSchedule" value="#{flightDutyBacking.futureFlightSchedules}" rows="10" tableStyleClass="table-small" selectionMode="single" rowKey="#{flightSchedule.flightScheduleId}"
+                     paginator="true" rowsPerPageTemplate="10,15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+            <p:column headerText="Flight No.">
+                <p:outputLabel value="#{flightSchedule.flight.flightNo}" />
+            </p:column>
+            <p:column headerText="Departure">
+                <p:outputLabel id="depart" value="#{flightSchedule.leg.departAirport.city.cityName}">
+                    <p:tooltip for="depart" value="#{flightSchedule.leg.departAirport.country.countryName} - #{flightSchedule.leg.departAirport.city.cityName} - #{flightSchedule.leg.departAirport.airportName}" trackMouse="true"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Departure Date">
+                <p:outputLabel value="#{flightSchedule.departDate}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Departure Time">
+                <p:outputLabel value="#{flightSchedule.departDate}">
+                    <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Arrival">
+                <p:outputLabel id="arrival" value="#{flightSchedule.leg.arrivalAirport.city.cityName}" >
+                    <p:tooltip for="arrival" value="#{flightSchedule.leg.arrivalAirport.country.countryName} - #{flightSchedule.leg.arrivalAirport.city.cityName} - #{flightSchedule.leg.arrivalAirport.airportName}" trackMouse="true"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Arrival Date">
+                <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Arrival Time">
+                <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                    <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Aircraft Type">
+                <p:outputLabel value="#{flightSchedule.aircraft.aircraftType.typeCode}" />
+            </p:column>
+            <p:column headerText="Aircraft Tail No.">
+                <p:outputLabel value="#{flightSchedule.aircraft.tailNo}" />
+            </p:column>
+        </p:dataTable>
+    </cc:implementation>
+</html>

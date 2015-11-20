@@ -4,58 +4,15 @@
                 template="./../../../../../template/AfosTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
 
     <ui:define name="content">
         <h:form id="createChecklistForm">
             <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>
-
-            <p:dataTable id="flightTable" var="flight" value="#{flightDutyBacking.scheduledFlights}" rows="10" tableStyleClass="table-small"
-                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15"
-                         selection="#{flightDutyBacking.selectedFlight}" rowKey="#{flight.id}">
-                <f:facet name="header">
-                    <p:outputLabel value=" Please select flights to create checklist" class="fa fa-info-circle" style="font-weight: bold"/>
-                </f:facet>
-                <p:column selectionMode="single" style="width:16px;text-align:center"/>
-                <p:column headerText="Flight Number" sortBy="#{flight.flightNo}">
-                    <h:outputText value="#{flight.flightNo}" />
-                </p:column>
-                <p:column headerText="Return Flight" sortBy="#{flight.returnedFlight.flightNo}">
-                    <h:outputText value="#{flight.returnedFlight.flightNo}" />
-                </p:column>
-                <p:column headerText="Depature" sortBy="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}">
-                    <h:outputText id="depart" value="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}" />
-                </p:column>
-                <p:column headerText="Arrival" sortBy="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}">
-                    <h:outputText value="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}" />
-                </p:column>
-                <p:column headerText="Total Duration (Hrs)" sortBy="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}">
-                    <h:outputText value="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" >
-                        <f:convertNumber maxFractionDigits="2"/>
-                    </h:outputText>
-                </p:column>
-                <p:column headerText="Total Distance (Km)" sortBy="#{flightScheduleManager.getRouteHelper(flight).getTotalDistance()}">
-                    <h:outputText value="#{flightScheduleManager.getRouteHelper(flight).getTotalDistance()}" >
-                        <f:convertNumber maxFractionDigits="2"/>
-                    </h:outputText>
-                </p:column>
-                <p:column headerText="Schedules">
-                    <p:commandButton action="#{flightDutyBacking.onViewBtnClick()}" icon="fa fa-calendar" title="View Schedules">
-                        <f:setPropertyActionListener value="#{flight}" target="#{flightDutyBacking.selectedFlight}" />
-                    </p:commandButton>
-                </p:column>
-                <f:facet name="footer">
-                    <h:outputText value=" Please select checklist type" class="fa fa-info-circle" style="font-weight: bold"/>
-                    <p:separator style="border:none"/>
-                    <p:selectOneMenu value="#{flightDutyBacking.selectedType}" style="width: 150px">
-                        <f:selectItem itemLabel="Select One" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{flightDutyBacking.checklistTypes}" var="type" itemValue="#{type}" itemLabel="#{type}"/>
-                        <p:ajax event="change" listener="#{flightDutyBacking.onChecklistTypeChange}" update="templateDlg"/>
-                    </p:selectOneMenu>
-                </f:facet>
-            </p:dataTable>
+            <ta:FlightTable selection="#{flightDutyBacking.selectedFlight}" selectionMode="single" displayFooter="true" header=" Please select flights to create checklist"/>
             <p:separator/>
-            <p:commandButton value="Create" action="#{flightDutyBacking.onCreateBtnClick()}"/>
+            <p:commandButton value="Create/Edit" action="#{flightDutyBacking.onCreateBtnClick()}"/>
         </h:form>
 
         <p:dialog header="Select a Template" id="templateDlg" widgetVar="templateDlg" resizable="false" closeOnEscape="true" >
@@ -76,49 +33,38 @@
 
         <p:dialog widgetVar="flightScheduleDlg" id="flightScheduleDlg" header="Flight Schedules for #{flightDutyBacking.selectedFlight.flightNo}/#{flightDutyBacking.selectedFlight.returnedFlight.flightNo}" modal="true" appendTo="@(body)" resizable="false">
             <h:form>
-                <p:dataTable id="flight-schedule" var="flightSchedule" value="#{flightDutyBacking.futureFlightSchedules}" rows="10" tableStyleClass="table-small" selectionMode="single" rowKey="#{flightSchedule.flightScheduleId}"
-                             paginator="true" rowsPerPageTemplate="10,15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-                    <p:column headerText="Flight No.">
-                        <p:outputLabel value="#{flightSchedule.flight.flightNo}" />
-                    </p:column>
-                    <p:column headerText="Departure">
-                        <p:outputLabel id="depart" value="#{flightSchedule.leg.departAirport.city.cityName}">
-                            <p:tooltip for="depart" value="#{flightSchedule.leg.departAirport.country.countryName} - #{flightSchedule.leg.departAirport.city.cityName} - #{flightSchedule.leg.departAirport.airportName}" trackMouse="true"/>
-                        </p:outputLabel>
-                    </p:column>
-                    <p:column headerText="Departure Date">
-                        <p:outputLabel value="#{flightSchedule.departDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
-                        </p:outputLabel>
-                    </p:column>
-                    <p:column headerText="Departure Time">
-                        <p:outputLabel value="#{flightSchedule.departDate}">
-                            <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
-                        </p:outputLabel>
-                    </p:column>
-                    <p:column headerText="Arrival">
-                        <p:outputLabel id="arrival" value="#{flightSchedule.leg.arrivalAirport.city.cityName}" >
-                            <p:tooltip for="arrival" value="#{flightSchedule.leg.arrivalAirport.country.countryName} - #{flightSchedule.leg.arrivalAirport.city.cityName} - #{flightSchedule.leg.arrivalAirport.airportName}" trackMouse="true"/>
-                        </p:outputLabel>
-                    </p:column>
-                    <p:column headerText="Arrival Date">
-                        <p:outputLabel value="#{flightSchedule.arrivalDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
-                        </p:outputLabel>
-                    </p:column>
-                    <p:column headerText="Arrival Time">
-                        <p:outputLabel value="#{flightSchedule.arrivalDate}">
-                            <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
-                        </p:outputLabel>
-                    </p:column>
-                    <p:column headerText="Aircraft Type">
-                        <p:outputLabel value="#{flightSchedule.aircraft.aircraftType.typeCode}" />
-                    </p:column>
-                    <p:column headerText="Aircraft Tail No.">
-                        <p:outputLabel value="#{flightSchedule.aircraft.tailNo}" />
-                    </p:column>
-                </p:dataTable>
+                <ta:CCFlightScheduleTable/>
             </h:form>
+        </p:dialog>
+
+        <p:dialog widgetVar="checklistDlg" id="checklistDlg" header="#{flightDutyBacking.selectedTypeForChlt} for #{flightDutyBacking.selectedFlightForChlt.flightNo}/#{flightDutyBacking.selectedFlightForChlt.returnedFlight.flightNo}" modal="true" appendTo="@(body)" resizable="false">
+            <p:panelGrid>
+                <p:row>
+                    <p:column class="ui-widget-header">
+                        <p:outputLabel value="S/N" />
+                    </p:column>
+                    <p:column class="ui-widget-header">
+                        <p:outputLabel value="Name" class="ui-widget-header"/>
+                    </p:column>
+                    <p:column class="ui-widget-header">
+                        <p:outputLabel value="Description" class="ui-widget-header"/>
+                    </p:column>
+                </p:row>
+
+                <ui:repeat value="#{flightDutyBacking.flightChecklist.checklistItems}" var="item" varStatus="status">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{status.index+1}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{item.name}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{item.description} "/>
+                        </p:column>
+                    </p:row>
+                </ui:repeat>
+            </p:panelGrid>
         </p:dialog>
     </ui:define>
 
