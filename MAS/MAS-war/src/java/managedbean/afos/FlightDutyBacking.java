@@ -10,23 +10,36 @@ import ams.afos.entity.ChecklistItem;
 import ams.afos.entity.FlightCrew;
 import ams.afos.session.FlightCrewMgmtSessionLocal;
 import ams.afos.util.helper.ChecklistType;
+import ams.aps.entity.Airport;
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.FlightSchedulingSessionLocal;
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import managedbean.application.AfosNavController;
 import managedbean.application.MsgController;
@@ -71,6 +84,7 @@ public class FlightDutyBacking implements Serializable {
 
     private List<FlightCrew> crewsForFlightSchedule;
     private FlightCrew selectedCrew;
+    private Checklist postFlightReport;
 
     /**
      * Creates a new instance of FlightDutyBacking
@@ -113,6 +127,11 @@ public class FlightDutyBacking implements Serializable {
             case "updateCrewAttendance":
                 map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
                 setCrewsForFlightSchedule((List<FlightCrew>) map.get("flightCrews"));
+                setSelectedFlightSchedule((FlightSchedule) map.get("selectedFlightSchedule"));
+                break;
+            case "viewDutyReport":
+                map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+                setPostFlightReport((Checklist) map.get("postFlightReport"));
                 setSelectedFlightSchedule((FlightSchedule) map.get("selectedFlightSchedule"));
                 break;
             default:
@@ -273,7 +292,7 @@ public class FlightDutyBacking implements Serializable {
     }
 
     public String getDepartureDateTime() {
-        SimpleDateFormat ft = new SimpleDateFormat("E dd/MM/yyyy 'at' hh:mm:ss a zzz");
+        SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
         return ft.format(selectedFlightSchedule.getDepartDate());
     }
 
@@ -287,10 +306,95 @@ public class FlightDutyBacking implements Serializable {
         flightCrewMgmtSession.updateAttendance(crewsForFlightSchedule, selectedFlightSchedule);
         return "";
     }
-    
-    public String onSaveBtnClick(){
+
+    public String onSaveBtnClick() {
         updateAttendance();
         return afosNavController.toCrewReporting();
+    }
+
+    public String onViewReportBtnClick() {
+        setPostFlightReport(flightCrewMgmtSession.getPostFlightReport(selectedFlightSchedule));
+        Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        map.put("postFlightReport", getPostFlightReport());
+        map.put("selectedFlightSchedule", selectedFlightSchedule);
+        return afosNavController.toViewPostDutyReport();
+    }
+
+    public String getItemValue(double value) {
+        if (value == 1) {
+            return "Checked";
+        } else if (value == 0) {
+            return "Not Checked";
+        } else {
+            String pattern = "###,###.##";
+            DecimalFormat decimalFormat = new DecimalFormat(pattern);
+            return decimalFormat.format(value);
+        }
+    }
+
+    public void preProcessPDF(Object document) throws IOException, BadElementException, DocumentException {
+        Document pdf = (Document) document;
+        pdf.open();
+        pdf.setPageSize(PageSize.A4);
+        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        String logo = servletContext.getRealPath("") + File.separator + "resources" + File.separator + "images" + File.separator + "logo.png";
+        Image logoImg = Image.getInstance(logo);
+        logoImg.scalePercent(20f);
+        SimpleDateFormat sdf = new SimpleDateFormat("E, dd/MM/yyyy 'at' hh:mm:ss a");
+
+        Font titleFont = new Font();
+        Font subtitleFont = new Font();
+        titleFont.setSize(16);
+        titleFont.setStyle(Font.BOLD);
+        subtitleFont.setSize(12);
+        subtitleFont.setStyle(Font.BOLD);
+
+        Paragraph title = new Paragraph("Post-Flight Duty Report", titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        title.setSpacingAfter(12f);
+
+        Paragraph subTitle1 = new Paragraph("Flight Information:", subtitleFont);
+        subTitle1.setSpacingAfter(8f);
+
+        Paragraph subTitle2 = new Paragraph("Post-Flight Checklist:", subtitleFont);
+        subTitle2.setSpacingBefore(12f);
+        subTitle2.setSpacingAfter(12f);
+
+        com.lowagie.text.List list = new com.lowagie.text.List(true, 15);
+        list.setLettered(true);
+        list.add("Flight: " + selectedFlightSchedule.getFlight().getFlightNo());
+        list.add("Return Flight: " + selectedFlightSchedule.getFlight().getReturnedFlight().getFlightNo());
+        Airport departure, arrival;
+        departure = selectedFlightSchedule.getLeg().getDepartAirport();
+        arrival = selectedFlightSchedule.getLeg().getArrivalAirport();
+        sdf.setTimeZone(TimeZone.getTimeZone(getTimeZone(departure)));
+        list.add("Departure Time: " + sdf.format(selectedFlightSchedule.getDepartDate()) + " (" + departure.getCity().getCityName() + " Time)");
+        sdf.setTimeZone(TimeZone.getTimeZone(getTimeZone(arrival)));
+        list.add("Arrival Time: " + sdf.format(selectedFlightSchedule.getArrivalDate())+" (" + arrival.getCity().getCityName() + " Time)");
+        list.add("Origin: " + departure.getCity().getCityName() + " (" + departure.getAirportName() + ")");
+        list.add("Destination: " + arrival.getCity().getCityName() + " (" + arrival.getAirportName() + ")");
+
+        pdf.add(logoImg);
+        pdf.add(new Paragraph(" "));
+        pdf.add(title);
+        pdf.add(subTitle1);
+        pdf.add(list);
+        pdf.add(subTitle2);
+        pdf.setMargins(72, 72, 72, 72);
+        pdf.addAuthor("Merlion Airline");
+        pdf.addCreationDate();
+        sdf.applyPattern("dd/MM/yyyy_hh:mm:ss");
+        pdf.addTitle("Post-Flight Duty Report_" + selectedFlightSchedule.getFlight().getFlightNo() + "_" + sdf.format(selectedFlightSchedule.getDepartDate()));
+    }
+
+    private String getTimeZone(Airport airport) {
+        DecimalFormat df = new DecimalFormat("#.#");
+        float utc = airport.getCity().getUTC();
+        if (utc > 0) {
+            return "GMT+" + df.format(utc);
+        } else {
+            return "GMT" + df.format(utc);
+        }
     }
 
     /**
@@ -529,6 +633,20 @@ public class FlightDutyBacking implements Serializable {
      */
     public void setSelectedCrew(FlightCrew selectedCrew) {
         this.selectedCrew = selectedCrew;
+    }
+
+    /**
+     * @return the postFlightReport
+     */
+    public Checklist getPostFlightReport() {
+        return postFlightReport;
+    }
+
+    /**
+     * @param postFlightReport the postFlightReport to set
+     */
+    public void setPostFlightReport(Checklist postFlightReport) {
+        this.postFlightReport = postFlightReport;
     }
 
 }

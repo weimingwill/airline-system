@@ -65,7 +65,7 @@
                 </p:commandButton>
             </p:column>
             <p:column headerText="Duty Report" rendered="#{cc.attrs.postFlightReport}">
-                <p:commandButton icon="fa fa-file-text-o">
+                <p:commandButton icon="fa fa-file-text-o" action="#{flightDutyBacking.onViewReportBtnClick()}">
                     <f:setPropertyActionListener value="#{flightSchedule}" target="#{flightDutyBacking.selectedFlightSchedule}" />
                 </p:commandButton>
             </p:column>

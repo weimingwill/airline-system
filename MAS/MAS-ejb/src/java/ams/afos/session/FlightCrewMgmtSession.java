@@ -16,6 +16,7 @@ import ams.afos.util.exception.BiddingSessionConflictException;
 import ams.afos.util.exception.FlightDutyConflictException;
 import ams.afos.util.exception.PairingConflictException;
 import ams.afos.util.helper.BiddingSessionStatus;
+import ams.afos.util.helper.ChecklistType;
 import ams.afos.util.helper.CrewType;
 import ams.afos.util.helper.PairingCrewStatus;
 import ams.aps.entity.AircraftCabinClass;
@@ -753,14 +754,14 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
 
     @Override
     public void updateAttendance(List<FlightCrew> flightCrews, FlightSchedule flightSchedule) {
-        for(FlightCrew fc: flightCrews){
+        for (FlightCrew fc : flightCrews) {
             em.merge(fc);
         }
     }
 
     @Override
     public List<FlightCrew> getOnDutyCrews(FlightSchedule flightSchedule) {
-        Query q=em.createQuery("SELECT DISTINCT pfc.flightCrew FROM PairingFlightCrew pfc, IN(pfc.pairing.flightDuties) fd, IN(fd.flightSchedules) fs WHERE fs.flightScheduleId = :fsId AND pfc.status = :status ORDER BY pfc.flightCrew.position.rank DESC, pfc.flightCrew.dateJoined ASC");
+        Query q = em.createQuery("SELECT DISTINCT pfc.flightCrew FROM PairingFlightCrew pfc, IN(pfc.pairing.flightDuties) fd, IN(fd.flightSchedules) fs WHERE fs.flightScheduleId = :fsId AND pfc.status = :status ORDER BY pfc.flightCrew.position.rank DESC, pfc.flightCrew.dateJoined ASC");
         q.setParameter("fsId", flightSchedule.getFlightScheduleId());
         q.setParameter("status", PairingCrewStatus.SUCCESS);
         return (List<FlightCrew>) q.getResultList();
@@ -794,8 +795,15 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     }
 
     @Override
-    public List<Checklist> getPostFlightReport(FlightSchedule flightSchedule) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Checklist getPostFlightReport(FlightSchedule flightSchedule) {
+        Query q = em.createQuery("SELECT cl FROM FlightSchedule fs, IN(fs.checklists) cl WHERE fs.flightScheduleId = :inId AND cl.deleted =FALSE AND cl.type = :inType");
+        q.setParameter("inId", flightSchedule.getFlightScheduleId());
+        q.setParameter("inType", ChecklistType.POST_FLIGHT);
+        try {
+            return (Checklist) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     // helper function

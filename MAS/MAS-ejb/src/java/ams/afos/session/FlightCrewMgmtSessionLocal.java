@@ -42,6 +42,6 @@ public interface FlightCrewMgmtSessionLocal {
     public List<Checklist> getFlightDutyChecklist(FlightSchedule FlightSchedule, String type);
     public Checklist getFlightChecklist(Flight thisFlight, String type);
     public List<Checklist> getChecklistTemplates(String type);
-    public List<Checklist> getPostFlightReport(FlightSchedule flightSchedule);
+    public Checklist getPostFlightReport(FlightSchedule flightSchedule);
     
 }

@@ -67,4 +67,8 @@ public class AfosNavController {
     public String toUpdateCrewAttendance(){
         return AFOS_URL + "crew_regulation/updateCrewAttendance.xhtml" + REDIRECT;
     }
+    
+    public String toViewPostDutyReport(){
+        return AFOS_URL + "crew_regulation/viewDutyReport.xhtml" + REDIRECT;
+    }
 }
