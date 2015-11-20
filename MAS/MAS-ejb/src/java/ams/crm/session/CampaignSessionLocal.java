@@ -27,4 +27,12 @@ public interface CampaignSessionLocal {
     public CustomerList getCustomerListById(Long id);
     
     public MktCampaign updateMktCampaign(MktCampaign mktCampaign, Date startTime, Date endTime, double budget);
+    
+    public int getCampaignNo();
+    
+    public int getOngoingCampaignNo();
+    
+    public String getPromoCodeByCampaign(MktCampaign mktCampaign);
+    
+    
 }

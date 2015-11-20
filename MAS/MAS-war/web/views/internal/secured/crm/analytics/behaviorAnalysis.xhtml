@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Customer Behavioral Analysis
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <p:growl id="msgs" showDetail="true" />
+
+            <p:dashboard id="bahaviorDashboard" model="#{analyticsController.behaviorDashboard}">
+                <p:ajax event="reorder" listener="#{analyticsController.handleReorder}" update="msgs" />
+
+                <p:panel id="travellerType" header="Business travellers vs Leisure travellers">
+                    <p:chart type="donut" model="#{analyticsController.travellerType}" style="width:400px;height:300px" />
+                </p:panel>
+
+                <p:panel id="customerType" header="New customers vs Return customers">
+                    <p:chart type="donut" model="#{analyticsController.customerType}" style="width:400px;height:300px" />
+                </p:panel>
+
+                <p:panel id="addOnRate" header="Purchase rate of add-on service">
+                    <p:outputLabel value="#{analyticsController.addOnRate}">
+                    </p:outputLabel>
+                </p:panel>
+
+                <p:panel id="channelDistribution" header="Sales Channel Distribution">
+                    <p:chart type="donut" model="#{analyticsController.channelDistribution}" style="width:400px;height:300px" />
+                </p:panel>
+
+            </p:dashboard>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

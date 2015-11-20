@@ -151,13 +151,6 @@ public class RevMgmtSession implements RevMgmtSessionLocal {
     }
 
     @Override
-    public BookingClassHelper getBookingClassHelperById(Long Id) throws NoSuchBookingClassException {
-        BookingClassHelper bookingClassHelper = new BookingClassHelper();
-        bookingClassHelper.setBookingClass(getBookingClassById(Id));
-        return bookingClassHelper;
-    }
-
-    @Override
     public List<BookingClassHelper> getBookingClassHelpers(Long flightScheduleId, Long ticketFamilyId) {
         List<BookingClassHelper> bookingClassHelpers = new ArrayList<>();
         try {
@@ -309,19 +302,6 @@ public class RevMgmtSession implements RevMgmtSessionLocal {
         }
     }
 
-//    @Override
-//    public void setBookingClassDefaultPrice(Long flightScheduleId, Long ticketFamilyId, float ticketFamilyPrice)
-//            throws NoSuchFlightScheduleBookingClassException {
-//        try {
-//            for (FlightScheduleBookingClass fsbc : getFlightScheduleBookingClassJoinTablesOfTicketFamily(flightScheduleId, ticketFamilyId)) {
-//                FlightScheduleBookingClass flightScheduleBookingClass = getOriginalFlightScheduleBookingClass(fsbc);
-//                flightScheduleBookingClass.setPrice(ticketFamilyPrice);
-//                em.merge(flightScheduleBookingClass);
-//            }
-//        } catch (NoSuchFlightScheduleBookingClassException ex) {
-//            throw new NoSuchFlightScheduleBookingClassException(AisMsg.NO_SUCH_BOOKING_CLASS_ERROR);
-//        }
-//    }
     private FlightScheduleBookingClass getOriginalFlightScheduleBookingClass(FlightScheduleBookingClass fsbc) {
         return em.find(FlightScheduleBookingClass.class, fsbc.getFlightScheduleBookingClassId());
     }

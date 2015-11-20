@@ -36,13 +36,13 @@
                     <h:outputText value="#{campaign.description}" />
                 </p:column>
 
-                <p:column headerText="Start time" sortBy="#{feedback.startTime}">
+                <p:column headerText="Start time" sortBy="#{campaign.startTime}">
                     <p:outputLabel value="#{campaign.startTime}">
                         <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
                     </p:outputLabel>
                 </p:column>
 
-                <p:column headerText="End time" sortBy="#{feedback.endTime}">
+                <p:column headerText="End time" sortBy="#{campaign.endTime}">
                     <p:outputLabel value="#{campaign.endTime}">
                         <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
                     </p:outputLabel>

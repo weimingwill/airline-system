@@ -22,9 +22,13 @@
                     </p:commandLink>
                 </p:menuitem>
 
-                
+
                 <f:facet name="options">
-                    <p:commandButton value="Login"  icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>
+                    <p:commandButton value="Registration"  icon="ui-icon-person" styleClass="navBtn" action="#{crmExNavController.redirectToCustomerRegistration()}"></p:commandButton>
+                    <p:commandButton value="Login"  icon="ui-icon-person" styleClass="navBtn" action="#{crmExNavController.redirectToCustomerLogin()}"></p:commandButton>
+                    <p:commandButton value="Logout"  icon="ui-icon-extlink" styleClass="navBtn" actionListener="#{customerLoginManager.doLogout()}" action="#{crmExNavController.redirectToCustomerLogin()}"></p:commandButton>
+                    <!--                    <p:commandButton value="Edit Profile"  icon="ui-icon-pencil" styleClass="navBtn" action="{crmExNavController.redirectToProfileManagement()}"></p:commandButton>-->
+                    <p:commandButton value="General Information"  icon="ui-icon-document" styleClass="navBtn" action="#{crmExNavController.redirectToGeneralInformation()}"></p:commandButton>
                 </f:facet>
             </p:menubar>
         </h:form>        

@@ -1,0 +1,658 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="costReport" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1c9a714e-e752-4ff1-8e68-766e0dfbf777">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="47"/>
+	<property name="ireport.y" value="451"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="PieChartDataset" uuid="ea75b45f-cbe3-40c2-8b81-b21f258ffcc8"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     FLIGHT.`ID` AS FLIGHT_ID,
+     FLIGHT.`COMPLETED` AS FLIGHT_COMPLETED,
+     FLIGHT.`DELETED` AS FLIGHT_DELETED,
+     FLIGHT.`FLIGHTNO` AS FLIGHT_FLIGHTNO,
+     FLIGHT.`NUMOFUNSCHEDULED` AS FLIGHT_NUMOFUNSCHEDULED,
+     FLIGHT.`SPEEDFRACTION` AS FLIGHT_SPEEDFRACTION,
+     FLIGHT.`WEEKLYFREQUENCY` AS FLIGHT_WEEKLYFREQUENCY,
+     FLIGHT.`ROUTE_ROUTEID` AS FLIGHT_ROUTE_ROUTEID,
+     FLIGHT.`RETURNEDFLIGHT_ID` AS FLIGHT_RETURNEDFLIGHT_ID,
+     FLIGHTSCHEDULE.`FLIGHTSCHEDULEID` AS FLIGHTSCHEDULE_FLIGHTSCHEDULEID,
+     FLIGHTSCHEDULE.`ARRIVALDATE` AS FLIGHTSCHEDULE_ARRIVALDATE,
+     FLIGHTSCHEDULE.`ARRIVALGATE` AS FLIGHTSCHEDULE_ARRIVALGATE,
+     FLIGHTSCHEDULE.`ARRIVALTERMINAL` AS FLIGHTSCHEDULE_ARRIVALTERMINAL,
+     FLIGHTSCHEDULE.`COMPLETED` AS FLIGHTSCHEDULE_COMPLETED,
+     FLIGHTSCHEDULE.`CREATEDTIME` AS FLIGHTSCHEDULE_CREATEDTIME,
+     FLIGHTSCHEDULE.`DELETED` AS FLIGHTSCHEDULE_DELETED,
+     FLIGHTSCHEDULE.`DEPARTDATE` AS FLIGHTSCHEDULE_DEPARTDATE,
+     FLIGHTSCHEDULE.`DEPARTGATE` AS FLIGHTSCHEDULE_DEPARTGATE,
+     FLIGHTSCHEDULE.`DEPARTTERMINAL` AS FLIGHTSCHEDULE_DEPARTTERMINAL,
+     FLIGHTSCHEDULE.`PRICED` AS FLIGHTSCHEDULE_PRICED,
+     FLIGHTSCHEDULE.`SEATALLOCATED` AS FLIGHTSCHEDULE_SEATALLOCATED,
+     FLIGHTSCHEDULE.`STATUS` AS FLIGHTSCHEDULE_STATUS,
+     FLIGHTSCHEDULE.`TURNOVERTIME` AS FLIGHTSCHEDULE_TURNOVERTIME,
+     FLIGHTSCHEDULE.`AIRCRAFT_AIRCRAFTID` AS FLIGHTSCHEDULE_AIRCRAFT_AIRCRAFTID,
+     FLIGHTSCHEDULE.`FLIGHT_ID` AS FLIGHTSCHEDULE_FLIGHT_ID,
+     FLIGHTSCHEDULE.`LEG_LEGID` AS FLIGHTSCHEDULE_LEG_LEGID,
+     FLIGHTSCHEDULE.`NEXTFLIGHTSCHED_FLIGHTSCHEDULEID` AS FLIGHTSCHEDULE_NEXTFLIGHTSCHED_FLIGHTSCHEDULEID,
+     FLIGHTSCHEDULE.`PREFLIGHTSCHED_FLIGHTSCHEDULEID` AS FLIGHTSCHEDULE_PREFLIGHTSCHED_FLIGHTSCHEDULEID
+FROM
+     `FLIGHT` FLIGHT INNER JOIN `FLIGHTSCHEDULE` FLIGHTSCHEDULE ON FLIGHT.`ID` = FLIGHTSCHEDULE.`FLIGHT_ID`]]>
+	</queryString>
+	<field name="FLIGHT_ID" class="java.lang.Long"/>
+	<field name="FLIGHT_COMPLETED" class="java.lang.Boolean"/>
+	<field name="FLIGHT_DELETED" class="java.lang.Boolean"/>
+	<field name="FLIGHT_FLIGHTNO" class="java.lang.String"/>
+	<field name="FLIGHT_NUMOFUNSCHEDULED" class="java.lang.Integer"/>
+	<field name="FLIGHT_SPEEDFRACTION" class="java.lang.Double"/>
+	<field name="FLIGHT_WEEKLYFREQUENCY" class="java.lang.Integer"/>
+	<field name="FLIGHT_ROUTE_ROUTEID" class="java.lang.Long"/>
+	<field name="FLIGHT_RETURNEDFLIGHT_ID" class="java.lang.Long"/>
+	<field name="FLIGHTSCHEDULE_FLIGHTSCHEDULEID" class="java.lang.Long"/>
+	<field name="FLIGHTSCHEDULE_ARRIVALDATE" class="java.sql.Timestamp"/>
+	<field name="FLIGHTSCHEDULE_ARRIVALGATE" class="java.lang.String"/>
+	<field name="FLIGHTSCHEDULE_ARRIVALTERMINAL" class="java.lang.String"/>
+	<field name="FLIGHTSCHEDULE_COMPLETED" class="java.lang.Boolean"/>
+	<field name="FLIGHTSCHEDULE_CREATEDTIME" class="java.sql.Timestamp"/>
+	<field name="FLIGHTSCHEDULE_DELETED" class="java.lang.Boolean"/>
+	<field name="FLIGHTSCHEDULE_DEPARTDATE" class="java.sql.Timestamp"/>
+	<field name="FLIGHTSCHEDULE_DEPARTGATE" class="java.lang.String"/>
+	<field name="FLIGHTSCHEDULE_DEPARTTERMINAL" class="java.lang.String"/>
+	<field name="FLIGHTSCHEDULE_PRICED" class="java.lang.Boolean"/>
+	<field name="FLIGHTSCHEDULE_SEATALLOCATED" class="java.lang.Boolean"/>
+	<field name="FLIGHTSCHEDULE_STATUS" class="java.lang.String"/>
+	<field name="FLIGHTSCHEDULE_TURNOVERTIME" class="java.lang.Double"/>
+	<field name="FLIGHTSCHEDULE_AIRCRAFT_AIRCRAFTID" class="java.lang.Long"/>
+	<field name="FLIGHTSCHEDULE_FLIGHT_ID" class="java.lang.Long"/>
+	<field name="FLIGHTSCHEDULE_LEG_LEGID" class="java.lang.Long"/>
+	<field name="FLIGHTSCHEDULE_NEXTFLIGHTSCHED_FLIGHTSCHEDULEID" class="java.lang.Long"/>
+	<field name="FLIGHTSCHEDULE_PREFLIGHTSCHED_FLIGHTSCHEDULEID" class="java.lang.Long"/>
+	<group name="FLIGHT_ID">
+		<groupExpression><![CDATA[$F{FLIGHT_ID}]]></groupExpression>
+		<groupHeader>
+			<band height="31">
+				<frame>
+					<reportElement mode="Opaque" x="229" y="7" width="573" height="24" forecolor="#B89F7D" backcolor="#70A9C6" uuid="994f321d-6a34-4045-8534-740bc264791e"/>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="SubTitle" isPrintRepeatedValues="false" x="2" y="1" width="263" height="23" forecolor="#FFFFFF" uuid="3f401701-aed4-4297-9003-82e95ba48397"/>
+						<textElement>
+							<font fontName="Arial" isBold="false" pdfFontName="Helvetica"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FLIGHT_ID}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="6"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="555" splitType="Stretch">
+			<pie3DChart>
+				<chart isShowLegend="false" evaluationTime="Report">
+					<reportElement x="-18" y="406" width="229" height="139" uuid="34e0b055-b03b-46b2-a83b-b1bc3e71cafa"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<dataset>
+						<datasetRun subDataset="PieChartDataset" uuid="2abfe2b3-2cc5-4d67-8e2d-188ac406a92f">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(5)]]></dataSourceExpression>
+						</datasetRun>
+					</dataset>
+					<keyExpression><![CDATA[/* Replace with your key expression here */
+$V{REPORT_COUNT}]]></keyExpression>
+					<valueExpression><![CDATA[new Double(200*Math.random()*5)]]></valueExpression>
+				</pieDataset>
+				<pie3DPlot>
+					<plot backgroundAlpha="0.5" foregroundAlpha="0.8">
+						<seriesColor seriesOrder="0" color="#3399FF"/>
+						<seriesColor seriesOrder="1" color="#00CCFF"/>
+						<seriesColor seriesOrder="2" color="#0066CC"/>
+						<seriesColor seriesOrder="3" color="#6699FF"/>
+						<seriesColor seriesOrder="4" color="#004A94"/>
+						<seriesColor seriesOrder="5" color="#00356A"/>
+					</plot>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+				</pie3DPlot>
+			</pie3DChart>
+			<image>
+				<reportElement x="-20" y="65" width="229" height="250" uuid="8fb91473-b746-4069-ba6a-561c79f74687">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA["flower1.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="-20" y="-20" width="229" height="250" uuid="16941942-9ffa-4967-87f8-412b7d40d54b">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} > 1]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA["flower1.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Opaque" x="318" y="315" width="239" height="181" backcolor="#FFFFCC" uuid="eb3f0d66-47a5-40ee-967f-282243f14c73">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4">
+					<pen lineWidth="1.0" lineColor="#CC9900"/>
+					<topPen lineWidth="1.0" lineColor="#CC9900"/>
+					<leftPen lineWidth="1.0" lineColor="#CC9900"/>
+					<bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+					<rightPen lineWidth="1.0" lineColor="#CC9900"/>
+				</box>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Each chart is populated on each page.
+The 3 pie charts are currently using an empty datasource and the values are
+generated using a random generator.
+
+This rectangle element is not printed (see the print when expression of this
+element)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="201" y="431" width="117" height="1" uuid="d2cd2dfd-3267-4669-b3d5-bfc7769e75e3">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="275" y="-10" width="240" height="181" backcolor="#FFFFCC" uuid="831449ae-5bb5-4364-94c7-5cbd2245d056">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4">
+					<pen lineWidth="1.0" lineColor="#CC9900"/>
+					<topPen lineWidth="1.0" lineColor="#CC9900"/>
+					<leftPen lineWidth="1.0" lineColor="#CC9900"/>
+					<bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+					<rightPen lineWidth="1.0" lineColor="#CC9900"/>
+				</box>
+				<textElement markup="none">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Flowers
+
+There are two flowers, the first one is printed only starting from the second page, the other one only in the first page.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="72" y="37" width="204" height="1" uuid="f52b3980-0fd2-47df-a4e9-0228a06556c8">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+				</graphicElement>
+			</line>
+		</band>
+	</background>
+	<title>
+		<band height="94" splitType="Stretch">
+			<staticText>
+				<reportElement style="SubTitle" x="336" y="65" width="449" height="29" uuid="aca48e62-2991-4831-8439-3f3a155aea1e"/>
+				<textElement textAlignment="Right">
+					<font size="22" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Flower SubTitle]]></text>
+			</staticText>
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="0" width="822" height="65" forecolor="#006699" backcolor="#006699" uuid="8854aef2-5b88-4dae-a18a-9ef14c571275"/>
+				<staticText>
+					<reportElement style="Title" x="231" y="0" width="578" height="65" uuid="5fdd0901-2619-4095-9502-d3acb9997d3e"/>
+					<textElement textAlignment="Right">
+						<font size="54" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Flower Title]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<frame>
+				<reportElement x="227" y="0" width="575" height="14" uuid="27f61493-d342-4406-8f82-9aa55d78464b"/>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="0" y="0" width="21" height="14" forecolor="#000000" uuid="28264f89-ebc8-478e-8eaa-6665b6568633"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHT_COMPLETED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="21" y="0" width="21" height="14" forecolor="#000000" uuid="ac5e323a-d1d0-4979-bdf3-86763699f214"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHT_DELETED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="42" y="0" width="21" height="14" forecolor="#000000" uuid="15cbb913-eee7-4694-bc54-9e672bba899b"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHT_FLIGHTNO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="63" y="0" width="21" height="14" forecolor="#000000" uuid="925b660a-f85b-400a-a807-e3bcda71804e"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHT_NUMOFUNSCHEDULED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="84" y="0" width="21" height="14" forecolor="#000000" uuid="c1fb7c1a-f41b-496c-b20b-16986e3adb68"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHT_SPEEDFRACTION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="105" y="0" width="21" height="14" forecolor="#000000" uuid="fc94a601-61e4-45d6-9813-3f00d19f8049"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHT_WEEKLYFREQUENCY]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="126" y="0" width="21" height="14" forecolor="#000000" uuid="8333f4f4-bcdc-43a7-af2e-26b0043e0cee"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHT_ROUTE_ROUTEID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="147" y="0" width="21" height="14" forecolor="#000000" uuid="44c21f1c-6e18-4a82-829e-c5fabad1977a"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHT_RETURNEDFLIGHT_ID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="168" y="0" width="21" height="14" forecolor="#000000" uuid="4f6ff30f-3bd5-4c2d-9a20-bd805a90eebe"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_FLIGHTSCHEDULEID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="189" y="0" width="21" height="14" forecolor="#000000" uuid="91e3206c-49c6-4826-9486-c228495ea8f3"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_ARRIVALDATE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="210" y="0" width="21" height="14" forecolor="#000000" uuid="c5054ea5-18e6-4b3e-94dc-59fea962a574"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_ARRIVALGATE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="231" y="0" width="21" height="14" forecolor="#000000" uuid="8d98f2f7-1cb3-4103-a2e8-b36192468d0d"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_ARRIVALTERMINAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="252" y="0" width="21" height="14" forecolor="#000000" uuid="98b18a01-043d-4c3a-9b33-6ea744a2e946"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_COMPLETED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="273" y="0" width="21" height="14" forecolor="#000000" uuid="9cc8e6d3-b5f6-4483-b373-721e8f523840"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_CREATEDTIME]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="294" y="0" width="21" height="14" forecolor="#000000" uuid="b00e21c1-fdce-48c3-bd11-216e2a41efcf"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_DELETED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="315" y="0" width="21" height="14" forecolor="#000000" uuid="da7c3949-b812-43f9-9aab-70a992e897d5"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_DEPARTDATE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="336" y="0" width="21" height="14" forecolor="#000000" uuid="84995381-ecdf-4bbf-a15e-1a3c542e934d"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_DEPARTGATE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="357" y="0" width="21" height="14" forecolor="#000000" uuid="c500c189-0788-43e1-ab5f-7be5f9585ea4"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_DEPARTTERMINAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="378" y="0" width="21" height="14" forecolor="#000000" uuid="6a2a0fa7-9c8f-4927-9248-1a083aae51b7"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_PRICED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="399" y="0" width="21" height="14" forecolor="#000000" uuid="1afd2660-6db8-4bfe-9d75-2d59eedc46fd"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_SEATALLOCATED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="420" y="0" width="21" height="14" forecolor="#000000" uuid="72b6f88b-2ec7-49cd-9f74-b2a1199f5091"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_STATUS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="441" y="0" width="21" height="14" forecolor="#000000" uuid="f73668bc-3d8a-48ec-83da-6dc8ba8cf003"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_TURNOVERTIME]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="462" y="0" width="21" height="14" forecolor="#000000" uuid="d35f9077-87db-43b7-b4a6-fa90b7bf419c"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_AIRCRAFT_AIRCRAFTID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="483" y="0" width="21" height="14" forecolor="#000000" uuid="74f0fe93-f6b2-46f8-ac19-b4cbe1f06394"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_FLIGHT_ID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="504" y="0" width="21" height="14" forecolor="#000000" uuid="3bf3acce-a522-4b21-9a2e-3c33574f0dee"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_LEG_LEGID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="525" y="0" width="21" height="14" forecolor="#000000" uuid="67957f4d-8719-4ef8-9b0e-73f00f545bd3"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_NEXTFLIGHTSCHED_FLIGHTSCHEDULEID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="546" y="0" width="21" height="14" forecolor="#000000" uuid="ea0a3875-27bc-4b73-a25f-63f249fea808"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[FLIGHTSCHEDULE_PREFLIGHTSCHED_FLIGHTSCHEDULEID]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="227" y="14" width="575" height="1" uuid="349bef5e-c6e1-467a-9e6f-63070d55fdea"/>
+			</line>
+			<frame>
+				<reportElement x="227" y="0" width="575" height="14" uuid="c1dc0725-99fe-4b9c-b166-6bc9757ebced"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="0" y="0" width="21" height="14" uuid="703c2131-d713-45cb-921c-47b6c38f6e9f"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHT_COMPLETED}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="21" y="0" width="21" height="14" uuid="b21a946a-374e-4f2f-aad6-b814514e4495"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHT_DELETED}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="42" y="0" width="21" height="14" uuid="8210f87f-6cfa-4521-800a-e7980adbf6ed"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHT_FLIGHTNO}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="63" y="0" width="21" height="14" uuid="9e92491c-e39d-4233-b1fb-8dfd0c88e237"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHT_NUMOFUNSCHEDULED}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="84" y="0" width="21" height="14" uuid="71937cc4-48f7-4f27-b8cd-19186e7359a8"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHT_SPEEDFRACTION}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="105" y="0" width="21" height="14" uuid="c73a8393-b917-4832-906a-dbcf61ac097b"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHT_WEEKLYFREQUENCY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="126" y="0" width="21" height="14" uuid="7f71b9ba-c2c6-401b-9c46-59879325e538"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHT_ROUTE_ROUTEID}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="147" y="0" width="21" height="14" uuid="802dac7a-3621-4ec7-b140-c113d2ad4757"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHT_RETURNEDFLIGHT_ID}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="168" y="0" width="21" height="14" uuid="e683b5f3-50fa-4370-8e81-e51b52ee24ff"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_FLIGHTSCHEDULEID}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="189" y="0" width="21" height="14" uuid="78a9a189-1983-4550-8dea-cca5475eb560"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_ARRIVALDATE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="210" y="0" width="21" height="14" uuid="3c4e7f8a-4c60-46c4-820e-08e733b867a3"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_ARRIVALGATE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="231" y="0" width="21" height="14" uuid="344dc50c-9612-4d7b-95ed-adc3ebc3afc6"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_ARRIVALTERMINAL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="252" y="0" width="21" height="14" uuid="4dc3299c-b867-4cec-a5be-1f7749ed0d0c"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_COMPLETED}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="273" y="0" width="21" height="14" uuid="f9349da8-4d0e-4507-888a-3b47217cb9e3"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_CREATEDTIME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="294" y="0" width="21" height="14" uuid="e85c1567-d739-4f93-aa4b-4c6bb6f19193"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_DELETED}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="315" y="0" width="21" height="14" uuid="921418db-944d-436a-83f6-b1aae03369b5"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_DEPARTDATE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="336" y="0" width="21" height="14" uuid="131c84d7-73dd-42bc-8621-22eb4a31616c"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_DEPARTGATE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="357" y="0" width="21" height="14" uuid="18534d88-2098-4d2b-8356-a6e8d88cd92f"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_DEPARTTERMINAL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="378" y="0" width="21" height="14" uuid="72d99547-ba69-4222-8819-37d20f6039f1"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_PRICED}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="399" y="0" width="21" height="14" uuid="38957adb-da53-4443-92f3-a8c31a5fb36f"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_SEATALLOCATED}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="420" y="0" width="21" height="14" uuid="0019900e-8455-45fa-a93a-806c9ed0884b"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_STATUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="441" y="0" width="21" height="14" uuid="b328e04d-1873-4bfd-8f4d-1892ff0ac3e6"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_TURNOVERTIME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="462" y="0" width="21" height="14" uuid="fc523782-d1ab-404d-b339-1bbb2652b7d8"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_AIRCRAFT_AIRCRAFTID}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="483" y="0" width="21" height="14" uuid="be849da1-0679-4c3f-9102-a3b5f38256b8"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_FLIGHT_ID}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="504" y="0" width="21" height="14" uuid="c6bc7a03-9c1b-4368-b4bf-4a33d1ce7b14"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_LEG_LEGID}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="525" y="0" width="21" height="14" uuid="399965ab-94d8-451f-9493-dc73b94317d7"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_NEXTFLIGHTSCHED_FLIGHTSCHEDULEID}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="546" y="0" width="21" height="14" uuid="43081390-ca9f-4dce-8363-04820152ddcc"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FLIGHTSCHEDULE_PREFLIGHTSCHED_FLIGHTSCHEDULEID}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="7f335e9a-a6b0-4d82-bcc5-ea218d7a112c"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="2" y="0" width="800" height="16" forecolor="#D0B48E" backcolor="#006699" uuid="025a88c7-f892-405b-a7f6-09f9c68e3662"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#FFFFFF" uuid="a1cc9c1b-7faa-4d6a-86b1-ad2380eeb91a"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#FFFFFF" uuid="94ae6ce3-de9e-4671-9ef5-32a618f48857"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="2" y="0" width="197" height="16" forecolor="#FFFFFF" uuid="98435f02-7faf-4917-92e3-64ea4cf881c3"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

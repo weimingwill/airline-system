@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="./../../../../../template/ArsTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="title">
+        Login Booking
+    </ui:define>
+
+    <ui:define name="content">
+        <h2>Enter passenger details</h2>
+
+        <p:panelGrid columns="2">
+            <h:form id="form">
+                <p:panelGrid columns="1" style="margin-top: -50px;">
+                    <p:outputLabel style="font-weight: bold; font-size: 20px;margin-bottom: 20px;" value="Continue as guest" />
+                    <p:outputLabel value=" " />
+                    <p:outputLabel style="font-size: 15px" value="If you do not have an online profile, you can enter your details manually on the next page or register later." />
+                    <p:outputLabel value=" " />
+                    <p:commandButton value="Continue" action="#{bookingManager.toEnterPassengerDetails()}" />
+                </p:panelGrid>
+            </h:form>
+            <h:form>
+                <p:panel header="Login">
+                    <pa:CCCustomerLoginPanel />
+                </p:panel>
+            </h:form>
+        </p:panelGrid>
+
+
+    </ui:define>
+
+</ui:composition>

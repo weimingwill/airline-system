@@ -417,6 +417,13 @@ permissionLink.a:link, permissionLink.a:visited {
     overflow:visible !important;
 }
 
+.centeredPanel{
+    margin-left: 70%;
+    background: rgba(251, 251, 252, 0.66);
+    width: 100%;
+    max-width: 500px;
+}
+
 /* Custom styles for the Timeline */  
 div.timeline-frame {  
     border-color: #5D99C3;  
@@ -490,4 +497,21 @@ div.timeline-event-selected {
 
 .alignTop {
     vertical-align: top !important;
+}
+
+.alignCenter {
+    text-align: center !important;
+}
+
+.alignRight{
+    text-align: right !important;
+}
+
+.priceTag {
+    font-size: 11px !important;
+    color: #FF984F !important;
+}
+
+.notificationBar {
+    display: block;
 }

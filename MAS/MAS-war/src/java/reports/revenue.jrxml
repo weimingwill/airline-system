@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revenue" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1365528a-0476-48c8-a401-80a3f1d16172">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     BOOKING.`CHANNEL` AS BOOKING_CHANNEL,
+     BOOKING.`PAID` AS BOOKING_PAID,
+     BOOKING.`PRICE` AS BOOKING_PRICE,
+     BOOKING.`REFERENCENO` AS BOOKING_REFERENCENO
+FROM
+     `BOOKING` BOOKING]]>
+	</queryString>
+	<field name="BOOKING_CHANNEL" class="java.lang.String"/>
+	<field name="BOOKING_PAID" class="java.lang.Boolean"/>
+	<field name="BOOKING_PRICE" class="java.lang.Double"/>
+	<field name="BOOKING_REFERENCENO" class="java.lang.String"/>
+	<group name="BOOKING_CHANNEL">
+		<groupExpression><![CDATA[$F{BOOKING_CHANNEL}]]></groupExpression>
+		<groupHeader>
+			<band height="33">
+				<line>
+					<reportElement x="-20" y="32" width="595" height="1" forecolor="#666666" uuid="c1601a05-e9a7-4ba5-a78f-776bc5f9b25c"/>
+				</line>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="1" width="185" height="32" forecolor="#006699" backcolor="#E6E6E6" uuid="57dc7f6a-f9fb-400f-a027-57710279d5d7"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BOOKING_PAID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="185" y="0" width="185" height="32" forecolor="#006699" backcolor="#E6E6E6" uuid="b9366bdf-e336-4c98-a9c7-d938011bcdd6"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BOOKING_PRICE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="370" y="0" width="185" height="32" forecolor="#006699" backcolor="#E6E6E6" uuid="19c363a1-4dad-4c61-92fb-c19009db58f3"/>
+					<textElement textAlignment="Center">
+						<font size="20" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BOOKING_REFERENCENO]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="b4cc8499-a62e-467b-b8d6-08c094430d9d"/>
+				<staticText>
+					<reportElement x="20" y="20" width="234" height="43" forecolor="#FFFFFF" uuid="d7f7d1fd-b9cb-44af-9812-000f5b588274"/>
+					<textElement>
+						<font size="24" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Revenue Report]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="395" y="43" width="180" height="20" forecolor="#FFFFFF" uuid="7b4ea884-cbde-4b26-9608-f4d689f591b3"/>
+					<textElement textAlignment="Right">
+						<font size="14" isBold="false"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="96b395c8-484d-478a-a419-a2616d3809c0"/>
+			</line>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="-13" width="460" height="33" forecolor="#006699" backcolor="#E6E6E6" uuid="64887035-2752-46e1-93e5-4a179e36723a"/>
+				<textElement>
+					<font size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOOKING_CHANNEL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="f927a1fb-e18c-4069-87d2-05e2892fde31"/>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="185" height="20" uuid="01cb76e8-9fbf-4605-a77d-d6d0dc93dd54"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOOKING_PAID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="185" y="0" width="185" height="20" uuid="edaa0439-f221-414d-a781-acc1b1c8980c"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOOKING_PRICE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="370" y="0" width="185" height="20" uuid="3a8d24ba-12da-4f6f-89b3-c0dab40355eb"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOOKING_REFERENCENO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="83ad40fd-d06d-4b4e-b37b-86d4665150af"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="f66b5c21-72e3-4322-8e3c-d4f4cbd85ca2"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="4" width="100" height="13" uuid="b7bc4058-6c1b-469a-8e6a-2135c6d71fd3"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

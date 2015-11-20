@@ -1,14 +1,17 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./../../../../template/ArsTemplate.xhtml">
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="./../../../../template/CrmTemplate.xhtml">
+    
 
     <ui:define name="title">
-        Registration
+        View revenue report
     </ui:define>
 
     <ui:define name="content">
-        content
+        <object type="application/pdf" data="/MAS-war/resources/revenue_report/RevenueReport.pdf" height="800px" width="100%">
+        </object>
     </ui:define>
 
 </ui:composition>

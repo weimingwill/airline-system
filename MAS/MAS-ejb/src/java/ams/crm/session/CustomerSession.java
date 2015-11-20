@@ -246,7 +246,7 @@ public class CustomerSession implements CustomerSessionLocal {
         return copy;
     }
 
-    public static int getAge(Date dateOfBirth) {
+    public int getAge(Date dateOfBirth) {
 
         Calendar today = Calendar.getInstance();
         Calendar birthDate = Calendar.getInstance();
@@ -383,5 +383,27 @@ public class CustomerSession implements CustomerSessionLocal {
         } catch (NoResultException ex) {
         }
         return customers.size();
+    }
+
+    @Override
+    public int getTotalCustomerNo() {
+        Query query = em.createQuery("SELECT c FROM Customer c");
+        List<Customer> customers = new ArrayList<>();
+        try {
+            customers = (List<Customer>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+        return customers.size();
+    }
+
+    @Override
+    public int getTotalMemberNo() {
+        Query query = em.createQuery("SELECT r FROM RegCust r");
+        List<RegCust> members = new ArrayList<>();
+        try {
+            members = (List<RegCust>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+        return members.size();
     }
 }

@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
                 template="./../../../../template/CrmExTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -18,7 +19,7 @@
         <p:tabView style="width: 490px; opacity: 0.95">
 
             <p:tab title="Book A Flight" >
-                <h:form>
+                <h:form id="form">
                     <p:panelGrid style="width: 445px;">
 
                         <!--Departure Airport-->
@@ -76,33 +77,35 @@
 
                         <p:row>
                             <p:column colspan="3">
-                                <p:selectOneRadio id="console" value="#{bookingManager.choice}">
+                                <p:selectOneRadio id="console" styleClass="radioChoice" value="#{bookingManager.choice}">
+                                    <p:ajax listener="#{bookingManager.onChoiceSelectd()}" update="arrDateCol,arrDateLabelCol" />
                                     <f:selectItem itemLabel="Return" itemValue="return" />
                                     <f:selectItem itemLabel="One-Way" itemValue="oneway" />
                                 </p:selectOneRadio>
                             </p:column>
                             <p:column colspan="3"><p:commandLink value="Multi City" /></p:column>
                         </p:row>
+                        
                         <p:row>
                             <p:column colspan="3"><p:outputLabel for="deptDate" value="Departure Date"/></p:column>
-                            <p:column colspan="3"><p:outputLabel for="arriveDate" value="Arrival Date"/></p:column>
+                            <p:column colspan="3" id="arrDateLabelCol"><p:outputLabel for="arriveDate" value="Arrival Date" rendered="#{bookingManager.arrDateShow}" /></p:column>
                         </p:row>
 
                         <!--Departure Date & Arrival Date-->
                         <p:row>
                             <p:column colspan="3">
-                                <p:calendar id="deptDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
-                                            value="#{bookingManager.deptDate}" mindate="#{bookingManager.deptDate}" >
-                                    <p:ajax event="dateSelect" update="arriveDate" listener="#{bookingManager.onDeptDateChange()}" />
+                                <p:calendar id="deptDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8" value="#{bookingManager.deptDate}">
+                                    <p:ajax event="dateSelect" update="arrDateCol" listener="#{bookingManager.onDeptDateChange()}" />
                                 </p:calendar>
                             </p:column>
-                            <p:column colspan="3">
+                            <p:column colspan="3" id="arrDateCol">
                                 <p:calendar id="arriveDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
-                                            value="#{bookingManager.arrDate}" mindate="#{bookingManager.deptDate}" />
+                                            value="#{bookingManager.arrDate}" mindate="#{bookingManager.deptDate}" rendered="#{bookingManager.arrDateShow}" />
                             </p:column>
                         </p:row>
                         <p:row>
-                            <p:column colspan="6">
+                            <p:column colspan="1"><p:outputLabel value="Cabin Class: "/></p:column>
+                            <p:column colspan="5">
                                 <p:selectOneMenu value="#{bookingManager.selectedCabinCls}" converter="cabinClassConverter">
                                     <f:selectItems value="#{bookingManager.cabinClses}" var="cabinCls" itemLabel="#{cabinCls.name}" itemValue="#{cabinCls}" />
                                 </p:selectOneMenu>

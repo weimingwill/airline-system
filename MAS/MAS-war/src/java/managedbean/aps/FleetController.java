@@ -138,14 +138,40 @@ public class FleetController implements Serializable {
         }
     }
 
-    public void onSeatQtyChange(AjaxBehaviorEvent event) {
+    public void onSeatQtyChange(AircraftCabinClassHelper thisHelper) {
+        System.out.println("this aircraftCabinClass: "+thisHelper.getSeatQty());
         int totalQty = getTotalSeatQty();
-
+        setRowCols(thisHelper);
+        
         if (totalQty > aircraftModel.getMaxSeating()) {
             msgController.addErrorMessage("Total seat quantity (" + totalQty + ") must be lower than maximum quantity (" + aircraftModel.getMaxSeating() + ")");
         } else if (totalQty > aircraftModel.getTypicalSeating()) {
             msgController.warn("Total seat quantity (" + totalQty + ") is suggested to be lower or equal to typical seating quantity (" + aircraftModel.getTypicalSeating() + ")");
         }
+    }
+    
+    public void onRowColChange(AircraftCabinClassHelper thisHelper){
+        thisHelper.setSeatQty(thisHelper.getNumOfCol()*thisHelper.getNumOfRow());
+    }
+    
+    private void setRowCols(AircraftCabinClassHelper thisHelper){
+        int numOfCols = 1, numOfRows = 1;
+        
+        switch(thisHelper.getType()){
+            case "F": 
+                numOfCols = 2;break;
+            case "B":
+                numOfCols = 4;break;
+            case "P":
+                numOfCols = 6;break;
+            case "E":
+                numOfCols = 8;break;
+                
+        }
+        numOfRows = thisHelper.getSeatQty()/numOfCols;
+        thisHelper.setNumOfRow(numOfRows);
+        thisHelper.setNumOfCol(numOfCols);
+        thisHelper.setSeatQty(numOfRows*numOfCols);
     }
 
     private int getTotalSeatQty() {
