@@ -8,6 +8,7 @@ package ams.afos.session;
 import ams.afos.entity.BiddingSession;
 import ams.afos.entity.Checklist;
 import ams.afos.entity.FlightCrew;
+import ams.afos.entity.FlightDuty;
 import ams.afos.entity.Pairing;
 import ams.afos.entity.PairingFlightCrew;
 import ams.afos.entity.SwappingRequest;
@@ -183,5 +184,43 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
     @Override
     public Pairing getPairingById(Long id) {
         return em.find(Pairing.class, id);
+    }
+
+    @Override
+    public List<FlightDuty> getCrewCurrMonthDuties(FlightCrew thisCrew) {
+        Calendar temp = Calendar.getInstance();
+        Query q = em.createQuery("SELECT DISTINCT fd FROM PairingFlightCrew pfc, IN(pfc.pairing.flightDuties) fd, IN(fd.flightSchedules) fs WHERE (fs.departDate BETWEEN :nextMonthFirstDay AND :nextMonthLastDay) AND pfc.flightCrew.systemUserId = :crewId AND pfc.status = :status");
+        temp.setTime(getNextMonthFirstDay());
+        temp.add(Calendar.MONTH, -1);
+        q.setParameter("nextMonthFirstDay", temp.getTime());
+        temp.setTime(getNextMonthLastDay());
+        temp.add(Calendar.MONTH, -1);
+        q.setParameter("nextMonthLastDay", temp.getTime());
+        q.setParameter("crewId", thisCrew.getSystemUserId());
+        q.setParameter("status", PairingCrewStatus.SUCCESS);
+        return q.getResultList();
+    }
+
+    // helper function
+    private Date getNextMonthFirstDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, calendar.getActualMinimum(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, calendar.getActualMinimum(Calendar.SECOND));
+        calendar.set(Calendar.MILLISECOND, calendar.getActualMinimum(Calendar.MILLISECOND));
+        return calendar.getTime();
+    }
+
+    private Date getNextMonthLastDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMaximum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, calendar.getActualMaximum(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, calendar.getActualMaximum(Calendar.SECOND));
+        calendar.set(Calendar.MILLISECOND, calendar.getActualMaximum(Calendar.MILLISECOND));
+        return calendar.getTime();
     }
 }

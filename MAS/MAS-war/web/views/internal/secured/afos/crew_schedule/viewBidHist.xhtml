@@ -39,10 +39,13 @@
                 </p:column>
                 <p:column>
                     <h:outputText value="#{pairingFlightCrew.pairing.cabinCrewQuota}" />
-                    
+
                 </p:column>
                 <p:column>
-                    <h:outputText value="#{pairingFlightCrew.status}" style="color: #FFA500; font-weight: bold"/>
+                    <h:outputText value="#{pairingFlightCrew.status}" style="color: #FFA500; font-weight: bold" rendered="#{pairingFlightCrew.status == 'In Progress'}"/>
+                    <h:outputText value="#{pairingFlightCrew.status}" style="color: #136e13; font-weight: bold" rendered="#{pairingFlightCrew.status == 'Success'}"/>
+                    <h:outputText value="#{pairingFlightCrew.status}" style="color: #D20005; font-weight: bold" rendered="#{pairingFlightCrew.status == 'Failed'}"/>
+
                     <p:subTable value="#{pairingFlightCrew.pairing.flightDuties}" var="duty">
                         <p:column>
                             <h:outputText value="#{duty.id}" />

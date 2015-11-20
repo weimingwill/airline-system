@@ -9,8 +9,8 @@
     <ui:define name="content">
         <h:form>
             <p:panel header="Flight Crews for flight #{flightDutyBacking.selectedFlightSchedule.flight.flightNo} flying on #{flightDutyBacking.getDepartureDateTime()}"/>
-            <p:panelGrid columns="2">
-                <p:dataGrid value="#{flightDutyBacking.crewsForFlightSchedule}" var="flightCrew" rows="3"  columns="2" paginator="true" styleClass="crewDG alighTop">
+            <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
+                <p:dataGrid value="#{flightDutyBacking.crewsForFlightSchedule}" var="flightCrew" rows="3"  columns="2" paginator="true" styleClass="crewDG">
                     <p:panel>
                         <p:panelGrid>
                             <p:row>

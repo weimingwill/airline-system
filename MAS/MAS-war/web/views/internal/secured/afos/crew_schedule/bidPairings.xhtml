@@ -78,73 +78,79 @@
 
         <p:dialog header="Pairings with the same pairing code: #{flightCrewBiddingManager.selectedPairing.pairingCode}" id="samePairingCodePairingsDlg" widgetVar="samePairingCodePairingsDlg" appendTo="@(body)" resizable="false" modal="true">
             <h:form>
-                <p:dataTable id="samePairingCodeTable" widgetVar="samePairingCodeTable" var="flightPairing" value="#{flightCrewBiddingManager.pairingsWithSameCode}" rows="3" tableStyleClass="table-small" rowKey="#{flightPairing.pairingId}"
-                             paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="4,8,12">
+                <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
+                    <p:dataTable id="samePairingCodeTable" widgetVar="samePairingCodeTable" var="flightPairing" value="#{flightCrewBiddingManager.pairingsWithSameCode}" rows="3" tableStyleClass="table-small" rowKey="#{flightPairing.pairingId}"
+                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="4,8,12">
 
-                    <p:subTable value="#{flightPairing}" var="pairings">
-                        <p:columnGroup type="header">
-                            <p:row>
-                                <p:column headerText="Pairing Code"/>
-                                <p:column headerText="Layover Time (Hrs)"/>
-                                <p:column headerText="Cockpit Crew Quota"/>
-                                <p:column headerText="Cabin Crew Quota"/>
-                                <p:column/>
-                            </p:row>
-                            <p:row>
-                                <p:column headerText="Duty ID"/>
-                                <p:column headerText="Report Location"/>
-                                <p:column headerText="Report Time"/>
-                                <p:column headerText="Dismiss Location"/>
-                                <p:column headerText="Dismiss Time"/>
-                            </p:row>
-                        </p:columnGroup>
-                        <p:column>
-                            <h:outputText value="#{pairings.pairingCode}" />
-                        </p:column>
-                        <p:column>
-                            <h:outputText value="#{pairings.layoverTime}">
-                                <f:convertNumber maxFractionDigits="2"/>
-                            </h:outputText>
-                        </p:column>
-                        <p:column>
-                            <h:outputText value="#{pairings.cockpitCrewQuota}" />
-                        </p:column>
-                        <p:column>
-                            <h:outputText value="#{pairings.cabinCrewQuota}" />
-                        </p:column>
-                        <p:column>
-                            <p:subTable value="#{flightPairing.flightDuties}" var="duty">
-                                <p:column>
-                                    <h:outputText value="#{duty.id}" />
-                                </p:column>
-                                <p:column>
-                                    <h:outputText value="#{duty.reportLoc.city.cityName}" />
-                                </p:column>
-                                <p:column>
-                                    <h:outputText value="#{duty.reportTime}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
-                                    </h:outputText>
-                                </p:column>
-                                <p:column>
-                                    <h:outputText value="#{duty.dismissLoc.city.cityName}" />
-                                </p:column>
-                                <p:column>
-                                    <h:outputText value="#{duty.dismissTime}" >
-                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
-                                    </h:outputText>
-                                </p:column>
-                            </p:subTable>
-                        </p:column>
+                        <p:subTable value="#{flightPairing}" var="pairings">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column headerText="Pairing Code"/>
+                                    <p:column headerText="Layover Time (Hrs)"/>
+                                    <p:column headerText="Cockpit Crew Quota"/>
+                                    <p:column headerText="Cabin Crew Quota"/>
+                                    <p:column/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Duty ID"/>
+                                    <p:column headerText="Report Location"/>
+                                    <p:column headerText="Report Time"/>
+                                    <p:column headerText="Dismiss Location"/>
+                                    <p:column headerText="Dismiss Time"/>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column>
+                                <h:outputText value="#{pairings.pairingCode}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{pairings.layoverTime}">
+                                    <f:convertNumber maxFractionDigits="2"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{pairings.cockpitCrewQuota}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{pairings.cabinCrewQuota}" />
+                            </p:column>
+                            <p:column>
+                                <p:subTable value="#{flightPairing.flightDuties}" var="duty">
+                                    <p:column>
+                                        <h:outputText value="#{duty.id}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.reportLoc.city.cityName}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.reportTime}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.dismissLoc.city.cityName}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.dismissTime}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                                        </h:outputText>
+                                    </p:column>
+                                </p:subTable>
+                            </p:column>
 
-                    </p:subTable>
-                    <f:facet name="footer">
-                        <p:selectCheckboxMenu converter="pairingConverter" id="menu" value="#{flightCrewBiddingManager.pairingsToBid}" label="Pairings on Dates"
-                                              filter="true" filterMatchMode="startsWith">
+                        </p:subTable>
+                    </p:dataTable>
+                    <p:panel header="Please select pairings on specific dates">
+                        <p:selectManyMenu converter="pairingConverter" id="menu" value="#{flightCrewBiddingManager.pairingsToBid}" label="Pairings on Dates"
+                                          filter="true" filterMatchMode="startsWith" showCheckbox="true" style="width: 100%">
                             <f:selectItems value="#{flightCrewBiddingManager.pairingsWithSameCode}" var="thisPairing" itemLabel="#{flightCrewBiddingManager.convertDateFormat(thisPairing.flightDuties.get(0).reportTime)}"/>
-                        </p:selectCheckboxMenu>
+                        </p:selectManyMenu>
+                        <p:separator/>
                         <p:commandButton value="Confirm Bid" actionListener="#{flightCrewBiddingManager.placeBidForPairings()}" oncomplete="PF('samePairingCodePairingsDlg').hide()" update=":form:availablePairingTable"/>
-                    </f:facet>
-                </p:dataTable>
+                        <p:commandButton value="Cancel" oncomplete="PF('samePairingCodePairingsDlg').hide()" />
+                    </p:panel>
+                </p:panelGrid>
+
             </h:form>
         </p:dialog>
 

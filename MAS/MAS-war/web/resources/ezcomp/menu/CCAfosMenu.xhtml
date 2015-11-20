@@ -45,15 +45,14 @@
                 
                 
                 <p:submenu label="Bidding Management" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(cabinCrew) or userController.hasRole(cockpitCrew)}">
-                    <p:menuitem value="Place Standing Bid"/>
                     <p:menuitem value="Bid for Lines" action="#{afosNavController.toSelectBiddingSession()}"/>
                     <p:menuitem value="View Bid Result" action="#{afosNavController.toViewBidHist()}"/>
                     <p:menuitem value="Request for Swapping"/>
                 </p:submenu>
 
                 <p:submenu label="Reporting" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(cabinCrew) or userController.hasRole(cockpitCrew)}">
-                    <p:menuitem value="Pre-flight Reporting"/>
-                    <p:menuitem value="Post-flight Reporting"/>
+                    <p:menuitem value="Pre-flight Reporting" action="#{afosNavController.toReportPreFlightDuty()}"/>
+                    <p:menuitem value="Post-flight Reporting" action="#{afosNavController.toReportPostFlightDuty()}"/>
                 </p:submenu>
 
                 <p:submenu label="Task Management" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(maintCrew)}">

@@ -39,9 +39,7 @@ public interface FlightCrewMgmtSessionLocal {
     public void createFlightDutyChecklist(Checklist checklist, Flight flight); // combine create and update together
     public void updateAttendance(List<FlightCrew> flightCrews,FlightSchedule flightSchedule);
     public List<FlightCrew> getOnDutyCrews(FlightSchedule flightSchedule);
-    public List<Checklist> getFlightDutyChecklist(FlightSchedule FlightSchedule, String type);
     public Checklist getFlightChecklist(Flight thisFlight, String type);
     public List<Checklist> getChecklistTemplates(String type);
     public Checklist getPostFlightReport(FlightSchedule flightSchedule);
-    
 }

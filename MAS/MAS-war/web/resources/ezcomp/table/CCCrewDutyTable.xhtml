@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="type" required="true" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dataTable id="crewDutyTable" var="crewDuty" value="#{flightCrewReportingBacking.crewDuties}" rows="10" tableStyleClass="table-small" selectionMode="single" rowKey="#{crewDuty.id}"
+                     paginator="true" rowsPerPageTemplate="10,15"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+            <f:facet name="header">
+                <p:outputLabel value="Flight Crew Duty for Current Month"/>
+            </f:facet>
+
+            <p:column headerText="duty ID">
+                <p:outputLabel value="#{crewDuty.id}"/>
+            </p:column>
+
+            <p:column headerText="Pre-Flight Checklist" rendered="#{cc.attrs.type == 'Pre'}">
+                <p:commandButton class="fa fa-search" title="View Checklist">
+                    <f:setPropertyActionListener value="#{crewDuty}" target="#{flightCrewReportingBacking.selectedDuty}" />
+                </p:commandButton>
+            </p:column>
+            
+            <p:column headerText="Post-Flight Checklist" rendered="#{cc.attrs.type == 'Post'}">
+                <p:commandButton class="fa fa-search" title="View Checklist">
+                    <f:setPropertyActionListener value="#{crewDuty}" target="#{flightCrewReportingBacking.selectedDuty}" />
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+    </cc:implementation>
+</html>

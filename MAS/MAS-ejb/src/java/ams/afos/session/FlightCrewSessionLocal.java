@@ -8,6 +8,7 @@ package ams.afos.session;
 import ams.afos.entity.BiddingSession;
 import ams.afos.entity.Checklist;
 import ams.afos.entity.FlightCrew;
+import ams.afos.entity.FlightDuty;
 import ams.afos.entity.Pairing;
 import ams.afos.entity.PairingFlightCrew;
 import ams.afos.entity.SwappingRequest;
@@ -27,6 +28,7 @@ public interface FlightCrewSessionLocal {
     public Pairing getPairingById(Long id);
     
     // Flight Crew Duty Report
+    public List<FlightDuty> getCrewCurrMonthDuties(FlightCrew thisCrew);
     public void updatePreFlightChecklist(Checklist checklist);
     public void updatePostFlightChecklist(Checklist checklist);
     // Flight Crew Bidding

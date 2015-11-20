@@ -409,6 +409,9 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         }
         assignRemainingPairingsToCrew(CrewType.FLIGHT_ATTENDENT, session);
         assignRemainingPairingsToCrew(CrewType.PILOT, session);
+        session.setEndTime(Calendar.getInstance().getTime());
+        session.setStatus(BiddingSessionStatus.CLOSED);
+        em.merge(session);
     }
 
     @Override
@@ -723,12 +726,18 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         List<Checklist> fsChecklists;
         boolean foundExistingChecklist = false;
         List<FlightSchedule> flightSchedules = flightSchedulingSession.getThisFlightFlightSchedules(flight);
+        Checklist newChecklist;
         for (FlightSchedule fs : flightSchedules) {
+            newChecklist = new Checklist();
+            newChecklist.setChecklistItems(checklist.getChecklistItems());
+            newChecklist.setDeleted(false);
+            newChecklist.setIsTemplate(checklist.getIsTemplate());
+            newChecklist.setType(checklist.getType());
             if (fs.getChecklists() == null) {
                 // if flight schedule does not have any checklist, create a new checklist and add it to flight schedule
-                em.persist(checklist);
+                em.persist(newChecklist);
                 fsChecklists = new ArrayList();
-                fsChecklists.add(checklist);
+                fsChecklists.add(newChecklist);
                 fs.setChecklists(fsChecklists);
                 em.merge(fs);
             } else {
@@ -744,8 +753,8 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
                 }
                 if (!foundExistingChecklist) {
                     // if not found then add the checklist to flight schedule checklists
-                    em.persist(checklist);
-                    fs.getChecklists().add(checklist);
+                    em.persist(newChecklist);
+                    fs.getChecklists().add(newChecklist);
                 }
                 em.merge(fs);
             }
@@ -765,12 +774,6 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         q.setParameter("fsId", flightSchedule.getFlightScheduleId());
         q.setParameter("status", PairingCrewStatus.SUCCESS);
         return (List<FlightCrew>) q.getResultList();
-    }
-
-    @Override
-    public List<Checklist> getFlightDutyChecklist(FlightSchedule FlightSchedule, String type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-
     }
 
     @Override
