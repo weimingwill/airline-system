@@ -23,4 +23,5 @@ public class CrmMsg {
     public static final String PROMOCODE_UNAUTHORISED_ERROR = "Sorry, you do not have the right to use this promotion code";
     public static final String NO_SUCH_BOOKING_REFERENCE_ERROR = "This is invalid booking reference.";
     public static final String No_SUCH_PRIVILEGE_VALUE_ERROR="There is no such privilege value";
+    public static final String NO_SUCH_BOOKING_ERROR = "Booking does not exist, please enter a valid number";
 }  

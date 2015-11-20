@@ -17,7 +17,7 @@ import ams.ars.entity.PricingItem;
 import ams.crm.entity.RegCust;
 import ams.crm.util.exception.InvalidPromoCodeException;
 import ams.ars.entity.Booking;
-import ams.crm.util.exception.NoSuchBookingReferenceException;
+import ams.crm.util.exception.NoSuchBookingException;
 import ams.crm.util.helper.BookingHelper;
 import ams.dcs.entity.Luggage;
 import java.util.Date;
@@ -66,10 +66,14 @@ public interface BookingSessionLocal {
 
     public List<Booking> getCurrentBookingsByEmail(String email);
 
-    public Booking getBookingByBookingRef(String bookingRef) throws NoSuchBookingReferenceException;
+    public Booking getUnClaimedBookingByBookingRef(String bookingRef) throws NoSuchBookingException;
 
-    public void updateBooking(String bookingRef) throws NoSuchBookingReferenceException;
+    public Booking getBookingByBookingRef(String bookingRef) throws NoSuchBookingException;
 
-    public List<FlightSchedule> searchFlightStatusByFlightNo(String flightNo, Date date, Airport airport, String choice, Map<Long, FlightSchedule> flightSchedMaps) 
+    public Booking getBookingByETicketNo(String eTicketNo) throws NoSuchBookingException;
+
+    public void claimBooking(String bookingRef) throws NoSuchBookingException;
+
+    public List<FlightSchedule> searchFlightStatusByFlightNo(String flightNo, Date date, Airport airport, String choice, Map<Long, FlightSchedule> flightSchedMaps)
             throws NoSuchFlightSchedulException;
 }

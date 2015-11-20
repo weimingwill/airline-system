@@ -5,7 +5,7 @@
  */
 package managedbean.crm;
 
-import ams.crm.util.exception.NoSuchBookingReferenceException;
+import ams.crm.util.exception.NoSuchBookingException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import java.io.Serializable;
 import java.util.logging.Level;
@@ -32,7 +32,7 @@ public class ClaimMilesBacking implements Serializable{
      */
     public ClaimMilesBacking() {
     }
-    public void claimMile() throws NoSuchBookingReferenceException{
+    public void claimMile() throws NoSuchBookingException{
         try {
             customerController.claimMiles();
         } catch (NoSuchRegCustException ex) {

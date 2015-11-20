@@ -13,7 +13,7 @@ import ams.crm.session.BookingSession;
 import ams.crm.session.BookingSessionLocal;
 import ams.crm.session.CustomerExSessionLocal;
 import ams.crm.util.exception.ExistSuchRegCustException;
-import ams.crm.util.exception.NoSuchBookingReferenceException;
+import ams.crm.util.exception.NoSuchBookingException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import java.io.Serializable;
 import java.util.Date;
@@ -132,10 +132,10 @@ public class CustomerController implements Serializable {
     }
     
     
-     public String claimMiles() throws NoSuchRegCustException, NoSuchBookingReferenceException{
+     public String claimMiles() throws NoSuchRegCustException, NoSuchBookingException{
         customerSession.updateMiles(email,accMiles+viewBookingBacking.getActualPointClaim());
         customerSession.updateValue(email,custValue+viewBookingBacking.getActualPointClaim());
-        bookingSession.updateBooking(viewBookingBacking.getBookingReferenceNo()); 
+        bookingSession.claimBooking(viewBookingBacking.getBookingReferenceNo()); 
         return navigationController.redirectToCurrentPage();
     }
      

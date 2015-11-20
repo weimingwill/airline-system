@@ -95,13 +95,13 @@
                     <!--Departure Date & Arrival Date-->
                     <p:row>
                         <p:column colspan="3">
-                            <p:calendar id="deptDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
+                            <p:calendar id="deptDate" pages="2" pattern="dd/MM/yyyy" timeZone="GMT+8"
                                         value="#{bookingManager.deptDate}" mindate="#{bookingManager.deptDate}" >
                                 <p:ajax event="dateSelect" update="arriveDate" listener="#{bookingManager.onDeptDateChange()}" />
                             </p:calendar>
                         </p:column>
                         <p:column colspan="3">
-                            <p:calendar id="arriveDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
+                            <p:calendar id="arriveDate" pages="2" pattern="dd/MM/yyyy" timeZone="GMT+8"
                                         value="#{bookingManager.arrDate}" mindate="#{bookingManager.deptDate}" />
                         </p:column>
 

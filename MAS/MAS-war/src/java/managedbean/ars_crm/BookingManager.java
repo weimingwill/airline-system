@@ -131,6 +131,7 @@ public class BookingManager implements Serializable {
     //Itinerary
     private Booking booking;
     private List<CustomerHelper> custHelpers;
+    private double farePrice;
 
     /**
      * Creates a new instance of bookingManager
@@ -473,7 +474,8 @@ public class BookingManager implements Serializable {
     public String bookingFlight() {
         try {
             booking = bookingSession.bookingFlight(bookingHelper);
-            setCustomerHelpers();
+            custHelpers = setCustomerHelpers(booking);
+            farePrice = setFarePrice(booking);
             msgController.addMessage("Booking flight successfully!");
             return crmExNavController.redirectToItinerary();
         } catch (InvalidPromoCodeException e) {
@@ -482,13 +484,21 @@ public class BookingManager implements Serializable {
         }
     }
 
-    private void setCustomerHelpers() {
-        custHelpers = new ArrayList<>();
+    public double setFarePrice(Booking booking) {
+        double price = 0;
+        for (AirTicket airTicket : booking.getAirTickets()) {
+            price += airTicket.getFlightSchedBookingClass().getPrice();
+        }
+        return price;
+    }
+
+    public List<CustomerHelper> setCustomerHelpers(Booking booking) {
+        List<CustomerHelper> customerHelpers = new ArrayList<>();
         for (AirTicket airTicket : booking.getAirTickets()) {
             Customer customer = airTicket.getCustomer();
             CustomerHelper custHelper = new CustomerHelper();
             boolean exist = false;
-            for (CustomerHelper customerHelper : custHelpers) {
+            for (CustomerHelper customerHelper : customerHelpers) {
                 if (customer.getPassportNo().equals(customerHelper.getCustomer().getPassportNo())) {
                     exist = true;
                 }
@@ -507,9 +517,10 @@ public class BookingManager implements Serializable {
                     }
                 }
                 custHelper.setLuggage(airTicket.getPurchasedLuggage());
-                custHelpers.add(custHelper);
+                customerHelpers.add(custHelper);
             }
         }
+        return customerHelpers;
     }
 
     //
@@ -745,6 +756,14 @@ public class BookingManager implements Serializable {
 
     public void setCustHelpers(List<CustomerHelper> custHelpers) {
         this.custHelpers = custHelpers;
+    }
+
+    public double getFarePrice() {
+        return farePrice;
+    }
+
+    public void setFarePrice(double farePrice) {
+        this.farePrice = farePrice;
     }
 
 }

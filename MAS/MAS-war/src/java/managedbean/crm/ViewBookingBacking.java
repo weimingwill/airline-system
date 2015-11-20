@@ -11,7 +11,7 @@ import ams.ars.entity.Booking;
 import ams.crm.entity.RegCust;
 import ams.crm.session.BookingSessionLocal;
 import ams.crm.session.CustomerExSessionLocal;
-import ams.crm.util.exception.NoSuchBookingReferenceException;
+import ams.crm.util.exception.NoSuchBookingException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import ams.crm.util.helper.CrmMsg;
 import java.io.Serializable;
@@ -82,9 +82,9 @@ public class ViewBookingBacking implements Serializable {
     public Booking checkBookingReference(){
        
         try {
-            selectedBooking=bookingSession.getBookingByBookingRef(bookingReferenceNo);
+            selectedBooking=bookingSession.getUnClaimedBookingByBookingRef(bookingReferenceNo);
             mileCalculation();
-        } catch (NoSuchBookingReferenceException ex) {
+        } catch (NoSuchBookingException ex) {
             msgController.addErrorMessage("Please input a valid booking reference. Please check if you have claim the miles before");
             Logger.getLogger(ViewBookingBacking.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -92,7 +92,7 @@ public class ViewBookingBacking implements Serializable {
         return selectedBooking;
     }
     
-    public void claimMiles() throws NoSuchBookingReferenceException {
+    public void claimMiles() throws NoSuchBookingException {
 
         try {
             customerController.claimMiles();

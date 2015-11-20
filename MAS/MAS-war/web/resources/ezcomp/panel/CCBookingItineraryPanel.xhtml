@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="booking" required="true" />
+        <cc:attribute name="customerHelpers" required="true" />
+        <cc:attribute name="farePrice" required="true" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set var="booking" value="#{cc.attrs.booking}" />
+        <c:set var="custHelpers" value="#{cc.attrs.customerHelpers}" />
+        <c:set var="farePrice" value="#{cc.attrs.farePrice}" />
+        <!--Basic Booking Info-->
+        <p:panelGrid styleClass="fullWidth itineraryPanel">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="2">Manage my booking</p:column>
+                </p:row>
+            </f:facet>
+            <p:row>
+                <p:column>YOUR BOOKING NUMBER: #{booking.referenceNo}</p:column>
+            </p:row>
+            <p:row>
+                <p:column>YOUR E-TICKET NUMBER: #{booking.geteTicketNo()}</p:column>
+            </p:row>
+        </p:panelGrid>
+
+        <!--Flight detail-->
+        <p:panelGrid styleClass="fullWidth itineraryPanel">
+            <p:row styleClass="ui-widget-header">
+                <p:column>Flight</p:column>
+                <p:column colspan="2">From</p:column>
+                <p:column></p:column>
+                <p:column colspan="2">To</p:column>
+                <p:column>Aircraft</p:column>
+                <p:column>Cabin Class</p:column>
+            </p:row>
+
+            <c:forEach items="#{booking.airTickets}" var="airticket">
+                <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{airticket.flightSchedBookingClass.flightSchedule}" fb="#{airticket.flightSchedBookingClass}"/>
+            </c:forEach>
+        </p:panelGrid>
+
+        <!--Passenger details-->
+        <p:panelGrid styleClass="fullWidth itineraryPanel">
+            <p:row styleClass="ui-widget-header">
+                <p:column colspan="2" rowspan="2">Passenger Name</p:column>
+                <p:column colspan="6" styleClass="alignCenter">Special Needs</p:column>
+            </p:row>
+            <p:row styleClass="ui-widget-header">
+                <p:column colspan="2">Meal(s)</p:column>
+                <p:column colspan="2">Extra Luggage(s)</p:column>
+                <p:column colspan="2">Travel Insurance</p:column>
+            </p:row>
+            <c:forEach items="#{custHelpers}" var="customerHelper">
+                <p:row>
+                    <p:column colspan="2">#{customerHelper.customer.firstName} #{customerHelper.customer.lastName}</p:column>
+                    <p:column colspan="2">#{customerHelper.meal.description}</p:column>
+                    <p:column colspan="2">Extra luggage #{customerHelper.luggage.maxWeight} kg</p:column>
+                    <p:column colspan="2">                    
+                        <p:outputLabel styleClass="fa fa-check" rendered="#{customerHelper.insurance}" />
+                        <p:outputLabel styleClass="fa fa-remove" rendered="#{not customerHelper.insurance}" />
+                    </p:column>
+                </p:row>
+            </c:forEach>
+        </p:panelGrid>
+
+        <!--Contact details-->
+        <p:panelGrid styleClass="fullWidth itineraryPanel">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="2">Contact details</p:column>
+                </p:row>
+            </f:facet>
+            <p:row>
+                <p:column>Phone number</p:column>
+                <p:column>#{booking.phoneNo.countryCode} #{booking.phoneNo.areaCode} #{booking.phoneNo.number}</p:column>
+            </p:row>
+            <p:row>
+                <p:column>Email</p:column>
+                <p:column>#{booking.email}</p:column>
+            </p:row>
+        </p:panelGrid>
+
+        <!--Pricing details-->
+        <p:panelGrid styleClass="fullWidth itineraryPanel">
+            <p:row styleClass="ui-widget-header">
+                <p:column colspan="4">Purchase description</p:column>
+                <p:column colspan="2">Price(S$)</p:column>
+            </p:row>
+
+            <c:forEach items="#{booking.airTickets}" var="airticket" varStatus="index">
+                <p:row>
+                    <p:column colspan="4">Fare fee #{index.index + 1}</p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="#{airticket.flightSchedBookingClass.price}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+            </c:forEach>
+
+            <c:forEach items="#{custHelpers}" var="customerHelper">
+                <p:row rendered="#{customerHelper.insurance}">
+                    <p:column colspan="4">Travel insurance</p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="#{bookingBacking.travelInsurance.price}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>  
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">Extra luggage #{customerHelper.luggage.maxWeight} kg</p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="#{customerHelper.luggage.price}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>  
+                </p:row>
+            </c:forEach>
+
+
+            <c:forEach items="#{bookingBacking.pricingItems}" var="pricingItem">
+                <p:row>
+                    <p:column colspan="4">#{pricingItem.name}</p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="#{farePrice * pricingItem.price}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>   
+                </p:row>
+            </c:forEach>
+
+            <p:row rendered="#{booking.promoPrice ne 0}">
+                <p:column colspan="4">Promotion price</p:column>
+                <p:column colspan="2" styleClass="alignRight">
+                    <p:outputLabel value="- "/>
+                    <p:outputLabel value="#{booking.promoPrice}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                    </p:outputLabel>
+                </p:column>   
+            </p:row>
+
+            <p:row style="font-weight: bold;">
+                <p:column colspan="4">TOTAL FARE</p:column>
+                <p:column colspan="2" styleClass="alignRight">
+                    <p:outputLabel value="#{booking.price}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                    </p:outputLabel>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+    </cc:implementation>
+</html>

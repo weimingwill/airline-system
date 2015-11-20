@@ -9,13 +9,13 @@ package ams.crm.util.exception;
  *
  * @author Bowen
  */
-public class NoSuchBookingReferenceException extends Exception {
+public class NoSuchBookingException extends Exception {
 
     /**
      * Creates a new instance of <code>NoSuchBookingReferenceException</code>
      * without detail message.
      */
-    public NoSuchBookingReferenceException() {
+    public NoSuchBookingException() {
     }
 
     /**
@@ -24,7 +24,7 @@ public class NoSuchBookingReferenceException extends Exception {
      *
      * @param msg the detail message.
      */
-    public NoSuchBookingReferenceException(String msg) {
+    public NoSuchBookingException(String msg) {
         super(msg);
     }
 }

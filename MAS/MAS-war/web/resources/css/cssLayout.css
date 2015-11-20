@@ -543,3 +543,7 @@ div.timeline-event-selected {
 .fullWidth>.ui-inputfield {
     width: 100% !important;    
 }
+
+.itineraryPanel {
+    margin-bottom: 10px;
+}

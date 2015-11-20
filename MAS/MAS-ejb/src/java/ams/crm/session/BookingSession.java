@@ -34,7 +34,7 @@ import ams.crm.entity.SelectedCust;
 import ams.crm.util.exception.InvalidPromoCodeException;
 import ams.crm.util.helper.CustomerHelper;
 import ams.dcs.entity.Luggage;
-import ams.crm.util.exception.NoSuchBookingReferenceException;
+import ams.crm.util.exception.NoSuchBookingException;
 import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.CrmMsg;
 import ams.dcs.util.helper.AirTicketStatus;
@@ -108,10 +108,10 @@ public class BookingSession implements BookingSessionLocal {
     }
 
     @Override
-    public void updateBooking(String bookingRef) throws NoSuchBookingReferenceException {
-        Booking b = getBookingByBookingRef(bookingRef);
+    public void claimBooking(String bookingRef) throws NoSuchBookingException {
+        Booking b = getUnClaimedBookingByBookingRef(bookingRef);
         if (b == null) {
-            throw new NoSuchBookingReferenceException(CrmMsg.NO_SUCH_BOOKING_REFERENCE_ERROR);
+            throw new NoSuchBookingException(CrmMsg.NO_SUCH_BOOKING_REFERENCE_ERROR);
         } else {
             b.setClaimed(true);
             em.merge(b);
@@ -120,16 +120,42 @@ public class BookingSession implements BookingSessionLocal {
     }
 
     @Override
-    public Booking getBookingByBookingRef(String bookingRef) throws NoSuchBookingReferenceException {
-        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.referenceNo = :bookingRef AND b.claimed=FALSE");
+    public Booking getUnClaimedBookingByBookingRef(String bookingRef) throws NoSuchBookingException {
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.referenceNo = :bookingRef AND b.claimed = FALSE");
         query.setParameter("bookingRef", bookingRef);
-        Booking r = null;
+        Booking booking = null;
         try {
-            r = (Booking) query.getSingleResult();
+            booking = (Booking) query.getSingleResult();
         } catch (NoResultException ex) {
-            throw new NoSuchBookingReferenceException(CrmMsg.NO_SUCH_BOOKING_REFERENCE_ERROR);
+            throw new NoSuchBookingException(CrmMsg.NO_SUCH_BOOKING_REFERENCE_ERROR);
         }
-        return r;
+        return booking;
+    }
+
+    @Override
+    public Booking getBookingByBookingRef(String bookingRef) throws NoSuchBookingException {
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.referenceNo = :bookingRef");
+        query.setParameter("bookingRef", bookingRef);
+        Booking booking = null;
+        try {
+            booking = (Booking) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new NoSuchBookingException(CrmMsg.NO_SUCH_BOOKING_REFERENCE_ERROR);
+        }
+        return booking;
+    }
+
+    @Override
+    public Booking getBookingByETicketNo(String eTicketNo) throws NoSuchBookingException {
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.eTicketNo = :eTicketNo");
+        query.setParameter("eTicketNo", eTicketNo);
+        Booking booking = null;
+        try {
+            booking = (Booking) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new NoSuchBookingException(CrmMsg.NO_SUCH_BOOKING_ERROR);
+        }
+        return booking;
     }
 
     @Override
@@ -234,16 +260,6 @@ public class BookingSession implements BookingSessionLocal {
         return tixFams;
     }
 
-//    @Override
-//    public Map<String, FlightSchedBookingClsHelper> getFlightSchedBookingClsHelperMaps(List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, String channelName, int numOfTix) {
-//        Map<String, FlightSchedBookingClsHelper> flightSchedBookingClsMaps = new HashMap<>();
-//        for (FlightSchedule flightSched : flightScheds) {
-//            for (FlightSchedBookingClsHelper fbHelper : getOpenedFlightSchedBookingClses(flightSched, tixFams, channelName, numOfTix)) {
-//                flightSchedBookingClsMaps.put(fbHelper.getFlightSchedBookingCls().getFlightScheduleBookingClassId().toString(), fbHelper);
-//            }
-//        }
-//        return flightSchedBookingClsMaps;
-//    }
     @Override
     public List<FlightSchedBookingClsHelper> getAllFlightSchedBookingClses(List<FlightSchedule> flightScheds, List<TicketFamily> tixFams, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps) {
         List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
@@ -255,13 +271,6 @@ public class BookingSession implements BookingSessionLocal {
         return flightSchedBookingClsHelpers;
     }
 
-//    private List<FlightSchedBookingClsHelper> getOpenedFlightSchedBookingClses(FlightSchedule flightSched, List<TicketFamily> tixFams, String channelName, int numOfTix) {
-//        List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
-//        for (TicketFamily tixFam : tixFams) {
-//            flightSchedBookingClsHelpers.add(getOpenedFlightSchedBookingCls(flightSched, tixFam, channelName, numOfTix, new HashMap<>()));
-//        }
-//        return flightSchedBookingClsHelpers;
-//    }
     private FlightSchedBookingClsHelper getOpenedFlightSchedBookingCls(FlightSchedule flightSched, TicketFamily tixFam, Airport arrAirport, String channelName, int numOfTix, Map<String, FlightScheduleBookingClass> fbMaps, Map<String, FlightSchedBookingClsHelper> fbHelperMaps) {
         Query query = em.createQuery("SELECT fb FROM FlightScheduleBookingClass fb, BookingClass b "
                 + "WHERE fb.flightScheduleBookingClassId.flightScheduleId = :inFlightScheduleId "
@@ -333,20 +342,6 @@ public class BookingSession implements BookingSessionLocal {
         }
     }
 
-//    private List<TicketFamily> addTixFams(List<TicketFamily> tixFams, FlightSchedule flightSched, CabinClass cabinClass) {
-//        try {
-//            List<TicketFamily> ticketFamilys = productDesignSession.getCabinClassTicketFamilysFromJoinTable(flightSched.getAircraft().getAircraftId(), cabinClass.getCabinClassId());
-//            for (TicketFamily ticketFamily : ticketFamilys) {
-//                if (tixFams.size() < 4) {
-//                    tixFams.add(ticketFamily);
-//                } else {
-//                    break;
-//                }
-//            }
-//        } catch (NoSuchTicketFamilyException e) {
-//        }
-//        return tixFams;
-//    }
     @Override
     public Booking bookingFlight(BookingHelper bookingHelper) throws InvalidPromoCodeException {
 
@@ -359,6 +354,7 @@ public class BookingSession implements BookingSessionLocal {
 
         //Update flightSchedule booking class
         booking.setPrice(bookingHelper.getTotalPrice());
+        booking.setPromoPrice(0.0);
         em.persist(booking);
         em.flush();
 
@@ -383,7 +379,7 @@ public class BookingSession implements BookingSessionLocal {
         //Promotion: 1. for all users, no need login. 2. for specific users, need login.
         String promoCodeName = bookingHelper.getPromoCode();
 
-        booking.setPromoPrice(0.0);
+        System.out.println("PromoCode: " + promoCodeName);
         if (!promoCodeName.equals("")) {
             RegCust regCust = bookingHelper.getCustomers().get(0).getRegCust();
             verifyPromoCodeUsability(promoCodeName, regCust);
@@ -612,11 +608,6 @@ public class BookingSession implements BookingSessionLocal {
         } catch (Exception e) {
         }
         return luggage;
-    }
-
-    public Booking getBookingByBookingRefString(String bookingRef) {
-        Booking booking = new Booking();
-        return booking;
     }
 
     @Override
