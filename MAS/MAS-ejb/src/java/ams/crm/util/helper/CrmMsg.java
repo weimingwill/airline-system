@@ -19,4 +19,5 @@ public class CrmMsg {
     public static final String NO_SUCH_FEEDBACK_ERROR = "There is no such feedback";
     public static final String NO_ENOUGH_POINT_ERROR = "You don't have enough point to redeem this ticket.";
     public static final String NO_SUCH_BOOKING_REFERENCE_ERROR = "This is invalid booking reference.";
+    public static final String No_SUCH_PRIVILEGE_VALUE_ERROR="There is no such privilege value";
 }  

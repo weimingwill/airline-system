@@ -5,7 +5,10 @@
  */
 package ams.crm.session;
 
+import ams.crm.entity.Membership;
 import ams.crm.entity.Privilege;
+import ams.crm.entity.PrivilegeValue;
+import ams.crm.util.exception.NoSuchPrivilegeValueException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -16,4 +19,6 @@ import javax.ejb.Local;
 @Local
 public interface PrivilegeSessionLocal {
     public List<Privilege> getAllPrivileges();
+    public List<Membership> getAllMemberships();
+    public PrivilegeValue getPVById(Long pId, Long mid)throws NoSuchPrivilegeValueException;
 }

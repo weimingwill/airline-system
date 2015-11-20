@@ -254,6 +254,8 @@
                         </p:panelGrid>
 
                     </p:panel>
+                </h:form>
+                <h:form id="redeemform" style="width: 500px;text-align: center;" >
                     <p:panel header="Redeem Section" styleClass="centeredPanel">
                         <p:panelGrid style="width: 400px;">
 
@@ -325,7 +327,8 @@
                             </p:row>
                         </p:panelGrid>
                     </p:panel>
-
+                </h:form>
+                <h:form id="Claimform" style="width: 500px;text-align: center;" >
                     <p:panel header="Claim Section" styleClass="centeredPanel" >
                         <p:panelGrid columns="2" style="width: 400px;" >
                             <p:outputLabel for="bookingRefenceNo" value="Booking Reference No."/>
@@ -336,7 +339,8 @@
                             <p:commandButton value="Check" update="claimDialog,messages" actionListener="#{viewBookingBacking.checkBookingReference()}" oncomplete="PF('claimDialog').show()" icon="ui-icon-calculator"/>
                         </p:column>
                     </p:panel>
-
+                </h:form>
+                <h:form id="Upgradeform" style="width: 500px;text-align: center;" >
                     <p:panel header="Upgrade Section" styleClass="centeredPanel">
                         <p:panelGrid columns="3" style="width: 450px;" >
                             <p:outputLabel for="membershipStandard1" value="Upgrade to Elite Silver"/>
@@ -351,7 +355,7 @@
                             <p:column headerText="Upgrade" style="width:45px;text-align: center">
                                 <p:commandButton value="Upgrade" update="upgradeGoldDialog"  oncomplete="PF('upgradeGoldDialog').show()" icon="ui-icon-arrow-1-n"/>
                             </p:column>
-                            
+
                         </p:panelGrid>
 
                     </p:panel>
@@ -660,7 +664,7 @@
                             </p:column>
 
                             <p:column>
-                               <p:outputLabel value="S$ 8000 / Year" />
+                                <p:outputLabel value="S$ 8000 / Year" />
                             </p:column>
                         </p:row>
 
@@ -670,7 +674,7 @@
 
             </h:form>
         </p:dialog>
-        
+
         <p:dialog id="upgradeGoldDialog"  header="The following action allows you to become Elite Gold Member" widgetVar="upgradeGoldDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
             <h:form>
                 <p:panel id="upgradeGoldDetail">
@@ -692,7 +696,7 @@
                             </p:column>
 
                             <p:column>
-                               <p:outputLabel value="S$ 20,000 / Year" />
+                                <p:outputLabel value="S$ 20,000 / Year" />
                             </p:column>
                         </p:row>
                     </p:panelGrid>
