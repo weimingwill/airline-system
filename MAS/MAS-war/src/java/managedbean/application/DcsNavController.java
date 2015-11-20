@@ -8,6 +8,7 @@ package managedbean.application;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import managedbean.dcs.LuggageManager;
 import managedbean.dcs.PassengerManager;
 
 /**
@@ -22,6 +23,9 @@ public class DcsNavController {
     private final String DCS_URL = "/views/internal/secured/dcs/";
     @Inject
     private PassengerManager passengerManager;
+
+    @Inject
+    private LuggageManager luggageManager;
 
     /**
      * Creates a new instance of DcsNavController
@@ -67,6 +71,7 @@ public class DcsNavController {
     }
 
     public String toSearchBPForLuggage() {
+        luggageManager.cleanVariables();
         return DCS_URL + "searchBPForLuggage.xhtml" + REDIRECT;
     }
 
@@ -79,6 +84,7 @@ public class DcsNavController {
     }
 
     public String toSearchTicket() {
+        luggageManager.cleanVariables();
         return DCS_URL + "searchTicket.xhtml" + REDIRECT;
     }
 }

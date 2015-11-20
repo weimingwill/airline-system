@@ -45,13 +45,17 @@
                 <p:column headerText="Arrival Date">
                     <h:outputText value="#{ticket.flightSchedBookingClass.flightSchedule.arrivalDate}" />
                 </p:column>
-
-                <p:column headerText="Luggage Plan (Max Kg)">
-                    <h:outputText value="#{ticket.purchasedLuggage.maxWeight}" />
+                
+                <p:column headerText="Luggage Plan">
+                    <h:outputText value="#{luggageManager.getLuggagePlan(ticket)}" />
                 </p:column>
 
-                <p:column headerText="Luggage Plan Description">
-                    <h:outputText value="#{ticket.purchasedLuggage.description}" />
+                <p:column headerText="Add on Luggage Plan (Kg)">
+                    <h:outputText value="#{ticket.purchasedLuggage.maxWeight}" />
+                </p:column>
+                
+                <p:column headerText="Current Piece">
+                    <h:outputText value="#{ticket.luggages.size()}" />
                 </p:column>
 
                 <p:column headerText="Check In Luggage" selectionMode="multiple"/>
@@ -73,8 +77,8 @@
                     <p:inputTextarea value="#{luggageManager.remark}" rows="6" cols="33" />
                 </p:panelGrid>
                 <p:separator/>
-                <p:commandButton value="Confirm" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.addLuggage}" onclick="PF('myForm:luggageDlg').hide()"/>
-                <p:commandButton value="Cancel" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('myForm:luggageDlg').hide()"/>   
+                <p:commandButton value="Confirm" type="submit" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="messages" action="#{dcsNavController.toAddLuggage}" actionListener="#{luggageManager.addLuggage}" oncomplete="PF('luggageDlg').hide()"/>
+                <p:commandButton value="Cancel" styleClass="ui-confirmdialog-no" icon="ui-icon-close" oncomplete="PF('luggageDlg').hide()"/>   
             </h:form>    
         </p:dialog>
     </ui:define>

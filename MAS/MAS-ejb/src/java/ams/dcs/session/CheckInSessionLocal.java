@@ -41,7 +41,9 @@ public interface CheckInSessionLocal {
 
     public BoardingPass checkInPassenger(AirTicket ticket);
 
-    public Double calculateLuggagePrice(AirTicket airTicket, List<CheckInLuggage> luggageList);
+    public double calculateLuggagePrice(AirTicket airTicket, double totalWeight);
+    
+    public double calculateLuggageWeight(AirTicket airTicket);
 
     public boolean checkInLuggage(AirTicket airticket, List<CheckInLuggage> luggageList, Double price);
 

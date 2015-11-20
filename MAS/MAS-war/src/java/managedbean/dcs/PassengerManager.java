@@ -126,12 +126,14 @@ public class PassengerManager implements Serializable {
         rows = new ArrayList<>();
         System.out.println(ss.size());
         if (!ss.isEmpty()) {
+            List<Seat> toBeRemoved = new ArrayList();
+            toBeRemoved.addAll(ss);
             for (Seat s : ss) {
                 if (s.getReserved() == true) {
-                    ss.remove(s);
+                    toBeRemoved.remove(s);
                 }
             }
-            setSeats(ss);
+            setSeats(toBeRemoved);
             rows = new ArrayList<>();
             for (Seat s : seats) {
                 if (!rows.contains(s.getRowNo())) {
@@ -157,7 +159,7 @@ public class PassengerManager implements Serializable {
         }
     }
 
-    public void selectSeat() {
+    public String selectSeat() {
         System.out.println("passport = " + passportNo);
         if (row != null && col != null && !col.equals("")) {
             seat = new Seat();
@@ -167,14 +169,15 @@ public class PassengerManager implements Serializable {
 
         if (seat == null) {
             msgController.addErrorMessage("Seat not selected!");
+            return "";
         } else {
             if (checkInSession.selectSeat(airTicket.getId(), seat)) {
                 msgController.addMessage("Select a seat successfully!");
-                seat = null;
-                airTicket = null;
+                checkPassenger();
             } else {
                 msgController.addErrorMessage("Failed to select seat!");
             }
+            return dcsNavController.toCheckInPassenger();
         }
     }
 
@@ -197,7 +200,6 @@ public class PassengerManager implements Serializable {
                 RequestContext context = RequestContext.getCurrentInstance();
                 context.update(":myForm:ticket");
                 context.execute("window.open('" + request.getContextPath() + dcsNavController.toBoardingPass() + "', '_blank')");
-                context.execute("PF(':myForm:luggageDlg').show()");
             }
         }
     }

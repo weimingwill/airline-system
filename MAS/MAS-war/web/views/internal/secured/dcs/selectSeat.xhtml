@@ -15,6 +15,7 @@
                 <p:outputLabel for="row" value="Select Row: " />
                 <p:selectOneMenu id="row" value="#{passengerManager.row}" style="width:200px" filter="true" filterMatchMode="contains">
                     <p:ajax listener="#{passengerManager.onRowChange}" update="col"/>
+                    <f:selectItem itemLabel="Select" itemValue="" noSelectionOption="false"/>
                     <f:selectItems value="#{passengerManager.rows}" var="row" itemLabel="#{row}" itemValue="#{row}" />
                 </p:selectOneMenu>
                 
@@ -25,7 +26,7 @@
             </p:panelGrid>
             
             <p:separator/>
-            <p:commandButton value="Seat Confirmed" update="messages" action="#{dcsNavController.toCheckInPassenger()}" actionListener="#{passengerManager.selectSeat()}" icon="ui-icon-check"/>
+            <p:commandButton value="Seat Confirmed" update="messages" action="#{passengerManager.selectSeat()}" icon="ui-icon-check"/>
 
         </h:form>
     </ui:define>

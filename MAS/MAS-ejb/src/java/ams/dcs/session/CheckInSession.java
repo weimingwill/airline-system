@@ -5,12 +5,14 @@
  */
 package ams.dcs.session;
 
+import ams.ais.entity.TicketFamily;
 import ams.aps.entity.FlightSchedule;
 import ams.ars.entity.AdditionalCharge;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.AirTicketAdditionalCharge;
 import ams.ars.entity.BoardingPass;
 import ams.ars.entity.Seat;
+import ams.ars.entity.helper.AirTicketAdditionalChargeId;
 import ams.crm.entity.Customer;
 import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.entity.Luggage;
@@ -40,7 +42,9 @@ public class CheckInSession implements CheckInSessionLocal {
     @PersistenceContext
     EntityManager em;
 
-    private final double WEIGHT_LEVEL_1 = 15.0;
+    private final double SP_WEIGHT = 69.0;
+    private final double OTHER_WEIGHT = 46.0;
+    private final double WEIGHT_LEVEL_1 = 20.0;
     private final double WEIGHT_LEVEL_2 = 30.0;
     private final double LUGGAGE_PRICE_1 = 25.0;
     private final double LUGGAGE_PRICE_2 = 35.0;
@@ -66,9 +70,9 @@ public class CheckInSession implements CheckInSessionLocal {
         q.setParameter("aid", ticketNo);
         q.setParameter("row", seat.getRowNo());
         q.setParameter("col", seat.getColNo());
-        
+
         try {
-            Seat s = (Seat)q.getSingleResult();
+            Seat s = (Seat) q.getSingleResult();
             AirTicket a = em.find(AirTicket.class, ticketNo);
 
             s.setReserved(Boolean.TRUE);
@@ -114,37 +118,60 @@ public class CheckInSession implements CheckInSessionLocal {
 
     @Override
     public boolean checkInLuggage(AirTicket airticket, List<CheckInLuggage> luggageList, Double price) {
+
+        airticket = em.find(AirTicket.class, airticket.getId());
+        List<CheckInLuggage> ori = airticket.getLuggages();
         List<CheckInLuggage> lug = new ArrayList<>();
+        if (ori != null) {
+            lug.addAll(ori);
+        }
+
         try {
             for (CheckInLuggage c : luggageList) {
-                em.persist(c);
-                em.flush();
+                System.out.println("Luggage Id: " + c.getId());
                 lug.add(c);
+                em.persist(c);
             }
-            
-            Query q = em.createQuery("SELECT ac FROM AdditionalCharge ac WHERE ac.name = :name");
-            q.setParameter("name", "Excessive Luggage");
-
-            AdditionalCharge ac = (AdditionalCharge)q.getSingleResult();
-            
-            AirTicketAdditionalCharge atpi = new AirTicketAdditionalCharge();
-            atpi.setAirTicket(airticket);
-            atpi.setPrice(price);
-            atpi.setAdditionalCharge(ac);
-            em.persist(atpi);
             em.flush();
-
-            AirTicket at = em.find(AirTicket.class, airticket.getId());
-            List<AirTicketAdditionalCharge> atpiList = at.getAirTicketAdditionalCharges();
-            atpiList.add(atpi);
-            at.setAirTicketAdditionalCharges(atpiList);
-            at.setLuggages(lug);
-            em.merge(at);
-
+            addLuggageToAirticket(lug, airticket, price);
             return true;
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
+    }
+
+    private void addLuggageToAirticket(List<CheckInLuggage> lug, AirTicket airticket, double price) {
+        Query q1 = em.createQuery("SELECT atac FROM AirTicketAdditionalCharge atac WHERE atac.airTicket.id = :aid AND atac.additionalCharge.name =:name");
+        q1.setParameter("aid", airticket.getId());
+        q1.setParameter("name", "Excess Luggage");
+
+        List<AirTicketAdditionalCharge> atpiList = airticket.getAirTicketAdditionalCharges();
+
+        try {
+            q1.getSingleResult();
+        } catch (Exception e) {
+            Query q = em.createQuery("SELECT ac FROM AdditionalCharge ac WHERE ac.name = :name");
+            q.setParameter("name", "Excess Luggage");
+
+            AdditionalCharge ac = (AdditionalCharge) q.getSingleResult();
+
+            AirTicketAdditionalCharge atpi = new AirTicketAdditionalCharge();
+            atpi.setPrice(price);
+            atpi.setAdditionalCharge(ac);
+            AirTicketAdditionalChargeId id = new AirTicketAdditionalChargeId();
+            id.setAirTicketId(airticket.getId());
+            id.setAdditionalChargeId(ac.getId());
+            atpi.setAirTicketAdditonalChargeId(id);
+            atpi.setAirTicket(em.find(AirTicket.class, airticket.getId()));
+            em.persist(atpi);
+
+            atpiList.add(atpi);
+        }
+
+        airticket.setAirTicketAdditionalCharges(atpiList);
+        airticket.setLuggages(lug);
+        em.merge(airticket);
     }
 
     @Override
@@ -164,19 +191,28 @@ public class CheckInSession implements CheckInSessionLocal {
     }
 
     @Override
-    public Double calculateLuggagePrice(AirTicket airTicket, List<CheckInLuggage> luggageList) {
-        Double price = 0.0;
-
-        for (CheckInLuggage l : luggageList) {
-            if (l.getRealWeight() > airTicket.getPurchasedLuggage().getMaxWeight()) {
-                Double ex = l.getRealWeight() - airTicket.getPurchasedLuggage().getMaxWeight();
-                if (ex <= WEIGHT_LEVEL_1) {
-                    price += ex * LUGGAGE_PRICE_1;
-                } else if (ex <= WEIGHT_LEVEL_2) {
-                    price += LUGGAGE_PRICE_2 * (ex - WEIGHT_LEVEL_1) + LUGGAGE_PRICE_1 * WEIGHT_LEVEL_1;
-                } else {
-                    price += 0.0;
-                }
+    public double calculateLuggagePrice(AirTicket airTicket, double totalWeight) {
+        double price = 0.0;
+        TicketFamily tf = airTicket.getFlightSchedBookingClass().getBookingClass().getTicketFamily();
+        if (tf.getType().equals("MSF")) {
+            double weightLimit = SP_WEIGHT + airTicket.getPurchasedLuggage().getMaxWeight();
+            double excess = totalWeight - weightLimit;
+            if (excess <= 0) {
+                price = 0.0;
+            } else if (excess <= WEIGHT_LEVEL_1) {
+                price += excess * LUGGAGE_PRICE_1;
+            } else if (excess <= WEIGHT_LEVEL_2) {
+                price += WEIGHT_LEVEL_1 * LUGGAGE_PRICE_1 + (excess - WEIGHT_LEVEL_1) * LUGGAGE_PRICE_2;
+            }
+        } else {
+            double weightLimit = OTHER_WEIGHT + airTicket.getPurchasedLuggage().getMaxWeight();
+            double excess = totalWeight - weightLimit;
+            if (excess <= 0) {
+                price = 0.0;
+            } else if (excess <= WEIGHT_LEVEL_1) {
+                price += excess * LUGGAGE_PRICE_1;
+            } else if (excess <= WEIGHT_LEVEL_2) {
+                price += WEIGHT_LEVEL_1 * LUGGAGE_PRICE_1 + (excess - WEIGHT_LEVEL_1) * LUGGAGE_PRICE_2;
             }
         }
         return price;
@@ -318,21 +354,35 @@ public class CheckInSession implements CheckInSessionLocal {
     }
 
     @Override
-    public void removeLuggage(AirTicket airTicket, List<CheckInLuggage> luggages) throws LuggageNotRomovedException {
+    public void removeLuggage(AirTicket airTicket, List<CheckInLuggage> lug) throws LuggageNotRomovedException {
         try {
             AirTicket a = em.find(AirTicket.class, airTicket.getId());
             List<CheckInLuggage> lugList = a.getLuggages();
+            List<CheckInLuggage> temp = a.getLuggages();
 
-            for (CheckInLuggage l : lugList) {
-                if (luggages.contains(l)) {
-                    lugList.remove(l);
-                }
-            }
-            
-            a.setLuggages(lugList);
+//            for (CheckInLuggage l : lugList) {
+//                if (lug.contains(l)) {
+//                    temp.remove(l);
+//                }
+//            }
+            a.getLuggages().removeAll(lug);
+
             em.merge(a);
         } catch (Exception e) {
             throw new LuggageNotRomovedException();
         }
+    }
+
+    @Override
+    public double calculateLuggageWeight(AirTicket airTicket) {
+        AirTicket a = em.find(AirTicket.class, airTicket.getId());
+        List<CheckInLuggage> lug = a.getLuggages();
+        double weight = 0.0;
+
+        for (CheckInLuggage l : lug) {
+            weight += l.getRealWeight();
+        }
+
+        return weight;
     }
 }
