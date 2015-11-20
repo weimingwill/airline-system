@@ -5,7 +5,11 @@
  */
 package ams.crm.session;
 
+import ams.aps.session.RoutePlanningSession;
+import ams.ars.entity.AirTicket;
+import ams.ars.entity.Booking;
 import ams.crm.entity.Membership;
+import ams.crm.entity.PrivilegeValue;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
 import ams.crm.util.exception.ExistSuchRegCustException;
@@ -18,6 +22,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -36,8 +41,9 @@ public class CustomerExSession implements CustomerExSessionLocal {
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @PersistenceContext
-    private EntityManager entityManager;
-    private Object emailController;
+    private EntityManager em;
+    @EJB
+    private RoutePlannningSessionLocal routePlanningSession;
 
     @Override
     public void createRegCust(RegCust regCust) throws ExistSuchRegCustException {
@@ -51,7 +57,7 @@ public class CustomerExSession implements CustomerExSessionLocal {
         regCust.setActivated(true);
         System.out.println("createRegCust: \n\tCountry Code: " + regCust.getPhone().getCountryCode());
         try {
-            regCust.setMembership(entityManager.find(Membership.class, getMembershipByName("Elite Bronze").getId()));
+            regCust.setMembership(em.find(Membership.class, getMembershipByName("Elite Bronze").getId()));
         } catch (NoSuchMembershipException ex) {
             Logger.getLogger(CustomerExSession.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NullPointerException ex) {
@@ -62,7 +68,7 @@ public class CustomerExSession implements CustomerExSessionLocal {
             }
         }
         regCust.setMembershipId("MA" + 10000 + r.nextInt(20000));
-        entityManager.persist(regCust);
+        em.persist(regCust);
     }
 //    public void createRegCust(String title, String firstname,String lastname, String passportNo, String nationality, String gender,Date dob, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone mobilephone, Phone telephone, String pwd,String securQuest,String securAns, Boolean newsLetterPref, Boolean promoPref, String membershipClass, Double accMiles,Double custValue, Integer numOfFlights, String memberShipId) throws ExistSuchRegCustException {
 //        RegCust regCust = new RegCust();
@@ -92,7 +98,7 @@ public class CustomerExSession implements CustomerExSessionLocal {
 //        regCust.setCustValue(custValue);
 //        regCust.setNumOfFlights(numOfFlights);
 //        regCust.setMemberShipId(memberShipId);
-//        entityManager.persist(regCust);
+//        em.persist(regCust);
 //    }
 
     @Override
@@ -131,7 +137,7 @@ public class CustomerExSession implements CustomerExSessionLocal {
     public void upgradeMembership(String email, String membershipName) throws NoSuchRegCustException {
         RegCust r = getRegCustByEmail(email);
         try {
-            r.setMembership(entityManager.find(Membership.class, getMembershipByName(membershipName).getId()));
+            r.setMembership(em.find(Membership.class, getMembershipByName(membershipName).getId()));
         } catch (NoSuchMembershipException ex) {
             Logger.getLogger(CustomerExSession.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NullPointerException ex) {
@@ -141,19 +147,19 @@ public class CustomerExSession implements CustomerExSessionLocal {
                 Logger.getLogger(CustomerExSession.class.getName()).log(Level.SEVERE, null, ex1);
             }
         }
-        entityManager.merge(r);
-        entityManager.flush();
+        em.merge(r);
+        em.flush();
     }
 
     @Override
     public List<RegCust> getAllRegCusts() {
-        Query query = entityManager.createQuery("SELECT r FROM RegCust r");
+        Query query = em.createQuery("SELECT r FROM RegCust r");
         return query.getResultList();
     }
 
     @Override
     public Membership getMembershipByName(String membershipClassName) throws NoSuchMembershipException {
-        Query query = entityManager.createQuery("SELECT c FROM Membership c WHERE c.name = :inMembershipName");
+        Query query = em.createQuery("SELECT c FROM Membership c WHERE c.name = :inMembershipName");
         query.setParameter("inMembershipName", membershipClassName);
         Membership selectMembership = null;
         try {
@@ -169,7 +175,7 @@ public class CustomerExSession implements CustomerExSessionLocal {
     @Override
     public RegCust getRegCustByEmail(String email) throws NoSuchRegCustException {
         System.out.print("test email" + email);
-        Query query = entityManager.createQuery("SELECT r FROM RegCust r WHERE r.email = :inEmail");
+        Query query = em.createQuery("SELECT r FROM RegCust r WHERE r.email = :inEmail");
         query.setParameter("inEmail", email);
         RegCust selectRegCust = null;
         System.out.printf("selectRegCustrtyjrytr " + selectRegCust);
@@ -203,13 +209,13 @@ public class CustomerExSession implements CustomerExSessionLocal {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
         } else {
             if (r.getCustValue() >= 50000) {
-                r.setMembership(entityManager.find(Membership.class, getMembershipByName("Elite Silver").getId()));
+                r.setMembership(em.find(Membership.class, getMembershipByName("Elite Silver").getId()));
             } else if (r.getCustValue() >= 100000) {
-                r.setMembership(entityManager.find(Membership.class, getMembershipByName("Elite Gold").getId()));
+                r.setMembership(em.find(Membership.class, getMembershipByName("Elite Gold").getId()));
 
             }
-            entityManager.merge(r);
-            entityManager.flush();
+            em.merge(r);
+            em.flush();
 
         }
     }
@@ -221,8 +227,8 @@ public class CustomerExSession implements CustomerExSessionLocal {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
         } else {
             r.setAccMiles(accMiles);
-            entityManager.merge(r);
-            entityManager.flush();
+            em.merge(r);
+            em.flush();
 
         }
     }
@@ -234,8 +240,8 @@ public class CustomerExSession implements CustomerExSessionLocal {
             throw new NoSuchRegCustException(CrmMsg.NO_SUCH_Reg_Cust_ERROR);
         } else {
             r.setCustValue(customerValue);
-            entityManager.merge(r);
-            entityManager.flush();
+            em.merge(r);
+            em.flush();
             try {
                 checkAccountUpgrade(email);
             } catch (NoSuchMembershipException ex) {
@@ -275,13 +281,38 @@ public class CustomerExSession implements CustomerExSessionLocal {
         r.setSecurQuest(securQuest);
         r.setNewsLetterPref(newsLetterPref);
         r.setPromoPref(promoPref);
-        entityManager.merge(r);
-        entityManager.flush();
+        em.merge(r);
+        em.flush();
 
     }
 
+    @Override
+    public double calcCustValue(Booking booking, RegCust regCust) {
+        double distance = 0;
+        for (AirTicket airTicket : booking.getAirTickets()) {
+            distance += airTicket.getFlightSchedBookingClass().getFlightSchedule().getFlight().getDistance();
+        }
+        //Transfer km to mile
+        distance *= 0.000621371;
+        //Transfer distance to cust value
+        double custValue = distance / 8;
+        custValue *= getMembershipBonusMiles(regCust.getMembership());
+        return custValue;
+    }
+
+    private double getMembershipBonusMiles(Membership membership) {
+        Query query = em.createQuery("SELECT pv FROM PrivilegeValue pv WHERE pv.membership.id = :membershipId AND pv.privilege.name = 'Bonus miles'");
+        query.setParameter("membershipId", membership.getId());
+        PrivilegeValue privilegeValue = new PrivilegeValue();
+        try {
+            privilegeValue = (PrivilegeValue) query.getSingleResult();
+        } catch (Exception e) {
+        }
+        return privilegeValue.getPrivilegeValue();
+    }
+
     private RegCust getRegCustById(Long customerId) throws NoSuchRegCustException {
-        Query query = entityManager.createQuery("SELECT r FROM RegCust r WHERE r.id = :customerId");
+        Query query = em.createQuery("SELECT r FROM RegCust r WHERE r.id = :customerId");
         query.setParameter("customerId", customerId);
         RegCust selectRegCust = null;
         System.out.printf("selectRegCustrtyjrytr " + selectRegCust);
@@ -298,7 +329,7 @@ public class CustomerExSession implements CustomerExSessionLocal {
     }
 
     private List<RegCust> getAllOtherRegCustById(Long customerId) {
-        Query query = entityManager.createQuery("SELECT c FROM RegCust c where c.id <> :customerId");
+        Query query = em.createQuery("SELECT c FROM RegCust c where c.id <> :customerId");
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
