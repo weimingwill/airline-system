@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmExTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="title">
+        Membership Information
+    </ui:define>
+
+    <ui:define name="content">
+        <p:panel  header="Miles And Membership"  style="width: 600px;text-align: center;" >
+                <p:dataTable id="membershipPolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
+                    
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="CabinClass - TicketFamily" />
+                            <ui:repeat value="#{generalInformationController.nameChangeRules}" var="rule">
+                                <p:column id="rule#{rule.ruleId}" headerText="#{rule.name}">
+                                    <p:tooltip for="rule#{rule.ruleId}" value="#{rule.description}" />
+                                </p:column>
+                            </ui:repeat>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column>
+                        <p:outputLabel id="tf#{tf.ticketFamilyId}" value="#{tf.getCabinClass().name} - #{tf.name}" />
+                        <!--<p:tooltip for="tf{tf.ticketFamilyId}" value="{tf.getCabinClass().name}" />-->
+                    </p:column>
+                    <c:forEach items="#{generalInformationController.nameChangeRules}" var="rule">
+                        <p:column>
+                            <p:outputLabel value="#{ticketFamilyController.getTicketFamilyRuleValue(tf.ticketFamilyId, rule.ruleId)}" />
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>
