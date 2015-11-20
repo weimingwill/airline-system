@@ -59,4 +59,12 @@ public class AfosNavController {
     public String toCreateChecklist() {
         return AFOS_URL + "crew_regulation/createChecklist.xhtml" + REDIRECT;
     }
+    
+    public String toCrewReporting(){
+        return AFOS_URL + "crew_regulation/crewReporting.xhtml" + REDIRECT;
+    }
+    
+    public String toUpdateCrewAttendance(){
+        return AFOS_URL + "crew_regulation/updateCrewAttendance.xhtml" + REDIRECT;
+    }
 }

@@ -752,13 +752,18 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     }
 
     @Override
-    public void updateAttendance(List<FlightCrew> flightCrews) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void updateAttendance(List<FlightCrew> flightCrews, FlightSchedule flightSchedule) {
+        for(FlightCrew fc: flightCrews){
+            em.merge(fc);
+        }
     }
 
     @Override
     public List<FlightCrew> getOnDutyCrews(FlightSchedule flightSchedule) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Query q=em.createQuery("SELECT DISTINCT pfc.flightCrew FROM PairingFlightCrew pfc, IN(pfc.pairing.flightDuties) fd, IN(fd.flightSchedules) fs WHERE fs.flightScheduleId = :fsId AND pfc.status = :status ORDER BY pfc.flightCrew.position.rank DESC, pfc.flightCrew.dateJoined ASC");
+        q.setParameter("fsId", flightSchedule.getFlightScheduleId());
+        q.setParameter("status", PairingCrewStatus.SUCCESS);
+        return (List<FlightCrew>) q.getResultList();
     }
 
     @Override

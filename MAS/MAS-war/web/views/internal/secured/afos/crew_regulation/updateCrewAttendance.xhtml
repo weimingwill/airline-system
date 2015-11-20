@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AfosTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form>
+            <p:panel header="Flight Crews for flight #{flightDutyBacking.selectedFlightSchedule.flight.flightNo} flying on #{flightDutyBacking.getDepartureDateTime()}"/>
+            <p:panelGrid columns="2">
+                <p:dataGrid value="#{flightDutyBacking.crewsForFlightSchedule}" var="flightCrew" rows="3"  columns="2" paginator="true" styleClass="crewDG alighTop">
+                    <p:panel>
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column rowspan="2">
+                                    <p:graphicImage value="/resources/images/crews/#{flightCrew.position.type}-#{flightCrew.gender}.png" width="100px"/>
+                                </p:column>
+                                <p:column style="font-size: large; text-align: center; font-weight: bold; vertical-align: bottom">
+                                    <p:outputLabel value="#{flightCrew.name}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="font-size: small; text-align: center; font-weight: bold; vertical-align: top; color: dimgray">
+                                    <p:outputLabel value="#{flightCrew.position.type == 'FA' ? 'Flight Attendant' : 'Pilot'}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" class="ui-widget-header">
+                                    <p:outputLabel value="Contacts"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Phone"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{flightCrew.phone}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Email"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{flightCrew.email}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" class="ui-widget-header">
+                                    <p:outputLabel value="Position"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Title"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{flightCrew.position.name}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Date Joined"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{flightCrew.dateJoined}">
+                                        <f:convertDateTime timeZone="GMT+8"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                </p:dataGrid>
+
+
+                <p:dataTable value="#{flightDutyBacking.crewsForFlightSchedule}" var="crew" tableStyleClass="table-small" styleClass="alignTop">
+                    <f:facet name="header">
+                        <p:outputLabel value="Update Crew Attendance (P: Present, A: Absent)"/>
+                        <p:commandButton value="Update" action="#{flightDutyBacking.updateAttendance()}" style="margin-left: 20px"/>
+                        <p:commandButton value="Save &amp; Exit" action="#{flightDutyBacking.onSaveBtnClick()}" style="margin-left: 20px"/>
+                    </f:facet>
+                    <p:column>
+                        <p:outputLabel value="#{crew.flightCrewID}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{crew.name}"/>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneRadio id="console" value="#{crew.status}" layout="grid" columns="2">
+                            <!--<f:setPropertyActionListener value="{crew}" target="{flightDutyBacking.selectedCrew}" />-->
+                            <f:selectItem itemLabel="P" itemValue="Present" />
+                            <f:selectItem itemLabel="A" itemValue="Absent" />
+                        </p:selectOneRadio>
+                    </p:column>
+                </p:dataTable>
+
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

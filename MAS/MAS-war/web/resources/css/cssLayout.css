@@ -495,3 +495,7 @@ div.timeline-event-selected {
 .hide-column-names table thead tr {
     display: none;
 }
+
+.crewDG > .ui-datagrid-content .ui-widget-content > table{
+    font-size: small !important;
+}

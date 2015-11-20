@@ -104,4 +104,8 @@ public interface FlightSchedulingSessionLocal {
     public List<FlightSchedule> getThisFlightFlightSchedules(Flight thisFlight);
     
     public List<Flight> getScheduledFlights();
+    
+    public List<FlightSchedule> getAllFutureFlightSchedules();
+    
+    public List<FlightSchedule> getAllPastFlightSchedules();
 }

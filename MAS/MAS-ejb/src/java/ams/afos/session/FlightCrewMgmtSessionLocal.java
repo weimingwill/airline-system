@@ -37,7 +37,7 @@ public interface FlightCrewMgmtSessionLocal {
     public List<BiddingSession> getAllBiddingSession();
     public void assignPairingsToCrew(String type, Pairing pairingWithBids, List<FlightCrew> orderedFlightCrew);
     public void createFlightDutyChecklist(Checklist checklist, Flight flight); // combine create and update together
-    public void updateAttendance(List<FlightCrew> flightCrews);
+    public void updateAttendance(List<FlightCrew> flightCrews,FlightSchedule flightSchedule);
     public List<FlightCrew> getOnDutyCrews(FlightSchedule flightSchedule);
     public List<Checklist> getFlightDutyChecklist(FlightSchedule FlightSchedule, String type);
     public Checklist getFlightChecklist(Flight thisFlight, String type);

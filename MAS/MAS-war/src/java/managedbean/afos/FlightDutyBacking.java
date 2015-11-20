@@ -7,12 +7,14 @@ package managedbean.afos;
 
 import ams.afos.entity.Checklist;
 import ams.afos.entity.ChecklistItem;
+import ams.afos.entity.FlightCrew;
 import ams.afos.session.FlightCrewMgmtSessionLocal;
 import ams.afos.util.helper.ChecklistType;
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import ams.aps.session.FlightSchedulingSessionLocal;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -21,6 +23,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -60,9 +63,14 @@ public class FlightDutyBacking implements Serializable {
     private Flight selectedFlight;
     private Flight selectedFlightForChlt;
     private List<FlightSchedule> futureFlightSchedules;
+    private List<FlightSchedule> pastFlightSchedules;
+    private FlightSchedule selectedFlightSchedule;
     private ChecklistItem selectedChecklistItem;
     private ChecklistItem newChecklistItem = new ChecklistItem();
     private boolean isTemplate = false;
+
+    private List<FlightCrew> crewsForFlightSchedule;
+    private FlightCrew selectedCrew;
 
     /**
      * Creates a new instance of FlightDutyBacking
@@ -77,6 +85,7 @@ public class FlightDutyBacking implements Serializable {
         uri = uri.substring(uri.lastIndexOf("/") + 1, uri.indexOf('.', uri.lastIndexOf("/")));
         System.out.println("FlightDutyBacking: init() uri = " + uri);
         setScheduledFlights(getFlightsWithFlightSchedules());
+        Map<String, Object> map;
         switch (uri) {
             case "selectChecklistType":
                 setChecklistTypes((List<String>) new ArrayList());
@@ -84,7 +93,7 @@ public class FlightDutyBacking implements Serializable {
                 getChecklistTypes().add(ChecklistType.POST_FLIGHT);
                 break;
             case "createChecklist":
-                Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+                map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
                 setSelectedFlight((Flight) map.get("selectedFlight"));
                 setSelectedType((String) map.get("selectedType"));
                 setSelectedTemplate((Checklist) map.get("selectedTemplate"));
@@ -97,6 +106,14 @@ public class FlightDutyBacking implements Serializable {
                     setFlightChecklist(newflightChecklist);
                 }
                 removeSelectedFlightFromFlightList();
+                break;
+            case "crewReporting":
+                setFutureFlightSchedules(flightSchedulingSession.getAllFutureFlightSchedules());
+                setPastFlightSchedules(flightSchedulingSession.getAllPastFlightSchedules());
+            case "updateCrewAttendance":
+                map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+                setCrewsForFlightSchedule((List<FlightCrew>) map.get("flightCrews"));
+                setSelectedFlightSchedule((FlightSchedule) map.get("selectedFlightSchedule"));
                 break;
             default:
         }
@@ -240,6 +257,40 @@ public class FlightDutyBacking implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         context.update("checklistDlg");
         context.execute("PF('checklistDlg').show();");
+    }
+
+    public String onViewCrewsBtnClick() {
+        setCrewsForFlightSchedule(flightCrewMgmtSession.getOnDutyCrews(selectedFlightSchedule));
+        if (crewsForFlightSchedule == null || crewsForFlightSchedule.isEmpty()) {
+            msgController.addErrorMessage("There is no crew assigned to this flight");
+            return "";
+        } else {
+            Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+            map.put("flightCrews", crewsForFlightSchedule);
+            map.put("selectedFlightSchedule", selectedFlightSchedule);
+            return afosNavController.toUpdateCrewAttendance();
+        }
+    }
+
+    public String getDepartureDateTime() {
+        SimpleDateFormat ft = new SimpleDateFormat("E dd/MM/yyyy 'at' hh:mm:ss a zzz");
+        return ft.format(selectedFlightSchedule.getDepartDate());
+    }
+
+    public String updateAttendance() {
+        for (FlightCrew fc : crewsForFlightSchedule) {
+            if (fc.getStatus() == null || fc.getStatus().equals("")) {
+                msgController.addErrorMessage("Please update attendance for crew: " + fc.getName());
+                return "";
+            }
+        }
+        flightCrewMgmtSession.updateAttendance(crewsForFlightSchedule, selectedFlightSchedule);
+        return "";
+    }
+    
+    public String onSaveBtnClick(){
+        updateAttendance();
+        return afosNavController.toCrewReporting();
     }
 
     /**
@@ -422,6 +473,62 @@ public class FlightDutyBacking implements Serializable {
      */
     public void setSelectedTypeForChlt(String selectedTypeForChlt) {
         this.selectedTypeForChlt = selectedTypeForChlt;
+    }
+
+    /**
+     * @return the pastFlightSchedules
+     */
+    public List<FlightSchedule> getPastFlightSchedules() {
+        return pastFlightSchedules;
+    }
+
+    /**
+     * @param pastFlightSchedules the pastFlightSchedules to set
+     */
+    public void setPastFlightSchedules(List<FlightSchedule> pastFlightSchedules) {
+        this.pastFlightSchedules = pastFlightSchedules;
+    }
+
+    /**
+     * @return the selectedFlightSchedule
+     */
+    public FlightSchedule getSelectedFlightSchedule() {
+        return selectedFlightSchedule;
+    }
+
+    /**
+     * @param selectedFlightSchedule the selectedFlightSchedule to set
+     */
+    public void setSelectedFlightSchedule(FlightSchedule selectedFlightSchedule) {
+        this.selectedFlightSchedule = selectedFlightSchedule;
+    }
+
+    /**
+     * @return the crewsForFlightSchedule
+     */
+    public List<FlightCrew> getCrewsForFlightSchedule() {
+        return crewsForFlightSchedule;
+    }
+
+    /**
+     * @param crewsForFlightSchedule the crewsForFlightSchedule to set
+     */
+    public void setCrewsForFlightSchedule(List<FlightCrew> crewsForFlightSchedule) {
+        this.crewsForFlightSchedule = crewsForFlightSchedule;
+    }
+
+    /**
+     * @return the selectedCrew
+     */
+    public FlightCrew getSelectedCrew() {
+        return selectedCrew;
+    }
+
+    /**
+     * @param selectedCrew the selectedCrew to set
+     */
+    public void setSelectedCrew(FlightCrew selectedCrew) {
+        this.selectedCrew = selectedCrew;
     }
 
 }

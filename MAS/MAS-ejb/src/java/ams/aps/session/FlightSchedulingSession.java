@@ -1048,4 +1048,21 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         Query q = em.createQuery("SELECT DISTINCT fs.flight FROM FlightSchedule fs WHERE fs.deleted = FALSE GROUP BY fs.flight");
         return (List<Flight>) q.getResultList();
     }
+
+    @Override
+    public List<FlightSchedule> getAllFutureFlightSchedules() {
+        Calendar time = Calendar.getInstance();
+        Query q = em.createQuery("SELECT DISTINCT fs FROM FlightSchedule fs WHERE fs.deleted = FALSE AND fs.departDate BETWEEN :startTime AND :endTime ORDER BY fs.departDate");
+        q.setParameter("startTime", time.getTime());
+        time.add(Calendar.HOUR_OF_DAY, 5);
+        q.setParameter("endTime", time.getTime());
+        return (List<FlightSchedule>) q.getResultList();
+    }
+
+    @Override
+    public List<FlightSchedule> getAllPastFlightSchedules() {
+        Query q = em.createQuery("SELECT DISTINCT fs FROM FlightSchedule fs WHERE fs.deleted = FALSE AND fs.arrivalDate <= CURRENT_TIMESTAMP ORDER BY fs.departDate");
+        System.out.println("past flights: " + (List<FlightSchedule>) q.getResultList());
+        return (List<FlightSchedule>) q.getResultList();
+    }
 }
