@@ -3,32 +3,42 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ams.ars.entity;
+package ams.aps.entity;
 
+import ams.ars.entity.Seat;
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
- * @author Bowen
+ * @author weiming
  */
 @Entity
-public class PricingItem implements Serializable {
+public class FlightScheduleSeat implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private Double price;
-    
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private AirTicket airTicket;
-    
+    private Integer rank;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<Seat> seats;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -39,10 +49,10 @@ public class PricingItem implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PricingItem)) {
+        if (!(object instanceof FlightScheduleSeat)) {
             return false;
         }
-        PricingItem other = (PricingItem) object;
+        FlightScheduleSeat other = (FlightScheduleSeat) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -51,39 +61,25 @@ public class PricingItem implements Serializable {
 
     @Override
     public String toString() {
-        return "ams.ars_crm.entity.PricingItem[ id=" + id + " ]";
+        return "ams.aps.entity.FlightScheduleSeat[ id=" + id + " ]";
     }
 
-    public Long getId() {
-        return id;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
-    public String getName() {
-        return name;
+    public List<Seat> getSeats() {
+        return seats;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
     }
 
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public AirTicket getAirTicket() {
-        return airTicket;
-    }
-
-    public void setAirTicket(AirTicket airTicket) {
-        this.airTicket = airTicket;
-    }
+    
     
 }

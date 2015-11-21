@@ -5,6 +5,7 @@
  */
 package ams.ars.entity.helper;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -13,32 +14,32 @@ import javax.persistence.Embeddable;
  * @author weiming
  */
 @Embeddable
-public class AirTicketPricingItemId {
+public class AirTicketAdditionalChargeId implements Serializable {
     
     @Column(name = "AIRTICKETID")
     private Long airTicketId;
-    @Column(name = "PRICINGITEMID")
-    private Long pricingItemId;
+    @Column(name = "ADDITIONALCHARGEID")
+    private Long additionalChargeId;
     
         
     @Override
     public int hashCode() {
-        return (int)(airTicketId + pricingItemId);
+        return (int)(airTicketId + additionalChargeId);
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the airTicketId fields are not set
-    if (object instanceof AirTicketPricingItemId) {
-      AirTicketPricingItemId otherId = (AirTicketPricingItemId) object;
-      return (otherId.pricingItemId == this.pricingItemId) && (otherId.airTicketId == this.airTicketId);
+    if (object instanceof AirTicketAdditionalChargeId) {
+      AirTicketAdditionalChargeId otherId = (AirTicketAdditionalChargeId) object;
+      return (otherId.additionalChargeId == this.additionalChargeId) && (otherId.airTicketId == this.airTicketId);
     }
     return false;
     }
 
     @Override
     public String toString() {
-        return "ams.ais.entity.CabinClassTicketFamily[ pricingItemId=" + pricingItemId + " ][ airTicketId=" + airTicketId + " ]";
+        return "ams.ais.entity.CabinClassTicketFamily[ additionalChargeId=" + additionalChargeId + " ][ airTicketId=" + airTicketId + " ]";
     }
 
     public Long getAirTicketId() {
@@ -49,11 +50,12 @@ public class AirTicketPricingItemId {
         this.airTicketId = airTicketId;
     }
 
-    public Long getPricingItemId() {
-        return pricingItemId;
+    public Long getAdditionalChargeId() {
+        return additionalChargeId;
     }
 
-    public void setPricingItemId(Long pricingItemId) {
-        this.pricingItemId = pricingItemId;
+    public void setAdditionalChargeId(Long additionalChargeId) {
+        this.additionalChargeId = additionalChargeId;
     }
+
 }
