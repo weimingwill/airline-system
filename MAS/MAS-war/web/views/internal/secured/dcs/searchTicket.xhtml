@@ -12,18 +12,19 @@
         </f:facet>
 
         <h:form>
-            <p:panelGrid columns="2" style="margin: 0 auto">
-                <p:outputLabel value="Reference No.: *" />
+            <p:panelGrid columns="1" style="margin: 0 auto;alignment-adjust:central">
+                <p:outputLabel value="Select reference type: *" />
                 <p:selectOneRadio id="reference" value="#{luggageManager.idMethod}">
                     <f:selectItem itemLabel="Air Ticket" itemValue="ticket" />
                     <f:selectItem itemLabel="Boarding Pass" itemValue="pass" />
                 </p:selectOneRadio>
 
-                <p:outputLabel value="Enter Boarding Pass No.: *" />
+                <p:outputLabel value="Enter reference No.: *" />
                 <p:inputText value="#{luggageManager.reference}" required="true" label="pass"/>
+
+                <p:commandButton value="Search for luggage" update="messages" action="#{luggageManager.getLuggages()}"/>
             </p:panelGrid>
 
-            <p:commandButton value="Search for luggage" update="messages" action="#{luggageManager.getLuggages()}"/>
         </h:form>
     </ui:define>
 
