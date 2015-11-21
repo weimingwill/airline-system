@@ -65,7 +65,7 @@ public class reportController {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:8889/mas", "root", "root");
             System.out.println("start to generate revenue report");
             try {
-                JasperReport jasperReport = JasperCompileManager.compileReport("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/RevenueReport.jrxml");
+                JasperReport jasperReport = JasperCompileManager.compileReport("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/revenueReport.jrxml");
                 System.out.println("step 1 done");
                 JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
                 System.out.println("step 2 done");
@@ -81,34 +81,5 @@ public class reportController {
         }
     }
 
-    
-    public void onPrerender(ComponentSystemEvent event) {
-
-        try {
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-            Document document = new Document();
-            PdfWriter.getInstance(document, out);
-            document.open();
-
-            for (int i = 0; i < 50; i++) {
-                document.add(new Paragraph("All work and no play makes Jack a dull boy"));
-            }
-
-            document.close();
-            content = new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public StreamedContent getContent() {
-        return content;
-    }
-
-    public void setContent(StreamedContent content) {
-        this.content = content;
-    }
 
 }
