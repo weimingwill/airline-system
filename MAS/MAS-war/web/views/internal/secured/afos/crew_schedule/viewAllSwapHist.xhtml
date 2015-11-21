@@ -2,10 +2,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <body>
 
@@ -13,15 +13,15 @@
 
             <ui:define name="content">
                 <h:form id="swappingReqForm">
-                    <p:dataTable id="swappingReqTable" var="swapReq" value="#{flightCrewBacking.crewSwappingRequests}" rows="2" tableStyleClass="table-small" rowKey="#{swapReq.id}" selection="#{flightCrewBacking.selectedSwappingRequest}"
-                                 paginator="true" rowsPerPageTemplate="2,4,8"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                    <p:dataTable id="swappingReqTable" var="swapReq" value="#{flightCrewBacking.crewSwappingRequests}" rows="3" tableStyleClass="table-small"
+                                 paginator="true" rowsPerPageTemplate="3,6,9"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
                         <f:facet name="header">
-                            <p:outputLabel value="Your Swapping Requests"/>
+                            <p:outputLabel value="Crew Swapping Requests"/>
                         </f:facet>
                         <p:column>
-                            <p:outputLabel value="Swap From:" class="label"/>
+                            <p:outputLabel value="Swap From: #{swapReq.sender.flightCrewID}" class="label"/>
                             <ta:CCPairingTable pairing="#{swapReq.chosenPairing}"/>
-                            <p:outputLabel value="Swap To:" class="label"/>
+                            <p:outputLabel value="Swap To: #{swapReq.receiver.flightCrewID}" class="label"/>
                             <ta:CCPairingTable pairing="#{swapReq.targetPairing}"/>
                         </p:column>
                         <p:column headerText="Status">
@@ -35,17 +35,7 @@
                                 <f:convertDateTime timeZone="GMT+8" pattern="dd/MM/yyy HH:ss:mm"/>
                             </p:outputLabel>
                         </p:column>
-                        <p:column headerText="Cancel">
-                            <p:commandButton action="#{flightCrewBacking.onDeleteReqBtnClick()}" icon="fa fa-trash-o" title="Cancel Swapping Request" rendered="#{swapReq.status == 'Pending'}" update=":swappingReqForm:swappingReqTable">
-                                <f:setPropertyActionListener value="#{swapReq}" target="#{flightCrewBacking.selectedSwappingRequest}" />
-                                <p:confirm icon="ui-icon-alert" header="Confirmation" message="Are you sure you want to delete this swapping request?"/>
-                            </p:commandButton>
-                        </p:column>
                     </p:dataTable>
-                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                    </p:confirmDialog>
                 </h:form>
             </ui:define>
 

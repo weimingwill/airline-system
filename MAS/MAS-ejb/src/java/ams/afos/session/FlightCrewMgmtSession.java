@@ -11,6 +11,7 @@ import ams.afos.entity.FlightCrew;
 import ams.afos.entity.FlightDuty;
 import ams.afos.entity.Pairing;
 import ams.afos.entity.PairingFlightCrew;
+import ams.afos.entity.SwappingRequest;
 import ams.afos.entity.helper.PairingCrewId;
 import ams.afos.util.exception.BiddingSessionConflictException;
 import ams.afos.util.exception.FlightDutyConflictException;
@@ -18,6 +19,7 @@ import ams.afos.util.exception.PairingConflictException;
 import ams.afos.util.helper.BiddingSessionStatus;
 import ams.afos.util.helper.ChecklistType;
 import ams.afos.util.helper.CrewType;
+import ams.afos.util.helper.NoCrewFoundException;
 import ams.afos.util.helper.PairingCrewStatus;
 import ams.aps.entity.AircraftCabinClass;
 import ams.aps.entity.Airport;
@@ -348,38 +350,42 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
     }
 
     @Override
-    public void generateBiddingSession(String target) throws BiddingSessionConflictException {
+    public void generateBiddingSession(String target) throws BiddingSessionConflictException, NoCrewFoundException {
         List<Pairing> nextMonthPairings = getNextMonthPairings();
         List<FlightCrew> flightCrews = getCrews(target);
-        checkBiddingSessionExist(nextMonthPairings, flightCrews.get(0));
-        BiddingSession newBiddingSession = new BiddingSession();
-        Calendar createTime, startTime;
-        createTime = Calendar.getInstance();
-        startTime = Calendar.getInstance(); // should change to the first of last week of each month.
-        Double remainingHrs = 7 * 24.0;
+        if (flightCrews != null && !flightCrews.isEmpty()) {
+            checkBiddingSessionExist(nextMonthPairings, flightCrews.get(0));
+            BiddingSession newBiddingSession = new BiddingSession();
+            Calendar createTime, startTime;
+            createTime = Calendar.getInstance();
+            startTime = Calendar.getInstance(); // should change to the first of last week of each month.
+            Double remainingHrs = 7 * 24.0;
 
-        newBiddingSession.setStartTime(startTime.getTime());
-        newBiddingSession.setCreatedTime(createTime.getTime());
-        newBiddingSession.setRemainingHrs(remainingHrs);
+            newBiddingSession.setStartTime(startTime.getTime());
+            newBiddingSession.setCreatedTime(createTime.getTime());
+            newBiddingSession.setRemainingHrs(remainingHrs);
 
-        newBiddingSession.setStatus(BiddingSessionStatus.CREATED);
-        printBiddingSession(newBiddingSession);
-        em.persist(newBiddingSession);
-        for (Pairing pairing : nextMonthPairings) {
-            List<BiddingSession> biddingSessions = pairing.getBiddingSessions();
-            biddingSessions.add(newBiddingSession);
-            pairing.setBiddingSessions(biddingSessions);
-            em.merge(pairing);
+            newBiddingSession.setStatus(BiddingSessionStatus.CREATED);
+            printBiddingSession(newBiddingSession);
+            em.persist(newBiddingSession);
+            for (Pairing pairing : nextMonthPairings) {
+                List<BiddingSession> biddingSessions = pairing.getBiddingSessions();
+                biddingSessions.add(newBiddingSession);
+                pairing.setBiddingSessions(biddingSessions);
+                em.merge(pairing);
+            }
+            for (FlightCrew crew : flightCrews) {
+                List<BiddingSession> biddingSessions = crew.getBiddingSessions();
+                biddingSessions.add(newBiddingSession);
+                crew.setBiddingSessions(biddingSessions);
+                em.merge(crew);
+            }
+            newBiddingSession.setPairings(nextMonthPairings);
+            newBiddingSession.setFlightCrews(flightCrews);
+            em.merge(newBiddingSession);
+        } else {
+            throw new NoCrewFoundException("No " + target + " Crew Found in Database");
         }
-        for (FlightCrew crew : flightCrews) {
-            List<BiddingSession> biddingSessions = crew.getBiddingSessions();
-            biddingSessions.add(newBiddingSession);
-            crew.setBiddingSessions(biddingSessions);
-            em.merge(crew);
-        }
-        newBiddingSession.setPairings(nextMonthPairings);
-        newBiddingSession.setFlightCrews(flightCrews);
-        em.merge(newBiddingSession);
     }
 
     @Override
@@ -897,6 +903,32 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
                 + "\n\tFlight Crew Position Rank: " + fc.getPosition().getRank()
                 + "\n\tFlight Crew Joined Date: " + fc.getDateJoined()
         );
+    }
+
+    @Override
+    public List<PairingFlightCrew> getAllBiddingHist() {
+        Calendar temp = Calendar.getInstance();
+        Query query = em.createQuery("SELECT DISTINCT pfc FROM PairingFlightCrew pfc, IN(pfc.pairing.biddingSessions) b WHERE b.createdTime BETWEEN :currentMonthFirstDay AND :currentMonthLastDay ORDER BY pfc.flightCrew.flightCrewID, pfc.status, pfc.lastUpdateTime DESC");
+        temp.setTime(getNextMonthFirstDay());
+        temp.add(Calendar.MONTH, -1);
+        query.setParameter("currentMonthFirstDay", temp.getTime());
+        temp.setTime(getNextMonthLastDay());
+        temp.add(Calendar.MONTH, -1);
+        query.setParameter("currentMonthLastDay", temp.getTime());
+        return (List<PairingFlightCrew>) query.getResultList();
+    }
+
+    @Override
+    public List<SwappingRequest> getAllSwappingRequests() {
+        Calendar temp = Calendar.getInstance();
+        Query query = em.createQuery("SELECT DISTINCT s FROM SwappingRequest s, IN(s.chosenPairing.biddingSessions) b WHERE b.createdTime BETWEEN :currentMonthFirstDay AND :currentMonthLastDay ORDER BY s.status, s.createdTime DESC");
+        temp.setTime(getNextMonthFirstDay());
+        temp.add(Calendar.MONTH, -1);
+        query.setParameter("currentMonthFirstDay", temp.getTime());
+        temp.setTime(getNextMonthLastDay());
+        temp.add(Calendar.MONTH, -1);
+        query.setParameter("currentMonthLastDay", temp.getTime());
+        return (List<SwappingRequest>) query.getResultList();
     }
 
 }

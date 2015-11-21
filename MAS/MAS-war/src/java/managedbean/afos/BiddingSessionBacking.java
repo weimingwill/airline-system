@@ -14,6 +14,7 @@ import ams.afos.session.FlightCrewSessionLocal;
 import ams.afos.util.exception.BiddingSessionConflictException;
 import ams.afos.util.exception.FlightDutyConflictException;
 import ams.afos.util.exception.PairingConflictException;
+import ams.afos.util.helper.NoCrewFoundException;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -80,7 +81,7 @@ public class BiddingSessionBacking implements Serializable {
             flightCrewMgmtSession.generateBiddingSession(target);
             setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
             msgController.addMessage("Bidding seesion of next month for " + target + " generated succesfully");
-        } catch (BiddingSessionConflictException ex) {
+        } catch (BiddingSessionConflictException | NoCrewFoundException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
     }
@@ -95,10 +96,10 @@ public class BiddingSessionBacking implements Serializable {
         }
     }
 
-    public void closeBiddingSession(){
+    public void closeBiddingSession() {
         flightCrewMgmtSession.closeBiddingSession(selectedBiddingSession);
     }
-    
+
     private void getAllBiddingSession() {
         setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
     }
@@ -121,7 +122,6 @@ public class BiddingSessionBacking implements Serializable {
 //                return false;
 //        }
 //    }
-
     /**
      * @return the flightDuties
      */

@@ -91,4 +91,12 @@ public class AfosNavController {
     public String toManageSwappingRequests() {
         return AFOS_URL + "crew_schedule/manageSwapping.xhtml" + REDIRECT;
     }
+    
+    public String toViewAllBidHist() {
+        return AFOS_URL + "crew_schedule/viewAllBidHist.xhtml" + REDIRECT;
+    }
+    
+    public String toViewAllSwapHist() {
+        return AFOS_URL + "crew_schedule/viewAllSwapHist.xhtml" + REDIRECT;
+    }
 }

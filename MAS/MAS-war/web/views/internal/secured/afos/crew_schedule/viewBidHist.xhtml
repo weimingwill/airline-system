@@ -8,8 +8,12 @@
 
     <ui:define name="content">
         <h:form>
-            <p:dataTable id="BiddingHistTable" widgetVar="BiddingHistTable" var="pairingFlightCrew" value="#{flightCrewBacking.histBids}" rows="10" tableStyleClass="table-small-font" rowKey="#{pairingFlightCrew.pairingCrewId}"
-                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15,20">
+            <p:dataTable id="BiddingHistTable" widgetVar="BiddingHistTable" var="pairingFlightCrew" value="#{flightCrewBacking.histBids}" rows="6" tableStyleClass="table-small-font" rowKey="#{pairingFlightCrew.pairingCrewId}"
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="6,12,18">
+                <f:facet name="header">
+                    <p:outputLabel value="Bidding Result for Next Month"/>
+                </f:facet>
+
                 <p:columnGroup type="header">
                     <p:row>
                         <p:column headerText="Pairing Code"/>
@@ -68,6 +72,9 @@
                         </p:column>
                     </p:subTable>
                 </p:column>
+                <f:facet name="footer">
+                    <p:outputLabel value=""/>
+                </f:facet>
             </p:dataTable>
         </h:form>
     </ui:define>

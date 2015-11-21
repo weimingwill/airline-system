@@ -11,7 +11,9 @@
             <p:dataTable id="availablePairingTable" widgetVar="availablePairingTable" var="flightPairing" value="#{flightCrewBiddingManager.availablePairings}" rows="4" tableStyleClass="table-small-font" rowKey="#{flightPairing.pairingId}"
                          paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="4,8,12"
                          selectionMode="single" selection="#{flightCrewBiddingManager.selectedPairing}">
-
+                <f:facet name="header">
+                    <p:outputLabel value="Please click button in the table to bid for pairings"/>
+                </f:facet>
                 <p:subTable value="#{flightPairing}" var="pairings">
                     <p:columnGroup type="header">
                         <p:row>
@@ -72,7 +74,9 @@
                     </p:column>
 
                 </p:subTable>
-
+                <f:facet name="footer">
+                    <p:outputLabel value=""/>
+                </f:facet>
             </p:dataTable>
         </h:form>
 

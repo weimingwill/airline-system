@@ -10,9 +10,12 @@ import ams.afos.entity.Checklist;
 import ams.afos.entity.FlightCrew;
 import ams.afos.entity.FlightDuty;
 import ams.afos.entity.Pairing;
+import ams.afos.entity.PairingFlightCrew;
+import ams.afos.entity.SwappingRequest;
 import ams.afos.util.exception.BiddingSessionConflictException;
 import ams.afos.util.exception.FlightDutyConflictException;
 import ams.afos.util.exception.PairingConflictException;
+import ams.afos.util.helper.NoCrewFoundException;
 import ams.aps.entity.Flight;
 import ams.aps.entity.FlightSchedule;
 import java.util.List;
@@ -28,7 +31,7 @@ public interface FlightCrewMgmtSessionLocal {
     public List<FlightDuty> getNextMonthFlightDuties();
     public void generatePairings() throws PairingConflictException;
     public List<Pairing> getNextMonthPairings();
-    public void generateBiddingSession(String target) throws BiddingSessionConflictException;
+    public void generateBiddingSession(String target) throws BiddingSessionConflictException, NoCrewFoundException;
 
     
     public void startBiddingSession(BiddingSession session);
@@ -43,4 +46,6 @@ public interface FlightCrewMgmtSessionLocal {
     public List<Checklist> getChecklistTemplates(String type);
     public Checklist getPostFlightReport(FlightSchedule flightSchedule);
     public Checklist getPreFlightReport(FlightSchedule flightSchedule);
+    public List<PairingFlightCrew> getAllBiddingHist();
+    public List<SwappingRequest> getAllSwappingRequests();
 }

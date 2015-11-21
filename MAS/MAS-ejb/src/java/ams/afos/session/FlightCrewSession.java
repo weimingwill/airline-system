@@ -104,10 +104,13 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
     public List<PairingFlightCrew> getFlightCrewBiddingHistory(FlightCrew flightCrew) {
         Date currMonthFirstDay = getCurrMonthFirstDay();
         Date currMonthLastDay = getCurrMonthLastDay();
-        Query query = em.createQuery("SELECT pfc FROM PairingFlightCrew pfc WHERE pfc.flightCrew.systemUserId = :id ");
+        Query query = em.createQuery("SELECT pfc FROM PairingFlightCrew pfc, IN(pfc.pairing.biddingSessions) b WHERE b.createdTime BETWEEN :currentMonthFirstDay AND :currentMonthLastDay AND pfc.flightCrew.systemUserId = :id AND (pfc.status LIKE :pending OR pfc.status LIKE :success) ORDER BY pfc.status, pfc.lastUpdateTime DESC");
         query.setParameter("id", flightCrew.getSystemUserId());
-//        query.setParameter("currMonthFirstDay", currMonthFirstDay);
-//        query.setParameter("currMonthLastDay", currMonthLastDay);
+        query.setParameter("currentMonthFirstDay", currMonthFirstDay);
+        query.setParameter("currentMonthLastDay", currMonthLastDay);
+        query.setParameter("pending", PairingCrewStatus.PENDING);
+        query.setParameter("success", PairingCrewStatus.SUCCESS);
+
         return (List<PairingFlightCrew>) query.getResultList();
     }
 
@@ -253,7 +256,7 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
 
     @Override
     public void cancelSwappingRequest(SwappingRequest thisRequest) {
-        SwappingRequest request= em.find(SwappingRequest.class, thisRequest.getId());
+        SwappingRequest request = em.find(SwappingRequest.class, thisRequest.getId());
         request.setStatus(SwappingReqStataus.CANCELED);
         em.merge(request);
     }

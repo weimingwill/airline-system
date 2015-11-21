@@ -9,6 +9,7 @@ import ams.afos.entity.FlightCrew;
 import ams.afos.entity.Pairing;
 import ams.afos.entity.PairingFlightCrew;
 import ams.afos.entity.SwappingRequest;
+import ams.afos.session.FlightCrewMgmtSessionLocal;
 import ams.afos.session.FlightCrewSessionLocal;
 import ams.afos.util.helper.SwappingReqStataus;
 import ams.aps.util.exception.EmptyTableException;
@@ -41,6 +42,9 @@ import org.primefaces.extensions.model.timeline.TimelineModel;
 @Named(value = "flightCrewBacking")
 @ViewScoped
 public class FlightCrewBacking implements Serializable {
+
+    @EJB
+    private FlightCrewMgmtSessionLocal flightCrewMgmtSession;
 
     @EJB
     private FlightCrewSessionLocal flightCrewSession;
@@ -97,6 +101,12 @@ public class FlightCrewBacking implements Serializable {
                 if (currCrew != null) {
                     setCrewSwappingRequests(flightCrewSession.getAllCrewSwappingRequests(currCrew));
                 }
+                break;
+            case "viewAllBidHist":
+                setHistBids(flightCrewMgmtSession.getAllBiddingHist());
+                break;
+            case "viewAllSwapHist":
+                setCrewSwappingRequests(flightCrewMgmtSession.getAllSwappingRequests());
                 break;
         }
     }
@@ -265,8 +275,8 @@ public class FlightCrewBacking implements Serializable {
         msgController.addMessage("Swapped!");
         return navigationController.redirectToCurrentPage();
     }
-    
-    public String onDeleteReqBtnClick(){
+
+    public String onDeleteReqBtnClick() {
         flightCrewSession.cancelSwappingRequest(selectedSwappingRequest);
         msgController.addMessage("Cancel Swapping Request with ID: " + selectedSwappingRequest.getId());
         return navigationController.redirectToCurrentPage();

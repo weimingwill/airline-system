@@ -38,8 +38,8 @@ public class MySQLConnection {
         Connection connection = null;
 
         try {
-//            connection = DriverManager.getConnection(CONNECTION_LINK, USERNAME, PASSWORD);
-            connection = DriverManager.getConnection(CONNECTION_LINK_LOCAL, USERNAME, PASSWORD);
+            connection = DriverManager.getConnection(CONNECTION_LINK, USERNAME, PASSWORD);
+//            connection = DriverManager.getConnection(CONNECTION_LINK_LOCAL, USERNAME, PASSWORD);
 
         } catch (SQLException e) {
             System.out.println("Connection Failed! Check output console");
