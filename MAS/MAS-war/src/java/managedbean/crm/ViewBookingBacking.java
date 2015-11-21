@@ -59,10 +59,9 @@ public class ViewBookingBacking implements Serializable {
     private RegCust regCust;
     private Booking selectedBooking;
     private Double actualPointClaim;
-    private Double actualDistance=0.0;
+    private Double actualDistance = 0.0;
     private String bookingReferenceNo;
     private List<AirTicket> airtickets;
-    
 
     @PostConstruct
     public void init() {
@@ -79,20 +78,21 @@ public class ViewBookingBacking implements Serializable {
             email = null;
         }
     }
-    public Booking checkBookingReference(){
-       
+
+    public Booking checkBookingReference() {
+
         try {
-            selectedBooking=bookingSession.getUnClaimedBookingByBookingRef(bookingReferenceNo);
+            selectedBooking = bookingSession.getUnClaimedBookingByBookingRef(bookingReferenceNo);
             actualDistance = customerExSession.calcCustValue(selectedBooking, regCust);
 //            mileCalculation();
         } catch (NoSuchBookingException ex) {
             msgController.addErrorMessage("Please input a valid booking reference. Please check if you have claim the miles before");
             Logger.getLogger(ViewBookingBacking.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
+
         return selectedBooking;
     }
-    
+
     public void claimMiles() throws NoSuchBookingException {
 
         try {
@@ -104,24 +104,24 @@ public class ViewBookingBacking implements Serializable {
         DecimalFormat fm = new DecimalFormat();
         fm.setMaximumFractionDigits(2);
         String subject = "[Important] Merlion Airline Receive your redemption Code";
-        String mailContent = "Dear Customer:\n\n You have successfully received "+fm.format(actualPointClaim) +" points on your accounts. \n For more information, Please visit our website.\n\n Hope we can see you again! \n\n Best Regards,\n Merlion Airline";
+        String mailContent = "Dear Customer:\n\n You have successfully received " + fm.format(actualPointClaim) + " points on your accounts. \n For more information, Please visit our website.\n\n Hope we can see you again! \n\n Best Regards,\n Merlion Airline";
         String receiver = customerController.getEmail();
         emailController.sendEmail(subject, mailContent, receiver);
 
     }
-//
+
 //    public void mileCalculation() {
-//        
+//
 ////        actualDistance = routePlanningSession.distance(arrAirport, deptAirport);
-//        airtickets=selectedBooking.getAirTickets();
-//        
+//        airtickets = selectedBooking.getAirTickets();
+//
 //        if (airtickets == null) {
 //            msgController.addErrorMessage("No Airtickets related to this booking");
 //        } else {
 //            for (AirTicket at : airtickets) {
-//                actualDistance=actualDistance+routePlanningSession.distance(at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getDepartAirport(), at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getArrivalAirport());
-//                }
-//            }       
+//                actualDistance = actualDistance + routePlanningSession.distance(at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getDepartAirport(), at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getArrivalAirport());
+//            }
+//        }
 //        actualDistance = actualDistance * 0.000621371;
 //        actualPointClaim = actualDistance / 8;
 //        if (regCust.getMembership().getName().equals("Elite Bronze")) {
@@ -131,9 +131,9 @@ public class ViewBookingBacking implements Serializable {
 //        } else if (regCust.getMembership().getName().equals("Elite Gold")) {
 //            actualPointClaim = actualPointClaim * 1.2;
 //        }
-//        System.out.println("calculated mile is" +  actualPointClaim);
+//        System.out.println("calculated mile is" + actualPointClaim);
 //    }
-//    
+
     public Double getActualDistance() {
         return actualDistance;
     }
@@ -141,6 +141,7 @@ public class ViewBookingBacking implements Serializable {
     public void setActualDistance(Double actualDistance) {
         this.actualDistance = actualDistance;
     }
+
     public List<Booking> getBookingByEmail() {
 
         System.out.print("Booking Email is" + email);
@@ -195,14 +196,15 @@ public class ViewBookingBacking implements Serializable {
     public void setActualPointClaim(Double actualPointClaim) {
         this.actualPointClaim = actualPointClaim;
     }
-    
-     public String getBookingReferenceNo() {
+
+    public String getBookingReferenceNo() {
         return bookingReferenceNo;
     }
 
     public void setBookingReferenceNo(String bookingReferenceNo) {
         this.bookingReferenceNo = bookingReferenceNo;
     }
+
     public List<AirTicket> getAirtickets() {
         return airtickets;
     }

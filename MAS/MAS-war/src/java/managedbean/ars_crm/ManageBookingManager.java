@@ -49,6 +49,7 @@ public class ManageBookingManager implements Serializable {
     private Booking booking;
     private List<CustomerHelper> custHelpers;
     private double farePrice;
+    private Booking selectThisBooking;
 
     /**
      * Creates a new instance of ManageBookingManager
@@ -95,6 +96,7 @@ public class ManageBookingManager implements Serializable {
     //
     //Getter and Setter
     //
+
     public String getSearchBy() {
         return searchBy;
     }
@@ -159,4 +161,15 @@ public class ManageBookingManager implements Serializable {
         this.farePrice = farePrice;
     }
 
+<<<<<<< HEAD
+=======
+    public Booking getSelectThisBooking() {
+        return selectThisBooking;
+    }
+
+    public void setSelectThisBooking(Booking selectThisBooking) {
+        this.selectThisBooking = selectThisBooking;
+    }
+
+>>>>>>> 0bbc83c2df44bdbd6f18dfe719d925507aba4f0d
 }
