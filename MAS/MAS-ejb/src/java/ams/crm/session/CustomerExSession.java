@@ -5,7 +5,7 @@
  */
 package ams.crm.session;
 
-import ams.aps.session.RoutePlanningSession;
+import ams.aps.session.RoutePlanningSessionLocal;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.Booking;
 import ams.crm.entity.Membership;
@@ -38,12 +38,10 @@ import javax.persistence.Query;
 
 public class CustomerExSession implements CustomerExSessionLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
     @PersistenceContext
     private EntityManager em;
     @EJB
-    private RoutePlannningSessionLocal routePlanningSession;
+    private RoutePlanningSessionLocal routePlanningSession;
 
     @Override
     public void createRegCust(RegCust regCust) throws ExistSuchRegCustException {
@@ -70,36 +68,6 @@ public class CustomerExSession implements CustomerExSessionLocal {
         regCust.setMembershipId("MA" + 10000 + r.nextInt(20000));
         em.persist(regCust);
     }
-//    public void createRegCust(String title, String firstname,String lastname, String passportNo, String nationality, String gender,Date dob, String email, String addr1, String addr2, String city, String state, String country, String zipCode, Phone mobilephone, Phone telephone, String pwd,String securQuest,String securAns, Boolean newsLetterPref, Boolean promoPref, String membershipClass, Double accMiles,Double custValue, Integer numOfFlights, String memberShipId) throws ExistSuchRegCustException {
-//        RegCust regCust = new RegCust();
-//      
-//        verifyRegCustExistence(passportNo);
-//        regCust.setTitle(title);
-//        regCust.setFirstName(firstname);
-//        regCust.setLastName(lastname);
-//        regCust.setNationality(nationality);
-//        regCust.setGender(gender);
-//        regCust.setDob(dob);
-//        regCust.setEmail(email);
-//        regCust.setAddr1(addr1);
-//        regCust.setAddr2(addr2);
-//        regCust.setCity(city);
-//        regCust.setCountry(country);
-//        regCust.setZipCode(zipCode);
-//        regCust.setMobilephone(mobilephone);
-//        regCust.setTelephone(telephone);
-//        regCust.setPwd(pwd);
-//        regCust.setSecurQuest(securQuest);
-//        regCust.setSecurAns(securAns);
-//        regCust.setNewsLetterPref(newsLetterPref);
-//        regCust.setPromoPref(promoPref);
-//        regCust.setMembershipClass(membershipClass);
-//        regCust.setAccMiles(accMiles);
-//        regCust.setCustValue(custValue);
-//        regCust.setNumOfFlights(numOfFlights);
-//        regCust.setMemberShipId(memberShipId);
-//        em.persist(regCust);
-//    }
 
     @Override
     public void doLogin(String email, String inputPassword) throws NoSuchRegCustException, InvalidPasswordException {
@@ -290,7 +258,7 @@ public class CustomerExSession implements CustomerExSessionLocal {
     public double calcCustValue(Booking booking, RegCust regCust) {
         double distance = 0;
         for (AirTicket airTicket : booking.getAirTickets()) {
-            distance += airTicket.getFlightSchedBookingClass().getFlightSchedule().getFlight().getDistance();
+            distance += airTicket.getFlightSchedBookingClass().getFlightSchedule().getFlight().getFlyDistance();
         }
         //Transfer km to mile
         distance *= 0.000621371;

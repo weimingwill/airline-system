@@ -49,7 +49,7 @@ public class ViewBookingBacking implements Serializable {
     private EmailController emailController;
 
     @EJB
-    private CustomerExSessionLocal customerSession;
+    private CustomerExSessionLocal customerExSession;
     @EJB
     private BookingSessionLocal bookingSession;
     @EJB
@@ -83,7 +83,8 @@ public class ViewBookingBacking implements Serializable {
        
         try {
             selectedBooking=bookingSession.getUnClaimedBookingByBookingRef(bookingReferenceNo);
-            mileCalculation();
+            actualDistance = customerExSession.calcCustValue(selectedBooking, regCust);
+//            mileCalculation();
         } catch (NoSuchBookingException ex) {
             msgController.addErrorMessage("Please input a valid booking reference. Please check if you have claim the miles before");
             Logger.getLogger(ViewBookingBacking.class.getName()).log(Level.SEVERE, null, ex);
@@ -108,31 +109,31 @@ public class ViewBookingBacking implements Serializable {
         emailController.sendEmail(subject, mailContent, receiver);
 
     }
-
-    public void mileCalculation() {
-        
-//        actualDistance = routePlanningSession.distance(arrAirport, deptAirport);
-        airtickets=selectedBooking.getAirTickets();
-        
-        if (airtickets == null) {
-            msgController.addErrorMessage("No Airtickets related to this booking");
-        } else {
-            for (AirTicket at : airtickets) {
-                actualDistance=actualDistance+routePlanningSession.distance(at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getDepartAirport(), at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getArrivalAirport());
-                }
-            }       
-        actualDistance = actualDistance * 0.000621371;
-        actualPointClaim = actualDistance / 8;
-        if (regCust.getMembership().getName().equals("Elite Bronze")) {
-            actualPointClaim = actualPointClaim * 1;
-        } else if (regCust.getMembership().getName().equals("Elite Silver")) {
-            actualPointClaim = actualPointClaim * 1.1;
-        } else if (regCust.getMembership().getName().equals("Elite Gold")) {
-            actualPointClaim = actualPointClaim * 1.2;
-        }
-        System.out.println("calculated mile is" +  actualPointClaim);
-    }
-    
+//
+//    public void mileCalculation() {
+//        
+////        actualDistance = routePlanningSession.distance(arrAirport, deptAirport);
+//        airtickets=selectedBooking.getAirTickets();
+//        
+//        if (airtickets == null) {
+//            msgController.addErrorMessage("No Airtickets related to this booking");
+//        } else {
+//            for (AirTicket at : airtickets) {
+//                actualDistance=actualDistance+routePlanningSession.distance(at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getDepartAirport(), at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getArrivalAirport());
+//                }
+//            }       
+//        actualDistance = actualDistance * 0.000621371;
+//        actualPointClaim = actualDistance / 8;
+//        if (regCust.getMembership().getName().equals("Elite Bronze")) {
+//            actualPointClaim = actualPointClaim * 1;
+//        } else if (regCust.getMembership().getName().equals("Elite Silver")) {
+//            actualPointClaim = actualPointClaim * 1.1;
+//        } else if (regCust.getMembership().getName().equals("Elite Gold")) {
+//            actualPointClaim = actualPointClaim * 1.2;
+//        }
+//        System.out.println("calculated mile is" +  actualPointClaim);
+//    }
+//    
     public Double getActualDistance() {
         return actualDistance;
     }
@@ -156,7 +157,7 @@ public class ViewBookingBacking implements Serializable {
     }
 
     public RegCust getRegCustByEmail() throws NoSuchRegCustException {
-        return customerSession.getRegCustByEmail(email);
+        return customerExSession.getRegCustByEmail(email);
     }
 
     public ViewBookingBacking() {

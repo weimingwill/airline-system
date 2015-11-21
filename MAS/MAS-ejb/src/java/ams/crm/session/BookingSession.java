@@ -68,7 +68,9 @@ public class BookingSession implements BookingSessionLocal {
     private RevMgmtSessionLocal revMgmtSession;
     @EJB
     private ProductDesignSessionLocal productDesignSession;
-
+    @EJB
+    private CustomerExSessionLocal customerExSession;
+    
     @Override
     public List<Booking> getBookingsByEmail(String email) {
 
