@@ -62,7 +62,11 @@
                                 <p:outputLabel value="#{custHelper.customer.lastName} #{custHelper.customer.firstName}" />
                             </p:column>
                             <p:column styleClass="alignMiddle">
-                                <p:selectBooleanCheckbox value="#{custHelper.insurance}" >
+                                <p:selectBooleanCheckbox value="#{custHelper.insurance}" rendered="#{not bookingManager.isChangeAddOn or not custHelper.insurance}">
+                                    <p:ajax listener="#{bookingManager.onInsuranceSelected()}" update=":summary:summaryForm" />
+                                    <p:ajax update="messages"/>
+                                </p:selectBooleanCheckbox>
+                                <p:selectBooleanCheckbox disabled="true" value="#{custHelper.insurance}" rendered="#{bookingManager.isChangeAddOn and custHelper.insurance}">
                                     <p:ajax listener="#{bookingManager.onInsuranceSelected()}" update=":summary:summaryForm" />
                                     <p:ajax update="messages"/>
                                 </p:selectBooleanCheckbox>
@@ -78,10 +82,13 @@
             <p:panelGrid>
                 <p:row style="border: transparent">
                     <p:column colspan="5" style="width: 90%">
-                        <p:commandButton value="Back" icon="fa fa-arrow-left" action="#{crmExNavController.redirectToPassengerInfo()}"/>
+                        <p:commandButton value="Back" icon="fa fa-arrow-left" action="#{crmExNavController.redirectToPassengerInfo()}" rendered="#{not bookingManager.isChangeAddOn}"/>
                     </p:column>
                     <p:column colspan="2" style="text-align: right;">
-                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{crmExNavController.redirectToBookingSummary()}" update="messages"/>
+                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{crmExNavController.redirectToBookingSummary()}" update="messages"
+                                         rendered="#{not bookingManager.isChangeAddOn}"/>
+                        <p:commandButton value="Continue" icon="fa fa-arrow-right" action="#{bookingManager.toChangeAddOnBookingSummary()}" update="messages" 
+                                         rendered="#{bookingManager.isChangeAddOn}"/>
                     </p:column>
                 </p:row>
 

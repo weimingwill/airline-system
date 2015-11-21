@@ -76,4 +76,8 @@ public interface BookingSessionLocal {
 
     public List<FlightSchedule> searchFlightStatusByFlightNo(String flightNo, Date date, Airport airport, String choice, Map<Long, FlightSchedule> flightSchedMaps)
             throws NoSuchFlightSchedulException;
+
+    public List<FlightScheduleBookingClass> getBookingFlightSchedBookingClses(Booking booking);
+
+    public Booking updateAddOn(BookingHelper bookingHelper);
 }

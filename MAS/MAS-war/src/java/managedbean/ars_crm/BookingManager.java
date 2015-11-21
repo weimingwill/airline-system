@@ -31,6 +31,7 @@ import ams.crm.util.helper.BookingHelper;
 import ams.crm.util.helper.ChannelHelper;
 import ams.crm.util.helper.CustomerHelper;
 import ams.crm.util.helper.FlightSchedHelper;
+import ams.dcs.entity.Luggage;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -123,7 +124,7 @@ public class BookingManager implements Serializable {
     private Map<String, Integer> selectedMealMap = new HashMap<>();
     private List<Double> selectedLuggages;
     private Map<Double, Integer> selectedLuggageMap = new HashMap<>();
-    private int selectedNumOfInsurance;
+    private int selectedNumOfInsurance = 0;
     private double selectedIsurancePrice;
     private double insurancePrice;
     private double luggagePrice;
@@ -132,6 +133,14 @@ public class BookingManager implements Serializable {
     private Booking booking;
     private List<CustomerHelper> custHelpers;
     private double farePrice;
+
+    //Manage booking
+    private boolean isChangeAddOn;
+    private List<Double> originLuggages;
+    private int originNumOfInsurance = 0;
+    //Change addon
+    private List<Double> additionalLuggages;
+    private double additionalPrice;
 
     /**
      * Creates a new instance of bookingManager
@@ -415,9 +424,9 @@ public class BookingManager implements Serializable {
     }
 
     public FlightSchedule getSelectedFlightSched() throws NoSuchFlightSchedulException {
-        if (selectedFb.getFlightSchedule() == null) {
-            return new FlightSchedule();
-        }
+//        if (selectedFb.getFlightSchedule() == null) {
+//            return new FlightSchedule();
+//        }
         return revMgmtSession.getFlightScheduleById(selectedFb.getFlightSchedule().getFlightScheduleId());
     }
 
@@ -477,11 +486,43 @@ public class BookingManager implements Serializable {
             custHelpers = setCustomerHelpers(booking);
             farePrice = setFarePrice(booking);
             msgController.addMessage("Booking flight successfully!");
+            clearVariables();
             return crmExNavController.redirectToItinerary();
         } catch (InvalidPromoCodeException e) {
             msgController.addErrorMessage(e.getMessage());
             return "";
         }
+    }
+
+    private void clearVariables() {
+        adultNo = 1;
+        childrenNo = 0;
+        infantNo = 0;
+        deptAirport = routePlanningSession.getAirportByICAOCode("WSSS");
+        arrAirport = new Airport();
+        initialDate();
+        selectedCabinCls = null;
+        promoCode = "";
+        flightScheds = new ArrayList<>();
+        tixFams = new ArrayList<>();
+        inDirectFlightSchedMaps = new HashMap<>();
+        fbHelperMaps = new HashMap<>();
+        fbMaps = new HashMap<>();
+        flightSchedHelpers = new ArrayList<>();
+        selectedFbHelper = null;
+        selectedFb = null;
+        flightSchedBookingClsHelpers = new ArrayList<>();
+        bookingHelper = null;
+        selectedMeals = null;
+        selectedMealMap = new HashMap<>();
+        selectedLuggages = null;
+        selectedLuggageMap = new HashMap<>();
+        selectedNumOfInsurance = 0;
+        selectedIsurancePrice = 0;
+        insurancePrice = 0;
+        luggagePrice = 0;
+        choice = "return";
+        arrDateShow = true;
     }
 
     public double setFarePrice(Booking booking) {
@@ -521,6 +562,150 @@ public class BookingManager implements Serializable {
             }
         }
         return customerHelpers;
+    }
+
+    public List<FlightScheduleBookingClass> getBookingFlightSchedBookingCls(Booking booking) {
+        return bookingSession.getBookingFlightSchedBookingClses(booking);
+    }
+
+    //Manage booking
+    public void toChangeAddOn() {
+        isChangeAddOn = true;
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        booking = (Booking) sessionMap.get("booking");
+        initializeManageBooking();
+    }
+
+    public void initializeManageBooking() {
+        adultNo = 0;
+        childrenNo = 0;
+        deptAirport = booking.getAirTickets().get(0).getFlightSchedBookingClass().getFlightSchedule().getLeg().getDepartAirport();
+        deptDate = booking.getAirTickets().get(0).getFlightSchedBookingClass().getFlightSchedule().getDepartDate();
+        selectedFb = booking.getAirTickets().get(0).getFlightSchedBookingClass();
+        selectedCabinCls = selectedFb.getBookingClass().getTicketFamily().getCabinClass();
+        arrDate = deptDate;
+        arrAirport = deptAirport;
+        for (AirTicket airTicket : booking.getAirTickets()) {
+            if (arrDate.before(airTicket.getFlightSchedBookingClass().getFlightSchedule().getArrivalDate())) {
+                arrDate = airTicket.getFlightSchedBookingClass().getFlightSchedule().getArrivalDate();
+                arrAirport = airTicket.getFlightSchedBookingClass().getFlightSchedule().getLeg().getArrivalAirport();
+            }
+        }
+        try {
+            searchForOneWayFlights();
+            onFlightSchedRadioSelected();
+        } catch (Exception e) {
+        }
+        setBookingNumOfCustomer();
+        initializeBookingHelper();
+        onMealSelected();
+        onLuggageSelected();
+        onInsuranceSelected();
+        originLuggages = getAllLuggages();
+        originNumOfInsurance = selectedNumOfInsurance;
+    }
+
+    private void setBookingNumOfCustomer() {
+        List<String> custPassports = new ArrayList<>();
+        adultNo = 0;
+        childrenNo = 0;
+        for (AirTicket airTicket : booking.getAirTickets()) {
+            if (!custPassports.contains(airTicket.getCustomer().getPassportNo())) {
+                if (airTicket.getCustomer().getIsAdult()) {
+                    adultNo++;
+                } else {
+                    childrenNo++;
+                }
+                custPassports.add(airTicket.getCustomer().getPassportNo());
+            }
+        }
+    }
+
+    private void initializeBookingHelper() {
+        bookingHelper = new BookingHelper();
+        List<CustomerHelper> adults = new ArrayList<>();
+        List<CustomerHelper> children = new ArrayList<>();
+        List<CustomerHelper> customerHelpers = new ArrayList<>();
+        List<String> custPassports = new ArrayList<>();
+        for (AirTicket airTicket : booking.getAirTickets()) {
+            if (!custPassports.contains(airTicket.getCustomer().getPassportNo())) {
+                CustomerHelper customerHelper = new CustomerHelper();
+                for (AddOn addOn : airTicket.getAddOns()) {
+                    if (AddOnHelper.MEAL.equals(addOn.getName())) {
+                        customerHelper.setMeal(addOn);
+                    } else if (AddOnHelper.INSURANCE.equals(addOn.getName())) {
+                        customerHelper.setInsurance(true);
+                    }
+                }
+                customerHelper.setLuggage(airTicket.getPurchasedLuggage());
+                if (airTicket.getCustomer().getIsAdult()) {
+                    customerHelper.setCustomer(airTicket.getCustomer());
+                    adults.add(customerHelper);
+                } else {
+                    customerHelper.setCustomer(airTicket.getCustomer());
+                    children.add(customerHelper);
+                }
+                custPassports.add(airTicket.getCustomer().getPassportNo());
+            }
+        }
+        bookingHelper.setBooking(booking);
+        bookingHelper.setAdults(adults);
+        bookingHelper.setChildren(children);
+        customerHelpers.addAll(adults);
+        customerHelpers.addAll(children);
+        bookingHelper.setCustomers(customerHelpers);
+        bookingHelper.setChannel(ChannelHelper.ARS);
+        List<FlightScheduleBookingClass> fbs = new ArrayList<>();
+        fbs.add(selectedFb);
+        FlightScheduleBookingClass nextFb = fbMaps.get(selectedFb.getFlightScheduleBookingClassId().toString());
+        if (nextFb != null) {
+            fbs.add(nextFb);
+        }
+        bookingHelper.setFlightSchedBookingClses(fbs);
+        setBookingHelperTotalPrice();
+    }
+
+    public String toChangeAddOnBookingSummary() {
+        List<Double> temp = getAllLuggages();
+        additionalLuggages = getAllLuggages();
+        System.out.println("Additional Luggage: " + additionalLuggages.get(0));
+        additionalPrice = 0;
+        for (Double luggage : temp) {
+            System.out.println("Temp Luggage: " + luggage);
+            if (originLuggages.contains(luggage)) {
+                additionalLuggages.remove(luggage);
+                originLuggages.remove(luggage);
+            }
+        }
+        for (Double luggage : additionalLuggages) {
+            additionalPrice += bookingBacking.getLuggageWeightPriceMap().get(luggage);
+        }
+        System.out.println("Additional Price: " + additionalPrice);
+        for (Double luggage : originLuggages) {
+            additionalPrice -= bookingBacking.getLuggageWeightPriceMap().get(luggage);
+        }
+        System.out.println("Additional Price: " + additionalPrice);
+        additionalPrice += (selectedNumOfInsurance - originNumOfInsurance) * insurancePrice;
+        return crmExNavController.redirectToBookingSummary();
+    }
+
+    //Get luggages with number
+    public List<Double> getAllLuggages() {
+        List<Double> allLuggages = new ArrayList<>();
+        for (Double luggage : selectedLuggages) {
+            for (int i = 0; i < selectedLuggageMap.get(luggage); i++) {
+                allLuggages.add(luggage);
+            }
+        }
+        return allLuggages;
+    }
+
+    public String updateAddOn() {
+        booking = bookingSession.updateAddOn(bookingHelper);
+        custHelpers = setCustomerHelpers(booking);
+        farePrice = setFarePrice(booking);
+        msgController.addMessage("Update add on successfully!");
+        return crmExNavController.redirectToItinerary();
     }
 
     //
@@ -764,6 +949,46 @@ public class BookingManager implements Serializable {
 
     public void setFarePrice(double farePrice) {
         this.farePrice = farePrice;
+    }
+
+    public boolean isIsChangeAddOn() {
+        return isChangeAddOn;
+    }
+
+    public void setIsChangeAddOn(boolean isChangeAddOn) {
+        this.isChangeAddOn = isChangeAddOn;
+    }
+
+    public List<Double> getAdditionalLuggages() {
+        return additionalLuggages;
+    }
+
+    public void setAdditionalLuggages(List<Double> additionalLuggages) {
+        this.additionalLuggages = additionalLuggages;
+    }
+
+    public double getAdditionalPrice() {
+        return additionalPrice;
+    }
+
+    public void setAdditionalPrice(double additionalPrice) {
+        this.additionalPrice = additionalPrice;
+    }
+
+    public List<Double> getOriginLuggages() {
+        return originLuggages;
+    }
+
+    public void setOriginLuggages(List<Double> originLuggages) {
+        this.originLuggages = originLuggages;
+    }
+
+    public int getOriginNumOfInsurance() {
+        return originNumOfInsurance;
+    }
+
+    public void setOriginNumOfInsurance(int originNumOfInsurance) {
+        this.originNumOfInsurance = originNumOfInsurance;
     }
 
 }

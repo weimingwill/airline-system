@@ -3,18 +3,23 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./../../../../../template/CrmExTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:fo="http://xmlns.jcp.org/jsf/composite/ezcomp/form">
 
     <ui:define name="title">
         Itinerary
     </ui:define>
 
     <ui:define name="content">
-        <p:panel style="width: 60%" header="Itinerary">
-            <pa:CCBookingItineraryPanel booking="#{bookingManager.booking}" customerHelpers="#{bookingManager.custHelpers}" farePrice="#{bookingManager.farePrice}" />
-        </p:panel>
+        <p:panelGrid columns="2" columnClasses="alignTop, alignTop">
+            <p:panel header="Itinerary">
+                <pa:CCBookingItineraryPanel booking="#{bookingManager.booking}" customerHelpers="#{bookingManager.custHelpers}" farePrice="#{bookingManager.farePrice}" />
+            </p:panel>
+            <p:panel header="Book another flight">
+                <fo:CCFlightSearchIndexForm />
+            </p:panel>
+        </p:panelGrid>
+
     </ui:define>
 
 </ui:composition>

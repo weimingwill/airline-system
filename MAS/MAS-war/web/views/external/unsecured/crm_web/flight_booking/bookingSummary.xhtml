@@ -5,7 +5,9 @@
                 template="./../../../../../template/CrmExBookingTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="title">
         Booking Summary
@@ -13,45 +15,92 @@
 
     <ui:define name="content">
         <h2>Booking Summary</h2>
-        <p:panelGrid>
-            <p:row styleClass="ui-widget-header">
-                <p:column>
-                    <p:outputLabel styleClass="fa fa-plane bookingSummaryIcon"/>
-                    <p:outputLabel value="Outbound Flight" />
-                </p:column>
-            </p:row>
-            <p:row>
-                <p:column>
-                    <p:outputLabel value="#{bookingManager.deptAirport.city.cityName} (#{bookingManager.deptAirport.iataCode}) - 
-                                   #{bookingManager.arrAirport.city.cityName} (#{bookingManager.arrAirport.iataCode})" />
-                </p:column>
-            </p:row>
+        <p:panel style="width: 80%;">
+            <p:panelGrid styleClass="fullWidth">
+                <p:row styleClass="ui-widget-header">
+                    <p:column>
+                        <p:outputLabel styleClass="fa fa-plane bookingSummaryIcon"/>
+                        <p:outputLabel value="Outbound Flight" />
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{bookingManager.deptAirport.city.cityName} (#{bookingManager.deptAirport.iataCode}) - 
+                                       #{bookingManager.arrAirport.city.cityName} (#{bookingManager.arrAirport.iataCode})" />
+                    </p:column>
+                </p:row>
 
-            <p:row>
-                <p:column>       
-                    <p:panelGrid style="width:100%">
-                        <p:row styleClass="ui-widget-header">
-                            <p:column>Flight</p:column>
-                            <p:column colspan="2">From</p:column>
-                            <p:column></p:column>
-                            <p:column colspan="2">To</p:column>
-                            <p:column>Aircraft</p:column>
-                            <p:column>Cabin Class</p:column>
-                        </p:row>
-                        <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.selectedFlightSched}" fb="#{bookingManager.selectedFb}"/>
-                        <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}" fb="#{bookingManager.selectedFb}"
-                                                             rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>
-                    </p:panelGrid>
+                <p:row>
+                    <p:column>       
+                        <p:panelGrid style="width:100%">
+                            <p:row styleClass="ui-widget-header">
+                                <p:column>Flight</p:column>
+                                <p:column colspan="2">From</p:column>
+                                <p:column></p:column>
+                                <p:column colspan="2">To</p:column>
+                                <p:column>Aircraft</p:column>
+                                <p:column>Cabin Class</p:column>
+                            </p:row>
+                            <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.selectedFb.flightSchedule}" fb="#{bookingManager.selectedFb}"/>
+                            <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.getMappedFlightSched(bookingManager.selectedFb.flightSchedule)}" fb="#{bookingManager.selectedFb}"
+                                                                 rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFb.flightSchedule)}"/>
+                        </p:panelGrid>
+                    </p:column>
+                </p:row>
+                <p:row >
+                    <p:column>
 
-                </p:column>
-            </p:row>
-            <p:row >
-                <p:column>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
 
-                </p:column>
-            </p:row>
-        </p:panelGrid>
+            <p:separator />
+
+            <p:panelGrid styleClass="fullWidth">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="3">Additional Charges</p:column>
+                    </p:row>
+                </f:facet>
+                    <p:row styleClass="ui-widget-header">
+                        <p:column>Item</p:column>
+                        <p:column>Detail</p:column>
+                        <p:column>Price(S$)</p:column>
+                    </p:row>
+                <c:forEach items="#{bookingManager.originLuggages}" var="luggage">
+                    <p:row>
+                        <p:column><p:outputLabel styleClass="fa fa-suitcase bookingIcon" /> Original extra luggage</p:column>
+                        <p:column>Extra #{luggage}kg</p:column>
+                        <p:column>#{bookingBacking.luggageWeightPriceMap.get(luggage)}</p:column>
+                    </p:row>
+                </c:forEach>
+                <c:forEach items="#{bookingManager.additionalLuggages}" var="luggage">
+                    <p:row>
+                        <p:column><p:outputLabel styleClass="fa fa-suitcase bookingIcon" /> Additional extra luggage</p:column>
+                        <p:column>Extra #{luggage}kg</p:column>
+                        <p:column>#{bookingBacking.luggageWeightPriceMap.get(luggage)}</p:column>
+                    </p:row>
+                </c:forEach>
+                <p:row>
+                    <p:column><p:outputLabel styleClass="fa fa-user-plus bookingIcon" /> Original insurance number</p:column>
+                    <p:column>#{bookingManager.originNumOfInsurance}</p:column>
+                    <p:column>#{bookingManager.originNumOfInsurance * bookingBacking.travelInsurance.price}</p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:outputLabel styleClass="fa fa-user-plus bookingIcon" /> Updated insurance number</p:column>
+                    <p:column>#{bookingManager.selectedNumOfInsurance}</p:column>
+                    <p:column>#{bookingManager.selectedNumOfInsurance * bookingBacking.travelInsurance.price}</p:column>
+                </p:row>
+
+                <p:row styleClass="boldFont">
+                    <p:column colspan="2">Total additional price</p:column>
+                    <p:column>#{bookingManager.additionalPrice}</p:column>
+                </p:row>
+            </p:panelGrid>
+
+        </p:panel>
         <p:separator />
+
         <h:form>
             <p:panelGrid>
                 <p:row style="border: transparent">
@@ -59,7 +108,10 @@
                         <p:commandButton value="Back" icon="fa fa-arrow-left" action="#{crmExNavController.redirectToPassengerInfo()}"/>
                     </p:column>
                     <p:column colspan="2" style="text-align: right;">
-                        <p:commandButton style="width: 160px;" value="Book your flight" icon="fa fa-arrow-right" action="#{bookingManager.bookingFlight()}"/>
+                        <p:commandButton style="width: 160px;" value="Book your flight" icon="fa fa-arrow-right" action="#{bookingManager.bookingFlight()}" 
+                                         rendered="#{not bookingManager.isChangeAddOn}"/>
+                        <p:commandButton style="width: 160px;" value="Payment" icon="fa fa-arrow-right" action="#{bookingManager.updateAddOn()}"
+                                         rendered="#{bookingManager.isChangeAddOn}"/>
                     </p:column>
                 </p:row>
             </p:panelGrid>

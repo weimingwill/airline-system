@@ -70,7 +70,7 @@ public class BookingSession implements BookingSessionLocal {
     private ProductDesignSessionLocal productDesignSession;
     @EJB
     private CustomerExSessionLocal customerExSession;
-    
+
     @Override
     public List<Booking> getBookingsByEmail(String email) {
 
@@ -349,7 +349,6 @@ public class BookingSession implements BookingSessionLocal {
 
         //create booking
         Booking booking = bookingHelper.getBooking();
-        System.out.println("Booking: " + booking.getEmail());
         booking.setCreatedTime(new Date());
         booking.setChannel(bookingHelper.getChannel());
         booking.setPaid(true);
@@ -378,12 +377,12 @@ public class BookingSession implements BookingSessionLocal {
 
         //Customer value calc
         //Select seat
+        RegCust regCust = bookingHelper.getCustomers().get(0).getRegCust();
+        setCustomerValue(booking, regCust);
+        booking.setClaimed(true);
         //Promotion: 1. for all users, no need login. 2. for specific users, need login.
         String promoCodeName = bookingHelper.getPromoCode();
-
-        System.out.println("PromoCode: " + promoCodeName);
         if (!promoCodeName.equals("")) {
-            RegCust regCust = bookingHelper.getCustomers().get(0).getRegCust();
             verifyPromoCodeUsability(promoCodeName, regCust);
             PromotionCode promoCode = getPromotionCodeByName(promoCodeName);
             //Use the promoCode, set promoPrice and deduct from total price.
@@ -399,6 +398,19 @@ public class BookingSession implements BookingSessionLocal {
 
         //Generate pnr
         return booking;
+    }
+
+    private void setCustomerValue(Booking booking, RegCust regCust) {
+        if (regCust != null) {
+            try {
+                regCust = customerExSession.getRegCustByEmail(booking.getEmail());
+                regCust = em.find(RegCust.class, regCust);
+                regCust.setCustValue(regCust.getCustValue() + customerExSession.calcCustValue(booking, regCust));
+                em.merge(regCust);
+                em.flush();
+            } catch (Exception e) {
+            }
+        }
     }
 
     @Override
@@ -664,4 +676,48 @@ public class BookingSession implements BookingSessionLocal {
         return flightSchedules;
     }
 
+    @Override
+    public List<FlightScheduleBookingClass> getBookingFlightSchedBookingClses(Booking booking) {
+        List<FlightScheduleBookingClass> flightSchedBookingCls = new ArrayList<>();
+        for (AirTicket airTicket : booking.getAirTickets()) {
+            FlightScheduleBookingClass bookedFb = airTicket.getFlightSchedBookingClass();
+            if (!flightSchedBookingCls.contains(bookedFb)) {
+                flightSchedBookingCls.add(bookedFb);
+            }
+        }
+        return flightSchedBookingCls;
+    }
+
+    @Override
+    public Booking updateAddOn(BookingHelper bookingHelper) {
+        Booking booking = bookingHelper.getBooking();
+        booking = em.find(Booking.class, booking.getId());
+        booking.setPrice(bookingHelper.getTotalPrice());
+        em.merge(booking);
+        em.flush();
+        List<CustomerHelper> customerHelpers = new ArrayList<>();
+        customerHelpers.addAll(bookingHelper.getCustomers());
+        updateAddOn(customerHelpers, booking.getAirTickets());
+        return booking;
+    }
+
+    private void updateAddOn(List<CustomerHelper> customerHelpers, List<AirTicket> airTickets) {
+        for (AirTicket airTicket : airTickets) {
+            for (CustomerHelper customerHelper : customerHelpers) {
+                airTicket = em.find(AirTicket.class, airTicket.getId());
+                if (airTicket.getCustomer().getPassportNo().equals(customerHelper.getCustomer().getPassportNo())) {
+                    List<AddOn> addOns = new ArrayList<>();
+                    addOns.add(getAddOnByDescription(customerHelper.getMeal().getDescription()));
+                    if (customerHelper.isInsurance()) {
+                        addOns.add(getTravelInsurance());
+                    }
+                    Luggage luggage = getLuggageByMaxWeight(customerHelper.getLuggage().getMaxWeight());
+                    airTicket.setAddOns(addOns);
+                    airTicket.setPurchasedLuggage(luggage);
+                    em.merge(airTicket);
+                    em.flush();
+                }
+            }
+        }
+    }
 }

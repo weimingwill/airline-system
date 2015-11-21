@@ -19,6 +19,7 @@
         <c:set var="booking" value="#{cc.attrs.booking}" />
         <c:set var="custHelpers" value="#{cc.attrs.customerHelpers}" />
         <c:set var="farePrice" value="#{cc.attrs.farePrice}" />
+        <c:set var="fbs" value="#{bookingManager.getBookingFlightSchedBookingCls(booking)}" />
         <!--Basic Booking Info-->
         <p:panelGrid styleClass="fullWidth itineraryPanel">
             <f:facet name="header">
@@ -45,8 +46,8 @@
                 <p:column>Cabin Class</p:column>
             </p:row>
 
-            <c:forEach items="#{booking.airTickets}" var="airticket">
-                <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{airticket.flightSchedBookingClass.flightSchedule}" fb="#{airticket.flightSchedBookingClass}"/>
+            <c:forEach items="#{fbs}" var="fb">
+                <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{fb.flightSchedule}" fb="#{fb}"/>
             </c:forEach>
         </p:panelGrid>
 
