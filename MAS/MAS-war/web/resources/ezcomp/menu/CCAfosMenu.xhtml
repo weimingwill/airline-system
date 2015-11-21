@@ -29,7 +29,7 @@
                     <p:submenu label="Flight Crew Scheduling" expanded="true">
                         <p:menuitem value="Manage Bidding" action="#{afosNavController.toManageBidding()}"/>
                         <p:menuitem value="View Bidding History"/>
-                        <p:menuitem value="Swap Slots"/>
+                        <p:menuitem value="View Swapping History"/>
                     </p:submenu>
                 </p:submenu>
                 
@@ -47,7 +47,7 @@
                 <p:submenu label="Bidding Management" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(cabinCrew) or userController.hasRole(cockpitCrew)}">
                     <p:menuitem value="Bid for Lines" action="#{afosNavController.toSelectBiddingSession()}"/>
                     <p:menuitem value="View Bid Result" action="#{afosNavController.toViewBidHist()}"/>
-                    <p:menuitem value="Request for Swapping"/>
+                    <p:menuitem value="Request for Swapping" action="#{afosNavController.toSwapWorkingSlots()}"/>
                 </p:submenu>
 
                 <p:submenu label="Reporting" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(cabinCrew) or userController.hasRole(cockpitCrew)}">

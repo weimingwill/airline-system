@@ -36,8 +36,11 @@ public interface FlightCrewSessionLocal {
     public void placeBidForPairings(List<Pairing> pairings, FlightCrew flightCrew);
     public void updateBids(List<PairingFlightCrew> selectedPairings, FlightCrew flightCrew);
     public List<PairingFlightCrew> getFlightCrewBiddingHistory(FlightCrew flightCrew);
-    public List<SwappingRequest> getMatchedSwappingReqs(SwappingRequest newRequest);
-    public void matchSelectedSwappingReq(SwappingRequest thisRequest, SwappingRequest selectedRequest);
+    public List<SwappingRequest> getMatchedSwappingReqs(Pairing chosenPairing, Pairing targetPairing, List<Pairing> existingPairings);
+    public List<SwappingRequest> getAlternativeSwappingReqs(Pairing chosenPairing, List<Pairing> existingPairings);
+    public void matchSelectedSwappingReq(SwappingRequest selectedRequest);
     public void sendSwappingRequest(SwappingRequest newRequest);
     public void cancelSwappingRequest(SwappingRequest thisRequest);   
+    public List<Pairing> getCrewNextMonthPairings(FlightCrew flightCrew);
+    public List<Pairing> getAllNextMonthPairings(FlightCrew flightCrew);
 }

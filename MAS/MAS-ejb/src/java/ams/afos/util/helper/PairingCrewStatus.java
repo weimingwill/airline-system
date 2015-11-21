@@ -16,4 +16,5 @@ public class PairingCrewStatus {
     public static final String PRESENT = "Present";
     public static final String ABSENCE = "Absent";
     public static final String COMPLETED = "Completed";
+    public static final String SWAPPED = "Swapped";
 }
