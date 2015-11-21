@@ -34,7 +34,7 @@
 
                     <p:dataTable value="#{viewBookingBacking.currentBookingByEmail}" styleClass="centeredPanel" var="booking" tableStyleClass="table-small-font" >
                         <f:facet name="header">
-                            My Current Booking History
+                            My Current Booking
                         </f:facet>
                         <p:column headerText="Created Time">
                             <p:outputLabel value="#{booking.createdTime}">
@@ -56,12 +56,17 @@
                             </p:outputLabel>
                         </p:column>
 
-                        <p:column headerText="Paid" >
+                        <p:column headerText="Paid" style="width:30px;text-align: center">
                             <p:outputLabel  value="Yes" rendered="#{booking.paid}" />
                             <p:outputLabel  value="Not Paid" rendered="#{not booking.paid}" />
 
                         </p:column>
 
+                        <p:column headerText="View" style="width:30px;text-align: center">
+                            <p:commandButton  action="#{manageBookingManager.searchForThisBooking()}" icon="ui-icon-search">
+                                <f:setPropertyActionListener value="#{booking}" target="#{manageBookingManager.selectThisBooking}" />
+                           </p:commandButton>
+                        </p:column>
                     </p:dataTable>
 
 
@@ -381,6 +386,8 @@
 
                             <p:outputLabel value="Membership Level "/>
                             <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
+
+
                         </p:panelGrid>
 
                     </p:panel>
@@ -409,12 +416,17 @@
                             </p:outputLabel>
                         </p:column>
 
-                        <p:column headerText="Paid" >
+                        <p:column headerText="Paid" style="width:30px;text-align: center">
                             <p:outputLabel  value="Yes" rendered="#{booking.paid}" />
                             <p:outputLabel  value="Not Paid" rendered="#{not booking.paid}" />
 
                         </p:column>
 
+                        <p:column headerText="View" style="width:30px;text-align: center">
+                            <p:commandButton  action="#{manageBookingManager.searchForThisBooking()}" icon="ui-icon-search">
+                                <f:setPropertyActionListener value="#{booking}" target="#{manageBookingManager.selectThisBooking}" />
+                           </p:commandButton>
+                        </p:column>
                     </p:dataTable>
                 </h:form>
             </p:tab>
