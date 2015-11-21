@@ -8,7 +8,7 @@
     <!-- INTERFACE -->
     <cc:interface>
         <cc:attribute name="attendanceReport" default="false"/>
-        <cc:attribute name="postFlightReport" default="false"/>
+        <cc:attribute name="flightReport" default="false"/>
         <cc:attribute name="header" default="Flight Schedules"/>
         <cc:attribute name="tableValue" default="#{flightDutyBacking.futureFlightSchedules}"/>
     </cc:interface>
@@ -64,8 +64,13 @@
                     <f:setPropertyActionListener value="#{flightSchedule}" target="#{flightDutyBacking.selectedFlightSchedule}" />
                 </p:commandButton>
             </p:column>
-            <p:column headerText="Duty Report" rendered="#{cc.attrs.postFlightReport}">
-                <p:commandButton icon="fa fa-file-text-o" action="#{flightDutyBacking.onViewReportBtnClick()}">
+            <p:column headerText="Pre-Flight Report" rendered="#{cc.attrs.flightReport}">
+                <p:commandButton icon="fa fa-file-text-o" action="#{flightDutyBacking.onViewReportBtnClick('Pre-Flight')}">
+                    <f:setPropertyActionListener value="#{flightSchedule}" target="#{flightDutyBacking.selectedFlightSchedule}" />
+                </p:commandButton>
+            </p:column>
+            <p:column headerText="Post-Flight Report" rendered="#{cc.attrs.flightReport}">
+                <p:commandButton icon="fa fa-file-text-o" action="#{flightDutyBacking.onViewReportBtnClick('Post-Flight')}">
                     <f:setPropertyActionListener value="#{flightSchedule}" target="#{flightDutyBacking.selectedFlightSchedule}" />
                 </p:commandButton>
             </p:column>

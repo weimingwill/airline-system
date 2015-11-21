@@ -55,13 +55,8 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
     }
 
     @Override
-    public void updatePreFlightChecklist(Checklist checklist) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updatePostFlightChecklist(Checklist checklist) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void updateFlightChecklist(Checklist checklist) {
+        em.merge(checklist);
     }
 
     @Override
@@ -189,7 +184,7 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
     @Override
     public List<FlightDuty> getCrewCurrMonthDuties(FlightCrew thisCrew) {
         Calendar temp = Calendar.getInstance();
-        Query q = em.createQuery("SELECT DISTINCT fd FROM PairingFlightCrew pfc, IN(pfc.pairing.flightDuties) fd, IN(fd.flightSchedules) fs WHERE (fs.departDate BETWEEN :nextMonthFirstDay AND :nextMonthLastDay) AND pfc.flightCrew.systemUserId = :crewId AND pfc.status = :status");
+        Query q = em.createQuery("SELECT DISTINCT fd FROM PairingFlightCrew pfc, IN(pfc.pairing.flightDuties) fd, IN(fd.flightSchedules) fs WHERE (fs.departDate BETWEEN :nextMonthFirstDay AND :nextMonthLastDay) AND pfc.flightCrew.systemUserId = :crewId AND pfc.status = :status ORDER BY fs.departDate");
         temp.setTime(getNextMonthFirstDay());
         temp.add(Calendar.MONTH, -1);
         q.setParameter("nextMonthFirstDay", temp.getTime());

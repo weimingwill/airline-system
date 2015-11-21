@@ -8,9 +8,9 @@
 
     <ui:define name="content">
         <h:form>
-            <p:dataTable id="pdr" value="#{flightDutyBacking.postFlightReport.checklistItems}" var="checklistItem" rowIndexVar="index" tableStyleClass="table-small-font">
+            <p:dataTable id="pdr" value="#{flightDutyBacking.flightReport.checklistItems}" var="checklistItem" rowIndexVar="index" tableStyleClass="table-small-font">
                 <f:facet name="header">
-                    <p:outputLabel value="#{flightDutyBacking.selectedType} Checklist for #{flightDutyBacking.selectedFlightSchedule.flight.flightNo}/#{flightDutyBacking.selectedFlightSchedule.flight.returnedFlight.flightNo}"/>
+                    <p:outputLabel value="#{flightDutyBacking.flightReport.type} Checklist for #{flightDutyBacking.selectedFlightSchedule.flight.flightNo}/#{flightDutyBacking.selectedFlightSchedule.flight.returnedFlight.flightNo}"/>
                 </f:facet>
                 <p:ajax event="cellEdit" listener="#{flightDutyBacking.onCellEdit}"/>
 
@@ -29,9 +29,22 @@
                 <p:column headerText="Value" width="100%">
                     <p:outputLabel value="#{flightDutyBacking.getItemValue(checklistItem.itemValue)}"/>
                 </p:column>
+
+                <p:column headerText="Checked By" width="100%">
+                    <p:outputLabel value="Nil" rendered="#{empty checklistItem.checkedBy || checklistItem.checkedBy == ''}"/>
+                    <p:outputLabel value="#{checklistItem.checkedBy}" rendered="#{not empty checklistItem.checkedBy and checklistItem.checkedBy != ''}"/>
+                </p:column>
+
+                <p:column headerText="Update Time" width="100%" >
+                    <p:outputLabel value="Nil" rendered="#{empty checklistItem.checkedBy || checklistItem.checkedBy == ''}"/>
+                    <p:outputLabel value="#{checklistItem.lastUpdateTime}" rendered="#{not empty checklistItem.checkedBy and checklistItem.checkedBy != ''}">
+                        <f:convertDateTime pattern="dd/MM/yyyy 'at' HH:ss:mm z" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
                 <f:facet name="footer">
-                    <h:commandLink id="pdf" value=" Export" class="fa fa-file-pdf-o" style="color: white; font-weight: bold">
-                        <p:dataExporter type="pdf" target="pdr" fileName="Post-Flight Duty Report_#{flightDutyBacking.selectedFlightSchedule.flight.flightNo}_#{flightDutyBacking.departureDateTime}" preProcessor="#{flightDutyBacking.preProcessPDF}" />
+                    <h:commandLink id="pdf" value=" Export" class="fa fa-file-pdf-o" style="color: white; font-weight: bold; font-size: medium">
+                        <p:dataExporter type="pdf" target="pdr" fileName="#{flightDutyBacking.flightReport.type} Duty Report_#{flightDutyBacking.selectedFlightSchedule.flight.flightNo}_#{flightDutyBacking.departureDateTime}" preProcessor="#{flightDutyBacking.preProcessPDF}" />
                     </h:commandLink>
                 </f:facet>
             </p:dataTable>

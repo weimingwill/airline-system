@@ -42,4 +42,5 @@ public interface FlightCrewMgmtSessionLocal {
     public Checklist getFlightChecklist(Flight thisFlight, String type);
     public List<Checklist> getChecklistTemplates(String type);
     public Checklist getPostFlightReport(FlightSchedule flightSchedule);
+    public Checklist getPreFlightReport(FlightSchedule flightSchedule);
 }

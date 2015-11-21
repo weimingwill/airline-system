@@ -29,8 +29,8 @@ public interface FlightCrewSessionLocal {
     
     // Flight Crew Duty Report
     public List<FlightDuty> getCrewCurrMonthDuties(FlightCrew thisCrew);
-    public void updatePreFlightChecklist(Checklist checklist);
-    public void updatePostFlightChecklist(Checklist checklist);
+    public void updateFlightChecklist(Checklist checklist);
+
     // Flight Crew Bidding
     public List<Pairing> getAllEligiblePairings(BiddingSession session, FlightCrew flightCrew);
     public void placeBidForPairings(List<Pairing> pairings, FlightCrew flightCrew);

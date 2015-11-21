@@ -17,7 +17,7 @@
             <p:tab title="Post-Flight Duty Report" id="flightDutyTab">
                 <h:form>
                     <p:messages id="messages2" showDetail="true" autoUpdate="true" closable="true"/>
-                    <ta:CCFlightScheduleTable postFlightReport="true" tableValue="#{flightDutyBacking.pastFlightSchedules}" header="Past Flight Schedules (Click button to view post flight duty report)"/>
+                    <ta:CCFlightScheduleTable flightReport="true" tableValue="#{flightDutyBacking.pastFlightSchedules}" header="Past Flight Schedules (Click button to view post flight duty report)"/>
                 </h:form>
             </p:tab>
         </p:tabView>

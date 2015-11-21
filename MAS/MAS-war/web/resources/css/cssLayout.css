@@ -178,7 +178,15 @@ tr.hide{
 
 .label{
     font-weight: bold;
-    color: #045491;
+    color: #203b7b;
+}
+
+.label-right{
+    background-color: #1F3F8C;
+    font-weight: bold;
+    color: white;
+    text-align: right;
+    border-radius: 2px;
 }
 
 .table-small{

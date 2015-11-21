@@ -84,7 +84,7 @@ public class FlightDutyBacking implements Serializable {
 
     private List<FlightCrew> crewsForFlightSchedule;
     private FlightCrew selectedCrew;
-    private Checklist postFlightReport;
+    private Checklist flightReport;
 
     /**
      * Creates a new instance of FlightDutyBacking
@@ -131,7 +131,7 @@ public class FlightDutyBacking implements Serializable {
                 break;
             case "viewDutyReport":
                 map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-                setPostFlightReport((Checklist) map.get("postFlightReport"));
+                setFlightReport((Checklist) map.get("flightReport"));
                 setSelectedFlightSchedule((FlightSchedule) map.get("selectedFlightSchedule"));
                 break;
             default:
@@ -164,7 +164,7 @@ public class FlightDutyBacking implements Serializable {
             checklist.setType(flightChecklist.getType());
         }
         flightCrewMgmtSession.createFlightDutyChecklist(checklist, thisFlight);
-        msgController.addMessage("Create " + selectedType + " Checklist for Flight" + thisFlight.getFlightNo() + "/" + thisFlight.getReturnedFlight().getFlightNo());
+        msgController.addMessage("Create " + selectedType + " Checklist for Flight " + thisFlight.getFlightNo() + "/" + thisFlight.getReturnedFlight().getFlightNo());
         return afosNavController.toSelectChecklist();
     }
 
@@ -227,16 +227,22 @@ public class FlightDutyBacking implements Serializable {
 
     public void onAddItemBtnClick() {
         List<ChecklistItem> checklistItems = flightChecklist.getChecklistItems();
-        newChecklistItem.setCreatedTime(Calendar.getInstance().getTime());
-        newChecklistItem.setLastUpdateTime(Calendar.getInstance().getTime());
+        ChecklistItem newItem = new ChecklistItem();
+        newItem.setName(newChecklistItem.getName());
+        newItem.setDescription(newChecklistItem.getDescription());
+        newItem.setCreatedTime(Calendar.getInstance().getTime());
+        newItem.setLastUpdateTime(Calendar.getInstance().getTime());
+
         if (checklistItems == null) {
             checklistItems = new ArrayList();
-            checklistItems.add(newChecklistItem);
+            checklistItems.add(newItem);
             flightChecklist.setChecklistItems(checklistItems);
         } else {
-            checklistItems.add(newChecklistItem);
+            checklistItems.add(newItem);
         }
         System.out.println("New Item: \n\tTitle: " + newChecklistItem.getName() + "\n\tDescription: " + newChecklistItem.getDescription());
+        newChecklistItem.setDescription("");
+        newChecklistItem.setName("");
     }
 
     public void onCellEdit(CellEditEvent event) {
@@ -312,11 +318,20 @@ public class FlightDutyBacking implements Serializable {
         return afosNavController.toCrewReporting();
     }
 
-    public String onViewReportBtnClick() {
-        setPostFlightReport(flightCrewMgmtSession.getPostFlightReport(selectedFlightSchedule));
+    public String onViewReportBtnClick(String type) {
         Map<String, Object> map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        map.put("postFlightReport", getPostFlightReport());
         map.put("selectedFlightSchedule", selectedFlightSchedule);
+
+        switch (type) {
+            case ChecklistType.POST_FLIGHT:
+                setFlightReport(flightCrewMgmtSession.getPostFlightReport(selectedFlightSchedule));
+                break;
+            case ChecklistType.PRE_FLIGHT:
+                setFlightReport(flightCrewMgmtSession.getPreFlightReport(selectedFlightSchedule));
+                break;
+            default:
+        }
+        map.put("flightReport", flightReport);
         return afosNavController.toViewPostDutyReport();
     }
 
@@ -349,14 +364,14 @@ public class FlightDutyBacking implements Serializable {
         subtitleFont.setSize(12);
         subtitleFont.setStyle(Font.BOLD);
 
-        Paragraph title = new Paragraph("Post-Flight Duty Report", titleFont);
+        Paragraph title = new Paragraph(flightReport.getType() + " Duty Report", titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
         title.setSpacingAfter(12f);
 
         Paragraph subTitle1 = new Paragraph("Flight Information:", subtitleFont);
         subTitle1.setSpacingAfter(8f);
 
-        Paragraph subTitle2 = new Paragraph("Post-Flight Checklist:", subtitleFont);
+        Paragraph subTitle2 = new Paragraph(flightReport.getType() + " Checklist:", subtitleFont);
         subTitle2.setSpacingBefore(12f);
         subTitle2.setSpacingAfter(12f);
 
@@ -370,7 +385,7 @@ public class FlightDutyBacking implements Serializable {
         sdf.setTimeZone(TimeZone.getTimeZone(getTimeZone(departure)));
         list.add("Departure Time: " + sdf.format(selectedFlightSchedule.getDepartDate()) + " (" + departure.getCity().getCityName() + " Time)");
         sdf.setTimeZone(TimeZone.getTimeZone(getTimeZone(arrival)));
-        list.add("Arrival Time: " + sdf.format(selectedFlightSchedule.getArrivalDate())+" (" + arrival.getCity().getCityName() + " Time)");
+        list.add("Arrival Time: " + sdf.format(selectedFlightSchedule.getArrivalDate()) + " (" + arrival.getCity().getCityName() + " Time)");
         list.add("Origin: " + departure.getCity().getCityName() + " (" + departure.getAirportName() + ")");
         list.add("Destination: " + arrival.getCity().getCityName() + " (" + arrival.getAirportName() + ")");
 
@@ -636,17 +651,17 @@ public class FlightDutyBacking implements Serializable {
     }
 
     /**
-     * @return the postFlightReport
+     * @return the flightReport
      */
-    public Checklist getPostFlightReport() {
-        return postFlightReport;
+    public Checklist getFlightReport() {
+        return flightReport;
     }
 
     /**
-     * @param postFlightReport the postFlightReport to set
+     * @param flightReport the flightReport to set
      */
-    public void setPostFlightReport(Checklist postFlightReport) {
-        this.postFlightReport = postFlightReport;
+    public void setFlightReport(Checklist flightReport) {
+        this.flightReport = flightReport;
     }
 
 }

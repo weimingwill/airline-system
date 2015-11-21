@@ -51,7 +51,7 @@
                 <p:commandButton value="Save &amp; Exits" action="#{flightDutyBacking.createNewChecklist(flightDutyBacking.flightChecklist, flightDutyBacking.selectedFlight)}"/>
             </h:form>
 
-            <h:form>
+            <h:form id="newChecklistItemForm">
                 <p:panel header="Add New Checklist Item">
                     <p:panelGrid columns="2">
                         <p:outputLabel value="Title"/>
@@ -60,7 +60,7 @@
                         <p:inputText value="#{flightDutyBacking.newChecklistItem.description}"/>
                     </p:panelGrid>
                     <p:separator style="border: none"/>
-                    <p:commandButton value="Add" actionListener="#{flightDutyBacking.onAddItemBtnClick()}" update="checklistTable"/>
+                    <p:commandButton value="Add" actionListener="#{flightDutyBacking.onAddItemBtnClick()}" update="checklistTable, newChecklistItemForm"/>
                 </p:panel>
             </h:form>
         </p:panelGrid>

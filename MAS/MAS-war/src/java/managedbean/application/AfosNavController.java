@@ -79,4 +79,9 @@ public class AfosNavController {
     public String toReportPostFlightDuty(){
         return AFOS_URL + "crew_regulation/reportPostFlightDuty.xhtml" + REDIRECT;
     }
+    
+    public String toUpdateChecklist(){
+        return AFOS_URL + "crew_regulation/updateChecklist.xhtml" + REDIRECT;
+    }
+    
 }

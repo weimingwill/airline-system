@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -18,21 +19,80 @@
                 <p:outputLabel value="Flight Crew Duty for Current Month"/>
             </f:facet>
 
-            <p:column headerText="duty ID">
-                <p:outputLabel value="#{crewDuty.id}"/>
-            </p:column>
+            <p:subTable var="flightSchedule" value="#{crewDuty.flightSchedules}" >
+                <f:facet name="header">
+                    <p:outputLabel value="Flight Duty ID: #{crewDuty.id}"/>
+                </f:facet>
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column headerText="Flight"/>
+                        <p:column headerText="Origin"/>
+                        <p:column headerText="Departure Date"/> 
+                        <p:column headerText="Departure Time"/>
+                        <p:column headerText="Report Time"/> 
+                        <p:column headerText="Destination"/> 
+                        <p:column headerText="Arrival Date"/> 
+                        <p:column headerText="Arrival Time"/> 
+                        <p:column headerText="Dismiss Time"/>
+                        <p:column headerText="Pre-Flight Checklist" rendered="#{cc.attrs.type == 'Pre-Flight'}"/>
+                        <p:column headerText="Post-Flight Checklist" rendered="#{cc.attrs.type == 'Post-Flight'}"/>
+                    </p:row>
+                </p:columnGroup>
 
-            <p:column headerText="Pre-Flight Checklist" rendered="#{cc.attrs.type == 'Pre'}">
-                <p:commandButton class="fa fa-search" title="View Checklist">
-                    <f:setPropertyActionListener value="#{crewDuty}" target="#{flightCrewReportingBacking.selectedDuty}" />
-                </p:commandButton>
-            </p:column>
-            
-            <p:column headerText="Post-Flight Checklist" rendered="#{cc.attrs.type == 'Post'}">
-                <p:commandButton class="fa fa-search" title="View Checklist">
-                    <f:setPropertyActionListener value="#{crewDuty}" target="#{flightCrewReportingBacking.selectedDuty}" />
-                </p:commandButton>
-            </p:column>
+                <p:column>
+                    <p:outputLabel value="#{flightSchedule.flight.flightNo}"/>
+                </p:column>
+                <p:column>
+                    <p:outputLabel id="depart" value="#{flightSchedule.leg.departAirport.city.cityName}">
+                        <p:tooltip for="depart" value="#{flightSchedule.leg.departAirport.country.countryName} - #{flightSchedule.leg.departAirport.city.cityName} - #{flightSchedule.leg.departAirport.airportName}" trackMouse="true"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column sortBy="#{flightSchedule.departDate}">
+                    <p:outputLabel value="#{flightSchedule.departDate}">
+                        <f:convertDateTime pattern="E, dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column sortBy="#{flightSchedule.departDate}">
+                    <p:outputLabel value="#{flightSchedule.departDate}">
+                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{crewDuty.reportTime}" style="color: #D20005; font-weight: bold">
+                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <p:outputLabel id="arrival" value="#{flightSchedule.leg.arrivalAirport.city.cityName}" >
+                        <p:tooltip for="arrival" value="#{flightSchedule.leg.arrivalAirport.country.countryName} - #{flightSchedule.leg.arrivalAirport.city.cityName} - #{flightSchedule.leg.arrivalAirport.airportName}" trackMouse="true"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column sortBy="#{flightSchedule.arrivalDate}">
+                    <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                        <f:convertDateTime pattern="E, dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column sortBy="#{flightSchedule.arrivalDate}">
+                    <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{crewDuty.dismissTime}" style="color: #e17009; font-weight: bold">
+                        <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column rendered="#{cc.attrs.type == 'Pre-Flight'}" style="text-align: center">
+                    <p:commandButton action="#{flightCrewReportingBacking.onViewChecklistBtnClick(cc.attrs.type)}" icon="fa fa-list-alt" title="View Pre-Flight Checklist">
+                        <f:setPropertyActionListener value="#{flightSchedule}" target="#{flightCrewReportingBacking.selectedFlightSchedule}" />
+                    </p:commandButton>
+                </p:column>
+                <p:column rendered="#{cc.attrs.type == 'Post-Flight'}" style="text-align: center">
+                    <p:commandButton action="#{flightCrewReportingBacking.onViewChecklistBtnClick(cc.attrs.type)}" icon="fa fa-list-alt" title="View Post-Flight Checklist">
+                        <f:setPropertyActionListener value="#{flightSchedule}" target="#{flightCrewReportingBacking.selectedFlightSchedule}" />
+                    </p:commandButton>
+                </p:column>
+            </p:subTable>
         </p:dataTable>
     </cc:implementation>
 </html>

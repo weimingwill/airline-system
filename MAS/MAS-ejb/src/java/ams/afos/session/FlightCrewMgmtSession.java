@@ -727,11 +727,15 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
         boolean foundExistingChecklist = false;
         List<FlightSchedule> flightSchedules = flightSchedulingSession.getThisFlightFlightSchedules(flight);
         Checklist newChecklist;
+        if (checklist.getIsTemplate()) {
+            em.persist(checklist);
+            em.flush();
+        }
         for (FlightSchedule fs : flightSchedules) {
             newChecklist = new Checklist();
             newChecklist.setChecklistItems(checklist.getChecklistItems());
             newChecklist.setDeleted(false);
-            newChecklist.setIsTemplate(checklist.getIsTemplate());
+            newChecklist.setIsTemplate(false);
             newChecklist.setType(checklist.getType());
             if (fs.getChecklists() == null) {
                 // if flight schedule does not have any checklist, create a new checklist and add it to flight schedule
@@ -799,9 +803,18 @@ public class FlightCrewMgmtSession implements FlightCrewMgmtSessionLocal {
 
     @Override
     public Checklist getPostFlightReport(FlightSchedule flightSchedule) {
+        return getFlightReport(flightSchedule, ChecklistType.POST_FLIGHT);
+    }
+
+    @Override
+    public Checklist getPreFlightReport(FlightSchedule flightSchedule) {
+        return getFlightReport(flightSchedule, ChecklistType.PRE_FLIGHT);
+    }
+
+    private Checklist getFlightReport(FlightSchedule flightSchedule, String type) {
         Query q = em.createQuery("SELECT cl FROM FlightSchedule fs, IN(fs.checklists) cl WHERE fs.flightScheduleId = :inId AND cl.deleted =FALSE AND cl.type = :inType");
         q.setParameter("inId", flightSchedule.getFlightScheduleId());
-        q.setParameter("inType", ChecklistType.POST_FLIGHT);
+        q.setParameter("inType", type);
         try {
             return (Checklist) q.getSingleResult();
         } catch (Exception e) {
