@@ -65,6 +65,7 @@ public class FlightCrewBacking implements Serializable {
     private SwappingRequest matchedReq;
     private List<SwappingRequest> altReqs;
     private SwappingRequest selectedSwappingRequest;
+    private List<SwappingRequest> crewSwappingRequests;
 
     /**
      * Creates a new instance of FlightCrewBacking
@@ -89,6 +90,12 @@ public class FlightCrewBacking implements Serializable {
                 setCurrCrew(getCurrFlightCrew());
                 if (currCrew != null) {
                     initTimeline();
+                }
+                break;
+            case "manageSwapping":
+                setCurrCrew(getCurrFlightCrew());
+                if (currCrew != null) {
+                    setCrewSwappingRequests(flightCrewSession.getAllCrewSwappingRequests(currCrew));
                 }
                 break;
         }
@@ -256,6 +263,12 @@ public class FlightCrewBacking implements Serializable {
                 break;
         }
         msgController.addMessage("Swapped!");
+        return navigationController.redirectToCurrentPage();
+    }
+    
+    public String onDeleteReqBtnClick(){
+        flightCrewSession.cancelSwappingRequest(selectedSwappingRequest);
+        msgController.addMessage("Cancel Swapping Request with ID: " + selectedSwappingRequest.getId());
         return navigationController.redirectToCurrentPage();
     }
 
@@ -457,6 +470,20 @@ public class FlightCrewBacking implements Serializable {
      */
     public void setMatchedReq(SwappingRequest matchedReq) {
         this.matchedReq = matchedReq;
+    }
+
+    /**
+     * @return the crewSwappingRequests
+     */
+    public List<SwappingRequest> getCrewSwappingRequests() {
+        return crewSwappingRequests;
+    }
+
+    /**
+     * @param crewSwappingRequests the crewSwappingRequests to set
+     */
+    public void setCrewSwappingRequests(List<SwappingRequest> crewSwappingRequests) {
+        this.crewSwappingRequests = crewSwappingRequests;
     }
 
 }

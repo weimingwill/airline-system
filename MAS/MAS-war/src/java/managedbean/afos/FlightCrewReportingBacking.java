@@ -75,8 +75,10 @@ public class FlightCrewReportingBacking implements Serializable {
         if (currCrew != null) {
             switch (uri) {
                 case "reportPostFlightDuty":
+                    setCrewDuties(flightCrewSession.getCrewCurrMonthPastDuties(currCrew));
+                    break;
                 case "reportPreFlightDuty":
-                    setCrewDuties(getCrewCurrMonthDuties());
+                    setCrewDuties(flightCrewSession.getCrewCurrMonthFutureDuties(currCrew));
                     break;
                 case "updateChecklist":
                     map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
@@ -141,10 +143,6 @@ public class FlightCrewReportingBacking implements Serializable {
             default:
                 return "";
         }
-    }
-
-    private List<FlightDuty> getCrewCurrMonthDuties() {
-        return flightCrewSession.getCrewCurrMonthDuties(currCrew);
     }
 
     public String onViewChecklistBtnClick(String type) {

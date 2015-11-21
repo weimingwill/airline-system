@@ -87,4 +87,8 @@ public class AfosNavController {
     public String toSwapWorkingSlots() {
         return AFOS_URL + "crew_schedule/swapWorkingSlots.xhtml" + REDIRECT;
     }
+    
+    public String toManageSwappingRequests() {
+        return AFOS_URL + "crew_schedule/manageSwapping.xhtml" + REDIRECT;
+    }
 }

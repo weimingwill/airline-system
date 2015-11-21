@@ -17,7 +17,6 @@ import ams.afos.util.helper.BiddingSessionStatus;
 import ams.afos.util.helper.PairingCrewStatus;
 import ams.afos.util.helper.SwappingReqStataus;
 import ams.aps.util.exception.EmptyTableException;
-import com.fasterxml.classmate.TypeBindings;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -254,7 +253,9 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
 
     @Override
     public void cancelSwappingRequest(SwappingRequest thisRequest) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SwappingRequest request= em.find(SwappingRequest.class, thisRequest.getId());
+        request.setStatus(SwappingReqStataus.CANCELED);
+        em.merge(request);
     }
 
     @Override
@@ -293,15 +294,18 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
     }
 
     @Override
-    public List<FlightDuty> getCrewCurrMonthDuties(FlightCrew thisCrew) {
-        Calendar temp = Calendar.getInstance();
-        Query q = em.createQuery("SELECT DISTINCT fd FROM PairingFlightCrew pfc, IN(pfc.pairing.flightDuties) fd, IN(fd.flightSchedules) fs WHERE (fs.departDate BETWEEN :nextMonthFirstDay AND :nextMonthLastDay) AND pfc.flightCrew.systemUserId = :crewId AND pfc.status = :status ORDER BY fs.departDate");
-        temp.setTime(getNextMonthFirstDay());
-        temp.add(Calendar.MONTH, -1);
-        q.setParameter("nextMonthFirstDay", temp.getTime());
-        temp.setTime(getNextMonthLastDay());
-        temp.add(Calendar.MONTH, -1);
-        q.setParameter("nextMonthLastDay", temp.getTime());
+    public List<FlightDuty> getCrewCurrMonthFutureDuties(FlightCrew thisCrew) {
+        Query q = em.createQuery("SELECT DISTINCT fd FROM PairingFlightCrew pfc, IN(pfc.pairing.flightDuties) fd, IN(fd.flightSchedules) fs WHERE (fs.departDate BETWEEN CURRENT_TIMESTAMP AND :currMonthLastDay) AND pfc.flightCrew.systemUserId = :crewId AND pfc.status = :status ORDER BY fs.departDate");
+        q.setParameter("currMonthLastDay", getCurrMonthLastDay());
+        q.setParameter("crewId", thisCrew.getSystemUserId());
+        q.setParameter("status", PairingCrewStatus.SUCCESS);
+        return q.getResultList();
+    }
+
+    @Override
+    public List<FlightDuty> getCrewCurrMonthPastDuties(FlightCrew thisCrew) {
+        Query q = em.createQuery("SELECT DISTINCT fd FROM PairingFlightCrew pfc, IN(pfc.pairing.flightDuties) fd, IN(fd.flightSchedules) fs WHERE (fs.departDate BETWEEN :currMonthFirstDay AND CURRENT_TIMESTAMP) AND pfc.flightCrew.systemUserId = :crewId AND pfc.status = :status ORDER BY fs.departDate");
+        q.setParameter("currMonthFirstDay", getCurrMonthFirstDay());
         q.setParameter("crewId", thisCrew.getSystemUserId());
         q.setParameter("status", PairingCrewStatus.SUCCESS);
         return q.getResultList();
@@ -347,6 +351,15 @@ public class FlightCrewSession implements FlightCrewSessionLocal {
         q.setParameter("currentMonthLastDay", getCurrMonthLastDay());
         q.setParameter("flightCrew", flightCrew);
         return (List<Pairing>) q.getResultList();
+    }
+
+    @Override
+    public List<SwappingRequest> getAllCrewSwappingRequests(FlightCrew flightCrew) {
+        Query q = em.createQuery("SELECT s FROM SwappingRequest s WHERE s.createdTime BETWEEN :currentMonthFirstDay AND :currentMonthLastDay AND s.sender.systemUserId = :crewId");
+        q.setParameter("currentMonthFirstDay", getCurrMonthFirstDay());
+        q.setParameter("currentMonthLastDay", getCurrMonthLastDay());
+        q.setParameter("crewId", flightCrew.getSystemUserId());
+        return (List<SwappingRequest>) q.getResultList();
     }
 
 }

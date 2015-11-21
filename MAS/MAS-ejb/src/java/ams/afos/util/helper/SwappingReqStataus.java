@@ -13,5 +13,5 @@ public class SwappingReqStataus {
     public static final String PENDING = "Pending";
     public static final String SWAPPED = "Swapped";
     public static final String EXPIRED = "Expired";
-    public static final String CANCELED = "Canceled";
+    public static final String CANCELED = "Cancelled";
 }

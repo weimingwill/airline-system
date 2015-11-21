@@ -28,7 +28,8 @@ public interface FlightCrewSessionLocal {
     public Pairing getPairingById(Long id);
     
     // Flight Crew Duty Report
-    public List<FlightDuty> getCrewCurrMonthDuties(FlightCrew thisCrew);
+    public List<FlightDuty> getCrewCurrMonthFutureDuties(FlightCrew thisCrew);
+    public List<FlightDuty> getCrewCurrMonthPastDuties(FlightCrew thisCrew);
     public void updateFlightChecklist(Checklist checklist);
 
     // Flight Crew Bidding
@@ -43,4 +44,5 @@ public interface FlightCrewSessionLocal {
     public void cancelSwappingRequest(SwappingRequest thisRequest);   
     public List<Pairing> getCrewNextMonthPairings(FlightCrew flightCrew);
     public List<Pairing> getAllNextMonthPairings(FlightCrew flightCrew);
+    public List<SwappingRequest> getAllCrewSwappingRequests(FlightCrew flightCrew);
 }

@@ -48,6 +48,7 @@
                     <p:menuitem value="Bid for Lines" action="#{afosNavController.toSelectBiddingSession()}"/>
                     <p:menuitem value="View Bid Result" action="#{afosNavController.toViewBidHist()}"/>
                     <p:menuitem value="Request for Swapping" action="#{afosNavController.toSwapWorkingSlots()}"/>
+                    <p:menuitem value="Manage Swapping Requests" action="#{afosNavController.toManageSwappingRequests()}"/>
                 </p:submenu>
 
                 <p:submenu label="Reporting" expanded="true" rendered="#{loginController.loggedIn and userController.hasRole(cabinCrew) or userController.hasRole(cockpitCrew)}">
