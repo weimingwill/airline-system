@@ -130,7 +130,7 @@ public class AnalyticsController {
         createMonthlySalesLinearModel();
 
         createYearlySalesLinearModel();
-        
+
         createSalesDashboard();
 
 //        monthlySales = analyticsSession.getMonthlySales();
@@ -194,23 +194,19 @@ public class AnalyticsController {
 
         DashboardColumn column2 = new DefaultDashboardColumn();
 
-        DashboardColumn column3 = new DefaultDashboardColumn();
-
         column1.addWidget("daySales");
 
-        column2.addWidget("monthSales");
+        column1.addWidget("monthSales");
 
-        column3.addWidget("yearSales");
+        column1.addWidget("yearSales");
 
-        column1.addWidget("monthlySales");
+        column2.addWidget("monthlySales");
 
         column2.addWidget("yearlySales");
 
-        customerDashboard.addColumn(column1);
+        salesDashboard.addColumn(column1);
 
-        customerDashboard.addColumn(column2);
-
-        customerDashboard.addColumn(column3);
+        salesDashboard.addColumn(column2);
 
     }
 
@@ -417,6 +413,7 @@ public class AnalyticsController {
 
         monthlySalesLineChart.setTitle("Monthly sales distribution");
         monthlySalesLineChart.setLegendPosition("e");
+        monthlySalesLineChart.setLegendPlacement(LegendPlacement.OUTSIDE);
         Axis yAxis = monthlySalesLineChart.getAxis(AxisType.Y);
         yAxis.setMin(0);
         yAxis.setMax(10000);
@@ -439,17 +436,18 @@ public class AnalyticsController {
         series1.set(year - 1, yearlySales[3]);
         series1.set(year, yearlySales[4]);
 
-        monthlySalesLineChart.addSeries(series1);
+        yearlySalesLineChart.addSeries(series1);
 
-        monthlySalesLineChart.setTitle("Yearly sales distribution");
-        monthlySalesLineChart.setLegendPosition("e");
-        Axis yAxis = monthlySalesLineChart.getAxis(AxisType.Y);
+        yearlySalesLineChart.setTitle("Yearly sales distribution");
+        yearlySalesLineChart.setLegendPosition("e");
+        yearlySalesLineChart.setLegendPlacement(LegendPlacement.OUTSIDE);
+        Axis yAxis = yearlySalesLineChart.getAxis(AxisType.Y);
         yAxis.setMin(0);
         yAxis.setMax(10000);
     }
 
     public String getPromoCodeByCampaign(MktCampaign mc) {
-        
+
         return campaignSession.getPromoCodeByCampaign(mc);
 
     }

@@ -17,27 +17,27 @@
             <p:dashboard id="salesDashboard" model="#{analyticsController.salesDashboard}">
                 <p:ajax event="reorder" listener="#{analyticsController.handleReorder}" update="msgs" />
 
-                <p:panel id="daySales" header="Today's sales">
-                    <p:outputLabel value="#{analyticsController.daySales}">
+                <p:panel id="daySales" header="Today's sales" style="width:320px;height:200px;">
+                    <p:outputLabel value="$#{analyticsController.daySales}">
                     </p:outputLabel>
                 </p:panel>
 
-                <p:panel id="monthSales" header="Current month's sales">
-                    <p:outputLabel value="#{analyticsController.monthSales}">
+                <p:panel id="monthSales" header="Current month's sales" style="width:320px;height:200px;">
+                    <p:outputLabel value="$#{analyticsController.monthSales}">
                     </p:outputLabel>
                 </p:panel>
 
-                <p:panel id="yearSales" header="Current year's sales">
-                    <p:outputLabel value="#{analyticsController.yearSales}">
+                <p:panel id="yearSales" header="Current year's sales" style="width:320px;height:200px;">
+                    <p:outputLabel value="$#{analyticsController.yearSales}">
                     </p:outputLabel>
                 </p:panel>
 
                 <p:panel id="monthlySales" header="Monthly sales distribution">
-                    <p:chart type="line" model="#{analyticsController.monthlySalesLineChart}" style="height:300px;"/>
+                    <p:chart type="line" model="#{analyticsController.monthlySalesLineChart}" style="width:640px;height:300px;"/>
                 </p:panel>
 
                 <p:panel id="yearlySales" header="Yearly sales distribution">
-                    <p:chart type="line" model="#{analyticsController.yearlySalesLineChart}" style="height:300px;"/>
+                    <p:chart type="line" model="#{analyticsController.yearlySalesLineChart}" style="width:640px;height:300px;"/>
                 </p:panel>
 
             </p:dashboard>

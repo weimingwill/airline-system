@@ -193,23 +193,20 @@ public class AnalyticsSession implements AnalyticsSessionLocal {
             bookings = (List<Booking>) query.getResultList();
         } catch (NoResultException e) {
         }
-        List<Booking> bookingsCopy = new ArrayList<>();
-        bookingsCopy = bookings;
 
         cal1.setTime(date);
-        int monthNo = cal1.MONTH;
         double[] month = new double[12];
-        for (int i = 0; i < monthNo; i++) {
+        for (int i = 0; i < 12; i++) {
             double sales = 0;
 
             for (Booking booking : bookings) {
                 cal2.setTime(booking.getCreatedTime());
-                boolean sameMonth = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
-                        && cal2.get(Calendar.MONTH) == (i + 1);
+                boolean sameMonth = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal2.get(Calendar.MONTH) == i;
                 if (sameMonth == true) {
                     sales = sales + booking.getPrice();
                 }
             }
+            System.out.println("Sales for month"+ (i+1)+"is"+sales);
             month[i] = sales;
         }
         return month;

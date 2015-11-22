@@ -14,7 +14,7 @@
         <h:form>
             <p:growl id="msgs" showDetail="true" />
 
-            <p:dashboard id="bahaviorDashboard" model="#{analyticsController.behaviorDashboard}">
+            <p:dashboard id="behaviorDashboard" model="#{analyticsController.behaviorDashboard}">
                 <p:ajax event="reorder" listener="#{analyticsController.handleReorder}" update="msgs" />
 
                 <p:panel id="travellerType" header="Business travellers vs Leisure travellers">
