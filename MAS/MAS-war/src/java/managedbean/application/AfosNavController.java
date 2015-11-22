@@ -87,16 +87,24 @@ public class AfosNavController {
     public String toSwapWorkingSlots() {
         return AFOS_URL + "crew_schedule/swapWorkingSlots.xhtml" + REDIRECT;
     }
-    
+
     public String toManageSwappingRequests() {
         return AFOS_URL + "crew_schedule/manageSwapping.xhtml" + REDIRECT;
     }
-    
+
     public String toViewAllBidHist() {
         return AFOS_URL + "crew_schedule/viewAllBidHist.xhtml" + REDIRECT;
     }
-    
+
     public String toViewAllSwapHist() {
         return AFOS_URL + "crew_schedule/viewAllSwapHist.xhtml" + REDIRECT;
+    }
+
+    public String toViewMaintSchedules() {
+        return AFOS_URL + "maint_mgmt/viewMaintSchedule.xhtml" + REDIRECT;
+    }
+
+    public String toCreateMaintChecklist() {
+        return AFOS_URL + "maint_mgmt/createMaintChecklist.xhtml" + REDIRECT;
     }
 }

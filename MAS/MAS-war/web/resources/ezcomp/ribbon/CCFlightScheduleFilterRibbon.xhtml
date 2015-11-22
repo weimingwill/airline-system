@@ -7,6 +7,7 @@
 
     <!-- INTERFACE -->
     <cc:interface>
+        <cc:attribute name="displayActions" default="true"/>
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
@@ -17,19 +18,23 @@
                         <p:selectCheckboxMenu id="aircraft" label="Select aircrafts" value="#{flightScheduleBacking.selectedAircrafts}" 
                                               filter="true" filterMatchMode="startsWith" panelStyle="width:250px" converter="aircraftConverter">
                             <f:selectItems value="#{flightScheduleBacking.aircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}"/>
-                            
+                            <p:ajax event="change" listener="#{flightScheduleBacking.onFilterChange()}" update="form"/>
                         </p:selectCheckboxMenu>
                     </p:ribbonGroup>
 
-                    <p:ribbonGroup label="From: " style="width:175px">
-                        <p:calendar value="#{flightScheduleBacking.startDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy" />
+                    <p:ribbonGroup label="From: " style="width:185px">
+                        <p:calendar value="#{flightScheduleBacking.startDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy" >
+                            <p:ajax event="change" listener="#{flightScheduleBacking.onFilterChange()}" update="form"/>
+                        </p:calendar>
                     </p:ribbonGroup>
 
-                    <p:ribbonGroup label="To: " style="width:175px">
-                        <p:calendar value="#{flightScheduleBacking.endDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy" />
+                    <p:ribbonGroup label="To: " style="width:185px">
+                        <p:calendar value="#{flightScheduleBacking.endDate}" timeZone="GMT+8"  pattern="dd/MM/yyyy" >
+                            <p:ajax event="change" listener="#{flightScheduleBacking.onFilterChange()}" update="form"/>
+                        </p:calendar>
                     </p:ribbonGroup>
 
-                    <p:ribbonGroup label="Actions">
+                    <p:ribbonGroup label="Actions" rendered="#{cc.attrs.displayActions}">
                         <p:panelGrid>
                             <p:commandButton value="Apply" update="form" actionListener="#{flightScheduleBacking.setTimelineFlightSched()}" icon="fa fa-check-square-o" styleClass="filterBtn"/>
                             <p:commandButton value="Reset" update="form" actionListener="#{flightScheduleBacking.resetFilters()}" icon="fa fa-refresh" styleClass="filterBtn"/>

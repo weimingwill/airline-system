@@ -131,6 +131,10 @@ public class FlightScheduleBacking implements Serializable {
     public void resetFilters() {
         selectedAircrafts = new ArrayList<>();
     }
+    
+    public void onFilterChange(){
+        setTimelineFlightSched();
+    }
 
     public void onFlightSchedChange(TimelineModificationEvent e) {
         event = e.getTimelineEvent();

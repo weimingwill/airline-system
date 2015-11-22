@@ -5,6 +5,13 @@
  */
 package ams.afos.session;
 
+import ams.afos.entity.Checklist;
+import ams.afos.entity.MaintCheckType;
+import ams.afos.entity.MaintCrew;
+import ams.afos.entity.MaintSchedule;
+import ams.afos.util.helper.MaintScheduleClashException;
+import ams.aps.entity.Aircraft;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +20,13 @@ import javax.ejb.Local;
  */
 @Local
 public interface MaintMgmtSessionLocal {
-    
+    public List<MaintSchedule> getAllMaintTasks();
+    public void addMaintTask(MaintSchedule newMaintSchedule) throws MaintScheduleClashException;
+    public void updateMaintTask(MaintSchedule maintSchedule);
+    public MaintCrew getCrewById(Long id);
+    public List<MaintCheckType> getMaintCheckTypes();
+    public List<MaintCrew> getMaintCrews();
+    public MaintCheckType getCheckTypeById(Long id);
+    public void createMaintChecklist(Checklist checklist);
+    public Checklist getAircraftMaintChecklistByType(Aircraft aircraft, String type);
 }
