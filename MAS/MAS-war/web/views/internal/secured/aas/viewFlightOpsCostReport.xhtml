@@ -3,8 +3,8 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns="http://www.w3.org/1999/xhtml"
                 template="./../../../../template/CrmTemplate.xhtml"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
 
 
     <ui:define name="title">
@@ -15,8 +15,9 @@
         <h:form>
             <p:commandButton action="#{aasNavController.redirectToReportDashboard()}" value="Return to report dashboard" update="messages" style="width:300px"/>
             <p:separator/>
-            <object type="application/pdf" data="/MAS-war/resources/revenue_report/RevenueReport.pdf" height="800px" width="100%">
+            <object type="application/pdf" data="/MAS-war/resources/cost_report/FlightOperationCostReport.pdf" height="800px" width="100%">
             </object>
         </h:form>
     </ui:define>
+
 </ui:composition>

@@ -135,8 +135,7 @@ public class CampaignSession implements CampaignSessionLocal {
 
         Calendar today = Calendar.getInstance();
 
-        List<MktCampaign> campaignCopy = new ArrayList<>();
-        campaignCopy = campaigns;
+        List<MktCampaign> campaignCopy = new ArrayList<>(campaigns);
 
         for (MktCampaign mc : campaigns) {
             Calendar startDate = Calendar.getInstance();
@@ -150,7 +149,6 @@ public class CampaignSession implements CampaignSessionLocal {
 
         }
         return campaignCopy.size();
-
     }
 
     @Override

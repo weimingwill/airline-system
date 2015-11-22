@@ -31,6 +31,38 @@ public class AasNavController implements Serializable {
     public String redirectToViewRevenueReport() {
         return AAS_URL + "viewRevenueReport.xhtml" + REDIRECT;
     }
+    
+    public String redirectToViewCostReport() {
+        return AAS_URL + "viewCostReport.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewFinancialReport() {
+        return AAS_URL + "viewFinancialReport.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewFeulCostReport() {
+        return AAS_URL + "viewFeulCostReport.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewFleetCostReport() {
+        return AAS_URL + "viewFleetCostReport.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewFlightOpsCostReport() {
+        return AAS_URL + "viewFlightOpsCostReport.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewHrCostReport() {
+        return AAS_URL + "viewHrCostReport.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToViewMktCostReport() {
+        return AAS_URL + "viewMktCostReport.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToReportDashboard() {
+        return AAS_URL + "generateRevenueReport.xhtml" + REDIRECT;
+    }
   
    
 }

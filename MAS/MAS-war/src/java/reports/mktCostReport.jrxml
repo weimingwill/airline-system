@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mktCostReport" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="72fbbec4-316d-4585-ade6-6f4c2bc080af">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="25"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="PieChartDataset" uuid="94998358-42df-4b75-ac2d-8f15191803dc"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     mktcampaign.`ID` AS mktcampaign_ID,
+     mktcampaign.`BUDGET` AS mktcampaign_BUDGET,
+     mktcampaign.`NAME` AS mktcampaign_NAME,
+     mktcampaign.`TYPE` AS mktcampaign_TYPE,
+     mktcampaign.`AUDIENCESIZE` AS mktcampaign_AUDIENCESIZE
+FROM
+     `mktcampaign` mktcampaign]]>
+	</queryString>
+	<field name="mktcampaign_ID" class="java.lang.Long"/>
+	<field name="mktcampaign_BUDGET" class="java.lang.Double"/>
+	<field name="mktcampaign_NAME" class="java.lang.String"/>
+	<field name="mktcampaign_TYPE" class="java.lang.String"/>
+	<field name="mktcampaign_AUDIENCESIZE" class="java.lang.Integer"/>
+	<variable name="totalMktCost" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{mktcampaign_BUDGET}]]></variableExpression>
+	</variable>
+	<background>
+		<band height="555" splitType="Stretch">
+			<line>
+				<reportElement x="201" y="431" width="117" height="1" uuid="84742dda-d31d-4ece-94e5-3a10b80baa41">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="72" y="37" width="204" height="1" uuid="8ae106e1-be00-4772-bea4-423038d1f038">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+				</graphicElement>
+			</line>
+		</band>
+	</background>
+	<title>
+		<band height="66" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="0" width="822" height="65" forecolor="#006699" backcolor="#006699" uuid="a4e4c61c-11be-435f-a85d-79bc0ba0fc75"/>
+				<staticText>
+					<reportElement style="Title" x="231" y="0" width="578" height="65" uuid="5549cee8-c9d2-436e-876a-1e86fb1595a2"/>
+					<textElement textAlignment="Right">
+						<font size="54" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Marketing Cost Report]]></text>
+				</staticText>
+				<image>
+					<reportElement x="20" y="0" width="229" height="65" uuid="a52854b1-9d10-48d5-b6b5-19c0e64ac21d">
+						<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+					</reportElement>
+					<imageExpression><![CDATA["/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/silver.png"]]></imageExpression>
+				</image>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<frame>
+				<reportElement x="227" y="0" width="575" height="14" uuid="e80fb073-df9f-4302-a0df-0db78deb77a3"/>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="65" y="0" width="123" height="14" forecolor="#000000" uuid="c42e6b27-49b5-4c99-a658-0ceadadbcea0"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[mktcampaign_TYPE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="217" y="0" width="180" height="14" forecolor="#000000" uuid="67ef6b43-d729-4ec5-bb53-be26711a58e4"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[mktcampaign_AUDIENCESIZE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="424" y="0" width="151" height="14" forecolor="#000000" uuid="160cb3de-fef2-4c31-948b-b3e21afce076"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[mktcampaign_BUDGET]]></text>
+				</staticText>
+			</frame>
+			<staticText>
+				<reportElement style="Column header" positionType="Float" x="0" y="0" width="115" height="14" forecolor="#000000" uuid="557535fa-74b7-44c6-b75f-a601929c0f56"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[mktcampaign_ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" positionType="Float" x="129" y="0" width="132" height="14" forecolor="#000000" uuid="c3d5c2fc-351f-4dbe-82fd-5a9439b4e93b"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[mktcampaign_NAME]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="802" height="1" uuid="3915113f-bd50-4ad5-811c-397ac4149eb8"/>
+			</line>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" positionType="Float" x="0" y="0" width="115" height="14" uuid="65754142-ef4e-4ffc-8214-b53d8778f7e1"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mktcampaign_ID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" positionType="Float" x="129" y="1" width="144" height="14" uuid="3a176d01-7cda-4cf6-9632-2f7b2e2e39f1"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mktcampaign_NAME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" positionType="Float" x="292" y="1" width="136" height="14" uuid="8cbbba45-08f6-43f1-a487-b4966ad2045e"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mktcampaign_TYPE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" positionType="Float" x="444" y="0" width="192" height="14" uuid="017e7469-df38-4112-9230-a783a5a22024"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mktcampaign_AUDIENCESIZE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" positionType="Float" x="651" y="0" width="151" height="14" uuid="579917bb-3aeb-4001-a1bd-395092b9c389"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mktcampaign_BUDGET}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="4" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="2" y="0" width="800" height="16" forecolor="#D0B48E" backcolor="#006699" uuid="8474a2e8-ba2c-42d7-98ac-5ed9e513fdbe"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#FFFFFF" uuid="3c73aaed-ee0b-4e90-87c3-17465f6fe0ea"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#FFFFFF" uuid="fa900e3f-d5e5-4786-8ec7-c0c22488adde"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="2" y="0" width="197" height="16" forecolor="#FFFFFF" uuid="60c2f395-722e-4885-ba71-39d1f70d5edb"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="115" height="20" uuid="90708cde-dc6d-48c0-b233-e1911e31ee50"/>
+				<textElement>
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Cost]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="651" y="0" width="138" height="20" uuid="38558832-9f26-4759-b8da-5a1185237693"/>
+				<textElement>
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalMktCost}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

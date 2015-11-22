@@ -3,20 +3,21 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns="http://www.w3.org/1999/xhtml"
                 template="./../../../../template/CrmTemplate.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:h="http://xmlns.jcp.org/jsf/html">
 
 
     <ui:define name="title">
-        View revenue report
+        View cost report
     </ui:define>
 
     <ui:define name="content">
         <h:form>
             <p:commandButton action="#{aasNavController.redirectToReportDashboard()}" value="Return to report dashboard" update="messages" style="width:300px"/>
             <p:separator/>
-            <object type="application/pdf" data="/MAS-war/resources/revenue_report/RevenueReport.pdf" height="800px" width="100%">
-            </object>
+            <pe:documentViewer height="800"  library="cost_report" name="CostReport.pdf"/>  
         </h:form>
     </ui:define>
 </ui:composition>

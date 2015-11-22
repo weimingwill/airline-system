@@ -13,10 +13,11 @@
 
     <ui:define name="content">
         <h:form>
-            <p:commandButton action="#{aasNavController.redirectToReportDashboard()}" value="Return to report dashboard" update="messages" style="width:300px"/>
-            <p:separator/>
-            <object type="application/pdf" data="/MAS-war/resources/revenue_report/RevenueReport.pdf" height="800px" width="100%">
-            </object>
+        <p:commandButton action="#{aasNavController.redirectToReportDashboard()}" value="Return to report dashboard" update="messages" style="width:300px"/>
+        <p:separator/>
+        <object type="application/pdf" data="/MAS-war/resources/cost_report/FeulCostReport.pdf" height="800px" width="100%">
+        </object>
         </h:form>
     </ui:define>
+
 </ui:composition>
