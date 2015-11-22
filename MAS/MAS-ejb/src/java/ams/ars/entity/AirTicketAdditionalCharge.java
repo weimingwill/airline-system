@@ -5,7 +5,7 @@
  */
 package ams.ars.entity;
 
-import ams.ars.entity.helper.AirTicketPricingItemId;
+import ams.ars.entity.helper.AirTicketAdditionalChargeId;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,28 +20,28 @@ import javax.persistence.PrimaryKeyJoinColumn;
  * @author weiming
  */
 @Entity
-public class AirTicketPricingItem implements Serializable {
-    
+public class AirTicketAdditionalCharge implements Serializable {
+
     @EmbeddedId
-    private AirTicketPricingItemId airTicketPricingItemId;
-    
+    private AirTicketAdditionalChargeId airTicketAdditonalChargeId;
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "AIRTICKETID", referencedColumnName = "ID")
     private AirTicket airTicket;
-    
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @PrimaryKeyJoinColumn(name = "PRICINGITEMID", referencedColumnName = "ID")
-    private PricingItem pricingItem;
-    
+    @PrimaryKeyJoinColumn(name = "ADDITIONALCHARGEID", referencedColumnName = "ID")
+    private AdditionalCharge additionalCharge;
+
     @Column(name = "PRICE")
     private Double price;
 
-    public AirTicketPricingItemId getAirTicketPricingItemId() {
-        return airTicketPricingItemId;
+    public AirTicketAdditionalChargeId getAirTicketAdditonalChargeId() {
+        return airTicketAdditonalChargeId;
     }
 
-    public void setAirTicketPricingItemId(AirTicketPricingItemId airTicketPricingItemId) {
-        this.airTicketPricingItemId = airTicketPricingItemId;
+    public void setAirTicketAdditonalChargeId(AirTicketAdditionalChargeId airTicketAdditonalChargeId) {
+        this.airTicketAdditonalChargeId = airTicketAdditonalChargeId;
     }
 
     public AirTicket getAirTicket() {
@@ -52,12 +52,12 @@ public class AirTicketPricingItem implements Serializable {
         this.airTicket = airTicket;
     }
 
-    public PricingItem getPricingItem() {
-        return pricingItem;
+    public AdditionalCharge getAdditionalCharge() {
+        return additionalCharge;
     }
- 
-    public void setPricingItem(PricingItem pricingItem) {
-        this.pricingItem = pricingItem;
+
+    public void setAdditionalCharge(AdditionalCharge additionalCharge) {
+        this.additionalCharge = additionalCharge;
     }
 
     public Double getPrice() {
@@ -67,6 +67,5 @@ public class AirTicketPricingItem implements Serializable {
     public void setPrice(Double price) {
         this.price = price;
     }
-    
+
 }
- 

@@ -8,14 +8,14 @@
     <ui:define name="content">
 
         <f:facet name="header">
-            Search Checked In PNR
+            Check In Luggage By Searching for Passenger Boarding Pass
         </f:facet>
 
         <h:form>
             <p:panelGrid columns="1" style="margin: 0 auto">
-                <p:outputLabel value="Enter ticket no.: *" />
-                <p:inputText value="#{luggageManager.ticketID}" required="true" label="PNR"/>
-                <p:commandButton value="Check in luggage" update="messages" action="#{luggageManager.searchTicket()}"/>
+                <p:outputLabel value="Enter Boarding Pass No.: *" />
+                <p:inputText value="#{luggageManager.passID}" required="true" label="pass"/>
+                <p:commandButton value="Check in luggage" update="messages" action="#{luggageManager.searchPass()}"/>
             </p:panelGrid>
         </h:form>
     </ui:define>

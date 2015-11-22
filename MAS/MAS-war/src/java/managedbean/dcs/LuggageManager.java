@@ -5,10 +5,12 @@
  */
 package managedbean.dcs;
 
+import ams.ais.entity.TicketFamily;
 import ams.ars.entity.AirTicket;
 import ams.crm.entity.Customer;
 import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.session.CheckInSessionLocal;
+import ams.dcs.util.exception.NoSuchBoardingPassException;
 import ams.dcs.util.exception.NoSuchPNRException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -41,19 +43,25 @@ public class LuggageManager implements Serializable {
     private CheckInSessionLocal checkInSession;
 
     private double weight;
+    private double totalWeight;
     private double excessWeight = 0;
     private double excessWeightPrice = 0;
     private double totalExcessWeightPrice = 0;
 
     private String remark;
-    private long ticketID;
+    private long passID;
+    private String idMethod;
+    private long reference;
 
     private Customer passenger;
 
     private AirTicket airTicket;
     private List<AirTicket> airTickets = new ArrayList();
+    private List<AirTicket> selectedAirTickets = new ArrayList();
     private CheckInLuggage luggage;
+    private List<CheckInLuggage> luggageToBeRemoved = new ArrayList();
     private List<CheckInLuggage> luggageList = new ArrayList();
+    private List<CheckInLuggage> selectLuggage = new ArrayList();
 
     /**
      * Creates a new instance of LuggageManager
@@ -85,41 +93,48 @@ public class LuggageManager implements Serializable {
         }
     }
 
-    public String searchTicket() {
+    public String searchPass() {
         try {
-            AirTicket a = checkInSession.searchTicketByID(ticketID);
+            AirTicket a = checkInSession.getAirTicketByPassID(passID);
             if (a == null) {
-                msgController.addErrorMessage("No PNR founded!");
+                msgController.addErrorMessage("Boarding pass not found!");
                 return "";
-            }else if (!a.getStatus().equals("Checked in")) {
-                msgController.addErrorMessage("Air ticket not checked in!");
+            } else if (!a.getStatus().equals("Checked-in")) {
+                msgController.addErrorMessage("The passenger is boarded already!");
                 return "";
-            }else{
+            } else {
+                cleanVariables();
                 setAirTicket(a);
+                setPassenger(airTicket.getCustomer());
+                airTickets.add(airTicket);
                 return dcsNavController.toCheckInLuggage();
             }
-        } catch (NoSuchPNRException e) {
-            msgController.addErrorMessage("No PNR found!");
+        } catch (NoSuchBoardingPassException e) {
+            msgController.addErrorMessage("Boarding pass not found!");
             return "";
         }
     }
 
     public void addLuggage() {
-        if (weight > 53) {
-            msgController.addErrorMessage("Luggage weight excesses 53 kg limitation!");
+        if (weight > 33.0) {
+            msgController.addErrorMessage("Luggage weight excesses 33kg single piece limitation!");
         } else {
+            
             getLuggage().setRealWeight(getWeight());
+            totalWeight += getWeight();
             if (getRemark() != null) {
                 getLuggage().setRemark(getRemark());
                 remark = "";
             }
             getLuggageList().add(getLuggage());
             setLuggage(new CheckInLuggage());
+            setWeight(0);
             setExcessWeight(0);
             setExcessWeightPrice(0);
 
             for (AirTicket a : getAirTickets()) {
-                excessWeightPrice = checkInSession.calculateLuggagePrice(a, luggageList);
+                excessWeightPrice = checkInSession.calculateLuggagePrice(a, totalWeight);
+                System.out.println("price= "+ excessWeightPrice);
                 totalExcessWeightPrice += excessWeightPrice;
             }
         }
@@ -127,10 +142,12 @@ public class LuggageManager implements Serializable {
 
     public void checkInLuggage() {
         boolean flag = true;
+        System.out.println(airTickets);
         for (AirTicket a : airTickets) {
-            Double price = checkInSession.calculateLuggagePrice(a, luggageList);
+            Double price = checkInSession.calculateLuggagePrice(a, totalWeight);
+            System.out.println("price: "+price);
             if (!checkInSession.checkInLuggage(a, luggageList, price)) {
-                msgController.addErrorMessage("Check In error for ticket " + a.getId() + " !");
+                msgController.addErrorMessage("Check in luggage error for boarding pass No. " + a.getBoardingPass().getId() + "!");
                 flag = false;
             }
         }
@@ -140,15 +157,65 @@ public class LuggageManager implements Serializable {
         }
     }
 
-    private void cleanVariables() {
+    public String getLuggagePlan(AirTicket a){
+        String tfType = a.getFlightSchedBookingClass().getBookingClass().getTicketFamily().getType();
+        if (tfType.equals("MSF")) {
+            return "3 peices, 69 kg";
+        }else{
+            return "2 peices, 46 kg";
+        }
+    }
+    
+    public String getLuggages() {
+        if (idMethod.equals("pass")) {
+            try {
+                airTicket = checkInSession.getAirTicketByPassID(reference);
+                passenger = airTicket.getCustomer();
+            } catch (Exception e) {
+                msgController.addErrorMessage("No Such Boarding Pass Found!");
+                return "";
+            }
+        } else {
+            try {
+                airTicket = checkInSession.getAirTicketByID(reference);
+                passenger = airTicket.getCustomer();
+            } catch (Exception e) {
+                msgController.addErrorMessage("No Such Air Ticket Found!");
+                return "";
+            }
+        }
+        luggageList = airTicket.getLuggages();
+        return dcsNavController.toViewLuggage();
+    }
+
+    public String removeLuggage() {
+        try {
+            checkInSession.removeLuggage(airTicket, selectLuggage);
+            msgController.addMessage("Luggage removed!");
+            return dcsNavController.toSearchTicket();
+        } catch (Exception e) {
+            msgController.addErrorMessage("Luggage failed to be removed!");
+            return dcsNavController.toSearchTicket();
+        }
+    }
+
+    public void cleanVariables() {
+        
         setAirTicket(new AirTicket());
         setAirTickets(new ArrayList<>());
         setExcessWeight(0);
         setExcessWeightPrice(0);
+        setIdMethod("");
+        setLuggageToBeRemoved(new ArrayList<>());
         setLuggage(new CheckInLuggage());
         setLuggageList(new ArrayList<>());
+        setPassID(0);
         setPassenger(new Customer());
         setRemark("");
+        setSelectLuggage(new ArrayList<>());
+        setReference(0);
+        setSelectedAirTickets(new ArrayList<>());
+        setTotalWeight(0);
         setTotalExcessWeightPrice(0);
         setWeight(0);
     }
@@ -294,17 +361,101 @@ public class LuggageManager implements Serializable {
     }
 
     /**
-     * @return the ticketID
+     * @return the passID
      */
-    public long getTicketID() {
-        return ticketID;
+    public long getPassID() {
+        return passID;
     }
 
     /**
-     * @param ticketID the ticketID to set
+     * @param passID the passID to set
      */
-    public void setTicketID(long ticketID) {
-        this.ticketID = ticketID;
+    public void setPassID(long passID) {
+        this.passID = passID;
+    }
+
+    /**
+     * @return the selectedAirTickets
+     */
+    public List<AirTicket> getSelectedAirTickets() {
+        return selectedAirTickets;
+    }
+
+    /**
+     * @param selectedAirTickets the selectedAirTickets to set
+     */
+    public void setSelectedAirTickets(List<AirTicket> selectedAirTickets) {
+        this.selectedAirTickets = selectedAirTickets;
+    }
+
+    /**
+     * @return the idMethod
+     */
+    public String getIdMethod() {
+        return idMethod;
+    }
+
+    /**
+     * @param idMethod the idMethod to set
+     */
+    public void setIdMethod(String idMethod) {
+        this.idMethod = idMethod;
+    }
+
+    /**
+     * @return the reference
+     */
+    public long getReference() {
+        return reference;
+    }
+
+    /**
+     * @param reference the reference to set
+     */
+    public void setReference(long reference) {
+        this.reference = reference;
+    }
+
+    /**
+     * @return the luggageToBeRemoved
+     */
+    public List<CheckInLuggage> getLuggageToBeRemoved() {
+        return luggageToBeRemoved;
+    }
+
+    /**
+     * @param luggageToBeRemoved the luggageToBeRemoved to set
+     */
+    public void setLuggageToBeRemoved(List<CheckInLuggage> luggageToBeRemoved) {
+        this.luggageToBeRemoved = luggageToBeRemoved;
+    }
+
+    /**
+     * @return the totalWeight
+     */
+    public double getTotalWeight() {
+        return totalWeight;
+    }
+
+    /**
+     * @param totalWeight the totalWeight to set
+     */
+    public void setTotalWeight(double totalWeight) {
+        this.totalWeight = totalWeight;
+    }
+
+    /**
+     * @return the selectLuggage
+     */
+    public List<CheckInLuggage> getSelectLuggage() {
+        return selectLuggage;
+    }
+
+    /**
+     * @param selectLuggage the selectLuggage to set
+     */
+    public void setSelectLuggage(List<CheckInLuggage> selectLuggage) {
+        this.selectLuggage = selectLuggage;
     }
 
 }

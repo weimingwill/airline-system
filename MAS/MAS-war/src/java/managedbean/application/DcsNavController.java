@@ -7,6 +7,9 @@ package managedbean.application;
 
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import managedbean.dcs.LuggageManager;
+import managedbean.dcs.PassengerManager;
 
 /**
  *
@@ -18,49 +21,70 @@ public class DcsNavController {
 
     private final String REDIRECT = "?faces-redirect=true";
     private final String DCS_URL = "/views/internal/secured/dcs/";
+    @Inject
+    private PassengerManager passengerManager;
+
+    @Inject
+    private LuggageManager luggageManager;
+
     /**
      * Creates a new instance of DcsNavController
      */
     public DcsNavController() {
     }
-    
+
     public String toSearchPassenger() {
+        passengerManager.init();
         return DCS_URL + "searchPassenger.xhtml" + REDIRECT;
     }
-    
+
     public String toCheckInPassenger() {
         return DCS_URL + "checkInPassenger.xhtml" + REDIRECT;
     }
-    
+
     public String toSelectSeat() {
         return DCS_URL + "selectSeat.xhtml" + REDIRECT; //not implemented yet
     }
-    
+
     public String toCheckInLuggage() {
         return DCS_URL + "checkInLuggage.xhtml" + REDIRECT;
     }
-    
+
     public String toPayLuggage() {
         return DCS_URL + "payLuggage.xhtml" + REDIRECT;
     }
-    
+
     public String toAddLuggage() {
         return DCS_URL + "addLuggage.xhtml" + REDIRECT;
     }
-    
+
     public String toBoardPassenger() {
         return DCS_URL + "boardPassenger.xhtml" + REDIRECT;
     }
-    
+
     public String toConfirmBoarding() {
-        return DCS_URL + "boardPassenger.xhtml" + REDIRECT;
+        return DCS_URL + "confirmBoarding.xhtml" + REDIRECT;
     }
-    
+
     public String toBoardingPass() {
         return DCS_URL + "boardingPass.xhtml";
     }
-    
-    public String toSearchCheckedInPNR(){
-        return DCS_URL + "searchCheckedInPNR.xhtml" + REDIRECT;
+
+    public String toSearchBPForLuggage() {
+        luggageManager.cleanVariables();
+        return DCS_URL + "searchBPForLuggage.xhtml" + REDIRECT;
+    }
+
+    public String toViewFlightInfo() {
+        return DCS_URL + "viewFlightInfo.xhtml" + REDIRECT;
+    }
+
+    public String toViewLuggage() {
+        return DCS_URL + "viewLuggage.xhtml" + REDIRECT;
+    }
+
+    public String toSearchTicket() {
+        luggageManager.cleanVariables();
+        return DCS_URL + "searchTicket.xhtml" + REDIRECT;
     }
 }

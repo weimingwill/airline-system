@@ -31,39 +31,7 @@
                         </p:row>
                     </f:facet>
 
-                    <ui:remove>
-                        <p:row>
-                            <p:column colspan="1" rowspan="3">Sky Palace</p:column>
-                            <p:column rowspan="2">Flex</p:column>
-                            <p:column rowspan="1">A</p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column rowspan="1">B</p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column rowspan="1">Standard</p:column>
-                            <p:column rowspan="1">E</p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column colspan="1" rowspan="3">Sky Palace</p:column>
-                        </p:row>
-                        <p:row>                        
-                            <p:column rowspan="2">Flex</p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column rowspan="1">A</p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column rowspan="1">B</p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column rowspan="1">Standard</p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column rowspan="1">E</p:column>
-                        </p:row>
-                    </ui:remove>
+                    
 
                     <c:forEach var="helper" items="#{bookingClassController.flightSchCabinClsTicFamBookingClsHelpers}">
                         <p:row>
@@ -99,42 +67,7 @@
 
 
 
-                    <ui:remove>
-                        <c:forEach var="helper" items="#{bookingClassController.flightSchCabinClsTicFamBookingClsHelpers}" varStatus="index">
-                            <p:row>
-                                <p:column colspan="1" rowspan="#{helper.bookingClassQty}">
-                                    #{helper.cabinClass.name}
-                                </p:column>
-                            </p:row>
-
-                            <c:forEach var="tf" items="#{helper.ticketFamilyBookingClassHelpers}">
-                                <p:row>
-                                    <p:column colspan="1">
-                                        #{tf.ticketFamily.name}
-                                    </p:column>
-                                </p:row>
-                                <c:forEach var="bc" items="#{tf.bookingClassHelpers}">
-                                    <p:row>
-                                        <p:column colspan="1">#{bc.bookingClass.name}</p:column>
-                                        <p:column colspan="1">
-                                            <p:inputText value="#{bc.priceCoefficient}" style="width:35px" >
-                                                <p:ajax event="blur" update="priceBookingClass" />
-                                            </p:inputText>
-                                            <p:outputLabel value=" X " />
-                                            <p:inputText value="#{bookingClassController.basicPrice}" style="width:35px">
-                                                <p:ajax event="blur" update ="priceBookingClass" />
-                                            </p:inputText>
-                                        </p:column>
-                                        <p:column id="priceOf#{bc.bookingClass.name}" colspan="1">
-                                            <p:inputText value="#{bc.priceCoefficient * bookingClassController.basicPrice}"  />
-                                        </p:column>
-                                    </p:row>
-                                </c:forEach>
-
-                            </c:forEach>
-
-                        </c:forEach>
-                    </ui:remove>
+                    
 
                 </p:panelGrid>
                 <p:commandButton value="Save" action="#{bookingClassController.priceBookingClasses()}" update="messages"/>

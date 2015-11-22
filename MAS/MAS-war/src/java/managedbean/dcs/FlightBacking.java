@@ -6,10 +6,21 @@
 package managedbean.dcs;
 
 import ams.aps.entity.FlightSchedule;
+import ams.dcs.session.CheckInSessionLocal;
+import ams.dcs.util.exception.FlightScheduleNotUpdatedException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import managedbean.application.DcsNavController;
+import managedbean.application.MsgController;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.TabChangeEvent;
 
 /**
  *
@@ -17,33 +28,158 @@ import javax.faces.view.ViewScoped;
  */
 @Named(value = "flightBacking")
 @ViewScoped
-public class FlightBacking implements Serializable{
 
-    /**
-     * Creates a new instance of FlightBacking
-     */
-    
+public class FlightBacking implements Serializable {
+
+    @Inject
+    private MsgController msgController;
+
+    @Inject
+    private DcsNavController dcsNavController;
+
+    @EJB
+    private CheckInSessionLocal checkInSession;
     private FlightSchedule fs = new FlightSchedule();
     private String flightNo;
     private Date currentDate = new Date();
     private Date selectedDate = new Date();
-    
     private String boardingGate = "";
     private String flightStatus = "";
-    
-    public String updateFlightStatus(){
-        return "";
+    private List<FlightSchedule> flightsDepart;
+    private FlightSchedule departFlight;
+    private List<FlightSchedule> flightsArrival;
+    private FlightSchedule arrivalFlight;
+    private FlightSchedule selectedFlight;
+    private String arrivalGate;
+    private String arrivalTerminal;
+    private Date acctualArrivalDate;
+    private Date acctualDepartureDate;
+    private String departureGate;
+    private String departureTerminal;
+
+    public FlightBacking() {
     }
-    
-    public String changeBoardingGate(){
-        return "";
+
+    @PostConstruct
+    public void init() {
+        List<FlightSchedule> dfs = getDepFlightSchedules();
+        List<FlightSchedule> afs = getArrFlightSchedules();
+        if (dfs != null) {
+            setFlightsDepart(dfs);
+        }
+        if (afs != null) {
+            setFlightsArrival(afs);
+        }
     }
-    
-    private FlightSchedule searchFlightSchedule(String flightNo, Date flightDate){
+
+    public String updateDepFlight() {
+
+        if (departureGate != null && !departureGate.equals("")) {
+            selectedFlight.setDepartGate(departureGate);
+        }
+        if (departureTerminal != null && !departureTerminal.equals("")) {
+            selectedFlight.setDepartTerminal(departureTerminal);
+        }
+        if (acctualDepartureDate != null) {
+            selectedFlight.setActualDepartDate(acctualDepartureDate);
+        }
+        try {
+            checkInSession.updateFlightSchedule(selectedFlight);
+            msgController.addMessage("Update flight info successfully!");
+            cleanView();
+            return dcsNavController.toViewFlightInfo();
+
+        } catch (FlightScheduleNotUpdatedException e) {
+            msgController.addErrorMessage("Flight info failed to be updated!");
+            return "";
+        }
+    }
+
+    public String updateArrFlight() {
+        if (arrivalGate != null && !arrivalGate.equals("")) {
+            selectedFlight.setArrivalGate(arrivalGate);
+        }
+        if (arrivalTerminal != null && !arrivalTerminal.equals("")) {
+            selectedFlight.setArrivalTerminal(arrivalTerminal);
+        }
+        if (acctualArrivalDate != null) {
+            selectedFlight.setActualArrivalDate(acctualArrivalDate);
+        }
+        try {
+            checkInSession.updateFlightSchedule(selectedFlight);
+            msgController.addMessage("Update flight info successfully!");
+            cleanView();
+            return dcsNavController.toViewFlightInfo();
+
+        } catch (FlightScheduleNotUpdatedException e) {
+            msgController.addErrorMessage("Flight info failed to be updated!");
+            return "";
+        }
+    }
+
+    public String getFlightStatus(Date expectDate, Date actualDate) {
+        if (actualDate != null && actualDate.before(expectDate)) {
+            return "Early";
+        } else if (actualDate != null && actualDate.after(expectDate)) {
+            return "Delay";
+        } else {
+            return "On Time";
+        }
+    }
+
+    private FlightSchedule searchFlightSchedule(String flightNo, Date flightDate) {
         return new FlightSchedule();
     }
-    
-    public FlightBacking() {
+
+    public void onTabChange(TabChangeEvent event) {
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.update(":myForm:flight1");
+        context.update(":myForm:flight2");
+    }
+
+    public void onEditDFlightBtnClick() {
+        if (selectedFlight != null) {
+            System.out.println("selectedFlight: " + selectedFlight.getFlightScheduleId());
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.update("depFlightInfoDlg");
+            context.execute("PF('depFlightInfoDlg').show();");
+        }
+    }
+
+    public void onEditAFlightBtnClick() {
+        if (selectedFlight != null) {
+            RequestContext context = RequestContext.getCurrentInstance();
+            context.update("arrFlightInfoDlg");
+            context.execute("PF('arrFlightInfoDlg').show();");
+        }
+    }
+
+    private List<FlightSchedule> getDepFlightSchedules() {
+        return checkInSession.getFlightSchedulesForDeparture();
+    }
+
+    private List<FlightSchedule> getArrFlightSchedules() {
+        return checkInSession.getFlightSchedulesForArrival();
+    }
+
+    private void cleanView() {
+        setAcctualArrivalDate(null);
+        setAcctualDepartureDate(null);
+        setArrivalFlight(null);
+        setArrivalGate("");
+        setArrivalTerminal("");
+        setBoardingGate("");
+        setCurrentDate(new Date());
+        setDepartFlight(null);
+        setDepartureTerminal("");
+        setDepartureGate("");
+        setFlightNo("");
+        setFlightStatus("");
+        setFlightsArrival(new ArrayList<>());
+        setFlightsDepart(new ArrayList<>());
+        setFs(null);
+        setSelectedDate(null);
+        setSelectedFlight(null);
     }
 
     /**
@@ -129,7 +265,159 @@ public class FlightBacking implements Serializable{
     public void setFlightStatus(String flightStatus) {
         this.flightStatus = flightStatus;
     }
-    
-    
-    
+
+    /**
+     * @return the flightsDepart
+     */
+    public List<FlightSchedule> getFlightsDepart() {
+        return flightsDepart;
+    }
+
+    /**
+     * @param flightsDepart the flightsDepart to set
+     */
+    public void setFlightsDepart(List<FlightSchedule> flightsDepart) {
+        this.flightsDepart = flightsDepart;
+    }
+
+    /**
+     * @return the departFlight
+     */
+    public FlightSchedule getDepartFlight() {
+        return departFlight;
+    }
+
+    /**
+     * @param departFlight the departFlight to set
+     */
+    public void setDepartFlight(FlightSchedule departFlight) {
+        this.departFlight = departFlight;
+    }
+
+    /**
+     * @return the flightsArrival
+     */
+    public List<FlightSchedule> getFlightsArrival() {
+        return flightsArrival;
+    }
+
+    /**
+     * @param flightsArrival the flightsArrival to set
+     */
+    public void setFlightsArrival(List<FlightSchedule> flightsArrival) {
+        this.flightsArrival = flightsArrival;
+    }
+
+    /**
+     * @return the arrivalFlight
+     */
+    public FlightSchedule getArrivalFlight() {
+        return arrivalFlight;
+    }
+
+    /**
+     * @param arrivalFlight the arrivalFlight to set
+     */
+    public void setArrivalFlight(FlightSchedule arrivalFlight) {
+        this.arrivalFlight = arrivalFlight;
+    }
+
+    /**
+     * @return the selectedFlight
+     */
+    public FlightSchedule getSelectedFlight() {
+        return selectedFlight;
+    }
+
+    /**
+     * @param selectedFlight the selectedFlight to set
+     */
+    public void setSelectedFlight(FlightSchedule selectedFlight) {
+        this.selectedFlight = selectedFlight;
+    }
+
+    /**
+     * @return the arrivalGate
+     */
+    public String getArrivalGate() {
+        return arrivalGate;
+    }
+
+    /**
+     * @param arrivalGate the arrivalGate to set
+     */
+    public void setArrivalGate(String arrivalGate) {
+        this.arrivalGate = arrivalGate;
+    }
+
+    /**
+     * @return the arrivalTerminal
+     */
+    public String getArrivalTerminal() {
+        return arrivalTerminal;
+    }
+
+    /**
+     * @param arrivalTerminal the arrivalTerminal to set
+     */
+    public void setArrivalTerminal(String arrivalTerminal) {
+        this.arrivalTerminal = arrivalTerminal;
+    }
+
+    /**
+     * @return the departureGate
+     */
+    public String getDepartureGate() {
+        return departureGate;
+    }
+
+    /**
+     * @param departureGate the departureGate to set
+     */
+    public void setDepartureGate(String departureGate) {
+        this.departureGate = departureGate;
+    }
+
+    /**
+     * @return the departureTerminal
+     */
+    public String getDepartureTerminal() {
+        return departureTerminal;
+    }
+
+    /**
+     * @param departureTerminal the departureTerminal to set
+     */
+    public void setDepartureTerminal(String departureTerminal) {
+        this.departureTerminal = departureTerminal;
+    }
+
+    /**
+     * @return the acctualArrivalDate
+     */
+    public Date getAcctualArrivalDate() {
+        return acctualArrivalDate;
+    }
+
+    /**
+     * @param acctualArrivalDate the acctualArrivalDate to set
+     */
+    public void setAcctualArrivalDate(Date acctualArrivalDate) {
+        this.acctualArrivalDate = acctualArrivalDate;
+    }
+
+    /**
+     * @return the acctualDepartureDate
+     */
+    public Date getAcctualDepartureDate() {
+        return acctualDepartureDate;
+    }
+
+    /**
+     * @param acctualDepartureDate the acctualDepartureDate to set
+     */
+    public void setAcctualDepartureDate(Date acctualDepartureDate) {
+        this.acctualDepartureDate = acctualDepartureDate;
+    }
+
 }

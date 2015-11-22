@@ -35,14 +35,7 @@
                                              arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
                                              arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
                                              flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" />        
-                            <ui:remove>
-                            <ti:CCFlightTile aircraft="#{flight.returnedFlight.flightNo}" index="#{index}r"
-                                             deptAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().icaoCode}"
-                                             deptAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().airportName}"
-                                             arriveAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().icaoCode}"
-                                             arriveAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().airportName}"
-                                             flyingHours="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getTotalDuration()}"  />
-                            </ui:remove>
+                            
                         </p:panel>
                     </p:column>
                 </p:row>
@@ -52,37 +45,6 @@
 
         </p:dataGrid>
 
-        <ui:remove>
-            <p:panel header="Selected unscheduled flight" styleClass="unscheduledFlight">
-                <p:panelGrid styleClass="noBorderPanelGrid unscheduledFlightPanelGrid">
-                    <c:forEach items="#{flightScheduleManager.unscheduledFlights}" var="flight" varStatus="index">
-                        <p:row>
-                            <c:forEach begin="0" end="#{flight.weeklyFrequency}" >
-                                <p:column>
-                                    <ti:CCFlightTile aircraft="#{flight.flightNo}" index="#{index.index}"
-                                                     deptAirport="#{flightScheduleManager.getRouteHelper(flight).getOrigin().icaoCode}"
-                                                     deptAirportName="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}"
-                                                     arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
-                                                     arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
-                                                     flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" />                                
-                                </p:column>
-                                <p:column>
-                                    <ti:CCFlightTile aircraft="#{flight.returnedFlight.flightNo}" index="#{index.index}r"
-                                                     deptAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().icaoCode}"
-                                                     deptAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getOrigin().airportName}"
-                                                     arriveAirport="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().icaoCode}"
-                                                     arriveAirportName="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getDestination().airportName}"
-                                                     flyingHours="#{flightScheduleManager.getRouteHelper(flight.returnedFlight).getTotalDuration()}"  />
-                                </p:column>
-                                <p:column>
-
-                                </p:column>
-                            </c:forEach>
-                        </p:row>
-                    </c:forEach>
-                </p:panelGrid>
-            </p:panel>
-        </ui:remove>
-
+        
     </cc:implementation>
 </html>
