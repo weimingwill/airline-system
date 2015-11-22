@@ -52,7 +52,7 @@ public interface SystemUserSessionLocal {
 
     public void changePassword(String username, String password) throws NoSuchUsernameException;
 
-    public void resetPassword(String email, String resetDiget, String password) 
+    public void resetPassword(String email, String resetDiget, String password)
             throws NoSuchEmailException, NoSuchResetDigestException, NeedResetDigestException;
 
     public void setResetDigest(String email, String resetDigest) throws NoSuchEmailException;
@@ -63,8 +63,9 @@ public interface SystemUserSessionLocal {
 
     public void unlockUser(String username) throws NoSuchUsernameException;
     
-    //Messages
+    public void updateUserPayroll(String username, Double salary) throws NoSuchUsernameException;
 
+    //Messages
     public List<SystemMsg> getUserMessages(String username);
 
     public List<SystemMsg> getUserUnreadMessages(String username);
@@ -78,11 +79,11 @@ public interface SystemUserSessionLocal {
     public Long deleteMessage(String username, Long messageId) throws NoSuchMessageException;
 
     public List<SystemMsgHelper> getSystemMsgHelpers(String username);
-    
+
     public List<String> getSystemMsgSenders(String username);
-    
+
     public List<SystemMsg> getSenderMsgs(String username, String sender);
-    
+
     //Verification
     public void verifySystemUserPassword(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException;
 
@@ -93,29 +94,31 @@ public interface SystemUserSessionLocal {
     public void verifyUserEmailExistence(String email) throws ExistSuchUserEmailException;
 
     public void verifyResetPassword(String email, String resetDigest) throws NoSuchEmailException, NeedResetDigestException, NoSuchResetDigestException;
-    
+
     public void assignUserToRole(List<SystemUser> users, List<SystemRole> roles);
 
     public void assignUserToRole(SystemUser user, List<SystemRole> roles);
-            
-            //Access Control
+
+    //Access Control
     public List<SystemRole> getUserRoles(String username);
 
     public List<Permission> getUserPermissions(String username);
-    
+
     public List<String> getUserPermissionSystems(String username);
-    
+
     public List<PermissionHelper> getPermissionHelpers(String username);
 
     public boolean hasRole(String username, String roleName);
 
     public boolean isAdmin(String username);
-    
+
     public String deleteUser(String username) throws NoSuchUsernameException, UserInUseException;
 
     public void doLogin(String username, String inputPassword) throws NoSuchUsernameException, InvalidPasswordException;
-    
+
     public void doLogout(String username) throws NoSuchUsernameException;
-    
+
     public List<String> getUserPermissionModules(String username, String systemName);
+
+   
 }

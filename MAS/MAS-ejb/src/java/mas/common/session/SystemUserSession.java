@@ -579,4 +579,18 @@ public class SystemUserSession implements SystemUserSessionLocal {
             return null;
         }
     }
+    
+    @Override
+    public void updateUserPayroll(String username, Double salary) throws NoSuchUsernameException {
+        System.out.println("username is"+username);
+        
+        SystemUser user = getSystemUserByName(username);
+        if (user== null) {
+              throw new NoSuchUsernameException(UserMsg.NO_SUCH_USERNAME_ERROR);
+                }
+         
+        user.setSalary(salary);
+        entityManager.merge(user);
+        entityManager.flush();
+    }
 }
