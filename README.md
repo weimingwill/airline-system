@@ -18,6 +18,7 @@ This repository contains the source code of merlion airline systems developed by
 * MySQL Workbench (http://dev.mysql.com/downloads/workbench/)
 * Java JDK 8 (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 * Java EE 7 (http://www.oracle.com/technetwork/java/javaee/downloads/index.html)
+* iReport designer for JasperReports (Netbeans 7.4) ()
 
 
 #### Setup MYSQL Connection ####
