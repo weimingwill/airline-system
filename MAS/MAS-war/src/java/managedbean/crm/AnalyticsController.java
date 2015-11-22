@@ -10,6 +10,7 @@ import ams.crm.session.AnalyticsSessionLocal;
 import ams.crm.session.CampaignSessionLocal;
 import ams.crm.session.CustomerSessionLocal;
 import ams.crm.session.PurchaseBehaviorSessionLocal;
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,7 +49,7 @@ import org.primefaces.model.chart.PieChartModel;
  */
 @Named(value = "analyticsController")
 @RequestScoped
-public class AnalyticsController {
+public class AnalyticsController implements Serializable{
 
     @EJB
     private CustomerSessionLocal customerSession;

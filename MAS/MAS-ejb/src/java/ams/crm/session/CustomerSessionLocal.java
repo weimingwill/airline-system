@@ -56,9 +56,11 @@ public interface CustomerSessionLocal {
     public int getTotalNumberOfMale();
 
     public int getAge(Date dateOfBirth);
-    
+
     public int getTotalCustomerNo();
-    
+
     public int getTotalMemberNo();
+
+    public List<RegCust> getAllWillingRegCusts();
 
 }

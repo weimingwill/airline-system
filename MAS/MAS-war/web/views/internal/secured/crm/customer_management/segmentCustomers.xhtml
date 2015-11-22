@@ -46,7 +46,7 @@
         </h:form>
 
         <h:form id="form"> 
-            <p:dataTable id="customer-table" var="customer" value="#{customerManager.regCusts}" rows="10" selectionMode="single" selection="#{customerManager.selectedCustomer}" 
+            <p:dataTable id="customer-table" var="customer" value="#{customerManager.willingRegCusts}" rows="10" selectionMode="single" selection="#{customerManager.selectedCustomer}" 
                          paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          rowsPerPageTemplate="10,15" rowKey="#{customer.id}" tableStyleClass="table-small">
                 <p:messages autoUpdate="true"/>
@@ -102,6 +102,10 @@
                         <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
                     </p:outputLabel>
                 </p:column>
+                
+                <p:column headerText="Willingness of receiving promotion info" sortBy="#{customer.promoPref}">
+                    <h:outputText value="#{customer.promoPref}" />
+                </p:column>  
 
                 <f:facet name="footer" >
                     <p:commandButton action="#{customerManager.toViewCustomerParticulars()}" value="View Particulars" update="messages" />

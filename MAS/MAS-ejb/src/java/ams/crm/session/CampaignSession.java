@@ -46,6 +46,7 @@ public class CampaignSession implements CampaignSessionLocal {
     @Override
     public MktCampaign createCampaign(String campaignName, String campaignType, String campaignDescription, Date startTime, Date endTime, String budget, String promotionCode, List<String> promotionCodeTypes, String promotionCodeType, String promotionPercentage, String promotionValue, CustomerList customerList) {
         MktCampaign campaign = new MktCampaign();
+        em.persist(campaign);
         campaign.setName(campaignName);
         campaign.setType(campaignType);
         campaign.setDescription(campaignDescription);
@@ -54,6 +55,7 @@ public class CampaignSession implements CampaignSessionLocal {
         campaign.setBudget(Double.parseDouble(budget));
 
         PromotionCode pc = new PromotionCode();
+        em.persist(pc);
         pc.setName(promotionCode);
         pc.setPercentage(Double.parseDouble(promotionPercentage));
         pc.setPromoValue(Double.parseDouble(promotionValue));
@@ -68,8 +70,9 @@ public class CampaignSession implements CampaignSessionLocal {
         int size = customerLists.size();
         campaign.setAudienceSize(size);
 
-        em.persist(campaign);
-        em.persist(pc);
+        em.merge(campaign);
+        em.merge(pc);
+        
 
         return campaign;
 

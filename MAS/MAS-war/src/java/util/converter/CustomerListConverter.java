@@ -15,7 +15,7 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import managedbean.aps.RouteController;
-import managedbean.crm.CampaignController;
+import managedbean.crm.CampaignManager;
 
 /**
  *
@@ -25,7 +25,7 @@ import managedbean.crm.CampaignController;
 public class CustomerListConverter implements Converter {
 
     @Inject
-    private CampaignController campaignController;
+    private CampaignManager campaignController;
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {

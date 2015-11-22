@@ -286,10 +286,13 @@ public class CustomerSession implements CustomerSessionLocal {
         Date date = new Date(yourmilliseconds);
         customerList.setCreatedTime(date);
         System.out.println("create customer list 3: date: " + customerList.getCreatedTime());
+        em.persist(customerList);
 
         List<SelectedCust> selectedCusts = new ArrayList<>();
         for (RegCust r : customers) {
             SelectedCust selectedCust = new SelectedCust();
+
+            em.persist(selectedCust);
             selectedCust.setAccMiles(r.getAccMiles());
             selectedCust.setActivated(r.getActivated());
             selectedCust.setAddr1(r.getAddr1());
@@ -323,7 +326,7 @@ public class CustomerSession implements CustomerSessionLocal {
             selectedCust.setSecurQuest(r.getSecurQuest());
             selectedCust.setTitle(r.getTitle());
             selectedCust.setZipCode(r.getZipCode());
-            em.persist(selectedCust);
+            em.merge(selectedCust);
             selectedCusts.add(selectedCust);
         }
 
@@ -331,7 +334,7 @@ public class CustomerSession implements CustomerSessionLocal {
         customerList.setDescription(name);
         System.out.println("create customer list 4: description: " + customerList.getDescription());
 
-        em.persist(customerList);
+        em.merge(customerList);
 
         return customerList;
     }
@@ -347,7 +350,6 @@ public class CustomerSession implements CustomerSessionLocal {
         } catch (NoResultException ex) {
         }
         return regCusts;
-
     }
 
     @Override
@@ -405,5 +407,27 @@ public class CustomerSession implements CustomerSessionLocal {
         } catch (NoResultException ex) {
         }
         return members.size();
+    }
+
+    @Override
+    public List<RegCust> getAllWillingRegCusts() {
+        Query query = em.createQuery("SELECT r FROM RegCust r WHERE r.DType NOT LIKE :dtype");
+        query.setParameter("dtype", "SelectedCust");
+
+        List<RegCust> regCusts = new ArrayList<>();
+        try {
+            regCusts = (List<RegCust>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+        System.out.println("size of reg cust" + regCusts.size());
+        List<RegCust> copy = new ArrayList<>(regCusts);
+        System.out.println("size of copy" + copy.size());
+
+        for (RegCust rc : regCusts) {
+            if (rc.getPromoPref() == false) {
+                copy.remove(rc);
+            }
+        }
+        return copy;
     }
 }

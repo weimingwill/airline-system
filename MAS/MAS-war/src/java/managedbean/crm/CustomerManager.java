@@ -62,6 +62,7 @@ public class CustomerManager implements Serializable {
     private CustomerList customerList;
     private List<CustomerList> customerLists;
     private String customerListId;
+    private List<RegCust> willingRegCusts;
 
     /**
      * Creates a new instance of customerManager
@@ -70,6 +71,9 @@ public class CustomerManager implements Serializable {
     public void init() {
         customers = getAllCustomers();
         regCusts = customerSession.getAllRegCusts();
+        willingRegCusts = customerSession.getAllWillingRegCusts();
+        System.out.println("size of willing customers"+willingRegCusts.size());
+
         List<String> channels = new ArrayList<>();
         channels.add("Call center");
         channels.add("Customer service counter");
@@ -242,7 +246,6 @@ public class CustomerManager implements Serializable {
         System.out.println("Current size of customers is: " + regCusts.size());
     }
 
-    //*******************getters & setters************************
     public List<Customer> getAllCustomers() {
         return customerSession.getAllCustomers();
     }
@@ -477,6 +480,14 @@ public class CustomerManager implements Serializable {
 
     public void setCustomerListId(String customerListId) {
         this.customerListId = customerListId;
+    }
+
+    public List<RegCust> getWillingRegCusts() {
+        return willingRegCusts;
+    }
+
+    public void setWillingRegCusts(List<RegCust> willingRegCusts) {
+        this.willingRegCusts = willingRegCusts;
     }
 
 }

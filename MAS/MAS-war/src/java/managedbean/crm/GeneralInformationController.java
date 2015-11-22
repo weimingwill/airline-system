@@ -7,6 +7,7 @@ package managedbean.crm;
 
 import ams.ais.entity.Rule;
 import ams.crm.session.GeneralInformationSessionLocal;
+import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -18,7 +19,7 @@ import javax.enterprise.context.RequestScoped;
  */
 @Named(value = "generalInformationController")
 @RequestScoped
-public class GeneralInformationController {
+public class GeneralInformationController implements Serializable{
 
     @EJB
     private GeneralInformationSessionLocal generalInformationSession;
