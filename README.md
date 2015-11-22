@@ -31,6 +31,7 @@ This repository contains the source code of merlion airline systems developed by
 7.Fill in the correct username and password for your MySQL Server Connection
 8.Click "Finish"
 * (Note: a new database connection like "jdbc:mysql://localhost:8889/mas?zeroDateTimeBehavior=convertToNull [root on Default schema]" should appear under "Database")
+9. For AAS report generation purpose, please change the CONNECTION_LINK, USERNAME and PASSWORD in "MAS/MAS-ejb/src/java/mas/common/util/helper/MySQLConnection.java" according to your local database settings.
 
 #### Setup JDBC Resource and JDBC Connection Pool ####
 1. Go to the enterprise bean project under the "Projects" tab of Netbeans IDE
