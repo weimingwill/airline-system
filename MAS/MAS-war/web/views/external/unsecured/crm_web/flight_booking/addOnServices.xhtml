@@ -24,7 +24,7 @@
                             <p:column>
                                 <p:selectOneMenu value="#{custHelper.meal}" converter="addOnConverter" >
                                     <p:ajax listener="#{bookingManager.onMealSelected()}" update=":summary:summaryForm" />
-                                    <f:selectItem itemLabel="Select meal" itemValue=""  noSelectionOption="true" />
+                                    <f:selectItem itemLabel="Select meal" itemValue="" />
                                     <f:selectItems value="#{bookingBacking.meals}" var="meal" itemValue="#{meal}" itemLabel="#{meal.description}" />
                                 </p:selectOneMenu>                            
                             </p:column>
@@ -44,7 +44,7 @@
                             <p:column>
                                 <p:selectOneMenu value="#{custHelper.luggage}" converter="luggageConverter" >
                                     <p:ajax listener="#{bookingManager.onLuggageSelected()}" update=":summary:summaryForm" />
-                                    <f:selectItem itemLabel="Select extra luggage" itemValue="" noSelectionOption="true" />
+                                    <f:selectItem itemLabel="Select extra luggage" itemValue="" />
                                     <f:selectItems value="#{bookingBacking.luggages}" var="luggage" itemValue="#{luggage}" itemLabel="Extra #{luggage.maxWeight}kg, price: S$#{luggage.price}"  />
                                 </p:selectOneMenu>
                             </p:column>

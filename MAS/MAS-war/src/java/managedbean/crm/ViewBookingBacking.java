@@ -13,7 +13,6 @@ import ams.crm.session.BookingSessionLocal;
 import ams.crm.session.CustomerExSessionLocal;
 import ams.crm.util.exception.NoSuchBookingException;
 import ams.crm.util.exception.NoSuchRegCustException;
-import ams.crm.util.helper.CrmMsg;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -80,10 +79,13 @@ public class ViewBookingBacking implements Serializable {
     }
 
     public Booking checkBookingReference() {
-
         try {
+            actualDistance = 0.0;
             selectedBooking = bookingSession.getUnClaimedBookingByBookingRef(bookingReferenceNo);
-            actualDistance = customerExSession.calcCustValue(selectedBooking, regCust);
+            for (AirTicket at : selectedBooking.getAirTickets()) {
+                actualDistance = actualDistance + routePlanningSession.distance(at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getDepartAirport(), at.getFlightSchedBookingClass().getFlightSchedule().getLeg().getArrivalAirport());
+            }
+            actualPointClaim = customerExSession.calcCustValue(selectedBooking, regCust);
 //            mileCalculation();
         } catch (NoSuchBookingException ex) {
             msgController.addErrorMessage("Please input a valid booking reference. Please check if you have claim the miles before");

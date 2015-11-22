@@ -18,7 +18,7 @@
             <p:tab title="Name Change">
                 <h3>The following is Name Change detail information. If you have any further queries, Feel free to contact us.</h3>
 
-                <p:panelGrid columns="2">
+                <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
                     <p:panel  header="Name Change Policy"  style="max-width:600px; overflow: scroll"  >
                         <p:dataTable id="nameChangePolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
 
@@ -69,8 +69,8 @@
             <p:tab title="Cancellation">
                 <h3>The following is Cancellation information. If you have any further queries, Feel free to contact us.</h3>
 
-                <p:panelGrid columns="2">
-                    <p:panel  header="Cancellation Policy"  style="max-width:600px; overflow: scroll"  >
+                <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
+                    <p:panel header="Cancellation Policy"  style="max-width:600px; overflow: scroll">
                         <p:dataTable id="cancellationPolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
 
                             <p:columnGroup type="header">
@@ -94,7 +94,7 @@
                             </c:forEach>
                         </p:dataTable>
                     </p:panel>
-                    <p:panel  header="Cancellation Policy Details"  style="max-width:600px; overflow: scroll"  >
+                    <p:panel header="Cancellation Policy Details"  style="max-width:600px; overflow: scroll"  >
 
                         <p:dataTable id="cancellationPolicyDetails" value="#{generalInformationController.cancellationRules}" var="rule" tableStyleClass="table-small">
 
@@ -121,9 +121,6 @@
             <!--luggage-->
             <p:tab title="Luggage">
                 <h3>The following is Luggage information. If you have any further queries, Feel free to contact us.</h3>
-
-
-
                 <p:panel  header="Luggage Policy"  style="width: 1100px;" >
                     <p:dataTable id="luggage" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
 
@@ -151,7 +148,6 @@
 
                 <p:panel  header="Luggage Policy Explanation"  style="width:650px; overflow: scroll"  >
                     <p:dataTable id="luggagePolicyDetails" value="#{generalInformationController.luggageRules}" var="rule" tableStyleClass="table-small">
-
                         <p:columnGroup type="header">
                             <p:row>
                                 <p:column headerText="Cancellation Rule Name" />
@@ -176,7 +172,7 @@
             <p:tab title="Flight Change Policy">
                 <h3>The following is Flight Change information. If you have any further queries, Feel free to contact us.</h3>
 
-                <p:panelGrid columns="2">
+                <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
                     <p:panel  header="Flight Change Policy"  style="max-width:600px; overflow: scroll"  >
                         <p:dataTable id="flightChangePolicy" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
 
@@ -228,7 +224,7 @@
             <p:tab title="Miles And Membership">
                 <h3>The following is Benefit for Merlion Air Member. If you have any further queries, Feel free to contact us.</h3>
 
-                <p:panelGrid columns="2">
+                <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
                     <p:panel  header="Name Change Policy"  style="max-width:700px; overflow: scroll"  >
                         <p:dataTable id="membershipPolicy" value="#{generalInformationController.privileges}" var="privilege" tableStyleClass="table-small">
 
@@ -280,7 +276,7 @@
             <p:tab title="Others">
                 <h3>The followings are hotel and meal policy. If you have any further queries, Feel free to contact us.</h3>
 
-                <p:panelGrid columns="2">
+                <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
                     <p:panel  header="Other Services"  style="max-width:600px; overflow: scroll"  >
                         <p:dataTable id="otherService" value="#{ticketFamilyController.allTicketFamily}" var="tf" tableStyleClass="table-small">
 
@@ -329,8 +325,11 @@
                 </p:panelGrid>
             </p:tab>
             <p:tab title="About Us">
-                <h2>       Our Vision</h2>
-                <p:panel style="background-image: url('./../../../../../resources/images/crm_index.png');">
+                <h2>Our Vision</h2>
+                <p:panel style="background-image: url('./../../../../../resources/images/crm_index.png');             
+                         background-size: cover;
+                         background-repeat: no-repeat;
+                         background-position: center center;">
 
                     <p:panelGrid columns="4" style="opacity: 0.9">
 
@@ -340,11 +339,11 @@
                                 <p:outputLabel style="font-size: 13px ;" value="We are deeply committed to Singapore, where the Company was founded in 2015. We continue to make substantial investments to develop Singapore's aviation industry and enhance Singapore's position as a regional transportation hub. In addition to our fleet of aircraft, these investments include catering, aircraft maintenance and ground handling companies, as well as our corporate headquarters at Singapore Changi International Airport."/>
                             </p:panelGrid>
 
-                            <p:panelGrid columns="1" style="margin-top:0px; width: 730px;max-width: 800px;opacity: 0.5; background-color: transparent !important;" styleClass="centered" >
+                            <p:panelGrid columns="1" style="margin-top:0px; width: 730px;max-width: 800px;opacity: 0.5; background-color: transparent !important;" styleClass="alignCenter" >
                                 <p:outputLabel style="font-weight: bold;font-size: 18px ; font-style: italic;" value="Our vision is to be the world’s best airline. Being the best means that we always strive to excel in everything we do."/>
                                 <p:outputLabel style="font-weight: bold;font-size: 18px ; font-style: italic" value="Our dynamic team provides the highest quality service so that our customers are happy they chose Merlion Air."/>
                             </p:panelGrid>
-                            <p:panelGrid columns="1" style="margin-top:10px; background-color: transparent !important; min-width: 730px; margin-bottom: 10px; max-width: 800px" styleClass="centered">
+                            <p:panelGrid columns="1" style="margin-top:10px; background-color: transparent !important; min-width: 730px; margin-bottom: 10px; max-width: 800px" styleClass="alignCenter">
 
                                 <p:outputLabel style="font-size: 15px ;" value="We put safety first"/>
                                 <p:outputLabel style="font-size: 15px ;" value="We grow a winning team"/>

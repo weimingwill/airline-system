@@ -499,6 +499,10 @@ div.timeline-event-selected {
     vertical-align: top !important;
 }
 
+.alignBottom {
+    vertical-align: bottom !important;
+}
+
 .alignMiddle {
     vertical-align: central !important;
 }
@@ -550,11 +554,6 @@ div.timeline-event-selected {
 
 .boldFont {
     font-weight: bold !important;
-}
-
-.centered {
-    text-align: center;
-    background-image:url("#{resource['images:homepage.jpg']}");
 }
 
 .textSize{

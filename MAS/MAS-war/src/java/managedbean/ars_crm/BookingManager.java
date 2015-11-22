@@ -331,7 +331,11 @@ public class BookingManager implements Serializable {
     }
 
     public String getFlightSchedTotalDur(FlightSchedule flightSched) {
-        return DateHelper.convertMSToHourMinute(DateHelper.calcDateDiff(flightSched.getDepartDate(), flightSched.getArrivalDate()));
+        if (flightSched != null && flightSched.getDepartDate() != null && flightSched.getArrivalDate() != null) {
+            return DateHelper.convertMSToHourMinute(DateHelper.calcDateDiff(flightSched.getDepartDate(), flightSched.getArrivalDate()));
+        } else {
+            return "";
+        }
     }
 
     private String getFlightSchedTotalDur(FlightSchedule flightSched, FlightSchedule nextFlightSched) {
@@ -374,11 +378,19 @@ public class BookingManager implements Serializable {
     }
 
     public FlightSchedule getMappedFlightSched(FlightSchedule flightSchedule) {
-        return inDirectFlightSchedMaps.get(flightSchedule.getFlightScheduleId());
+        if (flightSchedule != null) {
+            return inDirectFlightSchedMaps.get(flightSchedule.getFlightScheduleId());
+        } else {
+            return new FlightSchedule();
+        }
     }
 
     public void onFlightSchedRadioSelected() throws NoSuchFlightSchedulException {
         selectedFbHelper = fbHelperMaps.get(selectedFb.getFlightScheduleBookingClassId().toString());
+    }
+
+    public FlightSchedBookingClsHelper getFbHelperByFb(FlightScheduleBookingClass fb) {
+        return fbHelperMaps.get(fb.getFlightScheduleBookingClassId().toString());
     }
 
     public String toEnterPassengerDetails() {
@@ -477,12 +489,14 @@ public class BookingManager implements Serializable {
     public void onMealSelected() {
         selectedMeals = new ArrayList<>();
         for (CustomerHelper customerHelper : bookingHelper.getCustomers()) {
-            String meal = customerHelper.getMeal().getDescription();
-            if (selectedMeals.contains(meal)) {
-                selectedMealMap.put(meal, selectedMealMap.get(meal) + 1);
-            } else {
-                selectedMeals.add(meal);
-                selectedMealMap.put(meal, 1);
+            if (customerHelper.getMeal() != null) {
+                String meal = customerHelper.getMeal().getDescription();
+                if (selectedMeals.contains(meal)) {
+                    selectedMealMap.put(meal, selectedMealMap.get(meal) + 1);
+                } else {
+                    selectedMeals.add(meal);
+                    selectedMealMap.put(meal, 1);
+                }
             }
         }
     }
@@ -491,14 +505,16 @@ public class BookingManager implements Serializable {
         luggagePrice = 0;
         selectedLuggages = new ArrayList<>();
         for (CustomerHelper customerHelper : bookingHelper.getCustomers()) {
-            Double luggageWeight = customerHelper.getLuggage().getMaxWeight();
-            if (selectedLuggages.contains(luggageWeight)) {
-                selectedLuggageMap.put(luggageWeight, selectedLuggageMap.get(luggageWeight) + 1);
-            } else {
-                selectedLuggages.add(luggageWeight);
-                selectedLuggageMap.put(luggageWeight, 1);
+            if (customerHelper.getLuggage() != null) {
+                Double luggageWeight = customerHelper.getLuggage().getMaxWeight();
+                if (selectedLuggages.contains(luggageWeight)) {
+                    selectedLuggageMap.put(luggageWeight, selectedLuggageMap.get(luggageWeight) + 1);
+                } else {
+                    selectedLuggages.add(luggageWeight);
+                    selectedLuggageMap.put(luggageWeight, 1);
+                }
+                luggagePrice += bookingBacking.getLuggageWeightPriceMap().get(luggageWeight);
             }
-            luggagePrice += bookingBacking.getLuggageWeightPriceMap().get(luggageWeight);
         }
         setBookingHelperTotalPrice();
     }
@@ -570,7 +586,7 @@ public class BookingManager implements Serializable {
         selectedLuggageMap = new HashMap<>();
         selectedNumOfInsurance = 0;
         selectedIsurancePrice = 0;
-        insurancePrice = 0;
+        insurancePrice = insurancePrice = bookingSession.getTravelInsurance().getPrice();
         luggagePrice = 0;
         choice = "return";
         arrDateShow = true;

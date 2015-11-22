@@ -152,7 +152,7 @@
                     <p:row>
                         <p:column colspan="6"><p:outputLabel for="cabinClass" value="Cabin Class"/></p:column>    
                         <p:column colspan="4"><p:outputLabel value="Promo Code"/></p:column>    
-                        <p:column colspan="2"><p:inputText value="#{bookingManager.promoCode}"/></p:column>    
+                        <p:column colspan="2"></p:column>
                     </p:row>
 
                     <p:row>
@@ -161,8 +161,8 @@
                                 <f:selectItems value="#{bookingManager.cabinClses}" var="cabinCls" itemLabel="#{cabinCls.name}" itemValue="#{cabinCls}" />
                             </p:selectOneMenu>
                         </p:column>
-                        <p:column colspan="4"><p:inputText id="promoCode" /></p:column>
-                        <p:column colspan="2"><p:commandButton value="Search" action="#{bookingManager.searchFlights()}" update="messages" /></p:column>  
+                        <p:column colspan="4"><p:inputText value="#{bookingManager.promoCode}"/></p:column>    
+                        <p:column colspan="2"><p:commandButton value="Search" action="#{bookingManager.searchFlights(bookingManager.sources.get(0))}" update="messages" /></p:column>  
                     </p:row>
 
                 </p:panelGrid>

@@ -27,7 +27,7 @@ public class LuggageConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-        if (value != null && value.trim().length() > 0) {
+        if (value != null && value.trim().length() > 0 && !value.equals("Select extra luggage")) {
             try {
                 return bookingSession.getLuggageById(Long.parseLong(value));
             } catch (NumberFormatException e) {

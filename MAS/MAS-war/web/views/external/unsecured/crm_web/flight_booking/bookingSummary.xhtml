@@ -54,9 +54,9 @@
                 </p:row>
             </p:panelGrid>
 
-            <p:separator />
+            <p:separator rendered="#{bookingManager.additionalPrice gt 0}" />
 
-            <p:panelGrid styleClass="fullWidth">
+            <p:panelGrid styleClass="fullWidth" rendered="#{bookingManager.additionalPrice gt 0}">
                 <f:facet name="header">
                     <p:row>
                         <p:column colspan="3">Additional Charges</p:column>
@@ -108,7 +108,7 @@
                         <p:commandButton value="Back" icon="fa fa-arrow-left" action="#{crmExNavController.redirectToPassengerInfo()}"/>
                     </p:column>
                     <p:column colspan="2" style="text-align: right;">
-                        <p:commandButton style="width: 160px;" value="Book your flight" icon="fa fa-arrow-right" action="#{bookingManager.bookingFlight(bookingManager.sources.get(0))}" 
+                        <p:commandButton style="width: 180px;" value="Pay to book flight" icon="fa fa-arrow-right" action="#{bookingManager.bookingFlight(bookingManager.sources.get(0))}" 
                                          rendered="#{not bookingManager.isChangeAddOn}"/>
                         <p:commandButton style="width: 160px;" value="Payment" icon="fa fa-arrow-right" action="#{bookingManager.updateAddOn()}"
                                          rendered="#{bookingManager.isChangeAddOn}"/>

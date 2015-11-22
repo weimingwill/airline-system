@@ -73,7 +73,10 @@
                             <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.departAirport}" date="#{flightSched.departDate}" />
                         </p:column>
                         <p:column>
-                            <pa:CCFlightSchedDurationPanel time="#{flightSchedHelper.totalDur}"/>
+                            <pa:CCFlightSchedDurationPanel isDirect="true" time="#{flightSchedHelper.totalDur}"
+                                                           rendered="#{empty flightSchedHelper.nextFlightSched}"/>
+                            <pa:CCFlightSchedDurationPanel isDirect="false" time="#{flightSchedHelper.totalDur}"
+                                                           rendered="#{not empty flightSchedHelper.nextFlightSched}"/>
                         </p:column>
                         <p:column>
                             <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.arrivalAirport}" date="#{flightSched.arrivalDate}" 
@@ -83,38 +86,12 @@
                         </p:column>
 
                         <p:column colspan="#{bookingManager.tixFams.size()}">
-
-                            <p:dataGrid styleClass="alignCenter" value="#{flightSchedHelper.fbHelpers}" var="fbHelper" columns="#{bookingManager.tixFams.size()}" rowIndexVar="index">
-                                <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFb}" converter="flightSchedBookingClsConverter" layout="custom">
-                                    <!--<p:ajax event="change" update="form,barForm" onstart="PF('bar').hide();" oncomplete="PF('bar').show();" listener="{bookingManager.onFlightSchedRadioSelected()}"/>-->
-                                    <p:ajax event="change" update=":form:flights,barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
-                                    <f:selectItems value="#{flightSchedHelper.flightSchedBookingClses}"/>
-
-                                </p:selectOneRadio>
-
-
-                                <p:panelGrid styleClass="alignCenter" style="width: 100%;">
-                                    <p:row>
-                                        <p:column>
-                                            <p:radioButton for="priceRadio" itemIndex="#{index}" rendered="#{fbHelper.available}"/>
-                                        </p:column>
-                                    </p:row>
-                                    <p:row>
-                                        <p:column>
-                                            <p:outputLabel value="S$" rendered="#{fbHelper.available}"/>
-                                            <p:outputLabel value="#{fbHelper.price}" rendered="#{fbHelper.available}">
-                                                <f:convertNumber maxFractionDigits="1" /> 
-                                            </p:outputLabel>
-                                            <p:outputLabel value="Not available" rendered="#{not fbHelper.available}" />
-                                        </p:column>
-                                    </p:row>
-                                    <p:row>
-                                        <p:column>
-                                            <p:outputLabel styleClass="priceTag" value="#{fbHelper.remainedSeatQty} Seat(s) Left" rendered="#{not fbHelper.showLeftSeatQty and fbHelper.available}" />
-                                        </p:column>
-                                    </p:row>
-                                </p:panelGrid>
-                            </p:dataGrid>
+                            <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFb}" converter="flightSchedBookingClsConverter" layout="grid" columns="#{bookingManager.tixFams.size()}">
+                                <!--<p:ajax event="change" update="form,barForm" onstart="PF('bar').hide();" oncomplete="PF('bar').show();" listener="{bookingManager.onFlightSchedRadioSelected()}"/>-->
+                                <p:ajax event="change" update=":form:flights,barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
+                                <f:selectItems value="#{flightSchedHelper.flightSchedBookingClses}" var="fb" itemValue="#{fb}"
+                                               itemLabel="S$#{bookingManager.getFbHelperByFb(fb).price}"/>
+                            </p:selectOneRadio>
 
                         </p:column>
                     </p:row>
@@ -122,9 +99,7 @@
                         <p:column>&nbsp;</p:column>
                         <p:column>&nbsp;</p:column>
                         <p:column styleClass="alignRight">
-                            <p:commandLink value="More details" oncomplete="PF('flightSchedDetail').show()" >
-                                <f:setPropertyActionListener value="#{flightSched}" target="#{bookingBacking.flightSchedule}" />
-                            </p:commandLink>
+                            <p:commandLink value="More details" oncomplete="PF('flightSchedDetail').show()" actionListener="#{bookingBacking.onFlightScheduleClicked(flightSched)}" update="flightSchedDetail" />
                         </p:column>
                         <p:column>&nbsp;</p:column>
                         <p:column>&nbsp;</p:column>
@@ -134,11 +109,28 @@
 
             <p:dialog id="flightSchedDetail" widgetVar="flightSchedDetail" header="Flight Details" showEffect="clip" hideEffect="clip" width="500px;">
                 <p:panelGrid>
+                    <c:set var="flightSched" value="#{bookingBacking.flightSchedule}" />
                     <p:row>
+                        <p:column>
+                            <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.departAirport}" date="#{flightSched.departDate}" />
+                        </p:column>
+                        <p:column>
+                            <pa:CCFlightSchedDurationPanel isDirect="true" time="#{bookingManager.getFlightSchedTotalDur(flightSched)}"/>
+                        </p:column>
+                        <p:column>
+                            <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.arrivalAirport}" date="#{flightSched.arrivalDate}" />
+                        </p:column>
                     </p:row>
-                    <p:row>
-                        <p:column style="text-align: center;">
-                            <p:commandButton value="Close" oncomplete="PF('flightSchedDetail').hide();" />
+                    <p:row rendered="#{not empty bookingManager.getMappedFlightSched(flightSched)}">
+                        <c:set var="nextFlightsched" value="#{bookingManager.getMappedFlightSched(flightSched)}" />
+                        <p:column>
+                            <pa:CCFlightSchedInfoPanel flightSched="#{nextFlightsched}" airport="#{nextFlightsched.leg.departAirport}" date="#{nextFlightsched.departDate}" />
+                        </p:column>
+                        <p:column>
+                            <pa:CCFlightSchedDurationPanel isDirect="true" time="#{bookingManager.getFlightSchedTotalDur(nextFlightsched)}"/>
+                        </p:column>
+                        <p:column>
+                            <pa:CCFlightSchedInfoPanel flightSched="#{nextFlightsched}" airport="#{nextFlightsched.leg.arrivalAirport}" date="#{nextFlightsched.arrivalDate}" />
                         </p:column>
                     </p:row>
                 </p:panelGrid>
@@ -146,7 +138,7 @@
         </h:form>
         <h:form id="barForm">
             <p:panel rendered="#{not empty bookingManager.selectedFbHelper}">
-                <pa:CCOneWayPriceBarPanel flightSchedule="#{bookingManager.selectedFlightSched}" flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" 
+                <pa:CCOneWayPriceBarPanel flightSchedule="#{bookingBacking.flightSchedule}" flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" 
                                           rendered="#{empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>
                 <pa:CCOneWayPriceBarPanel flightSchedule="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}" flightSchedBookingClsHelper="#{bookingManager.selectedFbHelper}" 
                                           rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>

@@ -32,7 +32,7 @@ public class BookingBacking implements Serializable {
     @EJB
     private BookingSessionLocal bookingSession;
 
-    private FlightSchedule flightSchedule;
+    private FlightSchedule flightSchedule = new FlightSchedule();
     private FlightScheduleBookingClass selectedFlightSchedBookignCls;
 
     //Passenger details
@@ -61,6 +61,10 @@ public class BookingBacking implements Serializable {
     public BookingBacking() {
     }
 
+    public void onFlightScheduleClicked(FlightSchedule flightSched) {
+        setFlightSchedule(flightSched);
+    } 
+    
     private void setTitleList() {
         titles.add("Ms");
         titles.add("Mrs");

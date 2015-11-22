@@ -70,17 +70,33 @@
                     </p:column>
                 </p:row>
 
+                <p:row styleClass="ui-widget-header alignCenter" >
+                    <p:column colspan="4">Basic price break down</p:column>
+                </p:row>
+                
+                <c:forEach items="#{bookingBacking.pricingItems}" var="pricingItem">
                 <p:row>
-                    <p:column colspan="2"><p:outputLabel value="Price"/></p:column>
+                    <p:column colspan="2">#{pricingItem.name}</p:column>
                     <p:column colspan="2" styleClass="alignRight">
                         <p:outputLabel value="S$" />
-                        <p:outputLabel value="#{bookingManager.selectedFbHelper.price}">
-                            <f:convertNumber maxFractionDigits="2"/>
+                        <p:outputLabel value="#{bookingManager.selectedFbHelper.price * pricingItem.price * (bookingManager.adultNo + bookingManager.childrenNo)}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>   
+                </p:row>
+            </c:forEach>
+                
+                <p:row>
+                    <p:column colspan="2"><p:outputLabel value="Fare fee"/></p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="S$" />
+                        <p:outputLabel value="#{bookingManager.selectedFbHelper.price * (bookingManager.adultNo + bookingManager.childrenNo)}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                         </p:outputLabel>
                     </p:column>
                 </p:row>
 
-                <p:row styleClass="ui-widget-header">
+                <p:row styleClass="ui-widget-header" rendered="#{not empty bookingManager.selectedMeals or not empty bookingManager.selectedLuggages or bookingManager.selectedNumOfInsurance gt 0}">
                     <p:column colspan="4">Options</p:column>
                 </p:row>
                 <!--Meals-->

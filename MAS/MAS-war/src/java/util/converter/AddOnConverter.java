@@ -27,8 +27,9 @@ public class AddOnConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-        if (value != null && value.trim().length() > 0) {
+        if (value != null && value.trim().length() > 0 && !value.equals("Select meal")) {
             try {
+                System.out.println("Value: " + value);
                 return bookingSession.getAddOnById(Long.parseLong(value));
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid addOn."));
@@ -40,7 +41,7 @@ public class AddOnConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if (object != null && !(object instanceof String)) {
+        if (object != null && !(object instanceof String) && ((AddOn)object).getId()!=null) {
             return String.valueOf(((AddOn) object).getId());
         } else {
             return null;

@@ -21,15 +21,15 @@
 
             <p:row>
                 <p:column>
-                    <p:outputLabel value="OUTBOUND FLIGHT" />
+                    <p:outputLabel styleClass="boldFont" value="OUTBOUND FLIGHT" />
                 </p:column>
                 <p:column>
                     <p:outputLabel value="#{fbHelper.cabinClass.name} #{fbHelper.ticketFamily.name}" />
                 </p:column>
                 <p:column>
                     <p:outputLabel value="S$" />
-                    <p:outputLabel value="#{fbHelper.price}" >
-                        <f:convertNumber maxFractionDigits="1" />
+                    <p:outputLabel value="#{fbHelper.price * (bookingManager.adultNo + bookingManager.childrenNo)}" >
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                     </p:outputLabel>
                 </p:column>
                 <p:column><p:outputLabel value="" /></p:column>
@@ -56,9 +56,9 @@
                 </p:column>
                 <p:column></p:column>
                 <p:column rowspan="2">
-                    <p:outputLabel value="S$" />
-                    <p:outputLabel value="#{fbHelper.price}" >
-                        <f:convertNumber maxFractionDigits="1" />
+                    <p:outputLabel styleClass="boldFont" value="S$" />
+                    <p:outputLabel styleClass="boldFont" value="#{fbHelper.price * (bookingManager.adultNo + bookingManager.childrenNo)}" >
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                     </p:outputLabel>
                 </p:column>
             </p:row>
