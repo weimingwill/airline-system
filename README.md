@@ -71,6 +71,18 @@ This repository contains the source code of merlion airline systems developed by
 	  - Description: Topic Internal Com
 7. Close the admin console
 
+#### Setup iReport ####
+1. Open the Netbeans IDE.
+2. On the Menu Bar choose Tools and further choose the Plugins menu option.
+3. The Plugins dialog box opens up the Available Plugins tab by default; change the tab to Downloaded.
+4. Click the "Add Plugins..." button; A window pops up; navigate to the directory where you downloaded the plugin(s) and add them. 
+5. Click the install button on the Bottom-left corner of the dialog box.
+6. A confirmation window pops up; click Next to continue the installation.
+7. Next you need to read the license agreement and accept it. The IReport plugin is licensed under the GNU General Public License.
+8. Since the plugin would be designed by a 3rd party developer it may not be digitally signed and you would need to ignore and continue inspite of the Validation Warning if you are confirmed about the source of the plugin. If the plugin is signed and but not trusted, you'll need to continue passed this warning.
+9. The plugin will install automatically.
+10. Once the installation is finished, you should restart the IDE.
+
 #### Clean and Build Project ####
 1. Right click MAS project and choose "Clean and Build"
 
