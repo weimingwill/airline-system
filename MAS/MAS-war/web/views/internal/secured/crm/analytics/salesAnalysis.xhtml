@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Sales Dashboard
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <p:growl id="msgs" showDetail="true" />
+
+            <p:dashboard id="salesDashboard" model="#{analyticsController.salesDashboard}">
+                <p:ajax event="reorder" listener="#{analyticsController.handleReorder}" update="msgs" />
+
+                <p:panel id="daySales" header="Today's sales" style="width:320px;height:200px;">
+                    <p:outputLabel value="$#{analyticsController.daySales}">
+                    </p:outputLabel>
+                </p:panel>
+
+                <p:panel id="monthSales" header="Current month's sales" style="width:320px;height:200px;">
+                    <p:outputLabel value="$#{analyticsController.monthSales}">
+                    </p:outputLabel>
+                </p:panel>
+
+                <p:panel id="yearSales" header="Current year's sales" style="width:320px;height:200px;">
+                    <p:outputLabel value="$#{analyticsController.yearSales}">
+                    </p:outputLabel>
+                </p:panel>
+
+                <p:panel id="monthlySales" header="Monthly sales distribution">
+                    <p:chart type="line" model="#{analyticsController.monthlySalesLineChart}" style="width:640px;height:300px;"/>
+                </p:panel>
+
+                <p:panel id="yearlySales" header="Yearly sales distribution">
+                    <p:chart type="line" model="#{analyticsController.yearlySalesLineChart}" style="width:640px;height:300px;"/>
+                </p:panel>
+
+            </p:dashboard>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

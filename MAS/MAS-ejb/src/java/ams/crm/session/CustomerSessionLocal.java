@@ -9,6 +9,7 @@ import ams.crm.entity.Customer;
 import ams.crm.entity.CustomerList;
 import ams.crm.entity.Feedback;
 import ams.crm.entity.RegCust;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -53,5 +54,11 @@ public interface CustomerSessionLocal {
     public int getTotalNumberOfFemale();
 
     public int getTotalNumberOfMale();
+
+    public int getAge(Date dateOfBirth);
+    
+    public int getTotalCustomerNo();
+    
+    public int getTotalMemberNo();
 
 }

@@ -20,10 +20,11 @@
                     <p:menuitem value="Customer dashboard" action="#{crmNavController.redirectToViewCustomers()}" />
                 </p:submenu>
                 <p:submenu label="CRM Analytics">
-                    <p:menuitem value="Gender distribution" action="#{crmNavController.redirectToGenderDistribution()}" />
-
+                    <p:menuitem value="Customer Analysis" action="#{crmNavController.redirectToCustomerAnalysis()}" />
+                    <p:menuitem value="Marketing Analysis" action="#{crmNavController.redirectToMarketingAnalysis()}" />
+                    <p:menuitem value="Sales Analysis" action="#{crmNavController.redirectToSalesAnalysis()}" />
+                    <p:menuitem value="Behavior Analysis" action="#{crmNavController.redirectToBehaviorAnalysis()}" />
                 </p:submenu>
-
             </p:menu>
         </h:form>
     </cc:implementation>

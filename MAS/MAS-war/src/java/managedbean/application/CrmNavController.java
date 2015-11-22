@@ -69,4 +69,20 @@ public class CrmNavController implements Serializable {
     public String redirectToGenderDistribution() {
         return CRM_URL + "analytics/genderDistribution.xhtml" + REDIRECT;
     }
+    
+    public String redirectToCustomerAnalysis() {
+        return CRM_URL + "analytics/customerAnalysis.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToMarketingAnalysis() {
+        return CRM_URL + "analytics/marketingAnalysis.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToSalesAnalysis() {
+        return CRM_URL + "analytics/salesAnalysis.xhtml" + REDIRECT;
+    }
+    
+    public String redirectToBehaviorAnalysis() {
+        return CRM_URL + "analytics/behaviorAnalysis.xhtml" + REDIRECT;
+    }
 }

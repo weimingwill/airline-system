@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finAccReport" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2bd1cb51-9125-4101-a823-31451c633c0f">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="53"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="PieChartDataset" uuid="bb12ea11-00e6-4c29-8b3e-b275aa0795b5"/>
+	<queryString>
+		<![CDATA[SELECT
+     aircraft.`AIRCRAFTID` AS aircraft_AIRCRAFTID,
+     aircraft.`ADDONDATE` AS aircraft_ADDONDATE,
+     aircraft.`AVGUNITOILUSAGE` AS aircraft_AVGUNITOILUSAGE,
+     aircraft.`COST` AS aircraft_COST,
+     aircraft.`LIFETIME` AS aircraft_LIFETIME,
+     aircraft.`SCHEDULED` AS aircraft_SCHEDULED,
+     aircraft.`SOURCE` AS aircraft_SOURCE,
+     aircraft.`STATUS` AS aircraft_STATUS,
+     aircraft.`TAILNO` AS aircraft_TAILNO,
+     aircraft.`AIRCRAFTTYPE_ID` AS aircraft_AIRCRAFTTYPE_ID,
+     booking.`ID` AS booking_ID,
+     booking.`CHANNEL` AS booking_CHANNEL,
+     booking.`CREATEDTIME` AS booking_CREATEDTIME,
+     booking.`ETICKETNO` AS booking_ETICKETNO,
+     booking.`EMAIL` AS booking_EMAIL,
+     booking.`PAID` AS booking_PAID,
+     booking.`PRICE` AS booking_PRICE,
+     booking.`REFERENCENO` AS booking_REFERENCENO,
+     booking.`UPDATEDTIME` AS booking_UPDATEDTIME,
+     booking.`AREACODE` AS booking_AREACODE,
+     booking.`COUNTRYCODE` AS booking_COUNTRYCODE,
+     booking.`NUMBER` AS booking_NUMBER,
+     booking.`BOOKINGTRANS_ID` AS booking_BOOKINGTRANS_ID,
+     booking.`claimed` AS booking_claimed,
+     booking.`promoPrice` AS booking_promoPrice,
+     flight.`ID` AS flight_ID,
+     flight.`COMPLETED` AS flight_COMPLETED,
+     flight.`DELETED` AS flight_DELETED,
+     flight.`FLIGHTNO` AS flight_FLIGHTNO,
+     flight.`NUMOFUNSCHEDULED` AS flight_NUMOFUNSCHEDULED,
+     flight.`SPEEDFRACTION` AS flight_SPEEDFRACTION,
+     flight.`WEEKLYFREQUENCY` AS flight_WEEKLYFREQUENCY,
+     flight.`ROUTE_ROUTEID` AS flight_ROUTE_ROUTEID,
+     flight.`RETURNEDFLIGHT_ID` AS flight_RETURNEDFLIGHT_ID,
+     flight.`flyDistance` AS flight_flyDistance,
+     flightcrew.`SYSTEMUSERID` AS flightcrew_SYSTEMUSERID,
+     flightcrew.`BASE` AS flightcrew_BASE,
+     flightcrew.`DATEJOINED` AS flightcrew_DATEJOINED,
+     flightcrew.`DOB` AS flightcrew_DOB,
+     flightcrew.`FLIGHTCREWID` AS flightcrew_FLIGHTCREWID,
+     flightcrew.`GENDER` AS flightcrew_GENDER,
+     flightcrew.`TOTALFLYINGDIST` AS flightcrew_TOTALFLYINGDIST,
+     flightcrew.`TOTALFLYINGTIME` AS flightcrew_TOTALFLYINGTIME,
+     flightcrew.`POSITION_ID` AS flightcrew_POSITION_ID,
+     flightschedule.`FLIGHTSCHEDULEID` AS flightschedule_FLIGHTSCHEDULEID,
+     flightschedule.`ACTUALARRIVALDATE` AS flightschedule_ACTUALARRIVALDATE,
+     flightschedule.`ACTUALDEPARTDATE` AS flightschedule_ACTUALDEPARTDATE,
+     flightschedule.`ARRIVALDATE` AS flightschedule_ARRIVALDATE,
+     flightschedule.`ARRIVALGATE` AS flightschedule_ARRIVALGATE,
+     flightschedule.`ARRIVALTERMINAL` AS flightschedule_ARRIVALTERMINAL,
+     flightschedule.`COMPLETED` AS flightschedule_COMPLETED,
+     flightschedule.`CREATEDTIME` AS flightschedule_CREATEDTIME,
+     flightschedule.`DELETED` AS flightschedule_DELETED,
+     flightschedule.`DEPARTDATE` AS flightschedule_DEPARTDATE,
+     flightschedule.`DEPARTGATE` AS flightschedule_DEPARTGATE,
+     flightschedule.`DEPARTTERMINAL` AS flightschedule_DEPARTTERMINAL,
+     flightschedule.`PRICED` AS flightschedule_PRICED,
+     flightschedule.`SEATALLOCATED` AS flightschedule_SEATALLOCATED,
+     flightschedule.`STATUS` AS flightschedule_STATUS,
+     flightschedule.`TURNOVERTIME` AS flightschedule_TURNOVERTIME,
+     flightschedule.`AIRCRAFT_AIRCRAFTID` AS flightschedule_AIRCRAFT_AIRCRAFTID,
+     flightschedule.`FLIGHT_ID` AS flightschedule_FLIGHT_ID,
+     flightschedule.`LEG_LEGID` AS flightschedule_LEG_LEGID,
+     flightschedule.`NEXTFLIGHTSCHED_FLIGHTSCHEDULEID` AS flightschedule_NEXTFLIGHTSCHED_FLIGHTSCHEDULEID,
+     flightschedule.`PREFLIGHTSCHED_FLIGHTSCHEDULEID` AS flightschedule_PREFLIGHTSCHED_FLIGHTSCHEDULEID,
+     mktcampaign.`ID` AS mktcampaign_ID,
+     mktcampaign.`AUDIENCESIZE` AS mktcampaign_AUDIENCESIZE,
+     mktcampaign.`BUDGET` AS mktcampaign_BUDGET,
+     mktcampaign.`CAMPAIGNRESULT` AS mktcampaign_CAMPAIGNRESULT,
+     mktcampaign.`DESCRIPTION` AS mktcampaign_DESCRIPTION,
+     mktcampaign.`ENDTIME` AS mktcampaign_ENDTIME,
+     mktcampaign.`NAME` AS mktcampaign_NAME,
+     mktcampaign.`RESPONDERNO` AS mktcampaign_RESPONDERNO,
+     mktcampaign.`REVENUE` AS mktcampaign_REVENUE,
+     mktcampaign.`STARTTIME` AS mktcampaign_STARTTIME,
+     mktcampaign.`TYPE` AS mktcampaign_TYPE,
+     systemuser.`SYSTEMUSERID` AS systemuser_SYSTEMUSERID,
+     systemuser.`DTYPE` AS systemuser_DTYPE,
+     systemuser.`ACTIVATED` AS systemuser_ACTIVATED,
+     systemuser.`ADDRESS` AS systemuser_ADDRESS,
+     systemuser.`DELETED` AS systemuser_DELETED,
+     systemuser.`DEPARTMENT` AS systemuser_DEPARTMENT,
+     systemuser.`EMAIL` AS systemuser_EMAIL,
+     systemuser.`LOCKED` AS systemuser_LOCKED,
+     systemuser.`LOGGEDIN` AS systemuser_LOGGEDIN,
+     systemuser.`NAME` AS systemuser_NAME,
+     systemuser.`PASSWORD` AS systemuser_PASSWORD,
+     systemuser.`PHONE` AS systemuser_PHONE,
+     systemuser.`RESETDIGEST` AS systemuser_RESETDIGEST,
+     systemuser.`SALARY` AS systemuser_SALARY,
+     systemuser.`STATUS` AS systemuser_STATUS,
+     systemuser.`USERNAME` AS systemuser_USERNAME
+FROM
+     `aircraft` aircraft INNER JOIN `flightschedule` flightschedule ON aircraft.`AIRCRAFTID` = flightschedule.`AIRCRAFT_AIRCRAFTID`
+     INNER JOIN `flight` flight ON flightschedule.`FLIGHT_ID` = flight.`ID`,
+     `systemuser` systemuser INNER JOIN `flightcrew` flightcrew ON systemuser.`SYSTEMUSERID` = flightcrew.`SYSTEMUSERID`,
+     `booking` booking,
+     `mktcampaign` mktcampaign]]>
+	</queryString>
+	<field name="aircraft_AIRCRAFTID" class="java.lang.Long"/>
+	<field name="aircraft_ADDONDATE" class="java.sql.Date"/>
+	<field name="aircraft_AVGUNITOILUSAGE" class="java.lang.Float"/>
+	<field name="aircraft_COST" class="java.lang.Float"/>
+	<field name="aircraft_LIFETIME" class="java.lang.Float"/>
+	<field name="aircraft_SCHEDULED" class="java.lang.Boolean"/>
+	<field name="aircraft_SOURCE" class="java.lang.String"/>
+	<field name="aircraft_STATUS" class="java.lang.String"/>
+	<field name="aircraft_TAILNO" class="java.lang.String"/>
+	<field name="aircraft_AIRCRAFTTYPE_ID" class="java.lang.Long"/>
+	<field name="booking_ID" class="java.lang.Long"/>
+	<field name="booking_CHANNEL" class="java.lang.String"/>
+	<field name="booking_CREATEDTIME" class="java.sql.Timestamp"/>
+	<field name="booking_ETICKETNO" class="java.lang.String"/>
+	<field name="booking_EMAIL" class="java.lang.String"/>
+	<field name="booking_PAID" class="java.lang.Boolean"/>
+	<field name="booking_PRICE" class="java.lang.Double"/>
+	<field name="booking_REFERENCENO" class="java.lang.String"/>
+	<field name="booking_UPDATEDTIME" class="java.sql.Timestamp"/>
+	<field name="booking_AREACODE" class="java.lang.String"/>
+	<field name="booking_COUNTRYCODE" class="java.lang.String"/>
+	<field name="booking_NUMBER" class="java.lang.String"/>
+	<field name="booking_BOOKINGTRANS_ID" class="java.lang.Long"/>
+	<field name="booking_claimed" class="java.lang.Boolean"/>
+	<field name="booking_promoPrice" class="java.lang.Double"/>
+	<field name="flight_ID" class="java.lang.Long"/>
+	<field name="flight_COMPLETED" class="java.lang.Boolean"/>
+	<field name="flight_DELETED" class="java.lang.Boolean"/>
+	<field name="flight_FLIGHTNO" class="java.lang.String"/>
+	<field name="flight_NUMOFUNSCHEDULED" class="java.lang.Integer"/>
+	<field name="flight_SPEEDFRACTION" class="java.lang.Double"/>
+	<field name="flight_WEEKLYFREQUENCY" class="java.lang.Integer"/>
+	<field name="flight_ROUTE_ROUTEID" class="java.lang.Long"/>
+	<field name="flight_RETURNEDFLIGHT_ID" class="java.lang.Long"/>
+	<field name="flight_flyDistance" class="java.lang.Double"/>
+	<field name="flightcrew_SYSTEMUSERID" class="java.lang.Long"/>
+	<field name="flightcrew_BASE" class="java.lang.String"/>
+	<field name="flightcrew_DATEJOINED" class="java.sql.Date"/>
+	<field name="flightcrew_DOB" class="java.sql.Date"/>
+	<field name="flightcrew_FLIGHTCREWID" class="java.lang.String"/>
+	<field name="flightcrew_GENDER" class="java.lang.String"/>
+	<field name="flightcrew_TOTALFLYINGDIST" class="java.lang.Double"/>
+	<field name="flightcrew_TOTALFLYINGTIME" class="java.lang.Double"/>
+	<field name="flightcrew_POSITION_ID" class="java.lang.Long"/>
+	<field name="flightschedule_FLIGHTSCHEDULEID" class="java.lang.Long"/>
+	<field name="flightschedule_ACTUALARRIVALDATE" class="java.sql.Timestamp"/>
+	<field name="flightschedule_ACTUALDEPARTDATE" class="java.sql.Timestamp"/>
+	<field name="flightschedule_ARRIVALDATE" class="java.sql.Timestamp"/>
+	<field name="flightschedule_ARRIVALGATE" class="java.lang.String"/>
+	<field name="flightschedule_ARRIVALTERMINAL" class="java.lang.String"/>
+	<field name="flightschedule_COMPLETED" class="java.lang.Boolean"/>
+	<field name="flightschedule_CREATEDTIME" class="java.sql.Timestamp"/>
+	<field name="flightschedule_DELETED" class="java.lang.Boolean"/>
+	<field name="flightschedule_DEPARTDATE" class="java.sql.Timestamp"/>
+	<field name="flightschedule_DEPARTGATE" class="java.lang.String"/>
+	<field name="flightschedule_DEPARTTERMINAL" class="java.lang.String"/>
+	<field name="flightschedule_PRICED" class="java.lang.Boolean"/>
+	<field name="flightschedule_SEATALLOCATED" class="java.lang.Boolean"/>
+	<field name="flightschedule_STATUS" class="java.lang.String"/>
+	<field name="flightschedule_TURNOVERTIME" class="java.lang.Double"/>
+	<field name="flightschedule_AIRCRAFT_AIRCRAFTID" class="java.lang.Long"/>
+	<field name="flightschedule_FLIGHT_ID" class="java.lang.Long"/>
+	<field name="flightschedule_LEG_LEGID" class="java.lang.Long"/>
+	<field name="flightschedule_NEXTFLIGHTSCHED_FLIGHTSCHEDULEID" class="java.lang.Long"/>
+	<field name="flightschedule_PREFLIGHTSCHED_FLIGHTSCHEDULEID" class="java.lang.Long"/>
+	<field name="mktcampaign_ID" class="java.lang.Long"/>
+	<field name="mktcampaign_AUDIENCESIZE" class="java.lang.Integer"/>
+	<field name="mktcampaign_BUDGET" class="java.lang.Double"/>
+	<field name="mktcampaign_CAMPAIGNRESULT" class="java.lang.String"/>
+	<field name="mktcampaign_DESCRIPTION" class="java.lang.String"/>
+	<field name="mktcampaign_ENDTIME" class="java.sql.Timestamp"/>
+	<field name="mktcampaign_NAME" class="java.lang.String"/>
+	<field name="mktcampaign_RESPONDERNO" class="java.lang.Integer"/>
+	<field name="mktcampaign_REVENUE" class="java.lang.Double"/>
+	<field name="mktcampaign_STARTTIME" class="java.sql.Timestamp"/>
+	<field name="mktcampaign_TYPE" class="java.lang.String"/>
+	<field name="systemuser_SYSTEMUSERID" class="java.lang.Long"/>
+	<field name="systemuser_DTYPE" class="java.lang.String"/>
+	<field name="systemuser_ACTIVATED" class="java.lang.Boolean"/>
+	<field name="systemuser_ADDRESS" class="java.lang.String"/>
+	<field name="systemuser_DELETED" class="java.lang.Boolean"/>
+	<field name="systemuser_DEPARTMENT" class="java.lang.String"/>
+	<field name="systemuser_EMAIL" class="java.lang.String"/>
+	<field name="systemuser_LOCKED" class="java.lang.Boolean"/>
+	<field name="systemuser_LOGGEDIN" class="java.lang.Boolean"/>
+	<field name="systemuser_NAME" class="java.lang.String"/>
+	<field name="systemuser_PASSWORD" class="java.lang.String"/>
+	<field name="systemuser_PHONE" class="java.lang.String"/>
+	<field name="systemuser_RESETDIGEST" class="java.lang.String"/>
+	<field name="systemuser_SALARY" class="java.lang.Double"/>
+	<field name="systemuser_STATUS" class="java.lang.String"/>
+	<field name="systemuser_USERNAME" class="java.lang.String"/>
+	<background>
+		<band height="555" splitType="Stretch">
+			<image>
+				<reportElement x="-20" y="-20" width="229" height="250" uuid="87a1b5f6-272d-47cd-9cdc-f0622530b84e">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} > 1]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA["flower1.png"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="201" y="431" width="117" height="1" uuid="4e438998-82ad-4dbc-ad90-83d97ef7b750">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="275" y="-10" width="240" height="181" backcolor="#FFFFCC" uuid="994bcc45-09b9-48c8-8557-652ae76e7e51">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4">
+					<pen lineWidth="1.0" lineColor="#CC9900"/>
+					<topPen lineWidth="1.0" lineColor="#CC9900"/>
+					<leftPen lineWidth="1.0" lineColor="#CC9900"/>
+					<bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+					<rightPen lineWidth="1.0" lineColor="#CC9900"/>
+				</box>
+				<textElement markup="none">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Flowers
+
+There are two flowers, the first one is printed only starting from the second page, the other one only in the first page.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="72" y="37" width="204" height="1" uuid="b8a6a0b6-e2fa-46c3-be03-f324ba993032">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+				</graphicElement>
+			</line>
+		</band>
+	</background>
+	<title>
+		<band height="66" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="0" width="822" height="65" forecolor="#006699" backcolor="#006699" uuid="60d1b6bd-3d60-4c35-a112-406b5e18390a"/>
+				<staticText>
+					<reportElement style="Title" x="231" y="0" width="578" height="65" uuid="6c486d87-102f-4ac0-8c3b-9f7bce3418fe"/>
+					<textElement textAlignment="Right">
+						<font size="54" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Flower Title]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="115" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="20" uuid="1aaae0a3-27d2-4ee7-bec4-9e214237b757"/>
+				<text><![CDATA[aircraft_AIRCRAFTID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="0" width="200" height="20" uuid="019cd2c1-f5fa-40fd-92cd-d15497de3700"/>
+				<text><![CDATA[aircraft_COST]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="0" width="200" height="20" uuid="c06dce9d-707a-4308-93d9-8cc574af2d95"/>
+				<text><![CDATA[aircraft_SOURCE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="600" y="0" width="200" height="20" uuid="40fff772-135d-406a-b5de-5a300fa1ebfb"/>
+				<text><![CDATA[aircraft_TAILNO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="179" splitType="Stretch">
+			<textField>
+				<reportElement x="11" y="61" width="200" height="20" uuid="bddb4bd6-745c-45c0-b243-7680b55f7da6"/>
+				<textFieldExpression><![CDATA[$F{aircraft_AIRCRAFTID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="200" height="20" uuid="a9246c1f-3422-4306-acb7-fa12b5682801"/>
+				<textFieldExpression><![CDATA[$F{aircraft_COST}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="0" width="200" height="20" uuid="a7d8ae9b-0186-46fa-83f6-5f5ee111a1db"/>
+				<textFieldExpression><![CDATA[$F{aircraft_SOURCE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="600" y="0" width="200" height="20" uuid="d7190c78-71e0-45b0-b6f1-d39444a1058f"/>
+				<textFieldExpression><![CDATA[$F{aircraft_TAILNO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="241" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="101" y="53" width="555" height="1" uuid="efcee3cd-2635-4b83-ae2b-12d55fa3a7e8"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="159" y="28" width="575" height="1" uuid="e89cd7f4-019f-4cf4-b61a-1b9efc89533d"/>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="2" y="0" width="800" height="16" forecolor="#D0B48E" backcolor="#006699" uuid="6b131f98-1e99-44a0-84a6-f687507c84d2"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#FFFFFF" uuid="300f3c88-6fcd-4b0b-a6a9-edb60bec17c0"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#FFFFFF" uuid="c1230304-605c-478b-9c8b-87c0ccf8ebae"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="2" y="0" width="197" height="16" forecolor="#FFFFFF" uuid="e2871470-6290-4414-8adc-3d04a7a4e89a"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
