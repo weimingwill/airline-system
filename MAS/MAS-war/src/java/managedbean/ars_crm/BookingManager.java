@@ -19,6 +19,7 @@ import ams.aps.util.helper.FlightSchedStatus;
 import ams.ars.entity.AddOn;
 import ams.ars.entity.AirTicket;
 import ams.ars.entity.Booking;
+import ams.ars.entity.PricingItem;
 import ams.ars.util.helper.AddOnHelper;
 import ams.crm.entity.Customer;
 import ams.crm.entity.RegCust;
@@ -51,6 +52,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import managedbean.application.CrmExNavController;
+import managedbean.application.CrmMobileNavController;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
 import managedbean.crm.CustomerLoginManager;
@@ -74,6 +76,8 @@ public class BookingManager implements Serializable {
     BookingBacking bookingBacking;
     @Inject
     CustomerLoginManager customerLoginManager;
+    @Inject
+    CrmMobileNavController crmMobileNavController;
 
     @EJB
     private RoutePlanningSessionLocal routePlanningSession;
@@ -85,6 +89,9 @@ public class BookingManager implements Serializable {
     private RevMgmtSessionLocal revMgmtSession;
     @EJB
     private CustomerExSessionLocal customerExSession;
+
+    //Source: web or mobile
+    private List<String> sources;
 
     //Search conditions
     private int adultNo;
@@ -115,7 +122,7 @@ public class BookingManager implements Serializable {
     private FlightSchedBookingClsHelper selectedFbHelper;
     private FlightScheduleBookingClass selectedFb;
     private List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
-
+    private Map<Long, List<FlightSchedBookingClsHelper>> tixFamFbMap = new HashMap<>();
     //Passenger details
     private BookingHelper bookingHelper;
 
@@ -142,11 +149,17 @@ public class BookingManager implements Serializable {
     private List<Double> additionalLuggages;
     private double additionalPrice;
 
+    //For mobile
+    private FlightSchedHelper selectedFlightSchedHelper;
+
     /**
      * Creates a new instance of bookingManager
      */
     @PostConstruct
     public void init() {
+        sources = new ArrayList<>();
+        sources.add("web");
+        sources.add("mobile");
         allAirports = routePlanningSession.getAllAirports();
         cabinClses = productDesignSession.getAllCabinClass();
         deptAirport = routePlanningSession.getAirportByICAOCode("WSSS");
@@ -220,7 +233,7 @@ public class BookingManager implements Serializable {
         System.out.println("Departure date: " + deptDate);
     }
 
-    public String searchFlights() {
+    public String searchFlights(String method) {
         selectedFbHelper = null;
         searchDeptDate = DateHelper.convertDateTime(deptDate);
         searchArrDate = DateHelper.convertDateTime(arrDate);
@@ -230,9 +243,30 @@ public class BookingManager implements Serializable {
             if (choice.equals("oneway")) {
                 searchForOneWayFlights();
             } else if (choice.equals("return")) {
-                searchForReturnFlights();
+                searchForOneWayFlights();
+//                searchForReturnFlights();
             }
-            return crmExNavController.redirectToSearchFlightResult();
+            if (method.equals(sources.get(0))) {
+                return crmExNavController.redirectToSearchFlightResult();
+            } else {
+                List<Long> tixFams = new ArrayList<>();
+                for (FlightSchedBookingClsHelper fbHelper : flightSchedBookingClsHelpers) {
+                    Long tixFamId = fbHelper.getTicketFamily().getTicketFamilyId();
+                    if (!tixFams.contains(tixFamId)) {
+                        tixFams.add(tixFamId);
+                    }
+                }
+                for (Long tixFamId : tixFams) {
+                    List<FlightSchedBookingClsHelper> fbHelpers = new ArrayList<>();
+                    for (FlightSchedBookingClsHelper fbHelper : flightSchedBookingClsHelpers) {
+                        if (fbHelper.getTicketFamily().getTicketFamilyId().equals(tixFamId)) {
+                            fbHelpers.add(fbHelper);
+                        }
+                    }
+                    tixFamFbMap.put(tixFamId, fbHelpers);
+                }
+                return crmMobileNavController.redirectToSearchFlightResult();
+            }
         } catch (NoSuchFlightSchedulException | InvalidPromoCodeException e) {
             msgController.addErrorMessage(e.getMessage());
             return "";
@@ -296,7 +330,7 @@ public class BookingManager implements Serializable {
         System.out.println("searchForReturnFlights");
     }
 
-    private String getFlightSchedTotalDur(FlightSchedule flightSched) {
+    public String getFlightSchedTotalDur(FlightSchedule flightSched) {
         return DateHelper.convertMSToHourMinute(DateHelper.calcDateDiff(flightSched.getDepartDate(), flightSched.getArrivalDate()));
     }
 
@@ -352,6 +386,13 @@ public class BookingManager implements Serializable {
         return crmExNavController.redirectToPassengerInfo();
     }
 
+    public String toEnterPassengerDetails(FlightSchedBookingClsHelper fbHelper) throws NoSuchFlightSchedulException {
+        selectedFbHelper = fbHelper;
+        selectedFb = selectedFbHelper.getFlightSchedBookingCls();
+        setBookingHelper();
+        return crmMobileNavController.redirectToPassengerInfo();
+    }
+
     private void setBookingHelper() {
         bookingHelper = new BookingHelper();
         List<CustomerHelper> adults = new ArrayList<>();
@@ -398,9 +439,11 @@ public class BookingManager implements Serializable {
         bookingHelper.setChannel(ChannelHelper.ARS);
         List<FlightScheduleBookingClass> fbs = new ArrayList<>();
         fbs.add(selectedFb);
+        farePrice = selectedFb.getPrice();
         FlightScheduleBookingClass nextFb = fbMaps.get(selectedFb.getFlightScheduleBookingClassId().toString());
         if (nextFb != null) {
             fbs.add(nextFb);
+            farePrice += nextFb.getPrice();
         }
         bookingHelper.setFlightSchedBookingClses(fbs);
         //PromoCode = "" if nothing entered
@@ -473,6 +516,10 @@ public class BookingManager implements Serializable {
 
     private void setBookingHelperTotalPrice() {
         double price = 0;
+        for (PricingItem pricingItem : bookingBacking.getPricingItems()) {
+            price += farePrice * pricingItem.getPrice();
+        }
+
         for (FlightScheduleBookingClass fb : bookingHelper.getFlightSchedBookingClses()) {
             price += fb.getPrice() * (adultNo + childrenNo);
         }
@@ -480,14 +527,18 @@ public class BookingManager implements Serializable {
         bookingHelper.setTotalPrice(price);
     }
 
-    public String bookingFlight() {
+    public String bookingFlight(String method) {
         try {
             booking = bookingSession.bookingFlight(bookingHelper);
             custHelpers = setCustomerHelpers(booking);
             farePrice = setFarePrice(booking);
             msgController.addMessage("Booking flight successfully!");
             clearVariables();
-            return crmExNavController.redirectToItinerary();
+            if (sources.get(0).equals(method)) {
+                return crmExNavController.redirectToItinerary();
+            } else {
+                return crmMobileNavController.redirectToItinerary();
+            }
         } catch (InvalidPromoCodeException e) {
             msgController.addErrorMessage(e.getMessage());
             return "";
@@ -706,6 +757,21 @@ public class BookingManager implements Serializable {
         farePrice = setFarePrice(booking);
         msgController.addMessage("Update add on successfully!");
         return crmExNavController.redirectToItinerary();
+    }
+
+    public double getLowestPrice(FlightSchedHelper flightSchedHelper) {
+        double min = 1000000000;
+        for (FlightSchedBookingClsHelper fbHelper : flightSchedHelper.getFbHelpers()) {
+            if (min > fbHelper.getPrice()) {
+                min = fbHelper.getPrice();
+            }
+        }
+        return min;
+    }
+
+    public String toTixFamSelection(FlightSchedHelper flightSchedHelper) {
+        selectedFlightSchedHelper = flightSchedHelper;
+        return crmMobileNavController.redirectToTixFamSelection();
     }
 
     //
@@ -989,6 +1055,45 @@ public class BookingManager implements Serializable {
 
     public void setOriginNumOfInsurance(int originNumOfInsurance) {
         this.originNumOfInsurance = originNumOfInsurance;
+    }
+
+    public List<Airport> getAllAirports() {
+        return allAirports;
+    }
+
+    public void setAllAirports(List<Airport> allAirports) {
+        this.allAirports = allAirports;
+    }
+
+    public List<String> getSources() {
+        return sources;
+    }
+
+    public void setSources(List<String> sources) {
+        this.sources = sources;
+    }
+
+    public List<FlightSchedBookingClsHelper> getFlightSchedBookingClsHelpers() {
+        return flightSchedBookingClsHelpers;
+    }
+
+    public void setFlightSchedBookingClsHelpers(List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers) {
+        this.flightSchedBookingClsHelpers = flightSchedBookingClsHelpers;
+    }
+
+//    public Map<Long, List<FlightSchedBookingClsHelper>> getTixFamFbMap() {
+//        return tixFamFbMap;
+//    }
+//
+//    public void setTixFamFbMap(Map<Long, List<FlightSchedBookingClsHelper>> tixFamFbMap) {
+//        this.tixFamFbMap = tixFamFbMap;
+//    }
+    public FlightSchedHelper getSelectedFlightSchedHelper() {
+        return selectedFlightSchedHelper;
+    }
+
+    public void setSelectedFlightSchedHelper(FlightSchedHelper selectedFlightSchedHelper) {
+        this.selectedFlightSchedHelper = selectedFlightSchedHelper;
     }
 
 }

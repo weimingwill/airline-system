@@ -478,11 +478,16 @@ public class BookingSession implements BookingSessionLocal {
             List<AirTicket> custAirTickets = new ArrayList<>();
 
             List<AddOn> addOns = new ArrayList<>();
-            addOns.add(getAddOnByDescription(customerHelper.getMeal().getDescription()));
+            Luggage luggage = null;
+            if (customerHelper.getMeal() != null) {
+                addOns.add(getAddOnByDescription(customerHelper.getMeal().getDescription()));
+            }
             if (customerHelper.isInsurance()) {
                 addOns.add(getTravelInsurance());
             }
-            Luggage luggage = getLuggageByMaxWeight(customerHelper.getLuggage().getMaxWeight());
+            if (customerHelper.getLuggage() != null) {
+                luggage = getLuggageByMaxWeight(customerHelper.getLuggage().getMaxWeight());
+            }
 
             Customer customer = createCustomer(customerHelper);
             for (FlightScheduleBookingClass fb : fbs) {

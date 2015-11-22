@@ -108,7 +108,7 @@
                         <p:commandButton value="Back" icon="fa fa-arrow-left" action="#{crmExNavController.redirectToPassengerInfo()}"/>
                     </p:column>
                     <p:column colspan="2" style="text-align: right;">
-                        <p:commandButton style="width: 160px;" value="Book your flight" icon="fa fa-arrow-right" action="#{bookingManager.bookingFlight()}" 
+                        <p:commandButton style="width: 160px;" value="Book your flight" icon="fa fa-arrow-right" action="#{bookingManager.bookingFlight(bookingManager.sources.get(0))}" 
                                          rendered="#{not bookingManager.isChangeAddOn}"/>
                         <p:commandButton style="width: 160px;" value="Payment" icon="fa fa-arrow-right" action="#{bookingManager.updateAddOn()}"
                                          rendered="#{bookingManager.isChangeAddOn}"/>

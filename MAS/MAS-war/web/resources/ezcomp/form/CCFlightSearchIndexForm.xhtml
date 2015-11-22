@@ -163,7 +163,7 @@
                 </p:row>
                 <p:row>
                     <p:column colspan="6">
-                        <p:commandButton value="Search" action="#{bookingManager.searchFlights()}" update="messages" />
+                        <p:commandButton value="Search" action="#{bookingManager.searchFlights(bookingManager.sources.get(0))}" update="messages" />
                     </p:column>
                 </p:row>
             </p:panelGrid>

@@ -52,7 +52,7 @@ public class RoutePlanningSession implements RoutePlanningSessionLocal {
 
     @Override
     public List<Airport> getAllAirports() {
-        Query query = em.createQuery("SELECT a FROM Airport a");
+        Query query = em.createQuery("SELECT a FROM Airport a ORDER BY a.city.cityName");
         List<Airport> airports;
         try {
             airports = (List<Airport>) query.getResultList();

@@ -28,12 +28,12 @@
             </p:row>
             <p:row>
                 <p:column>
-                    <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.selectedFlightSched}" fbHelper="#{bookingManager.selectedFbHelper}"/>
+                    <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.selectedFb.flightSchedule}" fb="#{bookingManager.selectedFb}"/>
                 </p:column>
             </p:row>
-            <p:row rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}">
+            <p:row rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFb.flightSchedule)}">
                 <p:column>
-                    <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}" fbHelper="#{bookingManager.selectedFbHelper}"/>
+                    <pa:CCBookingSumFlightSchedInfoPanel flightSchedule="#{bookingManager.getMappedFlightSched(bookingManager.selectedFb.flightSchedule)}" fb="#{bookingManager.selectedFb}"/>
                 </p:column>
             </p:row>
         </p:panelGrid>
@@ -45,7 +45,7 @@
                         <p:commandButton value="Back" icon="fa fa-arrow-left" action="#{arsNavController.redirectToPassengerInfo()}"/>
                     </p:column>
                     <p:column colspan="2" style="text-align: right;">
-                        <p:commandButton style="width: 160px;" value="Book your flight" icon="fa fa-arrow-right" action="#{bookingManager.bookingFlight()}"/>
+                        <p:commandButton style="width: 160px;" value="Book your flight" icon="fa fa-arrow-right" action="#{bookingManager.bookingFlight(bookingManager.sources.get(0))}"/>
                     </p:column>
                 </p:row>
             </p:panelGrid>

@@ -28,10 +28,10 @@
                 </p:row>
             </f:facet>
             <p:row>
-                <p:column>YOUR BOOKING NUMBER: #{booking.referenceNo}</p:column>
+                <p:column>Booking Reference Number: #{booking.referenceNo}</p:column>
             </p:row>
             <p:row>
-                <p:column>YOUR E-TICKET NUMBER: #{booking.geteTicketNo()}</p:column>
+                <p:column>E-Ticket Number: #{booking.geteTicketNo()}</p:column>
             </p:row>
         </p:panelGrid>
 
@@ -65,8 +65,14 @@
             <c:forEach items="#{custHelpers}" var="customerHelper">
                 <p:row>
                     <p:column colspan="2">#{customerHelper.customer.firstName} #{customerHelper.customer.lastName}</p:column>
-                    <p:column colspan="2">#{customerHelper.meal.description}</p:column>
-                    <p:column colspan="2">Extra luggage #{customerHelper.luggage.maxWeight} kg</p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel styleClass="fa fa-remove" rendered="#{empty customerHelper.meal.description}" />
+                        <p:outputLabel styleClass="#{customerHelper.meal.description}" rendered="#{not empty customerHelper.meal.description}" />
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel styleClass="fa fa-remove" rendered="#{empty customerHelper.luggage.maxWeight}" />
+                        <p:outputLabel value="Extra luggage #{customerHelper.luggage.maxWeight} kg" rendered="#{not empty customerHelper.luggage.maxWeight}" />
+                    </p:column>
                     <p:column colspan="2">                    
                         <p:outputLabel styleClass="fa fa-check" rendered="#{customerHelper.insurance}" />
                         <p:outputLabel styleClass="fa fa-remove" rendered="#{not customerHelper.insurance}" />
@@ -119,8 +125,11 @@
                         </p:outputLabel>
                     </p:column>  
                 </p:row>
-                <p:row>
-                    <p:column colspan="4">Extra luggage #{customerHelper.luggage.maxWeight} kg</p:column>
+                
+                <p:row rendered="#{not empty customerHelper.luggage.maxWeight}" >
+                    <p:column colspan="4">
+                        <p:outputLabel value="Extra luggage #{customerHelper.luggage.maxWeight} kg"/>
+                    </p:column>
                     <p:column colspan="2" styleClass="alignRight">
                         <p:outputLabel value="#{customerHelper.luggage.price}">
                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
