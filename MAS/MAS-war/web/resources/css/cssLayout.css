@@ -551,3 +551,19 @@ div.timeline-event-selected {
 .boldFont {
     font-weight: bold !important;
 }
+
+.centered {
+    text-align: center;
+    background-image:url("#{resource['images:homepage.jpg']}");
+}
+
+.textSize{
+    font-size: 18px;
+}
+
+div.ui-input-text {
+    width: 50px !important
+}
+div.ui-input-search {
+    width: 50px !important
+}
