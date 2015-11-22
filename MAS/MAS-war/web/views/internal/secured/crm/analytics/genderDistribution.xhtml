@@ -16,6 +16,8 @@
             <p:chart type="pie" model="#{analyticsController.pieChartModel}" style="width:400px;height:300px" />
             <p:chart type="metergauge" model="#{analyticsController.customerNo}" style="width:400px;height:250px" />
             <p:chart type="metergauge" model="#{analyticsController.memberNo}" style="width:400px;height:250px" />
+            <p:chart type="line" model="#{analyticsController.monthlySalesLineChart}" style="width:640px;height:300px;"/>
+
         </p:panelGrid>
 
         <h:panelGrid columns="2" columnClasses="left,right" style="width:100%">

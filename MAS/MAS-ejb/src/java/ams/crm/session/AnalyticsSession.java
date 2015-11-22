@@ -226,13 +226,11 @@ public class AnalyticsSession implements AnalyticsSessionLocal {
             bookings = (List<Booking>) query.getResultList();
         } catch (NoResultException e) {
         }
-        List<Booking> bookingsCopy = new ArrayList<>();
-        bookingsCopy = bookings;
 
         cal1.setTime(date);
         int year = cal1.YEAR;
         double[] Year_5 = new double[5];
-        for (int i = 4; i >= 0; i--) {
+        for (int i = 4; i > 0; i--) {
             double sales = 0;
 
             for (Booking booking : bookings) {

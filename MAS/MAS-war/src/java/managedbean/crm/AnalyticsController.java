@@ -430,6 +430,12 @@ public class AnalyticsController {
 
         int year = Calendar.getInstance().get(Calendar.YEAR);
 
+        System.out.println((year - 4) + "sales is " + yearlySales[0]);
+        System.out.println((year - 3) + "sales is " + yearlySales[1]);
+        System.out.println((year - 2) + "sales is " + yearlySales[2]);
+        System.out.println((year - 1) + "sales is " + yearlySales[3]);
+        System.out.println((year) + "sales is " + yearlySales[4]);
+
         series1.set(year - 4, yearlySales[0]);
         series1.set(year - 3, yearlySales[1]);
         series1.set(year - 2, yearlySales[2]);
