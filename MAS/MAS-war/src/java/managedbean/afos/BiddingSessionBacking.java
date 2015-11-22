@@ -14,6 +14,7 @@ import ams.afos.session.FlightCrewSessionLocal;
 import ams.afos.util.exception.BiddingSessionConflictException;
 import ams.afos.util.exception.FlightDutyConflictException;
 import ams.afos.util.exception.PairingConflictException;
+import ams.afos.util.helper.NoCrewFoundException;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -65,18 +66,6 @@ public class BiddingSessionBacking implements Serializable {
         getAllBiddingSession();
     }
 
-    private void getAllBiddingSession() {
-        setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
-    }
-
-    private void getFutureFlightDuties() {
-        setFlightDuties(flightCrewMgmtSession.getNextMonthFlightDuties());
-    }
-
-    private void getFuturePairings() {
-        setPairings(flightCrewMgmtSession.getNextMonthPairings());
-    }
-
     public void generatePairings() {
         try {
             flightCrewMgmtSession.generatePairings();
@@ -91,8 +80,8 @@ public class BiddingSessionBacking implements Serializable {
         try {
             flightCrewMgmtSession.generateBiddingSession(target);
             setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
-            msgController.addMessage("Bidding seesion of next month for "+ target +" generated succesfully");
-        } catch (BiddingSessionConflictException ex) {
+            msgController.addMessage("Bidding seesion of next month for " + target + " generated succesfully");
+        } catch (BiddingSessionConflictException | NoCrewFoundException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
     }
@@ -105,6 +94,22 @@ public class BiddingSessionBacking implements Serializable {
         } catch (FlightDutyConflictException ex) {
             msgController.addErrorMessage(ex.getMessage());
         }
+    }
+
+    public void closeBiddingSession() {
+        flightCrewMgmtSession.closeBiddingSession(selectedBiddingSession);
+    }
+
+    private void getAllBiddingSession() {
+        setBiddingSessions(flightCrewMgmtSession.getAllBiddingSession());
+    }
+
+    private void getFutureFlightDuties() {
+        setFlightDuties(flightCrewMgmtSession.getNextMonthFlightDuties());
+    }
+
+    private void getFuturePairings() {
+        setPairings(flightCrewMgmtSession.getNextMonthPairings());
     }
 
     //    public boolean getOnOffValue(BiddingSession session) {

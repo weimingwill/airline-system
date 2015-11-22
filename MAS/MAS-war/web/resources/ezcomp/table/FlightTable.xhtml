@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="selectionMode"/>
+        <cc:attribute name="selection"/>
+        <cc:attribute name="displayFooter"/>
+        <cc:attribute name="header"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dataTable id="flightTable" var="flight" value="#{flightDutyBacking.scheduledFlights}" rows="10" tableStyleClass="table-small"
+                     paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15"
+                     selection="#{cc.attrs.selection}" rowKey="#{flight.id}">
+            <f:facet name="header">
+                <p:outputLabel value="#{cc.attrs.header}" class="fa fa-info-circle" style="font-weight: bold"/>
+            </f:facet>
+            <p:column selectionMode="#{cc.attrs.selectionMode}" style="width:16px;text-align:center"/>
+            <p:column headerText="Flight Number" sortBy="#{flight.flightNo}">
+                <h:outputText value="#{flight.flightNo}" />
+            </p:column>
+            <p:column headerText="Return Flight" sortBy="#{flight.returnedFlight.flightNo}">
+                <h:outputText value="#{flight.returnedFlight.flightNo}" />
+            </p:column>
+            <p:column headerText="Depature" sortBy="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}">
+                <h:outputText id="depart" value="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}" />
+            </p:column>
+            <p:column headerText="Arrival" sortBy="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}">
+                <h:outputText value="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}" />
+            </p:column>
+            <p:column headerText="Total Duration (Hrs)" sortBy="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}">
+                <h:outputText value="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" >
+                    <f:convertNumber maxFractionDigits="2"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Total Distance (Km)" sortBy="#{flightScheduleManager.getRouteHelper(flight).getTotalDistance()}">
+                <h:outputText value="#{flightScheduleManager.getRouteHelper(flight).getTotalDistance()}" >
+                    <f:convertNumber maxFractionDigits="2"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Schedules" style="text-align: center">
+                <p:commandButton action="#{flightDutyBacking.onViewBtnClick()}" icon="fa fa-calendar" title="View Schedules">
+                    <f:setPropertyActionListener value="#{flight}" target="#{flightDutyBacking.selectedFlight}" />
+                </p:commandButton>
+            </p:column>
+            <p:column headerText="Pre-Flight Checklist" style="text-align: center">
+                <p:commandButton action="#{flightDutyBacking.onViewPreBtnClick()}" icon="fa fa-search" title="View Pre-Flight Checklist">
+                    <f:setPropertyActionListener value="#{flight}" target="#{flightDutyBacking.selectedFlightForChlt}" />
+                </p:commandButton>
+            </p:column>
+            <p:column headerText="Post-Flight Checklist" style="text-align: center">
+                <p:commandButton action="#{flightDutyBacking.onViewPostBtnClick()}" icon="fa fa-search" title="View Post-Flight Checklist">
+                    <f:setPropertyActionListener value="#{flight}" target="#{flightDutyBacking.selectedFlightForChlt}" />
+                </p:commandButton>
+            </p:column>
+            <f:facet name="footer">
+                <h:outputText value=" Please select checklist type" class="fa fa-info-circle" style="font-weight: bold" rendered="#{cc.attrs.displayFooter}"/>
+                <p:separator style="border:none" rendered="#{cc.attrs.displayFooter}"/>
+                <p:selectOneMenu value="#{flightDutyBacking.selectedType}" style="width: 150px" rendered="#{cc.attrs.displayFooter}">
+                    <f:selectItem itemLabel="Select One" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{flightDutyBacking.checklistTypes}" var="type" itemValue="#{type}" itemLabel="#{type}"/>
+                    <p:ajax event="change" listener="#{flightDutyBacking.onChecklistTypeChange}" update="templateDlg"/>
+                </p:selectOneMenu>
+            </f:facet>
+        </p:dataTable>
+    </cc:implementation>
+</html>

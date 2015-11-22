@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AfosTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
+
+    <ui:define name="content">
+        <p:tabView id="tabView">
+            <p:tab title="Crew Attendance" id="flightAttenanceTab">
+                <h:form>
+                    <p:messages id="messages1" showDetail="true" autoUpdate="true" closable="true"/>
+                    <ta:CCFlightScheduleTable attendanceReport="true" header="Flights Take off in 5 Hours (Click button to update crew attendance)"/>
+                </h:form>
+            </p:tab>
+            <p:tab title="Crew Duty Report" id="flightDutyTab">
+                <h:form>
+                    <p:messages id="messages2" showDetail="true" autoUpdate="true" closable="true"/>
+                    <ta:CCFlightScheduleTable flightReport="true" tableValue="#{flightDutyBacking.pastFlightSchedules}" header="Past Flight Schedules (Click button to view post flight duty report)"/>
+                </h:form>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+</ui:composition>

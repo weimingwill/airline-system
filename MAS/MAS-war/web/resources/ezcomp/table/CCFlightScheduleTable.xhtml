@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="attendanceReport" default="false"/>
+        <cc:attribute name="flightReport" default="false"/>
+        <cc:attribute name="header" default="Flight Schedules"/>
+        <cc:attribute name="tableValue" default="#{flightDutyBacking.futureFlightSchedules}"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dataTable id="flight-schedule" var="flightSchedule" value="#{cc.attrs.tableValue}" rows="10" tableStyleClass="table-small" selectionMode="single" rowKey="#{flightSchedule.flightScheduleId}"
+                     paginator="true" rowsPerPageTemplate="10,15"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+            <f:facet name="header" >
+                <p:outputLabel value="#{cc.attrs.header}"/>
+            </f:facet>
+            <p:column headerText="Flight No." sortBy="#{flightSchedule.flight.flightNo}">
+                <p:outputLabel value="#{flightSchedule.flight.flightNo}" />
+            </p:column>
+            <p:column headerText="Departure">
+                <p:outputLabel id="depart" value="#{flightSchedule.leg.departAirport.city.cityName}">
+                    <p:tooltip for="depart" value="#{flightSchedule.leg.departAirport.country.countryName} - #{flightSchedule.leg.departAirport.city.cityName} - #{flightSchedule.leg.departAirport.airportName}" trackMouse="true"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Departure Date" sortBy="#{flightSchedule.departDate}">
+                <p:outputLabel value="#{flightSchedule.departDate}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Departure Time" sortBy="#{flightSchedule.departDate}">
+                <p:outputLabel value="#{flightSchedule.departDate}">
+                    <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Arrival">
+                <p:outputLabel id="arrival" value="#{flightSchedule.leg.arrivalAirport.city.cityName}" >
+                    <p:tooltip for="arrival" value="#{flightSchedule.leg.arrivalAirport.country.countryName} - #{flightSchedule.leg.arrivalAirport.city.cityName} - #{flightSchedule.leg.arrivalAirport.airportName}" trackMouse="true"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Arrival Date" sortBy="#{flightSchedule.arrivalDate}">
+                <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Arrival Time" sortBy="#{flightSchedule.arrivalDate}">
+                <p:outputLabel value="#{flightSchedule.arrivalDate}">
+                    <f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:column>
+            <p:column headerText="Aircraft Type">
+                <p:outputLabel value="#{flightSchedule.aircraft.aircraftType.typeCode}" />
+            </p:column>
+            <p:column headerText="Aircraft Tail No.">
+                <p:outputLabel value="#{flightSchedule.aircraft.tailNo}" />
+            </p:column>
+            <p:column headerText="Crews" rendered="#{cc.attrs.attendanceReport}">
+                <p:commandButton icon="fa fa-users" action="#{flightDutyBacking.onViewCrewsBtnClick()}">
+                    <f:setPropertyActionListener value="#{flightSchedule}" target="#{flightDutyBacking.selectedFlightSchedule}" />
+                </p:commandButton>
+            </p:column>
+            <p:column headerText="Pre-Flight Report" rendered="#{cc.attrs.flightReport}">
+                <p:commandButton icon="fa fa-file-text-o" action="#{flightDutyBacking.onViewReportBtnClick('Pre-Flight')}">
+                    <f:setPropertyActionListener value="#{flightSchedule}" target="#{flightDutyBacking.selectedFlightSchedule}" />
+                </p:commandButton>
+            </p:column>
+            <p:column headerText="Post-Flight Report" rendered="#{cc.attrs.flightReport}">
+                <p:commandButton icon="fa fa-file-text-o" action="#{flightDutyBacking.onViewReportBtnClick('Post-Flight')}">
+                    <f:setPropertyActionListener value="#{flightSchedule}" target="#{flightDutyBacking.selectedFlightSchedule}" />
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+    </cc:implementation>
+</html>

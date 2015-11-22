@@ -18,6 +18,8 @@ import java.sql.Statement;
 public class MySQLConnection {
 
     private static final String CONNECTION_LINK = "jdbc:mysql://is3102-i.comp.nus.edu.sg:3306/mas";
+    private static final String CONNECTION_LINK_LOCAL = "jdbc:mysql://localhost:8889/mas";
+
     private static final String USERNAME = "root";
     private static final String PASSWORD = "root";
 
@@ -37,6 +39,8 @@ public class MySQLConnection {
 
         try {
             connection = DriverManager.getConnection(CONNECTION_LINK, USERNAME, PASSWORD);
+//            connection = DriverManager.getConnection(CONNECTION_LINK_LOCAL, USERNAME, PASSWORD);
+
         } catch (SQLException e) {
             System.out.println("Connection Failed! Check output console");
             e.printStackTrace();

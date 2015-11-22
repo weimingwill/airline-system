@@ -25,6 +25,8 @@ public class ChecklistItem implements Serializable {
     private String name;
     private String description;
     private Double itemValue;
+    private String remark;
+    private String checkedBy;
 
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdTime;
@@ -99,6 +101,34 @@ public class ChecklistItem implements Serializable {
      */
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
+    }
+
+    /**
+     * @return the remark
+     */
+    public String getRemark() {
+        return remark;
+    }
+
+    /**
+     * @param remark the remark to set
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    /**
+     * @return the checkedBy
+     */
+    public String getCheckedBy() {
+        return checkedBy;
+    }
+
+    /**
+     * @param checkedBy the checkedBy to set
+     */
+    public void setCheckedBy(String checkedBy) {
+        this.checkedBy = checkedBy;
     }
 
 }

@@ -47,8 +47,64 @@ public class AfosNavController {
     public String toBidPairings() {
         return AFOS_URL + "crew_schedule/bidPairings.xhtml" + REDIRECT;
     }
-    
-    public String toViewBidHist(){
+
+    public String toViewBidHist() {
         return AFOS_URL + "crew_schedule/viewBidHist.xhtml" + REDIRECT;
+    }
+
+    public String toSelectChecklist() {
+        return AFOS_URL + "crew_regulation/selectChecklistType.xhtml" + REDIRECT;
+    }
+
+    public String toCreateChecklist() {
+        return AFOS_URL + "crew_regulation/createChecklist.xhtml" + REDIRECT;
+    }
+
+    public String toCrewReporting() {
+        return AFOS_URL + "crew_regulation/crewReporting.xhtml" + REDIRECT;
+    }
+
+    public String toUpdateCrewAttendance() {
+        return AFOS_URL + "crew_regulation/updateCrewAttendance.xhtml" + REDIRECT;
+    }
+
+    public String toViewPostDutyReport() {
+        return AFOS_URL + "crew_regulation/viewDutyReport.xhtml" + REDIRECT;
+    }
+
+    public String toReportPreFlightDuty() {
+        return AFOS_URL + "crew_regulation/reportPreFlightDuty.xhtml" + REDIRECT;
+    }
+
+    public String toReportPostFlightDuty() {
+        return AFOS_URL + "crew_regulation/reportPostFlightDuty.xhtml" + REDIRECT;
+    }
+
+    public String toUpdateChecklist() {
+        return AFOS_URL + "crew_regulation/updateChecklist.xhtml" + REDIRECT;
+    }
+
+    public String toSwapWorkingSlots() {
+        return AFOS_URL + "crew_schedule/swapWorkingSlots.xhtml" + REDIRECT;
+    }
+
+    public String toManageSwappingRequests() {
+        return AFOS_URL + "crew_schedule/manageSwapping.xhtml" + REDIRECT;
+    }
+
+    public String toViewAllBidHist() {
+        return AFOS_URL + "crew_schedule/viewAllBidHist.xhtml" + REDIRECT;
+    }
+
+    public String toViewAllSwapHist() {
+        return AFOS_URL + "crew_schedule/viewAllSwapHist.xhtml" + REDIRECT;
+    }
+
+    public String toViewMaintSchedules() {
+        return AFOS_URL + "maint_mgmt/viewMaintSchedule.xhtml" + REDIRECT;
+    }
+
+    public String toCreateMaintChecklist() {
+        return AFOS_URL + "maint_mgmt/createMaintChecklist.xhtml" + REDIRECT;
     }
 }
