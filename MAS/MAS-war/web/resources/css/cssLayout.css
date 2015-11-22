@@ -556,3 +556,10 @@ div.timeline-event-selected {
 .textSize{
     font-size: 18px;
 }
+
+div.ui-input-text {
+    width: 50px !important
+}
+div.ui-input-search {
+    width: 50px !important
+}
