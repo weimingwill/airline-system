@@ -550,4 +550,9 @@ div.timeline-event-selected {
 
 .centered {
     text-align: center;
+    background-image:url("#{resource['images:homepage.jpg']}");
+}
+
+.textSize{
+    font-size: 18px;
 }
