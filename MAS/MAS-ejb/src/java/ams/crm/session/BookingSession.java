@@ -541,7 +541,7 @@ public class BookingSession implements BookingSessionLocal {
         Customer cust = null;
         try {
             cust = (Customer) query.getSingleResult();
-        } catch (NoResultException e) {
+        } catch (Exception e) {
         }
         return cust;
     }
