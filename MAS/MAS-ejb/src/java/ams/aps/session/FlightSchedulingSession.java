@@ -526,6 +526,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
         List<FlightScheduleBookingClass> flightScheduleBookingClasses = new ArrayList<>();
         for (TicketFamily ticketFamily : revMgmtSession.getFlightScheduleTixFams(flightSchedule.getFlightScheduleId())) {
             //get min price as the basic price
+            System.out.println("ticket family"+ticketFamily.getName()+ticketFamily.getCabinClass().getName());
             double price = revMgmtSession.calTicketFamilyPrice(flightSchedule.getFlightScheduleId(), ticketFamily.getTicketFamilyId());
             if (basicPrice > price) {
                 basicPrice = price;
@@ -550,7 +551,7 @@ public class FlightSchedulingSession implements FlightSchedulingSessionLocal {
                     System.out.println(ex.getMessage());
                 }
                 flightSchedBookingCls.setSeatQty(cabinClsTixFam.getSeatQty());
-                flightSchedBookingCls.setPrice((float) price);
+                flightSchedBookingCls.setPrice((float) (price + flightSchedBookingCls.getBookingClass().getTicketFamily().getCabinClass().getBasePrice()));
                 em.merge(flightSchedBookingCls);
                 em.flush();
                 flightScheduleBookingClasses.add(flightSchedBookingCls);
