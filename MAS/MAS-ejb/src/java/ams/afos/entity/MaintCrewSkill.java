@@ -30,7 +30,7 @@ public class MaintCrewSkill implements Serializable {
     private MaintCrewSkillId maintCrewSkillId;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @PrimaryKeyJoinColumn(name = "MAINTCREWID", referencedColumnName = "SYSTEMUSERID")
+    @PrimaryKeyJoinColumn(name = "SYSTEMUSERID", referencedColumnName = "SYSTEMUSERID")
     private MaintCrew maintCrew;
 
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)

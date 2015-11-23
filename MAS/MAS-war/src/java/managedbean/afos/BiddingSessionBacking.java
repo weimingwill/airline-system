@@ -6,7 +6,6 @@
 package managedbean.afos;
 
 import ams.afos.entity.BiddingSession;
-import ams.afos.entity.FlightCrew;
 import ams.afos.entity.FlightDuty;
 import ams.afos.entity.Pairing;
 import ams.afos.session.FlightCrewMgmtSessionLocal;

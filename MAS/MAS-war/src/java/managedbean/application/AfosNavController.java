@@ -5,6 +5,7 @@
  */
 package managedbean.application;
 
+import java.io.Serializable;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -16,7 +17,7 @@ import managedbean.afos.FlightCrewBiddingManager;
  */
 @Named(value = "afosNavController")
 @RequestScoped
-public class AfosNavController {
+public class AfosNavController implements Serializable{
 
     @Inject
     FlightCrewBiddingManager biddingManager;

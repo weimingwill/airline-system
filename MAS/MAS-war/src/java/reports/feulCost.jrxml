@@ -19,22 +19,22 @@
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT
-     flight.`ID` AS flight_ID,
-     flight.`FLIGHTNO` AS flight_FLIGHTNO,
-     flight.`WEEKLYFREQUENCY` AS flight_WEEKLYFREQUENCY,
-     flight.`flyDistance` AS flight_flyDistance
+     FLIGHT.`ID` AS FLIGHT_ID,
+     FLIGHT.`FLIGHTNO` AS FLIGHT_FLIGHTNO,
+     FLIGHT.`WEEKLYFREQUENCY` AS FLIGHT_WEEKLYFREQUENCY,
+     FLIGHT.`flyDistance` AS FLIGHT_FLYDISTANCE
 FROM
-     `flight` flight]]>
+     `FLIGHT` FLIGHT]]>
 	</queryString>
-	<field name="flight_ID" class="java.lang.Long"/>
-	<field name="flight_FLIGHTNO" class="java.lang.String"/>
-	<field name="flight_WEEKLYFREQUENCY" class="java.lang.Integer"/>
-	<field name="flight_flyDistance" class="java.lang.Double"/>
+	<field name="FLIGHT_ID" class="java.lang.Long"/>
+	<field name="FLIGHT_FLIGHTNO" class="java.lang.String"/>
+	<field name="FLIGHT_WEEKLYFREQUENCY" class="java.lang.Integer"/>
+	<field name="FLIGHT_FLYDISTANCE" class="java.lang.Double"/>
 	<variable name="oilPrice" class="java.lang.Double">
 		<variableExpression><![CDATA[new Double(50.27)]]></variableExpression>
 	</variable>
 	<variable name="flightDistance" class="java.lang.Double">
-		<variableExpression><![CDATA[new Double($F{flight_WEEKLYFREQUENCY}.intValue()*$F{flight_flyDistance}.doubleValue())]]></variableExpression>
+		<variableExpression><![CDATA[new Double($F{FLIGHT_WEEKLYFREQUENCY}.intValue()*$F{FLIGHT_FLYDISTANCE}.doubleValue())]]></variableExpression>
 	</variable>
 	<variable name="totalDistance" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$V{flightDistance}]]></variableExpression>
@@ -127,21 +127,21 @@ FROM
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{flight_FLIGHTNO}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{FLIGHT_FLIGHTNO}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="201" y="0" width="187" height="14" uuid="80869c23-4b13-4409-b8bb-30bdd88a684f"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{flight_WEEKLYFREQUENCY}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{FLIGHT_WEEKLYFREQUENCY}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="438" y="0" width="143" height="14" uuid="f52f8080-5b91-4d19-be0b-d03f758c14bd"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{flight_flyDistance}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{FLIGHT_FLYDISTANCE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="655" y="0" width="143" height="14" uuid="4060fa4c-dbab-411d-b9b8-a69e2d5a4f21"/>

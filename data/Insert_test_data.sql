@@ -77,6 +77,10 @@ INSERT INTO `mas`.`SYSTEMROLE_PERMISSION`(`permissions_PERMISSIONID`,`systemRole
 (SELECT `SYSTEMROLEID` FROM `mas`.`SYSTEMROLE` WHERE `ROLENAME` = 'Check-in Counter Staff'));
 
 INSERT INTO `mas`.`SYSTEMROLE_PERMISSION`(`permissions_PERMISSIONID`,`systemRoles_SYSTEMROLEID`)VALUES(
+(SELECT `PERMISSIONID` FROM `mas`.`PERMISSION` WHERE `SYSTEM`='Departure Control System' AND `SYSTEMMODULE`='Baggage Management Module'),
+(SELECT `SYSTEMROLEID` FROM `mas`.`SYSTEMROLE` WHERE `ROLENAME` = 'Check-in Counter Staff'));
+
+INSERT INTO `mas`.`SYSTEMROLE_PERMISSION`(`permissions_PERMISSIONID`,`systemRoles_SYSTEMROLEID`)VALUES(
 (SELECT `PERMISSIONID` FROM `mas`.`PERMISSION` WHERE `SYSTEM`='Customer Relationship Management System' AND `SYSTEMMODULE`='Customer Management Module'),
 (SELECT `SYSTEMROLEID` FROM `mas`.`SYSTEMROLE` WHERE `ROLENAME` = 'Marketing Staff'));
 

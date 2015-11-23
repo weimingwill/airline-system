@@ -25,11 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 import javax.inject.Inject;
 import managedbean.application.AasNavController;
@@ -96,8 +94,6 @@ public class reportController implements Serializable{
     }
 
     public String generateRevenueReport() {
-        System.out.println(System.getProperty("user.dir"));
-
         Connection connection;
         connection = MySQLConnection.establishConnection();
         System.out.println("start to generate revenue report");

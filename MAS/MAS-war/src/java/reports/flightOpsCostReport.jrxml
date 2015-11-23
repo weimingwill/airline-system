@@ -19,17 +19,17 @@
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT
-     flightcrew.`SYSTEMUSERID` AS flightcrew_SYSTEMUSERID,
-     flightcrew.`FLIGHTCREWID` AS flightcrew_FLIGHTCREWID,
-     flightcrew.`TOTALFLYINGDIST` AS flightcrew_TOTALFLYINGDIST,
-     flightcrew.`TOTALFLYINGTIME` AS flightcrew_TOTALFLYINGTIME
+     FLIGHTCREW.`SYSTEMUSERID` AS FLIGHTCREW_SYSTEMUSERID,
+     FLIGHTCREW.`FLIGHTCREWID` AS FLIGHTCREW_FLIGHTCREWID,
+     FLIGHTCREW.`TOTALFLYINGDIST` AS FLIGHTCREW_TOTALFLYINGDIST,
+     FLIGHTCREW.`TOTALFLYINGTIME` AS FLIGHTCREW_TOTALFLYINGTIME
 FROM
-     `flightcrew` flightcrew]]>
+     `FLIGHTCREW` FLIGHTCREW]]>
 	</queryString>
-	<field name="flightcrew_SYSTEMUSERID" class="java.lang.Long"/>
-	<field name="flightcrew_FLIGHTCREWID" class="java.lang.String"/>
-	<field name="flightcrew_TOTALFLYINGDIST" class="java.lang.Double"/>
-	<field name="flightcrew_TOTALFLYINGTIME" class="java.lang.Double"/>
+	<field name="FLIGHTCREW_SYSTEMUSERID" class="java.lang.Long"/>
+	<field name="FLIGHTCREW_FLIGHTCREWID" class="java.lang.String"/>
+	<field name="FLIGHTCREW_TOTALFLYINGDIST" class="java.lang.Double"/>
+	<field name="FLIGHTCREW_TOTALFLYINGTIME" class="java.lang.Double"/>
 	<variable name="hourlyPay" class="java.lang.Double">
 		<variableExpression><![CDATA[new Double(45.0)]]></variableExpression>
 	</variable>
@@ -37,7 +37,7 @@ FROM
 		<variableExpression><![CDATA[new Double($V{totalFlyingTime}.doubleValue()*$V{hourlyPay}.doubleValue())]]></variableExpression>
 	</variable>
 	<variable name="totalFlyingTime" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{flightcrew_TOTALFLYINGTIME}]]></variableExpression>
+		<variableExpression><![CDATA[$F{FLIGHTCREW_TOTALFLYINGTIME}]]></variableExpression>
 	</variable>
 	<background>
 		<band height="555" splitType="Stretch">
@@ -110,14 +110,14 @@ FROM
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{flightcrew_FLIGHTCREWID}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{FLIGHTCREW_FLIGHTCREWID}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="592" y="0" width="210" height="14" uuid="87d9650c-fb76-44b6-ae7f-7428af957869"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{flightcrew_TOTALFLYINGTIME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{FLIGHTCREW_TOTALFLYINGTIME}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

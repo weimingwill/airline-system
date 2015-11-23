@@ -5,6 +5,7 @@
  */
 package managedbean.application;
 
+import java.io.Serializable;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -17,7 +18,7 @@ import managedbean.dcs.PassengerManager;
  */
 @Named(value = "dcsNavController")
 @RequestScoped
-public class DcsNavController {
+public class DcsNavController implements Serializable{
 
     private final String REDIRECT = "?faces-redirect=true";
     private final String DCS_URL = "/views/internal/secured/dcs/";

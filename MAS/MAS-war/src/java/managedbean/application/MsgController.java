@@ -5,6 +5,7 @@
  */
 package managedbean.application;
 
+import java.io.Serializable;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.application.FacesMessage;
@@ -16,7 +17,7 @@ import javax.faces.context.FacesContext;
  */
 @Named(value = "msgController")
 @ApplicationScoped
-public class MsgController {
+public class MsgController implements Serializable{
 
     /**
      * Creates a new instance of MsgController

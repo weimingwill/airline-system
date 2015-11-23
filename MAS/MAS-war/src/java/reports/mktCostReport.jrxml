@@ -19,21 +19,21 @@
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT
-     mktcampaign.`ID` AS mktcampaign_ID,
-     mktcampaign.`BUDGET` AS mktcampaign_BUDGET,
-     mktcampaign.`NAME` AS mktcampaign_NAME,
-     mktcampaign.`TYPE` AS mktcampaign_TYPE,
-     mktcampaign.`AUDIENCESIZE` AS mktcampaign_AUDIENCESIZE
+     MKTCAMPAIGN.`ID` AS MKTCAMPAIGN_ID,
+     MKTCAMPAIGN.`BUDGET` AS MKTCAMPAIGN_BUDGET,
+     MKTCAMPAIGN.`NAME` AS MKTCAMPAIGN_NAME,
+     MKTCAMPAIGN.`TYPE` AS MKTCAMPAIGN_TYPE,
+     MKTCAMPAIGN.`AUDIENCESIZE` AS MKTCAMPAIGN_AUDIENCESIZE
 FROM
-     `mktcampaign` mktcampaign]]>
+     `MKTCAMPAIGN` MKTCAMPAIGN]]>
 	</queryString>
-	<field name="mktcampaign_ID" class="java.lang.Long"/>
-	<field name="mktcampaign_BUDGET" class="java.lang.Double"/>
-	<field name="mktcampaign_NAME" class="java.lang.String"/>
-	<field name="mktcampaign_TYPE" class="java.lang.String"/>
-	<field name="mktcampaign_AUDIENCESIZE" class="java.lang.Integer"/>
+	<field name="MKTCAMPAIGN_ID" class="java.lang.Long"/>
+	<field name="MKTCAMPAIGN_BUDGET" class="java.lang.Double"/>
+	<field name="MKTCAMPAIGN_NAME" class="java.lang.String"/>
+	<field name="MKTCAMPAIGN_TYPE" class="java.lang.String"/>
+	<field name="MKTCAMPAIGN_AUDIENCESIZE" class="java.lang.Integer"/>
 	<variable name="totalMktCost" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{mktcampaign_BUDGET}]]></variableExpression>
+		<variableExpression><![CDATA[$F{MKTCAMPAIGN_BUDGET}]]></variableExpression>
 	</variable>
 	<background>
 		<band height="555" splitType="Stretch">
@@ -87,21 +87,21 @@ FROM
 					<textElement>
 						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
 					</textElement>
-					<text><![CDATA[mktcampaign_TYPE]]></text>
+					<text><![CDATA[MKTCAMPAIGN_TYPE]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="Column header" positionType="Float" x="217" y="0" width="180" height="14" forecolor="#000000" uuid="67ef6b43-d729-4ec5-bb53-be26711a58e4"/>
 					<textElement>
 						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
 					</textElement>
-					<text><![CDATA[mktcampaign_AUDIENCESIZE]]></text>
+					<text><![CDATA[MKTCAMPAIGN_AUDIENCESIZE]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="Column header" positionType="Float" x="424" y="0" width="151" height="14" forecolor="#000000" uuid="160cb3de-fef2-4c31-948b-b3e21afce076"/>
 					<textElement>
 						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
 					</textElement>
-					<text><![CDATA[mktcampaign_BUDGET]]></text>
+					<text><![CDATA[MKTCAMPAIGN_BUDGET]]></text>
 				</staticText>
 			</frame>
 			<staticText>
@@ -109,14 +109,14 @@ FROM
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
 				</textElement>
-				<text><![CDATA[mktcampaign_ID]]></text>
+				<text><![CDATA[MKTCAMPAIGN_ID]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" positionType="Float" x="129" y="0" width="132" height="14" forecolor="#000000" uuid="c3d5c2fc-351f-4dbe-82fd-5a9439b4e93b"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
 				</textElement>
-				<text><![CDATA[mktcampaign_NAME]]></text>
+				<text><![CDATA[MKTCAMPAIGN_NAME]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -130,35 +130,35 @@ FROM
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mktcampaign_ID}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{MKTCAMPAIGN_ID}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="129" y="1" width="144" height="14" uuid="3a176d01-7cda-4cf6-9632-2f7b2e2e39f1"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mktcampaign_NAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{MKTCAMPAIGN_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="292" y="1" width="136" height="14" uuid="8cbbba45-08f6-43f1-a487-b4966ad2045e"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mktcampaign_TYPE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{MKTCAMPAIGN_TYPE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="444" y="0" width="192" height="14" uuid="017e7469-df38-4112-9230-a783a5a22024"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mktcampaign_AUDIENCESIZE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{MKTCAMPAIGN_AUDIENCESIZE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="651" y="0" width="151" height="14" uuid="579917bb-3aeb-4001-a1bd-395092b9c389"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mktcampaign_BUDGET}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{MKTCAMPAIGN_BUDGET}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

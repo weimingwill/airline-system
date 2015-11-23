@@ -19,27 +19,27 @@
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT
-     aircraft.`AIRCRAFTID` AS aircraft_AIRCRAFTID,
-     aircraft.`ADDONDATE` AS aircraft_ADDONDATE,
-     aircraft.`AVGUNITOILUSAGE` AS aircraft_AVGUNITOILUSAGE,
-     aircraft.`COST` AS aircraft_COST,
-     aircraft.`LIFETIME` AS aircraft_LIFETIME,
-     aircraft.`SCHEDULED` AS aircraft_SCHEDULED,
-     aircraft.`SOURCE` AS aircraft_SOURCE,
-     aircraft.`STATUS` AS aircraft_STATUS,
-     aircraft.`TAILNO` AS aircraft_TAILNO,
-     aircraft.`AIRCRAFTTYPE_ID` AS aircraft_AIRCRAFTTYPE_ID
+     AIRCRAFT.`AIRCRAFTID` AS AIRCRAFT_AIRCRAFTID,
+     AIRCRAFT.`ADDONDATE` AS AIRCRAFT_ADDONDATE,
+     AIRCRAFT.`AVGUNITOILUSAGE` AS AIRCRAFT_AVGUNITOILUSAGE,
+     AIRCRAFT.`COST` AS AIRCRAFT_COST,
+     AIRCRAFT.`LIFETIME` AS AIRCRAFT_LIFETIME,
+     AIRCRAFT.`SCHEDULED` AS AIRCRAFT_SCHEDULED,
+     AIRCRAFT.`SOURCE` AS AIRCRAFT_SOURCE,
+     AIRCRAFT.`STATUS` AS AIRCRAFT_STATUS,
+     AIRCRAFT.`TAILNO` AS AIRCRAFT_TAILNO,
+     AIRCRAFT.`AIRCRAFTTYPE_ID` AS AIRCRAFT_AIRCRAFTTYPE_ID
 FROM
-     `aircraft` aircraft]]>
+     `AIRCRAFT` AIRCRAFT]]>
 	</queryString>
-	<field name="aircraft_COST" class="java.lang.Float"/>
-	<field name="aircraft_SOURCE" class="java.lang.String"/>
-	<field name="aircraft_TAILNO" class="java.lang.String"/>
+	<field name="AIRCRAFT_COST" class="java.lang.Float"/>
+	<field name="AIRCRAFT_SOURCE" class="java.lang.String"/>
+	<field name="AIRCRAFT_TAILNO" class="java.lang.String"/>
 	<variable name="totalFleetCost" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{aircraft_COST}]]></variableExpression>
+		<variableExpression><![CDATA[$F{AIRCRAFT_COST}]]></variableExpression>
 	</variable>
-	<group name="aircraft_TAILNO">
-		<groupExpression><![CDATA[$F{aircraft_TAILNO}]]></groupExpression>
+	<group name="AIRCRAFT_TAILNO">
+		<groupExpression><![CDATA[$F{AIRCRAFT_TAILNO}]]></groupExpression>
 		<groupHeader>
 			<band height="24">
 				<frame>
@@ -57,7 +57,7 @@ FROM
 					<textElement>
 						<font fontName="Arial" isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{aircraft_TAILNO}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{AIRCRAFT_TAILNO}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -139,14 +139,14 @@ element)]]></text>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
 				</textElement>
-				<text><![CDATA[aircraft_COST]]></text>
+				<text><![CDATA[AIRCRAFT_COST]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" positionType="Float" x="0" y="0" width="287" height="14" forecolor="#000000" uuid="e7e5127b-fc05-4056-82be-2e2857fd5a1d"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
 				</textElement>
-				<text><![CDATA[aircraft_SOURCE]]></text>
+				<text><![CDATA[AIRCRAFT_SOURCE]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -160,14 +160,14 @@ element)]]></text>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{aircraft_SOURCE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{AIRCRAFT_SOURCE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="664" y="1" width="134" height="14" uuid="9289ad60-9704-43ed-979d-b28090f16bec"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{aircraft_COST}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{AIRCRAFT_COST}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
