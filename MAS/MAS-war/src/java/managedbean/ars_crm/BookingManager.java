@@ -122,7 +122,6 @@ public class BookingManager implements Serializable {
     private FlightSchedBookingClsHelper selectedFbHelper;
     private FlightScheduleBookingClass selectedFb;
     private List<FlightSchedBookingClsHelper> flightSchedBookingClsHelpers = new ArrayList<>();
-    private Map<Long, List<FlightSchedBookingClsHelper>> tixFamFbMap = new HashMap<>();
     //Passenger details
     private BookingHelper bookingHelper;
 
@@ -233,7 +232,7 @@ public class BookingManager implements Serializable {
         System.out.println("Departure date: " + deptDate);
     }
 
-    public String searchFlights(String method) {
+    public String searchFlights(String method, String channel) {
         selectedFbHelper = null;
         searchDeptDate = DateHelper.convertDateTime(deptDate);
         searchArrDate = DateHelper.convertDateTime(arrDate);
@@ -241,30 +240,14 @@ public class BookingManager implements Serializable {
             RegCust regCust = getRegCustIfLoggined();
             bookingSession.verifyPromoCodeUsability(promoCode, regCust);
             if (choice.equals("oneway")) {
-                searchForOneWayFlights();
+                searchForOneWayFlights(channel);
             } else if (choice.equals("return")) {
-                searchForOneWayFlights();
+                searchForOneWayFlights(channel);
 //                searchForReturnFlights();
             }
             if (method.equals(sources.get(0))) {
                 return crmExNavController.redirectToSearchFlightResult();
             } else {
-                List<Long> tixFams = new ArrayList<>();
-                for (FlightSchedBookingClsHelper fbHelper : flightSchedBookingClsHelpers) {
-                    Long tixFamId = fbHelper.getTicketFamily().getTicketFamilyId();
-                    if (!tixFams.contains(tixFamId)) {
-                        tixFams.add(tixFamId);
-                    }
-                }
-                for (Long tixFamId : tixFams) {
-                    List<FlightSchedBookingClsHelper> fbHelpers = new ArrayList<>();
-                    for (FlightSchedBookingClsHelper fbHelper : flightSchedBookingClsHelpers) {
-                        if (fbHelper.getTicketFamily().getTicketFamilyId().equals(tixFamId)) {
-                            fbHelpers.add(fbHelper);
-                        }
-                    }
-                    tixFamFbMap.put(tixFamId, fbHelpers);
-                }
                 return crmMobileNavController.redirectToSearchFlightResult();
             }
         } catch (NoSuchFlightSchedulException | InvalidPromoCodeException e) {
@@ -287,11 +270,11 @@ public class BookingManager implements Serializable {
         return regCust;
     }
 
-    public void searchForOneWayFlights() throws NoSuchFlightSchedulException {
+    public void searchForOneWayFlights(String channel) throws NoSuchFlightSchedulException {
         System.out.println("searchForOneWayFlights");
         flightSchedHelpers = new ArrayList<>();
         inDirectFlightSchedMaps = new HashMap<>();
-        flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, inDirectFlightSchedMaps, FlightSchedStatus.METHOD_FLIGHT_STATUS);
+        flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, deptDate, inDirectFlightSchedMaps, FlightSchedStatus.METHOD_FLIGHT_STATUS, channel);
         getFlightSchedLowestTixFams();
         getAllFlightSchedBookingClsHelpers();
 
@@ -659,7 +642,7 @@ public class BookingManager implements Serializable {
             }
         }
         try {
-            searchForOneWayFlights();
+            searchForOneWayFlights(selectedFb.getBookingClass().getChannel());
             onFlightSchedRadioSelected();
         } catch (Exception e) {
         }
@@ -1097,13 +1080,6 @@ public class BookingManager implements Serializable {
         this.flightSchedBookingClsHelpers = flightSchedBookingClsHelpers;
     }
 
-//    public Map<Long, List<FlightSchedBookingClsHelper>> getTixFamFbMap() {
-//        return tixFamFbMap;
-//    }
-//
-//    public void setTixFamFbMap(Map<Long, List<FlightSchedBookingClsHelper>> tixFamFbMap) {
-//        this.tixFamFbMap = tixFamFbMap;
-//    }
     public FlightSchedHelper getSelectedFlightSchedHelper() {
         return selectedFlightSchedHelper;
     }

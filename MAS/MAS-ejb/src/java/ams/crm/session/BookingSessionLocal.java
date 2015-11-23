@@ -32,7 +32,7 @@ import javax.ejb.Local;
 @Local
 public interface BookingSessionLocal {
 
-    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps, String method) throws NoSuchFlightSchedulException;
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps, String method, String channel) throws NoSuchFlightSchedulException;
 
     public List<TicketFamily> getFlightSchedLowestTixFams(List<FlightSchedule> flightScheds, CabinClass cabinClass);
 
