@@ -206,7 +206,7 @@ public class AnalyticsSession implements AnalyticsSessionLocal {
                     sales = sales + booking.getPrice();
                 }
             }
-            System.out.println("Sales for month"+ (i+1)+"is"+sales);
+            System.out.println("Sales for month" + (i + 1) + "is" + sales);
             month[i] = sales;
         }
         return month;
@@ -226,23 +226,25 @@ public class AnalyticsSession implements AnalyticsSessionLocal {
             bookings = (List<Booking>) query.getResultList();
         } catch (NoResultException e) {
         }
-        List<Booking> bookingsCopy = new ArrayList<>();
-        bookingsCopy = bookings;
 
         cal1.setTime(date);
-        int year = cal1.YEAR;
         double[] Year_5 = new double[5];
         for (int i = 4; i >= 0; i--) {
+            System.out.println("rotate"+i);
             double sales = 0;
 
             for (Booking booking : bookings) {
                 cal2.setTime(booking.getCreatedTime());
-                boolean sameMonth = cal2.get(Calendar.YEAR) == (year - i);
+                System.out.println("booking year is" + cal2.YEAR);
+                System.out.println("today year is" + cal1.YEAR);
+
+                boolean sameMonth = (cal2.get(Calendar.YEAR) == (cal1.get(Calendar.YEAR) - i));
                 if (sameMonth == true) {
                     sales = sales + booking.getPrice();
                 }
             }
-            Year_5[i] = sales;
+            System.out.println("sales ="+sales);
+            Year_5[4-i] = sales;
         }
         return Year_5;
     }

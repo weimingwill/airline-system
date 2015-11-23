@@ -19,6 +19,7 @@ import javax.enterprise.context.RequestScoped;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ import org.primefaces.model.StreamedContent;
  */
 @Named(value = "reportController")
 @RequestScoped
-public class reportController {
+public class reportController implements Serializable{
 
     @Inject
     AasNavController aasNavController;

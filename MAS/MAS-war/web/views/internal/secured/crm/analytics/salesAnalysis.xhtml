@@ -18,17 +18,17 @@
                 <p:ajax event="reorder" listener="#{analyticsController.handleReorder}" update="msgs" />
 
                 <p:panel id="daySales" header="Today's sales" style="width:320px;height:200px;">
-                    <p:outputLabel value="$#{analyticsController.daySales}">
+                    <p:outputLabel value="$#{analyticsController.daySales}" style="font-weight:bold;font-size: 36px">
                     </p:outputLabel>
                 </p:panel>
 
                 <p:panel id="monthSales" header="Current month's sales" style="width:320px;height:200px;">
-                    <p:outputLabel value="$#{analyticsController.monthSales}">
+                    <p:outputLabel value="$#{analyticsController.monthSales}" style="font-weight:bold;font-size: 36px">
                     </p:outputLabel>
                 </p:panel>
 
                 <p:panel id="yearSales" header="Current year's sales" style="width:320px;height:200px;">
-                    <p:outputLabel value="$#{analyticsController.yearSales}">
+                    <p:outputLabel value="$#{analyticsController.yearSales}" style="font-weight:bold;font-size: 36px">
                     </p:outputLabel>
                 </p:panel>
 

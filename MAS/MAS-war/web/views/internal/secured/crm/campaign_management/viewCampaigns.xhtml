@@ -73,7 +73,7 @@
                 </p:rowExpansion>
 
                 <f:facet name="footer" >                    
-                    <p:commandButton value="View details" oncomplete="PF('campaignDialog').show()" update="campaignDialog">
+                    <p:commandButton value="View details" action="#{campaignController.getCustomerListNameofSelectedCampaign()}" oncomplete="PF('campaignDialog').show()" update="campaignDialog">
                     </p:commandButton>
 
                     <p:commandButton action="#{campaignController.toCreateCampaign()}" value="Create new campaign" update="messages" />
@@ -111,8 +111,8 @@
                     <p:outputLabel value="#{campaignController.selectedCampaign.startTime}">
                         <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
                     </p:outputLabel>
-                    
-                    
+
+
                     <p:outputLabel value="End time:" />
                     <p:outputLabel value="#{campaignController.selectedCampaign.endTime}">
                         <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
@@ -133,7 +133,11 @@
                     <h:outputLabel for="campaignResult" value="Campaign result:" />
                     <h:outputLabel value="#{campaignController.selectedCampaign.campaignResult}" />
 
+                    <h:outputLabel for="customerList" value="Customer List:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaignCustomerListName}" />
                 </h:panelGrid>
+                <p:commandButton value="View customer list" action="#{campaignController.redirectToViewCustomerList()}">
+                </p:commandButton>
             </h:form>
         </p:dialog>
 

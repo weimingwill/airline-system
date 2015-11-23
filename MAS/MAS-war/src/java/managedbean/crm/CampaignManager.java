@@ -11,6 +11,7 @@ import ams.crm.entity.MktCampaign;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.SelectedCust;
 import ams.crm.session.CampaignSessionLocal;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,20 +19,22 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import managedbean.application.CrmNavController;
 import managedbean.application.MsgController;
 import managedbean.application.NavigationController;
 import managedbean.common.EmailController;
-
+import org.primefaces.context.RequestContext;
 
 /**
  *
  * @author weiming
  */
 @Named(value = "campaignController")
-@RequestScoped
-public class CampaignController {
+@SessionScoped
+public class CampaignManager implements Serializable{
 
     @Inject
     private MsgController msgController;
@@ -61,11 +64,14 @@ public class CampaignController {
     private String promotionValue;
     private List<CustomerList> customerLists;
     private CustomerList selectedCustomerList;
+    private String selectedCampaignCustomerListName;
+    private CustomerList cl;
+    private List<SelectedCust> selectedCusts;
 
     /**
      * Creates a new instance of MktCampaignController
      */
-    public CampaignController() {
+    public CampaignManager() {
     }
 
     @PostConstruct
@@ -95,6 +101,11 @@ public class CampaignController {
         return campaignSession.getCustomerListById(id);
     }
 
+    public void getCustomerListNameofSelectedCampaign() {
+        cl = selectedCampaign.getCustomerLists().get(0);
+        selectedCampaignCustomerListName = cl.getName();
+    }
+
     public void sendEmail() {
         String promotioncode = selectedCampaign.getPromotionCodes().get(0).getName();
         List<SelectedCust> selectedCusts = new ArrayList<>();
@@ -113,13 +124,34 @@ public class CampaignController {
 
     }
     
+    public void resendEmail() {
+        String promotioncode = selectedCampaign.getPromotionCodes().get(0).getName();
+//        List<SelectedCust> selectedCusts = new ArrayList<>();
+//        selectedCusts = selectedCampaign.getCustomerLists().get(0).getSelectedCusts();
+        String promotionSubject = selectedCampaign.getName();
+        for (SelectedCust selectedCust : selectedCusts) {
+            String content = new String();
+            content = content.concat("Dear " + selectedCust.getTitle() + " " + selectedCust.getLastName() + ",\n");
+            content = content.concat("We have a promotion specially for you!\n");
+            content = content.concat("Please use this promotion code during you booking for discount: " + promotioncode + "\n");
+            content = content.concat("Looing forward to seeing you soon!\n");
+            content = content.concat("Best regards,\n");
+            content = content.concat("Merlion Airline\n");
+            emailController.sendEmail(promotionSubject, content, selectedCust.getEmail());
+        }
+
+    }
+
+    public String redirectToViewCustomerList() {
+        selectedCustomerList = cl;
+        selectedCusts = selectedCustomerList.getSelectedCusts();
+        return crmNavController.redirectToViewCustomerList();
+    }
+
 //    public void updateCampaign(){
 //        campaignSession.updateMktCampaign(selectedCampaign,selectedCampaign.getStartTime(),selectedCampaign.getEndTime(),selectedCampaign.getBudget());
 //        
 //    }
-        
-        
-
     //*******************getters & setters************************
     public MsgController getMsgController() {
         return msgController;
@@ -271,6 +303,38 @@ public class CampaignController {
 
     public void setSelectedCustomerList(CustomerList selectedCustomerList) {
         this.selectedCustomerList = selectedCustomerList;
+    }
+
+    public EmailController getEmailController() {
+        return emailController;
+    }
+
+    public void setEmailController(EmailController emailController) {
+        this.emailController = emailController;
+    }
+
+    public String getSelectedCampaignCustomerListName() {
+        return selectedCampaignCustomerListName;
+    }
+
+    public void setSelectedCampaignCustomerListName(String selectedCampaignCustomerListName) {
+        this.selectedCampaignCustomerListName = selectedCampaignCustomerListName;
+    }
+
+    public CustomerList getCl() {
+        return cl;
+    }
+
+    public void setCl(CustomerList cl) {
+        this.cl = cl;
+    }
+
+    public List<SelectedCust> getSelectedCusts() {
+        return selectedCusts;
+    }
+
+    public void setSelectedCusts(List<SelectedCust> selectedCusts) {
+        this.selectedCusts = selectedCusts;
     }
 
 }

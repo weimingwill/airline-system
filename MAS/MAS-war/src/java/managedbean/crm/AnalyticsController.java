@@ -10,6 +10,8 @@ import ams.crm.session.AnalyticsSessionLocal;
 import ams.crm.session.CampaignSessionLocal;
 import ams.crm.session.CustomerSessionLocal;
 import ams.crm.session.PurchaseBehaviorSessionLocal;
+import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
@@ -32,6 +34,7 @@ import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 
 import org.primefaces.model.chart.BarChartModel;
+import org.primefaces.model.chart.CategoryAxis;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.DonutChartModel;
 import org.primefaces.model.chart.LegendPlacement;
@@ -46,7 +49,7 @@ import org.primefaces.model.chart.PieChartModel;
  */
 @Named(value = "analyticsController")
 @RequestScoped
-public class AnalyticsController {
+public class AnalyticsController implements Serializable{
 
     @EJB
     private CustomerSessionLocal customerSession;
@@ -75,6 +78,7 @@ public class AnalyticsController {
     private int ongoingCamapaignNo;
     private DashboardModel behaviorDashboard;
     private double addOnRate;
+    private String addOnRateInPercentage;
     private DefaultDashboardModel salesDashboard;
     private double daySales;
     private double monthSales;
@@ -118,6 +122,10 @@ public class AnalyticsController {
         createCustomerTypeDonutChart();
 
         addOnRate = purchaseBehaviorSession.getAddonPurchaseRate();
+
+        NumberFormat defaultFormat = NumberFormat.getPercentInstance();
+        defaultFormat.setMinimumFractionDigits(1);
+        addOnRateInPercentage = defaultFormat.format(addOnRate);
 
         createChannelDistributionDonutChart();
 
@@ -168,21 +176,21 @@ public class AnalyticsController {
 
         behaviorDashboard = new DefaultDashboardModel();
 
-        DashboardColumn column3 = new DefaultDashboardColumn();
+        DashboardColumn column1 = new DefaultDashboardColumn();
 
-        DashboardColumn column4 = new DefaultDashboardColumn();
+        DashboardColumn column2 = new DefaultDashboardColumn();
 
-        column3.addWidget("travellerType");
+        column1.addWidget("travellerType");
 
-        column3.addWidget("customerType");
+        column1.addWidget("customerType");
 
-        column4.addWidget("addOnRate");
+        column2.addWidget("addOnRate");
 
-        column4.addWidget("channelDistribution");
+        column2.addWidget("channelDistribution");
 
-        behaviorDashboard.addColumn(column3);
+        behaviorDashboard.addColumn(column1);
 
-        behaviorDashboard.addColumn(column4);
+        behaviorDashboard.addColumn(column2);
 
     }
 
@@ -349,7 +357,6 @@ public class AnalyticsController {
         circle1.put("Lersure traveller", purchaseBehaviorSession.getLeisureTravellerNo());
         travellerType.addCircle(circle1);
 
-        travellerType.setTitle("Business vs Leisure travellers");
         travellerType.setLegendPosition("w");
         travellerType.setSliceMargin(5);
         travellerType.setShowDataLabels(true);
@@ -358,33 +365,31 @@ public class AnalyticsController {
     }
 
     private void createCustomerTypeDonutChart() {
-        travellerType = new DonutChartModel();
+        customerType = new DonutChartModel();
         Map<String, Number> circle1 = new LinkedHashMap<String, Number>();
         circle1.put("New customer", purchaseBehaviorSession.getNewCustomerNo());
         circle1.put("Return customer", purchaseBehaviorSession.getReturningCustomerNo());
-        travellerType.addCircle(circle1);
+        customerType.addCircle(circle1);
 
-        travellerType.setTitle("New vs Return customers");
-        travellerType.setLegendPosition("w");
-        travellerType.setSliceMargin(5);
-        travellerType.setShowDataLabels(true);
-        travellerType.setDataFormat("value");
-        travellerType.setShadow(false);
+        customerType.setLegendPosition("w");
+        customerType.setSliceMargin(5);
+        customerType.setShowDataLabels(true);
+        customerType.setDataFormat("value");
+        customerType.setShadow(false);
     }
 
     private void createChannelDistributionDonutChart() {
-        travellerType = new DonutChartModel();
+        channelDistribution = new DonutChartModel();
         Map<String, Number> circle1 = new LinkedHashMap<String, Number>();
         circle1.put("ARS", purchaseBehaviorSession.getArsBookingNo());
         circle1.put("DDS", purchaseBehaviorSession.getDdsBookingNo());
-        travellerType.addCircle(circle1);
+        channelDistribution.addCircle(circle1);
 
-        travellerType.setTitle("ARS vs DDS");
-        travellerType.setLegendPosition("w");
-        travellerType.setSliceMargin(5);
-        travellerType.setShowDataLabels(true);
-        travellerType.setDataFormat("value");
-        travellerType.setShadow(false);
+        channelDistribution.setLegendPosition("w");
+        channelDistribution.setSliceMargin(5);
+        channelDistribution.setShowDataLabels(true);
+        channelDistribution.setDataFormat("value");
+        channelDistribution.setShadow(false);
     }
 
     private void createMonthlySalesLinearModel() {
@@ -393,30 +398,36 @@ public class AnalyticsController {
         monthlySales = analyticsSession.getMonthlySales();
 
         monthlySalesLineChart = new LineChartModel();
-        LineChartSeries series1 = new LineChartSeries();
+
+        ChartSeries series1 = new ChartSeries();
         series1.setLabel("Sales");
 
-        series1.set("Jan", monthlySales[0]);
-        series1.set("Feb", monthlySales[1]);
-        series1.set("Mar", monthlySales[2]);
-        series1.set("Apr", monthlySales[3]);
-        series1.set("May", monthlySales[4]);
-        series1.set("Jun", monthlySales[5]);
-        series1.set("Jul", monthlySales[6]);
-        series1.set("Aug", monthlySales[7]);
-        series1.set("Sep", monthlySales[8]);
-        series1.set("Oct", monthlySales[9]);
-        series1.set("Nov", monthlySales[10]);
-        series1.set("Dec", monthlySales[11]);
+        series1.set("1", monthlySales[0]);
+        series1.set("2", monthlySales[1]);
+        series1.set("3", monthlySales[2]);
+        series1.set("4", monthlySales[3]);
+        series1.set("5", monthlySales[4]);
+        series1.set("6", monthlySales[5]);
+        series1.set("7", monthlySales[6]);
+        series1.set("8", monthlySales[7]);
+        series1.set("9", monthlySales[8]);
+        series1.set("10", monthlySales[9]);
+        series1.set("11", monthlySales[10]);
+        series1.set("12", monthlySales[11]);
 
         monthlySalesLineChart.addSeries(series1);
 
         monthlySalesLineChart.setTitle("Monthly sales distribution");
         monthlySalesLineChart.setLegendPosition("e");
         monthlySalesLineChart.setLegendPlacement(LegendPlacement.OUTSIDE);
+        Axis xAxis = monthlySalesLineChart.getAxis(AxisType.X);
+        xAxis.setMin(0);
+        xAxis.setMax(12);
+        xAxis.setTickInterval("1");
+
         Axis yAxis = monthlySalesLineChart.getAxis(AxisType.Y);
         yAxis.setMin(0);
-        yAxis.setMax(10000);
+        yAxis.setMax(10000000);
     }
 
     private void createYearlySalesLinearModel() {
@@ -425,10 +436,18 @@ public class AnalyticsController {
         yearlySales = analyticsSession.getYearlySales();
 
         yearlySalesLineChart = new LineChartModel();
-        LineChartSeries series1 = new LineChartSeries();
+
+        ChartSeries series1 = new ChartSeries();
         series1.setLabel("Sales");
 
         int year = Calendar.getInstance().get(Calendar.YEAR);
+        System.out.println("year is" + year);
+
+        System.out.println((year - 4) + "sales is " + yearlySales[0]);
+        System.out.println((year - 3) + "sales is " + yearlySales[1]);
+        System.out.println((year - 2) + "sales is " + yearlySales[2]);
+        System.out.println((year - 1) + "sales is " + yearlySales[3]);
+        System.out.println((year) + "sales is " + yearlySales[4]);
 
         series1.set(year - 4, yearlySales[0]);
         series1.set(year - 3, yearlySales[1]);
@@ -441,9 +460,10 @@ public class AnalyticsController {
         yearlySalesLineChart.setTitle("Yearly sales distribution");
         yearlySalesLineChart.setLegendPosition("e");
         yearlySalesLineChart.setLegendPlacement(LegendPlacement.OUTSIDE);
+        yearlySalesLineChart.getAxes().put(AxisType.X, new CategoryAxis("Years"));
         Axis yAxis = yearlySalesLineChart.getAxis(AxisType.Y);
         yAxis.setMin(0);
-        yAxis.setMax(10000);
+        yAxis.setMax(10000000);
     }
 
     public String getPromoCodeByCampaign(MktCampaign mc) {
@@ -641,21 +661,6 @@ public class AnalyticsController {
         this.yearSales = yearSales;
     }
 
-//    public double[] getMonthlySales() {
-//        return monthlySales;
-//    }
-//
-//    public void setMonthlySales(double[] monthlySales) {
-//        this.monthlySales = monthlySales;
-//    }
-//
-//    public double[] getYearlySales() {
-//        return yearlySales;
-//    }
-//
-//    public void setYearlySales(double[] yearlySales) {
-//        this.yearlySales = yearlySales;
-//    }
     public LineChartModel getMonthlySalesLineChart() {
         return monthlySalesLineChart;
     }
@@ -671,5 +676,15 @@ public class AnalyticsController {
     public void setYearlySalesLineChart(LineChartModel yearlySalesLineChart) {
         this.yearlySalesLineChart = yearlySalesLineChart;
     }
+
+    public String getAddOnRateInPercentage() {
+        return addOnRateInPercentage;
+    }
+
+    public void setAddOnRateInPercentage(String addOnRateInPercentage) {
+        this.addOnRateInPercentage = addOnRateInPercentage;
+    }
+    
+    
 
 }
