@@ -63,6 +63,10 @@ public class AasNavController implements Serializable {
     public String redirectToReportDashboard() {
         return AAS_URL + "generateRevenueReport.xhtml" + REDIRECT;
     }
+    
+    public String redirectToCrewPayroll() {
+        return AAS_URL + "payroll/crewPayroll.xhtml" + REDIRECT;
+    }
   
    
 }

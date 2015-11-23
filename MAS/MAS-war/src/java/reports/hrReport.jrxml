@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hrReport" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="41efd9b2-8c0e-47fb-b790-38188bad5b0c">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="61"/>
+	<property name="ireport.y" value="0"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
 	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
@@ -14,34 +14,37 @@
 		</conditionalStyle>
 	</style>
 	<subDataset name="PieChartDataset" uuid="574f6176-402f-4e9e-b809-98e905c9f513"/>
+	<parameter name="IMG_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/Users/Lewis/airline-system/MAS/MAS-war/src/java/reports/silver.png"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT
-     systemuser.`SYSTEMUSERID` AS systemuser_SYSTEMUSERID,
-     systemuser.`DTYPE` AS systemuser_DTYPE,
-     systemuser.`ACTIVATED` AS systemuser_ACTIVATED,
-     systemuser.`ADDRESS` AS systemuser_ADDRESS,
-     systemuser.`DELETED` AS systemuser_DELETED,
-     systemuser.`DEPARTMENT` AS systemuser_DEPARTMENT,
-     systemuser.`EMAIL` AS systemuser_EMAIL,
-     systemuser.`LOCKED` AS systemuser_LOCKED,
-     systemuser.`LOGGEDIN` AS systemuser_LOGGEDIN,
-     systemuser.`NAME` AS systemuser_NAME,
-     systemuser.`PASSWORD` AS systemuser_PASSWORD,
-     systemuser.`PHONE` AS systemuser_PHONE,
-     systemuser.`RESETDIGEST` AS systemuser_RESETDIGEST,
-     systemuser.`SALARY` AS systemuser_SALARY,
-     systemuser.`STATUS` AS systemuser_STATUS,
-     systemuser.`USERNAME` AS systemuser_USERNAME
+     SYSTEMUSER.`SYSTEMUSERID` AS SYSTEMUSER_SYSTEMUSERID,
+     SYSTEMUSER.`DTYPE` AS SYSTEMUSER_DTYPE,
+     SYSTEMUSER.`ACTIVATED` AS SYSTEMUSER_ACTIVATED,
+     SYSTEMUSER.`ADDRESS` AS SYSTEMUSER_ADDRESS,
+     SYSTEMUSER.`DELETED` AS SYSTEMUSER_DELETED,
+     SYSTEMUSER.`DEPARTMENT` AS SYSTEMUSER_DEPARTMENT,
+     SYSTEMUSER.`EMAIL` AS SYSTEMUSER_EMAIL,
+     SYSTEMUSER.`LOCKED` AS SYSTEMUSER_LOCKED,
+     SYSTEMUSER.`LOGGEDIN` AS SYSTEMUSER_LOGGEDIN,
+     SYSTEMUSER.`NAME` AS SYSTEMUSER_NAME,
+     SYSTEMUSER.`PASSWORD` AS SYSTEMUSER_PASSWORD,
+     SYSTEMUSER.`PHONE` AS SYSTEMUSER_PHONE,
+     SYSTEMUSER.`RESETDIGEST` AS SYSTEMUSER_RESETDIGEST,
+     SYSTEMUSER.`SALARY` AS SYSTEMUSER_SALARY,
+     SYSTEMUSER.`STATUS` AS SYSTEMUSER_STATUS,
+     SYSTEMUSER.`USERNAME` AS SYSTEMUSER_USERNAME
 FROM
-     `systemuser` systemuser]]>
+     `SYSTEMUSER` SYSTEMUSER]]>
 	</queryString>
-	<field name="systemuser_SYSTEMUSERID" class="java.lang.Long"/>
-	<field name="systemuser_DTYPE" class="java.lang.String"/>
-	<field name="systemuser_DEPARTMENT" class="java.lang.String"/>
-	<field name="systemuser_NAME" class="java.lang.String"/>
-	<field name="systemuser_SALARY" class="java.lang.Double"/>
+	<field name="SYSTEMUSER_SYSTEMUSERID" class="java.lang.Long"/>
+	<field name="SYSTEMUSER_DTYPE" class="java.lang.String"/>
+	<field name="SYSTEMUSER_DEPARTMENT" class="java.lang.String"/>
+	<field name="SYSTEMUSER_NAME" class="java.lang.String"/>
+	<field name="SYSTEMUSER_SALARY" class="java.lang.Double"/>
 	<variable name="totalHrCost" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{systemuser_SALARY}]]></variableExpression>
+		<variableExpression><![CDATA[$F{SYSTEMUSER_SALARY}]]></variableExpression>
 	</variable>
 	<background>
 		<band height="555" splitType="Stretch">
@@ -78,7 +81,7 @@ FROM
 					<reportElement x="22" y="0" width="229" height="65" uuid="4daffb9e-1986-4224-b07d-b751fff6c651">
 						<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
 					</reportElement>
-					<imageExpression><![CDATA["/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/silver.png"]]></imageExpression>
+					<imageExpression><![CDATA[$P{IMG_DIR}]]></imageExpression>
 				</image>
 			</frame>
 		</band>
@@ -138,35 +141,35 @@ FROM
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{systemuser_SYSTEMUSERID}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SYSTEMUSER_SYSTEMUSERID}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="320" y="1" width="137" height="14" uuid="f773d726-0e2c-4b85-bb49-f42cf85a4c84"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{systemuser_DTYPE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SYSTEMUSER_DTYPE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="188" y="0" width="130" height="14" uuid="024280ca-f931-4e89-a132-b6a4c1a8854b"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{systemuser_NAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SYSTEMUSER_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="663" y="0" width="142" height="14" uuid="6286c77c-2cd3-45e6-85be-f098cb9a5de2"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{systemuser_SALARY}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SYSTEMUSER_SALARY}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="457" y="1" width="179" height="14" uuid="3d60f99b-aea2-4c42-bbd6-b5f54c65d526"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{systemuser_DEPARTMENT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SYSTEMUSER_DEPARTMENT}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

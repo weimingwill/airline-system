@@ -37,9 +37,10 @@
                             <p:outputLabel value="#{ticketfamilyrule.rule.name}" />
                         </p:column>
                         <p:column>
-                            <p:outputLabel value="#{ticketfamilyrule.ruleValue}" >
+                            <p:outputLabel value="#{ticketfamilyrule.ruleValue}" rendered="#{ticketfamilyrule.ruleValue >= 0}">
                                 <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                             </p:outputLabel>
+                            <p:outputLabel value="Not Applicable" rendered="#{ticketfamilyrule.ruleValue < 0}"/>
                         </p:column>
                     </p:dataTable>  
                 </p:column>

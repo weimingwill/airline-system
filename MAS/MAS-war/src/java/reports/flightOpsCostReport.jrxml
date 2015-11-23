@@ -14,6 +14,9 @@
 		</conditionalStyle>
 	</style>
 	<subDataset name="PieChartDataset" uuid="59ad426d-8694-4a95-a7d5-ab5477d1db89"/>
+	<parameter name="IMG_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/Users/Lewis/airline-system/MAS/MAS-war/src/java/reports/silver.png"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT
      flightcrew.`SYSTEMUSERID` AS flightcrew_SYSTEMUSERID,
@@ -71,7 +74,7 @@ FROM
 					<reportElement x="22" y="0" width="229" height="65" uuid="4daffb9e-1986-4224-b07d-b751fff6c651">
 						<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
 					</reportElement>
-					<imageExpression><![CDATA["/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/silver.png"]]></imageExpression>
+					<imageExpression><![CDATA[$P{IMG_DIR}]]></imageExpression>
 				</image>
 			</frame>
 		</band>

@@ -23,9 +23,7 @@ public class NavigationController implements Serializable {
     private final String COMMON_URL = "/views/internal/secured/common/";
     private final String APS_URL = "/views/internal/secured/aps/";
     private final String AIS_URL = "/views/internal/secured/ais/";
-    
 
-    
     public NavigationController() {
     }
 
@@ -72,7 +70,8 @@ public class NavigationController implements Serializable {
     }
 
     public String toUnsecuredUsersFolder() {
-        return "http://localhost:8080/MAS-war/views/internal/unsecured/common/users/";
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/views/internal/unsecured/common/users/";
     }
 
     //Access control
@@ -229,9 +228,11 @@ public class NavigationController implements Serializable {
     public String redirectToCreateBookingClass() {
         return AIS_URL + "booking_class/createBookingClass.xhtml" + REDIRECT;
     }
-    public String redirectToViewAllBookingClass(){
+
+    public String redirectToViewAllBookingClass() {
         return AIS_URL + "booking_class/viewBookingClass.xhtml" + REDIRECT;
     }
+
     public String redirectToDeleteBookingClass() {
         return AIS_URL + "booking_class/deleteBookingClass.xhtml" + REDIRECT;
     }
@@ -276,8 +277,8 @@ public class NavigationController implements Serializable {
     public String redirectToViewSeatsReallocationHistroy() {
         return AIS_URL + "yield_management/viewSeatsReallocationHistory.xhtml" + REDIRECT;
     }
-    
-    public String redirectToAddCheckPoint(){
+
+    public String redirectToAddCheckPoint() {
         return AIS_URL + "yield_management/addCheckPoint.xhtml" + REDIRECT;
     }
 
@@ -384,17 +385,20 @@ public class NavigationController implements Serializable {
     public String toConfirmScheduleFlight() {
         return APS_URL + "flight_schedule/confirmFlightSchedule.xhtml";
     }
-    
+
     public String toViewFlightSchedule() {
         return APS_URL + "flight_schedule/viewFlightSchedule.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToCurrentPage() {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        System.out.println("Scheme: " + request.getScheme());
+        System.out.println("Server Name: " + request.getServerName());
+        System.out.println("Server Port: " + request.getServerPort());
+        System.out.println("URI: " + request.getRequestURI());
         String uri = request.getRequestURI();
         uri = uri.substring(uri.indexOf('/', 1));
         return uri + REDIRECT;
     }
-    
-    
+
 }

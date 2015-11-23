@@ -430,34 +430,91 @@ public class SystemUserSession implements SystemUserSessionLocal {
 
     private void setSystemUrl(String system, PermissionHelper permissionHelper) {
         switch (system) {
-            case PermissionNamesHelper.APS:
+            case PermissionNamesHelper.AIRLINE__PLANNING__SYSTEM:
                 permissionHelper.setUrl(NavigationUrlHelper.APS_URL);
                 break;
-            case PermissionNamesHelper.AIS:
+            case PermissionNamesHelper.AIRLINE__INVENTORY__SYSTEM:
                 permissionHelper.setUrl(NavigationUrlHelper.AIS_URL);
                 break;
-            case PermissionNamesHelper.AFOS:
+            case PermissionNamesHelper.AIRLINE__FLIGHT__OPERATION__SYSTEM:
                 permissionHelper.setUrl(NavigationUrlHelper.AFOS_URL);
+                break;
+            case PermissionNamesHelper.AIRLINE__RESERVATION__SYSTEM:
+                permissionHelper.setUrl(NavigationUrlHelper.ARS_URL);
+                break;
+            case PermissionNamesHelper.AIRLINE__ADMINISTRATION__SYSTEM:
+                permissionHelper.setUrl(NavigationUrlHelper.AAS_URL);
+                break;
+            case PermissionNamesHelper.DEPARTURE__CONTROL__SYSTEM:
+                permissionHelper.setUrl(NavigationUrlHelper.DCS_URL);
+                break;
+            case PermissionNamesHelper.CUSTOMER__RELATIONSHIP__MANAGEMENT__SYSTEM:
+                permissionHelper.setUrl(NavigationUrlHelper.CRM_URL);
                 break;
         }
     }
 
     private void setModuleUrl(String system, PermissionHelper permissionHelper) {
         switch (system) {
-            case PermissionNamesHelper.FLEET_PLANNING:
+            case PermissionNamesHelper.FLEET__PLANNING__MODULE:
                 permissionHelper.setUrl(NavigationUrlHelper.APS_FP_URL);
                 break;
-            case PermissionNamesHelper.FLIGHT_SCHEDULING:
+            case PermissionNamesHelper.FLIGHT__SCHEDULING__MODULE:
                 permissionHelper.setUrl(NavigationUrlHelper.APS_FS_URL);
                 break;
-            case PermissionNamesHelper.ROUTE_PLANNING:
+            case PermissionNamesHelper.ROUTE__PLANNING__MODULE:
                 permissionHelper.setUrl(NavigationUrlHelper.APS_RP_URL);
                 break;
-            case PermissionNamesHelper.PRODUCT_DESIGNE:
+            case PermissionNamesHelper.PRODUCT__DESIGN__MODULE:
                 permissionHelper.setUrl(NavigationUrlHelper.AIS_PD_URL);
                 break;
-            case PermissionNamesHelper.REVENUE_MANAGMENT:
-                permissionHelper.setUrl(NavigationUrlHelper.AIS_RM_URL);
+            case PermissionNamesHelper.INVENTORY__MANAGEMENT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.AIS_IM_URL);
+                break;
+            case PermissionNamesHelper.CREW__BIDDING__MANAGEMENT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.AFOS_BM_URL);
+                break;
+            case PermissionNamesHelper.MAINTENANCE__MANAGEMENT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.AFOS_MM_URL);
+                break;
+            case PermissionNamesHelper.CREW__DUTY__REPORT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.AFOS_CD_URL);
+                break;
+            case PermissionNamesHelper.FLIGHT__CREW__MANAGEMENT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.AFOS_FCM_URL);
+                break;
+            case PermissionNamesHelper.BOOKING__MANAGEMENT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.ARS_BM_URL);
+                break;
+            case PermissionNamesHelper.DIRECT__DISTRIBUTION__SYSTEM:
+                permissionHelper.setUrl(NavigationUrlHelper.ARS_DDS_URL);
+                break;
+            case PermissionNamesHelper.CHECKIN__MANAGEMENT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.DCS_CM_URL);
+                break;
+            case PermissionNamesHelper.BAGGAGE__MANAGEMENT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.DCS_BM_URL);
+                break;
+            case PermissionNamesHelper.REVENUE__ACCOUNTING__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.AAS_RA_URL);
+                break;
+            case PermissionNamesHelper.COST__ACCOUNTING__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.AAS_CA_URL);
+                break;
+            case PermissionNamesHelper.FINANCIAL__ACCOUNTING__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.AAS_FA_URL);
+                break;
+            case PermissionNamesHelper.PAYROLL__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.AAS_PR_URL);
+                break;
+            case PermissionNamesHelper.CUSTOMER__MANAGEMENT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.CRM_CM_URL);
+                break;
+            case PermissionNamesHelper.CAMPAIGN__MANAGEMENT__MODULE:
+                permissionHelper.setUrl(NavigationUrlHelper.CRM_CPM_URL);
+                break;
+            case PermissionNamesHelper.CUSTOMER__RELATIONSHIP__MANAGEMENT__ANALY:
+                permissionHelper.setUrl(NavigationUrlHelper.CRM_CA_URL);
                 break;
             default:
                 permissionHelper.setUrl(NavigationUrlHelper.AFOS_URL);
@@ -579,16 +636,16 @@ public class SystemUserSession implements SystemUserSessionLocal {
             return null;
         }
     }
-    
+
     @Override
     public void updateUserPayroll(String username, Double salary) throws NoSuchUsernameException {
-        System.out.println("username is"+username);
-        
+        System.out.println("username is" + username);
+
         SystemUser user = getSystemUserByName(username);
-        if (user== null) {
-              throw new NoSuchUsernameException(UserMsg.NO_SUCH_USERNAME_ERROR);
-                }
-         
+        if (user == null) {
+            throw new NoSuchUsernameException(UserMsg.NO_SUCH_USERNAME_ERROR);
+        }
+
         user.setSalary(salary);
         entityManager.merge(user);
         entityManager.flush();

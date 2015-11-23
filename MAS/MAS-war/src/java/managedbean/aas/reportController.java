@@ -6,14 +6,11 @@
 package managedbean.aas;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,18 +20,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 import javax.inject.Inject;
 import managedbean.application.AasNavController;
+import mas.common.util.helper.MySQLConnection;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -46,7 +44,6 @@ import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
 import org.primefaces.model.DefaultDashboardModel;
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 /**
@@ -63,6 +60,7 @@ public class reportController {
     private StreamedContent content;
     private DashboardModel reportDashboard;
     private File file;
+    private String FILE_PATH = "/Users/Lewis/airline-system/MAS/";
 
     /**
      * Creates a new instance of reportController
@@ -97,23 +95,21 @@ public class reportController {
     }
 
     public String generateRevenueReport() {
-        try {
-            Connection connection;
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:8889/mas", "root", "root");
-            System.out.println("start to generate revenue report");
-            try {
-                JasperReport jasperReport = JasperCompileManager.compileReport("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/revenueReport.jrxml");
-                System.out.println("step 1 done");
-                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
-                System.out.println("step 2 done");
-                String exportPath = "/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/revenue_report/RevenueReport.pdf";
-                JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
-                System.out.println("Report is generated");
+        System.out.println(System.getProperty("user.dir"));
 
-            } catch (JRException ex) {
-                Logger.getLogger(reportController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (SQLException ex) {
+        Connection connection;
+        connection = MySQLConnection.establishConnection();
+        System.out.println("start to generate revenue report");
+        try {
+            JasperReport jasperReport = JasperCompileManager.compileReport(FILE_PATH + "MAS-war/src/java/reports/revenueReport.jrxml");
+            System.out.println("step 1 done");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
+            System.out.println("step 2 done");
+            String exportPath = FILE_PATH + "MAS-war/web/resources/revenue_report/RevenueReport.pdf";
+            JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
+            System.out.println("Report is generated");
+
+        } catch (JRException ex) {
             Logger.getLogger(reportController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return aasNavController.redirectToViewRevenueReport();
@@ -129,13 +125,13 @@ public class reportController {
 
         try {
             List<InputStream> pdfs = new ArrayList<InputStream>();
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/FeulCostReport.pdf"));
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/FleetCostReport.pdf"));
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/FlightOperationCostReport.pdf"));
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/PayrollReport.pdf"));
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/MarketingCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/FeulCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/FleetCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/FlightOperationCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/PayrollReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/MarketingCostReport.pdf"));
 
-            OutputStream output = new FileOutputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/CostReport.pdf");
+            OutputStream output = new FileOutputStream(FILE_PATH + "MAS-war/web/resources/cost_report/CostReport.pdf");
             concatPDFs(pdfs, output, true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,14 +146,14 @@ public class reportController {
 
         try {
             List<InputStream> pdfs = new ArrayList<InputStream>();
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/FeulCostReport.pdf"));
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/FleetCostReport.pdf"));
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/FlightOperationCostReport.pdf"));
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/PayrollReport.pdf"));
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/MarketingCostReport.pdf"));
-            pdfs.add(new FileInputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/revenue_report/RevenueReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/FeulCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/FleetCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/FlightOperationCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/PayrollReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/cost_report/MarketingCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + "MAS-war/web/resources/revenue_report/RevenueReport.pdf"));
             System.out.println("P1");
-            OutputStream output = new FileOutputStream("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/financial_report/FinancialAccountingReport.pdf");
+            OutputStream output = new FileOutputStream(FILE_PATH + "MAS-war/web/resources/financial_report/FinancialAccountingReport.pdf");
             System.out.println("P2");
             concatPDFs(pdfs, output, true);
             System.out.println("P3");
@@ -170,25 +166,19 @@ public class reportController {
     }
 
     public String generateFeulCostReport() {
+        Connection connection;
+        connection = MySQLConnection.establishConnection();
+        System.out.println("start to generate feul cost report");
         try {
-            Connection connection;
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:8889/mas", "root", "root");
-            System.out.println("start to generate feul cost report");
-            try {
-                JasperReport jasperReport = JasperCompileManager.compileReport("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/feulCost.jrxml");
-                System.out.println("step 1 done");
-                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
-                System.out.println("step 2 done");
-                String exportPath = "/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/FeulCostReport.pdf";
-                JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
-                System.out.println("Report is generated");
+            JasperReport jasperReport = JasperCompileManager.compileReport(FILE_PATH + "MAS-war/src/java/reports/feulCost.jrxml");
+            System.out.println("step 1 done");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
+            System.out.println("step 2 done");
+            String exportPath = FILE_PATH + "MAS-war/web/resources/cost_report/FeulCostReport.pdf";
+            JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
+            System.out.println("Report is generated");
 
-            } catch (JRException ex) {
-                Logger.getLogger(reportController.class
-                        .getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } catch (SQLException ex) {
+        } catch (JRException ex) {
             Logger.getLogger(reportController.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
@@ -197,25 +187,19 @@ public class reportController {
     }
 
     public String generateFleetCostReport() {
+        Connection connection;
+        connection = MySQLConnection.establishConnection();
+        System.out.println("start to generate cost report");
         try {
-            Connection connection;
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:8889/mas", "root", "root");
-            System.out.println("start to generate cost report");
-            try {
-                JasperReport jasperReport = JasperCompileManager.compileReport("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/fleetCostReport.jrxml");
-                System.out.println("step 1 done");
-                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
-                System.out.println("step 2 done");
-                String exportPath = "/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/FleetCostReport.pdf";
-                JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
-                System.out.println("Report is generated");
+            JasperReport jasperReport = JasperCompileManager.compileReport(FILE_PATH + "MAS-war/src/java/reports/fleetCostReport.jrxml");
+            System.out.println("step 1 done");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
+            System.out.println("step 2 done");
+            String exportPath = FILE_PATH + "MAS-war/web/resources/cost_report/FleetCostReport.pdf";
+            JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
+            System.out.println("Report is generated");
 
-            } catch (JRException ex) {
-                Logger.getLogger(reportController.class
-                        .getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } catch (SQLException ex) {
+        } catch (JRException ex) {
             Logger.getLogger(reportController.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
@@ -224,25 +208,19 @@ public class reportController {
     }
 
     public String generateFlightOpsCostReport() {
+        Connection connection;
+        connection = MySQLConnection.establishConnection();
+        System.out.println("start to generate cost report");
         try {
-            Connection connection;
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:8889/mas", "root", "root");
-            System.out.println("start to generate cost report");
-            try {
-                JasperReport jasperReport = JasperCompileManager.compileReport("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/flightOpsCostReport.jrxml");
-                System.out.println("step 1 done");
-                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
-                System.out.println("step 2 done");
-                String exportPath = "/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/FlightOperationCostReport.pdf";
-                JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
-                System.out.println("Report is generated");
+            JasperReport jasperReport = JasperCompileManager.compileReport(FILE_PATH + "MAS-war/src/java/reports/flightOpsCostReport.jrxml");
+            System.out.println("step 1 done");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
+            System.out.println("step 2 done");
+            String exportPath = FILE_PATH + "MAS-war/web/resources/cost_report/FlightOperationCostReport.pdf";
+            JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
+            System.out.println("Report is generated");
 
-            } catch (JRException ex) {
-                Logger.getLogger(reportController.class
-                        .getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } catch (SQLException ex) {
+        } catch (JRException ex) {
             Logger.getLogger(reportController.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
@@ -251,25 +229,19 @@ public class reportController {
     }
 
     public String generatePayrollReport() {
+        Connection connection;
+        connection = MySQLConnection.establishConnection();
+        System.out.println("start to generate cost report");
         try {
-            Connection connection;
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:8889/mas", "root", "root");
-            System.out.println("start to generate cost report");
-            try {
-                JasperReport jasperReport = JasperCompileManager.compileReport("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/hrReport.jrxml");
-                System.out.println("step 1 done");
-                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
-                System.out.println("step 2 done");
-                String exportPath = "/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/PayrollReport.pdf";
-                JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
-                System.out.println("Report is generated");
+            JasperReport jasperReport = JasperCompileManager.compileReport(FILE_PATH + "MAS-war/src/java/reports/hrReport.jrxml");
+            System.out.println("step 1 done");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
+            System.out.println("step 2 done");
+            String exportPath = FILE_PATH + "MAS-war/web/resources/cost_report/PayrollReport.pdf";
+            JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
+            System.out.println("Report is generated");
 
-            } catch (JRException ex) {
-                Logger.getLogger(reportController.class
-                        .getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } catch (SQLException ex) {
+        } catch (JRException ex) {
             Logger.getLogger(reportController.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
@@ -278,25 +250,19 @@ public class reportController {
     }
 
     public String generateMktCostReport() {
+        Connection connection;
+        connection = MySQLConnection.establishConnection();
+        System.out.println("start to generate cost report");
         try {
-            Connection connection;
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:8889/mas", "root", "root");
-            System.out.println("start to generate cost report");
-            try {
-                JasperReport jasperReport = JasperCompileManager.compileReport("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/src/java/reports/mktCostReport.jrxml");
-                System.out.println("step 1 done");
-                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
-                System.out.println("step 2 done");
-                String exportPath = "/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/MarketingCostReport.pdf";
-                JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
-                System.out.println("Report is generated");
+            JasperReport jasperReport = JasperCompileManager.compileReport(FILE_PATH + "MAS-war/src/java/reports/mktCostReport.jrxml");
+            System.out.println("step 1 done");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
+            System.out.println("step 2 done");
+            String exportPath = FILE_PATH + "MAS-war/web/resources/cost_report/MarketingCostReport.pdf";
+            JasperExportManager.exportReportToPdfFile(jasperPrint, exportPath);
+            System.out.println("Report is generated");
 
-            } catch (JRException ex) {
-                Logger.getLogger(reportController.class
-                        .getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } catch (SQLException ex) {
+        } catch (JRException ex) {
             Logger.getLogger(reportController.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
@@ -394,10 +360,9 @@ public class reportController {
         this.reportDashboard = reportDashboard;
     }
 
-    public void onPrerender(ComponentSystemEvent event) {
-
-        file = new File("/Users/Tongtong/Documents/IS3102/MAS/MAS-war/web/resources/cost_report/CostReport.pdf");
-
+    public void onPrerender(ComponentSystemEvent event) throws IOException {
+        System.out.println(new File(".").getCanonicalPath());
+        file = new File(FILE_PATH + "MAS-war/web/resources/cost_report/CostReport.pdf");
     }
 
     public AasNavController getAasNavController() {
