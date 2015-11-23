@@ -68,8 +68,7 @@
 
                     <p:column colspan="#{bookingManager.tixFams.size()}">
                         <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFb}" converter="flightSchedBookingClsConverter" layout="grid" columns="#{bookingManager.tixFams.size()}">
-                            <!--<p:ajax event="change" update="form,barForm" onstart="PF('bar').hide();" oncomplete="PF('bar').show();" listener="{bookingManager.onFlightSchedRadioSelected()}"/>-->
-                            <p:ajax event="change" update="flights,barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
+                            <p:ajax event="change" update="barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
                             <f:selectItems value="#{flightSchedHelper.flightSchedBookingClses}" var="fb" itemValue="#{fb}"
                                            itemLabel="S$#{bookingManager.getFbHelperByFb(fb).price}"/>
                         </p:selectOneRadio>

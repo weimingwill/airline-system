@@ -34,10 +34,10 @@ public class NavigationUrlHelper {
     public final static String AFOS_BM_URL = AFOS_PATH + "crew_schedule/selectBiddingSession.xhtml" + REDIRECT;
     public final static String AFOS_MM_URL = AFOS_PATH + "maint_mgmt/viewMaintSchedule.xhtml" + REDIRECT;
     public final static String AFOS_CD_URL = AFOS_PATH + "afosMain.xhtml" + REDIRECT;
-    public final static String AFOS_FCM_URL = AFOS_PATH + "crew_schedule/viewFlightCrewProfile.xhtml" + REDIRECT;
+    public final static String AFOS_FCM_URL = AFOS_PATH + "crew_regulation/viewFlightCrewProfile.xhtml" + REDIRECT;
     
     public final static String ARS_URL = ARS_PATH + "index.xhtml" + REDIRECT;
-    public final static String ARS_BM_URL = ARS_PATH + "manage_booking/myBooking.xhtml" + REDIRECT;
+    public final static String ARS_BM_URL = ARS_PATH + "index.xhtml" + REDIRECT;
     public final static String ARS_DDS_URL = ARS_PATH + "index.xhtml" + REDIRECT;
     
     public final static String DCS_URL = DCS_PATH + "checkInPassenger.xhtml" + REDIRECT;
