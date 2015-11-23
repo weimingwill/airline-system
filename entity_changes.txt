@@ -1,5 +1,0 @@
-FlightSchedule -> FlightScheduleSeat -> Seat (One to Many, One to Many)
-Delete AirticketPricingItem, add itemValue to PricingItem
-Add entity: AdditionalCharge, AirTicketAdditonalCharge join table. 
-Add double promoPrice attribute to Booking entity
-Add double flyDistance to Flight entity

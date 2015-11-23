@@ -18,6 +18,7 @@ This repository contains the source code of merlion airline systems developed by
 * MySQL Workbench (http://dev.mysql.com/downloads/workbench/)
 * Java JDK 8 (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 * Java EE 7 (http://www.oracle.com/technetwork/java/javaee/downloads/index.html)
+* iReport designer for JasperReports (Netbeans 7.4) (http://plugins.netbeans.org/download/plugin/2748)
 
 
 #### Setup MYSQL Connection ####
@@ -30,6 +31,7 @@ This repository contains the source code of merlion airline systems developed by
 7.Fill in the correct username and password for your MySQL Server Connection
 8.Click "Finish"
 * (Note: a new database connection like "jdbc:mysql://localhost:8889/mas?zeroDateTimeBehavior=convertToNull [root on Default schema]" should appear under "Database")
+9. For AAS report generation purpose, please change the CONNECTION_LINK, USERNAME and PASSWORD in "MAS/MAS-ejb/src/java/mas/common/util/helper/MySQLConnection.java" according to your local database settings.
 
 #### Setup JDBC Resource and JDBC Connection Pool ####
 1. Go to the enterprise bean project under the "Projects" tab of Netbeans IDE
@@ -44,14 +46,14 @@ This repository contains the source code of merlion airline systems developed by
 10. Click "Next"
 11. Do not change anything for "Add Conncetion Pool Properties" and click "Next"
 12. Click "Finish"
-* Note: a file with name "sun-resources.xml" or "glassfish-resources.xml" should appear under folder "Server Resources")###
+* (Note: a file with name "sun-resources.xml" or "glassfish-resources.xml" should appear under folder "Server Resources")
 
 #### Setup JDBC Persistence Unit ####
 1. Go to the enterprise bean project under the "Projects" tab of Netbeans IDE
 2. Right click and choose "New" -> "Other" -> "Persistence" -> "Persistence Unit"
 3. Click "Next"
 4. Choose the "jdbc/mas" under "Data Source" and Click Finish
-(Note: a file with name "persistence.xml" should appear under foler "Configuration Files")
+* (Note: a file with name "persistence.xml" should appear under foler "Configuration Files")
 
 #### Setup JMS Resource ####
 1. In Netbeans IDE, go to the service tab
@@ -61,13 +63,25 @@ This repository contains the source code of merlion airline systems developed by
 5. Choose Connection Factories and add a new Connection Factory with the following properties:
       - JNDI Name: jms/topicInternalComConnectionFactory
       - Resource Type: javax.jms.TopicConnectionFactory
-     - Description: Topic Internal Com Connection Factory
+	  - Description: Topic Internal Com Connection Factory
 6. Choose Destination Resources and add a new Destination Resource with the following properties:
       - JNDI Name: jms/topicInternalCom
-     - Physical Destination Name: PhysicalTopic
-     - Resource Type: javax.jms.Topic
-     - Description: Topic Internal Com
+	  - Physical Destination Name: PhysicalTopic
+	  - Resource Type: javax.jms.Topic
+	  - Description: Topic Internal Com
 7. Close the admin console
+
+#### Setup iReport ####
+1. Open the Netbeans IDE.
+2. On the Menu Bar choose Tools and further choose the Plugins menu option.
+3. The Plugins dialog box opens up the Available Plugins tab by default; change the tab to Downloaded.
+4. Click the "Add Plugins..." button; A window pops up; navigate to the directory where you downloaded the plugin(s) and add them. 
+5. Click the install button on the Bottom-left corner of the dialog box.
+6. A confirmation window pops up; click Next to continue the installation.
+7. Next you need to read the license agreement and accept it. The IReport plugin is licensed under the GNU General Public License.
+8. Since the plugin would be designed by a 3rd party developer it may not be digitally signed and you would need to ignore and continue inspite of the Validation Warning if you are confirmed about the source of the plugin. If the plugin is signed and but not trusted, you'll need to continue passed this warning.
+9. The plugin will install automatically.
+10. Once the installation is finished, you should restart the IDE.
 
 #### Clean and Build Project ####
 1. Right click MAS project and choose "Clean and Build"
