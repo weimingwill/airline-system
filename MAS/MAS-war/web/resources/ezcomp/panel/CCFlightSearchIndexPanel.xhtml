@@ -84,7 +84,7 @@
         <!--Departure Date & Arrival Date-->
         <p:row>
             <p:column colspan="3">
-                <p:calendar id="deptDate" pages="2" pattern="dd/MM/yyyy" timeZone="GMT+8" value="#{bookingManager.deptDate}">
+                <p:calendar id="deptDate" pages="2" pattern="dd/MM/yyyy" yearRange="c-0:c+100" mindate="c" timeZone="GMT+8" value="#{bookingManager.deptDate}">
                     <p:ajax event="dateSelect" update="arrDateCol" listener="#{bookingManager.onDeptDateChange()}" />
                 </p:calendar>
             </p:column>

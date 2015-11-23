@@ -126,7 +126,7 @@ public class MilesRedemptionBacking implements Serializable {
         calculatedMiles = routePlanningSession.distance(arrAirport, deptAirport);
         calculatedMiles = calculatedMiles * 0.000621371;
         actualPointNeed = calculatedMiles *4 ;
-        if(selectedCabinCls.getName().equals("Merlion Sky Palace")){
+        if(selectedCabinCls.getName().equals("Merlion Sky Palace (First)")){
             actualPointNeed=actualPointNeed*8;
         }
         else if(selectedCabinCls.getName().equals("Business")) {
