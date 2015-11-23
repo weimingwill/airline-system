@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="feulCost" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="782295a5-118d-4c7e-a134-95d802df0be2">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F0EFEF"/>
-		</conditionalStyle>
-	</style>
-	<subDataset name="PieChartDataset" uuid="049e2f11-b411-4fe3-981a-cfd3a7ef9691"/>
-	<parameter name="IMG_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["silver.png"]]></defaultValueExpression>
-	</parameter>
-	<queryString language="SQL">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+    <style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+    <style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
+    <style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+    <style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+        <conditionalStyle>
+            <conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+            <style mode="Opaque" backcolor="#F0EFEF"/>
+        </conditionalStyle>
+    </style>
+    <subDataset name="PieChartDataset" uuid="049e2f11-b411-4fe3-981a-cfd3a7ef9691"/>
+    <parameter name="IMG_DIR" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["/Users/Lewis/airline-system/MAS/MAS-war/src/java/reports/silver.png"]]></defaultValueExpression>
+    </parameter>
+    <queryString language="SQL">
 		<![CDATA[SELECT
      FLIGHT.`ID` AS FLIGHT_ID,
      FLIGHT.`FLIGHTNO` AS FLIGHT_FLIGHTNO,
@@ -25,208 +25,208 @@
      FLIGHT.`flyDistance` AS FLIGHT_FLYDISTANCE
 FROM
      `FLIGHT` FLIGHT]]>
-	</queryString>
-	<field name="FLIGHT_ID" class="java.lang.Long"/>
-	<field name="FLIGHT_FLIGHTNO" class="java.lang.String"/>
-	<field name="FLIGHT_WEEKLYFREQUENCY" class="java.lang.Integer"/>
-	<field name="FLIGHT_FLYDISTANCE" class="java.lang.Double"/>
-	<variable name="oilPrice" class="java.lang.Double">
-		<variableExpression><![CDATA[new Double(50.27)]]></variableExpression>
-	</variable>
-	<variable name="flightDistance" class="java.lang.Double">
-		<variableExpression><![CDATA[new Double($F{FLIGHT_WEEKLYFREQUENCY}.intValue()*$F{FLIGHT_FLYDISTANCE}.doubleValue())]]></variableExpression>
-	</variable>
-	<variable name="totalDistance" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{flightDistance}]]></variableExpression>
-	</variable>
-	<variable name="totalFeulCost" class="java.lang.Double">
-		<variableExpression><![CDATA[new Double($V{totalDistance}.doubleValue()*$V{oilPrice}.doubleValue())]]></variableExpression>
-	</variable>
-	<background>
-		<band height="555" splitType="Stretch">
-			<line>
-				<reportElement x="201" y="431" width="117" height="1" uuid="95dadd88-5419-453c-a01c-04ec7ebc9944">
-					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
-				</reportElement>
-				<graphicElement>
-					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
-				</graphicElement>
-			</line>
-			<line>
-				<reportElement x="72" y="37" width="204" height="1" uuid="c237bf92-f13f-4aee-b8e9-74d596da8745">
-					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
-				</reportElement>
-				<graphicElement>
-					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
-				</graphicElement>
-			</line>
-		</band>
-	</background>
-	<title>
-		<band height="65" splitType="Stretch">
-			<frame>
-				<reportElement mode="Opaque" x="-20" y="0" width="822" height="65" forecolor="#006699" backcolor="#006699" uuid="de13af67-5b2f-4bad-afc7-dc7b6e071bcc"/>
-				<staticText>
-					<reportElement style="Title" x="122" y="0" width="578" height="65" uuid="aa9b1462-0833-4476-ad18-828754c446f6"/>
-					<textElement textAlignment="Right">
-						<font size="54" isBold="false"/>
-					</textElement>
-					<text><![CDATA[Feul Cost Report]]></text>
-				</staticText>
-				<image>
-					<reportElement x="22" y="0" width="229" height="65" uuid="4daffb9e-1986-4224-b07d-b751fff6c651">
-						<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
-					</reportElement>
-					<imageExpression><![CDATA[$P{IMG_DIR}]]></imageExpression>
-				</image>
-			</frame>
-		</band>
-	</title>
-	<pageHeader>
-		<band splitType="Stretch"/>
-	</pageHeader>
-	<columnHeader>
-		<band height="19" splitType="Stretch">
-			<staticText>
-				<reportElement style="Column header" positionType="Float" x="2" y="0" width="143" height="14" forecolor="#000000" uuid="e016ca3f-54f0-41df-ab68-e56a11ce0eea"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
-				</textElement>
-				<text><![CDATA[Flight No.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="Column header" positionType="Float" x="201" y="0" width="177" height="14" forecolor="#000000" uuid="89552313-2d66-4814-9644-439d2b4de979"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
-				</textElement>
-				<text><![CDATA[Weekly Frequence]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="Column header" positionType="Float" x="438" y="0" width="143" height="14" forecolor="#000000" uuid="c10177fc-8624-4c00-85d8-f3eacb69465b"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
-				</textElement>
-				<text><![CDATA[Fly Distance]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="Column header" positionType="Float" x="655" y="0" width="143" height="14" forecolor="#000000" uuid="360c070e-22a3-4b94-9fb8-cd2cd62806b1"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
-				</textElement>
-				<text><![CDATA[Flight Distance]]></text>
-			</staticText>
-		</band>
-	</columnHeader>
-	<detail>
-		<band height="18" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="14" width="802" height="1" uuid="71f786cd-e723-4c3c-a016-e9467cfecb97"/>
-			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" positionType="Float" x="0" y="0" width="143" height="14" uuid="7ad65f55-41e4-447a-afe8-eb8c44a4c94f"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{FLIGHT_FLIGHTNO}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" positionType="Float" x="201" y="0" width="187" height="14" uuid="80869c23-4b13-4409-b8bb-30bdd88a684f"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{FLIGHT_WEEKLYFREQUENCY}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" positionType="Float" x="438" y="0" width="143" height="14" uuid="f52f8080-5b91-4d19-be0b-d03f758c14bd"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{FLIGHT_FLYDISTANCE}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" positionType="Float" x="655" y="0" width="143" height="14" uuid="4060fa4c-dbab-411d-b9b8-a69e2d5a4f21"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{flightDistance}]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
-	<columnFooter>
-		<band height="3" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="16" splitType="Stretch">
-			<frame>
-				<reportElement mode="Opaque" x="2" y="0" width="800" height="16" forecolor="#D0B48E" backcolor="#006699" uuid="85841567-4f6c-44c9-8687-3907b20ba624"/>
-				<textField evaluationTime="Report">
-					<reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#FFFFFF" uuid="49e0cc29-d3f8-46f9-a158-e27729fb8317"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#FFFFFF" uuid="94389456-72a3-4d01-98b9-7b862b04c771"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-				</textField>
-				<textField pattern="EEEEE dd MMMMM yyyy">
-					<reportElement style="Column header" x="2" y="0" width="197" height="16" forecolor="#FFFFFF" uuid="2a159d1d-1e4a-4d41-aaf3-23687c245e37"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-				</textField>
-			</frame>
-		</band>
-	</pageFooter>
-	<summary>
-		<band height="62" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="20" width="100" height="20" uuid="65cc91f3-6198-45b9-94e3-e3756d410f3d"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Oil Price (SGD)]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="0" width="100" height="20" uuid="4c7530d3-9b78-46c0-a424-817a201276c9"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Total Distance]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="40" width="100" height="20" uuid="5600f17a-bfea-42cc-a9ef-51db52e53a39"/>
-				<textElement>
-					<font fontName="Arial" size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Total (SGD)]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="655" y="20" width="119" height="20" uuid="4a3f9e79-3ab5-4019-ae85-38e0e7319f37"/>
-				<textElement>
-					<font size="12" isBold="true" isUnderline="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{oilPrice}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="655" y="0" width="119" height="20" uuid="96c52c74-a334-4f0c-9416-955f8a4fa540"/>
-				<textElement>
-					<font size="12" isBold="true" isUnderline="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{totalDistance}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="655" y="40" width="119" height="20" uuid="63d416e7-6b94-4fa7-b6f7-cefad37d45f9"/>
-				<textElement>
-					<font size="14" isBold="true" isUnderline="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{totalFeulCost}]]></textFieldExpression>
-			</textField>
-		</band>
-	</summary>
+    </queryString>
+    <field name="FLIGHT_ID" class="java.lang.Long"/>
+    <field name="FLIGHT_FLIGHTNO" class="java.lang.String"/>
+    <field name="FLIGHT_WEEKLYFREQUENCY" class="java.lang.Integer"/>
+    <field name="FLIGHT_FLYDISTANCE" class="java.lang.Double"/>
+    <variable name="oilPrice" class="java.lang.Double">
+        <variableExpression><![CDATA[new Double(50.27)]]></variableExpression>
+    </variable>
+    <variable name="flightDistance" class="java.lang.Double">
+        <variableExpression><![CDATA[new Double($F{FLIGHT_WEEKLYFREQUENCY}.intValue()*$F{FLIGHT_FLYDISTANCE}.doubleValue())]]></variableExpression>
+    </variable>
+    <variable name="totalDistance" class="java.lang.Double" calculation="Sum">
+        <variableExpression><![CDATA[$V{flightDistance}]]></variableExpression>
+    </variable>
+    <variable name="totalFeulCost" class="java.lang.Double">
+        <variableExpression><![CDATA[new Double($V{totalDistance}.doubleValue()*$V{oilPrice}.doubleValue())]]></variableExpression>
+    </variable>
+    <background>
+        <band height="555" splitType="Stretch">
+            <line>
+                <reportElement x="201" y="431" width="117" height="1" uuid="95dadd88-5419-453c-a01c-04ec7ebc9944">
+                    <printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+                </reportElement>
+                <graphicElement>
+                    <pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+                </graphicElement>
+            </line>
+            <line>
+                <reportElement x="72" y="37" width="204" height="1" uuid="c237bf92-f13f-4aee-b8e9-74d596da8745">
+                    <printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+                </reportElement>
+                <graphicElement>
+                    <pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+                </graphicElement>
+            </line>
+        </band>
+    </background>
+    <title>
+        <band height="65" splitType="Stretch">
+            <frame>
+                <reportElement mode="Opaque" x="-20" y="0" width="822" height="65" forecolor="#006699" backcolor="#006699" uuid="de13af67-5b2f-4bad-afc7-dc7b6e071bcc"/>
+                <staticText>
+                    <reportElement style="Title" x="122" y="0" width="578" height="65" uuid="aa9b1462-0833-4476-ad18-828754c446f6"/>
+                    <textElement textAlignment="Right">
+                        <font size="54" isBold="false"/>
+                    </textElement>
+                    <text><![CDATA[Feul Cost Report]]></text>
+                </staticText>
+                <image>
+                    <reportElement x="22" y="0" width="229" height="65" uuid="4daffb9e-1986-4224-b07d-b751fff6c651">
+                        <printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+                    </reportElement>
+                    <imageExpression><![CDATA[$P{IMG_DIR}]]></imageExpression>
+                </image>
+            </frame>
+        </band>
+    </title>
+    <pageHeader>
+        <band splitType="Stretch"/>
+    </pageHeader>
+    <columnHeader>
+        <band height="19" splitType="Stretch">
+            <staticText>
+                <reportElement style="Column header" positionType="Float" x="2" y="0" width="143" height="14" forecolor="#000000" uuid="e016ca3f-54f0-41df-ab68-e56a11ce0eea"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+                </textElement>
+                <text><![CDATA[Flight No.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Column header" positionType="Float" x="201" y="0" width="177" height="14" forecolor="#000000" uuid="89552313-2d66-4814-9644-439d2b4de979"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+                </textElement>
+                <text><![CDATA[Weekly Frequence]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Column header" positionType="Float" x="438" y="0" width="143" height="14" forecolor="#000000" uuid="c10177fc-8624-4c00-85d8-f3eacb69465b"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+                </textElement>
+                <text><![CDATA[Fly Distance]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Column header" positionType="Float" x="655" y="0" width="143" height="14" forecolor="#000000" uuid="360c070e-22a3-4b94-9fb8-cd2cd62806b1"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+                </textElement>
+                <text><![CDATA[Flight Distance]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="18" splitType="Stretch">
+            <line>
+                <reportElement positionType="FixRelativeToBottom" x="0" y="14" width="802" height="1" uuid="71f786cd-e723-4c3c-a016-e9467cfecb97"/>
+            </line>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" positionType="Float" x="0" y="0" width="143" height="14" uuid="7ad65f55-41e4-447a-afe8-eb8c44a4c94f"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{FLIGHT_FLIGHTNO}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" positionType="Float" x="201" y="0" width="187" height="14" uuid="80869c23-4b13-4409-b8bb-30bdd88a684f"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{FLIGHT_WEEKLYFREQUENCY}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" positionType="Float" x="438" y="0" width="143" height="14" uuid="f52f8080-5b91-4d19-be0b-d03f758c14bd"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{FLIGHT_FLYDISTANCE}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" positionType="Float" x="655" y="0" width="143" height="14" uuid="4060fa4c-dbab-411d-b9b8-a69e2d5a4f21"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{flightDistance}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <columnFooter>
+        <band height="3" splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band height="16" splitType="Stretch">
+            <frame>
+                <reportElement mode="Opaque" x="2" y="0" width="800" height="16" forecolor="#D0B48E" backcolor="#006699" uuid="85841567-4f6c-44c9-8687-3907b20ba624"/>
+                <textField evaluationTime="Report">
+                    <reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#FFFFFF" uuid="49e0cc29-d3f8-46f9-a158-e27729fb8317"/>
+                    <textElement verticalAlignment="Middle">
+                        <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#FFFFFF" uuid="94389456-72a3-4d01-98b9-7b862b04c771"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+                </textField>
+                <textField pattern="EEEEE dd MMMMM yyyy">
+                    <reportElement style="Column header" x="2" y="0" width="197" height="16" forecolor="#FFFFFF" uuid="2a159d1d-1e4a-4d41-aaf3-23687c245e37"/>
+                    <textElement verticalAlignment="Middle">
+                        <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+                </textField>
+            </frame>
+        </band>
+    </pageFooter>
+    <summary>
+        <band height="62" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="20" width="100" height="20" uuid="65cc91f3-6198-45b9-94e3-e3756d410f3d"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Oil Price (SGD)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="0" width="100" height="20" uuid="4c7530d3-9b78-46c0-a424-817a201276c9"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total Distance]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="40" width="100" height="20" uuid="5600f17a-bfea-42cc-a9ef-51db52e53a39"/>
+                <textElement>
+                    <font fontName="Arial" size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total (SGD)]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="655" y="20" width="119" height="20" uuid="4a3f9e79-3ab5-4019-ae85-38e0e7319f37"/>
+                <textElement>
+                    <font size="12" isBold="true" isUnderline="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{oilPrice}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="655" y="0" width="119" height="20" uuid="96c52c74-a334-4f0c-9416-955f8a4fa540"/>
+                <textElement>
+                    <font size="12" isBold="true" isUnderline="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{totalDistance}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="655" y="40" width="119" height="20" uuid="63d416e7-6b94-4fa7-b6f7-cefad37d45f9"/>
+                <textElement>
+                    <font size="14" isBold="true" isUnderline="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{totalFeulCost}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
 </jasperReport>

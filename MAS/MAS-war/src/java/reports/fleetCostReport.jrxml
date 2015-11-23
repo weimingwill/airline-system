@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fleetCostReport" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28a458ae-aa5d-49fd-a098-eff09c422443">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F0EFEF"/>
-		</conditionalStyle>
-	</style>
-	<subDataset name="PieChartDataset" uuid="44b38333-c972-48ce-9787-4fc81da5431a"/>
-	<parameter name="IMG_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["silver.png"]]></defaultValueExpression>
-	</parameter>
-	<queryString language="SQL">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+    <style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+    <style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
+    <style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+    <style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+        <conditionalStyle>
+            <conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+            <style mode="Opaque" backcolor="#F0EFEF"/>
+        </conditionalStyle>
+    </style>
+    <subDataset name="PieChartDataset" uuid="44b38333-c972-48ce-9787-4fc81da5431a"/>
+    <parameter name="IMG_DIR" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["/Users/Lewis/airline-system/MAS/MAS-war/src/java/reports/silver.png"]]></defaultValueExpression>
+    </parameter>
+    <queryString language="SQL">
 		<![CDATA[SELECT
      AIRCRAFT.`AIRCRAFTID` AS AIRCRAFT_AIRCRAFTID,
      AIRCRAFT.`ADDONDATE` AS AIRCRAFT_ADDONDATE,
@@ -31,200 +31,200 @@
      AIRCRAFT.`AIRCRAFTTYPE_ID` AS AIRCRAFT_AIRCRAFTTYPE_ID
 FROM
      `AIRCRAFT` AIRCRAFT]]>
-	</queryString>
-	<field name="AIRCRAFT_COST" class="java.lang.Float"/>
-	<field name="AIRCRAFT_SOURCE" class="java.lang.String"/>
-	<field name="AIRCRAFT_TAILNO" class="java.lang.String"/>
-	<variable name="totalFleetCost" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{AIRCRAFT_COST}]]></variableExpression>
-	</variable>
-	<group name="AIRCRAFT_TAILNO">
-		<groupExpression><![CDATA[$F{AIRCRAFT_TAILNO}]]></groupExpression>
-		<groupHeader>
-			<band height="24">
-				<frame>
-					<reportElement mode="Opaque" x="0" y="0" width="801" height="24" forecolor="#B89F7D" backcolor="#70A9C6" uuid="12d05796-a307-4742-a680-bb0383b07802"/>
-					<staticText>
-						<reportElement x="2" y="0" width="70" height="23" uuid="17888f79-22a0-41b0-a74a-24e6de077905"/>
-						<textElement>
-							<font fontName="Arial" size="18" isBold="true"/>
-						</textElement>
-						<text><![CDATA[Aircraft]]></text>
-					</staticText>
-				</frame>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="SubTitle" isPrintRepeatedValues="false" x="72" y="1" width="263" height="23" forecolor="#FFFFFF" uuid="d79fd632-42c3-492e-9db4-6ca896c1ce97"/>
-					<textElement>
-						<font fontName="Arial" isBold="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{AIRCRAFT_TAILNO}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-		<groupFooter>
-			<band height="2"/>
-		</groupFooter>
-	</group>
-	<background>
-		<band height="555" splitType="Stretch">
-			<staticText>
-				<reportElement mode="Opaque" x="318" y="315" width="239" height="181" backcolor="#FFFFCC" uuid="9193bc3c-6612-4427-a237-7bad88f62125">
-					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
-				</reportElement>
-				<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4">
-					<pen lineWidth="1.0" lineColor="#CC9900"/>
-					<topPen lineWidth="1.0" lineColor="#CC9900"/>
-					<leftPen lineWidth="1.0" lineColor="#CC9900"/>
-					<bottomPen lineWidth="1.0" lineColor="#CC9900"/>
-					<rightPen lineWidth="1.0" lineColor="#CC9900"/>
-				</box>
-				<textElement>
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[Each chart is populated on each page.
+    </queryString>
+    <field name="AIRCRAFT_COST" class="java.lang.Float"/>
+    <field name="AIRCRAFT_SOURCE" class="java.lang.String"/>
+    <field name="AIRCRAFT_TAILNO" class="java.lang.String"/>
+    <variable name="totalFleetCost" class="java.lang.Double" calculation="Sum">
+        <variableExpression><![CDATA[$F{AIRCRAFT_COST}]]></variableExpression>
+    </variable>
+    <group name="AIRCRAFT_TAILNO">
+        <groupExpression><![CDATA[$F{AIRCRAFT_TAILNO}]]></groupExpression>
+        <groupHeader>
+            <band height="24">
+                <frame>
+                    <reportElement mode="Opaque" x="0" y="0" width="801" height="24" forecolor="#B89F7D" backcolor="#70A9C6" uuid="12d05796-a307-4742-a680-bb0383b07802"/>
+                    <staticText>
+                        <reportElement x="2" y="0" width="70" height="23" uuid="17888f79-22a0-41b0-a74a-24e6de077905"/>
+                        <textElement>
+                            <font fontName="Arial" size="18" isBold="true"/>
+                        </textElement>
+                        <text><![CDATA[Aircraft]]></text>
+                    </staticText>
+                </frame>
+                <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                    <reportElement style="SubTitle" isPrintRepeatedValues="false" x="72" y="1" width="263" height="23" forecolor="#FFFFFF" uuid="d79fd632-42c3-492e-9db4-6ca896c1ce97"/>
+                    <textElement>
+                        <font fontName="Arial" isBold="false" pdfFontName="Helvetica"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{AIRCRAFT_TAILNO}]]></textFieldExpression>
+                </textField>
+            </band>
+        </groupHeader>
+        <groupFooter>
+            <band height="2"/>
+        </groupFooter>
+    </group>
+    <background>
+        <band height="555" splitType="Stretch">
+            <staticText>
+                <reportElement mode="Opaque" x="318" y="315" width="239" height="181" backcolor="#FFFFCC" uuid="9193bc3c-6612-4427-a237-7bad88f62125">
+                    <printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+                </reportElement>
+                <box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4">
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <text><![CDATA[Each chart is populated on each page.
 The 3 pie charts are currently using an empty datasource and the values are
 generated using a random generator.
 
 This rectangle element is not printed (see the print when expression of this
 element)]]></text>
-			</staticText>
-			<line>
-				<reportElement x="201" y="431" width="117" height="1" uuid="c935e9c6-2f12-4865-983a-9f0b59455682">
-					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
-				</reportElement>
-				<graphicElement>
-					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
-				</graphicElement>
-			</line>
-			<line>
-				<reportElement x="72" y="37" width="204" height="1" uuid="260042e0-0196-41fc-b9ab-5ebc3218314a">
-					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
-				</reportElement>
-				<graphicElement>
-					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
-				</graphicElement>
-			</line>
-		</band>
-	</background>
-	<title>
-		<band height="67" splitType="Stretch">
-			<frame>
-				<reportElement mode="Opaque" x="-20" y="0" width="822" height="65" forecolor="#006699" backcolor="#006699" uuid="59e7abcf-1948-415d-9f88-d503c3c19a3c"/>
-				<staticText>
-					<reportElement style="Title" x="122" y="0" width="578" height="65" uuid="f60a6cc1-761c-4d37-92a1-5a41bcd21b20"/>
-					<textElement textAlignment="Right">
-						<font size="54" isBold="false"/>
-					</textElement>
-					<text><![CDATA[Fleet Cost Report]]></text>
-				</staticText>
-				<image>
-					<reportElement x="20" y="0" width="229" height="65" uuid="f0072e4d-3fb3-4442-b04d-9587c265b42b">
-						<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
-					</reportElement>
-					<imageExpression><![CDATA[$P{IMG_DIR}]]></imageExpression>
-				</image>
-			</frame>
-		</band>
-	</title>
-	<pageHeader>
-		<band splitType="Stretch"/>
-	</pageHeader>
-	<columnHeader>
-		<band height="19" splitType="Stretch">
-			<frame>
-				<reportElement x="227" y="0" width="575" height="14" uuid="ba684d0f-d252-43e5-a88a-957cfdfd31e7"/>
-			</frame>
-			<staticText>
-				<reportElement style="Column header" positionType="Float" x="664" y="0" width="137" height="14" forecolor="#000000" uuid="a19c8a56-a876-44a2-82c9-e201d6af602f"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
-				</textElement>
-				<text><![CDATA[AIRCRAFT_COST]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="Column header" positionType="Float" x="0" y="0" width="287" height="14" forecolor="#000000" uuid="e7e5127b-fc05-4056-82be-2e2857fd5a1d"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
-				</textElement>
-				<text><![CDATA[AIRCRAFT_SOURCE]]></text>
-			</staticText>
-		</band>
-	</columnHeader>
-	<detail>
-		<band height="17" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="2" y="15" width="799" height="1" uuid="2e3e917f-0269-4b14-8627-39d224c6c3bf"/>
-			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" positionType="Float" x="0" y="0" width="165" height="14" uuid="4219a0dd-b73a-4cf5-9d3d-3f2ec69f372c"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{AIRCRAFT_SOURCE}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" positionType="Float" x="664" y="1" width="134" height="14" uuid="9289ad60-9704-43ed-979d-b28090f16bec"/>
-				<textElement>
-					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{AIRCRAFT_COST}]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
-	<columnFooter>
-		<band height="5" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="2dc9b15d-febf-489d-b635-5a121af05764"/>
-				<graphicElement>
-					<pen lineWidth="0.5" lineColor="#999999"/>
-				</graphicElement>
-			</line>
-		</band>
-	</columnFooter>
-	<pageFooter>
-		<band height="16" splitType="Stretch">
-			<frame>
-				<reportElement mode="Opaque" x="2" y="0" width="800" height="16" forecolor="#D0B48E" backcolor="#006699" uuid="ec84ad7f-d2c4-46c4-8b04-f8a4f0dd1679"/>
-				<textField evaluationTime="Report">
-					<reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#FFFFFF" uuid="fd957ea1-f376-4566-96ae-107db21a5008"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#FFFFFF" uuid="7a456732-82e2-429c-b2b0-dda1b2254821"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-				</textField>
-				<textField pattern="EEEEE dd MMMMM yyyy">
-					<reportElement style="Column header" x="2" y="0" width="197" height="16" forecolor="#FFFFFF" uuid="cddfd420-b8be-40d2-8f82-9072ce102d4d"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-				</textField>
-			</frame>
-		</band>
-	</pageFooter>
-	<summary>
-		<band height="25" splitType="Stretch">
-			<staticText>
-				<reportElement x="2" y="0" width="100" height="20" uuid="6139392b-59e1-497d-af9b-f6bfa3523016"/>
-				<textElement>
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Total (SGD)]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="664" y="0" width="133" height="20" uuid="259e0279-8eca-4339-add9-ecd5065c4895"/>
-				<textElement>
-					<font size="14" isBold="true" isUnderline="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{totalFleetCost}]]></textFieldExpression>
-			</textField>
-		</band>
-	</summary>
+            </staticText>
+            <line>
+                <reportElement x="201" y="431" width="117" height="1" uuid="c935e9c6-2f12-4865-983a-9f0b59455682">
+                    <printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+                </reportElement>
+                <graphicElement>
+                    <pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+                </graphicElement>
+            </line>
+            <line>
+                <reportElement x="72" y="37" width="204" height="1" uuid="260042e0-0196-41fc-b9ab-5ebc3218314a">
+                    <printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+                </reportElement>
+                <graphicElement>
+                    <pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+                </graphicElement>
+            </line>
+        </band>
+    </background>
+    <title>
+        <band height="67" splitType="Stretch">
+            <frame>
+                <reportElement mode="Opaque" x="-20" y="0" width="822" height="65" forecolor="#006699" backcolor="#006699" uuid="59e7abcf-1948-415d-9f88-d503c3c19a3c"/>
+                <staticText>
+                    <reportElement style="Title" x="122" y="0" width="578" height="65" uuid="f60a6cc1-761c-4d37-92a1-5a41bcd21b20"/>
+                    <textElement textAlignment="Right">
+                        <font size="54" isBold="false"/>
+                    </textElement>
+                    <text><![CDATA[Fleet Cost Report]]></text>
+                </staticText>
+                <image>
+                    <reportElement x="20" y="0" width="229" height="65" uuid="f0072e4d-3fb3-4442-b04d-9587c265b42b">
+                        <printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+                    </reportElement>
+                    <imageExpression><![CDATA[$P{IMG_DIR}]]></imageExpression>
+                </image>
+            </frame>
+        </band>
+    </title>
+    <pageHeader>
+        <band splitType="Stretch"/>
+    </pageHeader>
+    <columnHeader>
+        <band height="19" splitType="Stretch">
+            <frame>
+                <reportElement x="227" y="0" width="575" height="14" uuid="ba684d0f-d252-43e5-a88a-957cfdfd31e7"/>
+            </frame>
+            <staticText>
+                <reportElement style="Column header" positionType="Float" x="664" y="0" width="137" height="14" forecolor="#000000" uuid="a19c8a56-a876-44a2-82c9-e201d6af602f"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+                </textElement>
+                <text><![CDATA[AIRCRAFT_COST]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Column header" positionType="Float" x="0" y="0" width="287" height="14" forecolor="#000000" uuid="e7e5127b-fc05-4056-82be-2e2857fd5a1d"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica"/>
+                </textElement>
+                <text><![CDATA[AIRCRAFT_SOURCE]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="17" splitType="Stretch">
+            <line>
+                <reportElement positionType="FixRelativeToBottom" x="2" y="15" width="799" height="1" uuid="2e3e917f-0269-4b14-8627-39d224c6c3bf"/>
+            </line>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" positionType="Float" x="0" y="0" width="165" height="14" uuid="4219a0dd-b73a-4cf5-9d3d-3f2ec69f372c"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{AIRCRAFT_SOURCE}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" positionType="Float" x="664" y="1" width="134" height="14" uuid="9289ad60-9704-43ed-979d-b28090f16bec"/>
+                <textElement>
+                    <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{AIRCRAFT_COST}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <columnFooter>
+        <band height="5" splitType="Stretch">
+            <line>
+                <reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="2dc9b15d-febf-489d-b635-5a121af05764"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#999999"/>
+                </graphicElement>
+            </line>
+        </band>
+    </columnFooter>
+    <pageFooter>
+        <band height="16" splitType="Stretch">
+            <frame>
+                <reportElement mode="Opaque" x="2" y="0" width="800" height="16" forecolor="#D0B48E" backcolor="#006699" uuid="ec84ad7f-d2c4-46c4-8b04-f8a4f0dd1679"/>
+                <textField evaluationTime="Report">
+                    <reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#FFFFFF" uuid="fd957ea1-f376-4566-96ae-107db21a5008"/>
+                    <textElement verticalAlignment="Middle">
+                        <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#FFFFFF" uuid="7a456732-82e2-429c-b2b0-dda1b2254821"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+                </textField>
+                <textField pattern="EEEEE dd MMMMM yyyy">
+                    <reportElement style="Column header" x="2" y="0" width="197" height="16" forecolor="#FFFFFF" uuid="cddfd420-b8be-40d2-8f82-9072ce102d4d"/>
+                    <textElement verticalAlignment="Middle">
+                        <font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+                </textField>
+            </frame>
+        </band>
+    </pageFooter>
+    <summary>
+        <band height="25" splitType="Stretch">
+            <staticText>
+                <reportElement x="2" y="0" width="100" height="20" uuid="6139392b-59e1-497d-af9b-f6bfa3523016"/>
+                <textElement>
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total (SGD)]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="664" y="0" width="133" height="20" uuid="259e0279-8eca-4339-add9-ecd5065c4895"/>
+                <textElement>
+                    <font size="14" isBold="true" isUnderline="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{totalFleetCost}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
 </jasperReport>
