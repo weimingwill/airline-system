@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="booking" required="true" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set var="booking" value="#{cc.attrs.booking}" />
+        <p:panelGrid styleClass="fullWidth itineraryPanel">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="2">Contact details</p:column>
+                </p:row>
+            </f:facet>
+            <p:row>
+                <p:column>Phone number</p:column>
+                <p:column>#{booking.phoneNo.countryCode} #{booking.phoneNo.areaCode} #{booking.phoneNo.number}</p:column>
+            </p:row>
+            <p:row>
+                <p:column>Email</p:column>
+                <p:column>#{booking.email}</p:column>
+            </p:row>
+        </p:panelGrid>
+    </cc:implementation>
+</html>

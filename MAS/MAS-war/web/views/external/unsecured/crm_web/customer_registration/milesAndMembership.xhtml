@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmExTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="title">
+        Membership Information
+    </ui:define>
+     
+    <ui:define name="content">
+      <h3  style="margin-top: 0">These are some information about our Merlion Air Membership:</h3> 
+        <p:panel  header="Miles And Membership"  style="width: 700px;text-align: center;"  styleClass="centerPanel">
+            <p:dataTable id="membershipPolicy" value="#{generalInformationController.privileges}" var="privilege" tableStyleClass="table-small">
+                    
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="Privilege Name" />
+                            <ui:repeat value="#{generalInformationController.memberships}" var="membership">
+                                <p:column  headerText="#{membership.name}"/>
+                                  
+                            </ui:repeat>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column>
+                        <p:outputLabel  value="#{privilege.name}" />
+                        
+                    </p:column>
+                    <c:forEach items="#{generalInformationController.memberships}" var="membership">
+                        <p:column>
+                            <p:outputLabel value="#{generalInformationController.getPrivilegeMembershipValue(privilege.id, membership.id)}" />
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

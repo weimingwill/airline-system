@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Market Campaign Analysis
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form> 
+            <h:panelGrid columns="2" columnClasses="column" cellpadding="5">
+                <h:outputLabel value="Total number of campaigns:   " />
+                <p:outputLabel value="#{analyticsController.campaignNo}">
+                </p:outputLabel>
+
+                <h:outputLabel value="Total number of ongoing campaigns:   " />
+                <p:outputLabel value="#{analyticsController.ongoingCamapaignNo}">
+                </p:outputLabel>
+            </h:panelGrid>
+
+            <p:dataScroller value="#{analyticsController.campaigns}" var="campaign" chunkSize="10">
+
+                <f:facet name="header">
+                    Scroll Down to Load More Cars
+                </f:facet>
+
+                <f:facet name="loader">
+                    <p:commandButton type="button" value="More" icon="ui-icon-circle-triangle-s"/>
+                </f:facet>
+
+                <h:panelGrid columns="1" style="width:100%" columnClasses="detail">
+
+                    <p:outputPanel>
+                        <h:panelGrid columns="4" cellpadding="10">
+                            <h:outputText value="Name:" />
+                            <h:outputText value="#{campaign.name}" style="font-weight: bold"/>
+                            <h:outputText style="font-weight: bold"/>
+                            <h:outputText style="font-weight: bold"/>
+
+
+
+                            <h:outputText value="Promotion code:" />
+                            <h:outputText value="#{analyticsController.getPromoCodeByCampaign(campaign)}" style="font-weight: bold"/>
+                            <h:outputText style="font-weight: bold"/>
+                            <h:outputText style="font-weight: bold"/>
+
+
+                            <h:outputText value="Revenue:" />
+                            <h:outputText value="#{campaign.revenue}" style="font-weight: bold"/>
+                            <h:outputText style="font-weight: bold"/>
+                            <h:outputText style="font-weight: bold"/>
+
+
+                            <h:outputText value="Conversion rate:" />
+                            <h:outputText value="#{campaign.responderNo}" style="font-weight: bold"/>
+                            <h:outputText value="/" style="font-weight: bold"/>
+                            <h:outputText value="#{campaign.audienceSize}" style="font-weight: bold"/>
+
+                        </h:panelGrid>
+                    </p:outputPanel>
+                    <p:separator />
+
+                </h:panelGrid>
+            </p:dataScroller>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

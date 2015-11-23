@@ -27,6 +27,7 @@
             <h:form>
                 <p:panel header="Login">
                     <pa:CCCustomerLoginPanel />
+                    <p:commandButton action="#{bookingManager.toEnterPassengerDetails()}" actionListener="#{customerLoginManager.doLogin()}" value="Login" update="messages" />
                 </p:panel>
             </h:form>
         </p:panelGrid>

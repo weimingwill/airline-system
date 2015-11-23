@@ -10,6 +10,7 @@ import ams.crm.entity.CustomerList;
 import ams.crm.entity.MktCampaign;
 import ams.crm.entity.PromotionCode;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -45,6 +46,7 @@ public class CampaignSession implements CampaignSessionLocal {
     @Override
     public MktCampaign createCampaign(String campaignName, String campaignType, String campaignDescription, Date startTime, Date endTime, String budget, String promotionCode, List<String> promotionCodeTypes, String promotionCodeType, String promotionPercentage, String promotionValue, CustomerList customerList) {
         MktCampaign campaign = new MktCampaign();
+        em.persist(campaign);
         campaign.setName(campaignName);
         campaign.setType(campaignType);
         campaign.setDescription(campaignDescription);
@@ -53,6 +55,7 @@ public class CampaignSession implements CampaignSessionLocal {
         campaign.setBudget(Double.parseDouble(budget));
 
         PromotionCode pc = new PromotionCode();
+        em.persist(pc);
         pc.setName(promotionCode);
         pc.setPercentage(Double.parseDouble(promotionPercentage));
         pc.setPromoValue(Double.parseDouble(promotionValue));
@@ -67,8 +70,9 @@ public class CampaignSession implements CampaignSessionLocal {
         int size = customerLists.size();
         campaign.setAudienceSize(size);
 
-        em.persist(campaign);
-        em.persist(pc);
+        em.merge(campaign);
+        em.merge(pc);
+        
 
         return campaign;
 
@@ -110,5 +114,53 @@ public class CampaignSession implements CampaignSessionLocal {
 
         return mc;
 
+    }
+
+    @Override
+    public int getCampaignNo() {
+        Query query = em.createQuery("SELECT m FROM MktCampaign m");
+        List<MktCampaign> campaigns = new ArrayList<>();
+        try {
+            campaigns = (List<MktCampaign>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+        return campaigns.size();
+    }
+
+    @Override
+    public int getOngoingCampaignNo() {
+        Query query = em.createQuery("SELECT m FROM MktCampaign m");
+        List<MktCampaign> campaigns = new ArrayList<>();
+        try {
+            campaigns = (List<MktCampaign>) query.getResultList();
+        } catch (NoResultException ex) {
+        }
+
+        Calendar today = Calendar.getInstance();
+
+        List<MktCampaign> campaignCopy = new ArrayList<>(campaigns);
+
+        for (MktCampaign mc : campaigns) {
+            Calendar startDate = Calendar.getInstance();
+            startDate.setTime(mc.getStartTime());
+            Calendar endDate = Calendar.getInstance();
+            endDate.setTime(mc.getEndTime());
+
+            if (today.after(endDate) || today.before(startDate)) {
+                campaignCopy.remove(mc);
+            }
+
+        }
+        return campaignCopy.size();
+    }
+
+    @Override
+    public String getPromoCodeByCampaign(MktCampaign mktCampaign) {
+        
+        MktCampaign mc = new MktCampaign();
+        
+        mc = em.find(MktCampaign.class, mktCampaign.getId());
+        
+        return mc.getPromotionCodes().get(0).getName();
     }
 }

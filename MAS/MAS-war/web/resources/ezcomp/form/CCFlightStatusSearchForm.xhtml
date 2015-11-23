@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        #{flightStatusManager.init()}
+        <h:form id="flightStatusForm">
+            <p:selectOneRadio id="searchBy" styleClass="radioChoice" value="#{flightStatusManager.searchBy}">
+                <p:ajax update="flightStatusForm" listener="#{flightStatusManager.onSearchBySelected()}"/>
+                <f:selectItem itemLabel="Search by route" itemValue="route" />
+                <f:selectItem itemLabel="Search by flight number" itemValue="flightNo" />
+            </p:selectOneRadio>
+
+            <p:panelGrid id="searchByRoute">
+                <p:row rendered="#{not flightStatusManager.selecteRoute}"> 
+                    <p:column colspan="1"><p:outputLabel for="flightNo" value="Flight number"/></p:column>
+                    <p:column colspan="5">
+                        <p:inputText styleClass="fullWidth" id="flightNo" value="#{flightStatusManager.flightNo}" />
+                    </p:column>
+                </p:row>
+
+                <!--Departure or Arrival-->
+                <p:row rendered="#{not flightStatusManager.selecteRoute}">
+                    <p:column colspan="6">
+                        <p:selectOneRadio id="scheduleChoice" styleClass="radioChoice" value="#{flightStatusManager.scheduleChoice}">
+                            <p:ajax update="flightStatusForm"/>
+                            <f:selectItem itemLabel="Depart" itemValue="depart" />
+                            <f:selectItem itemLabel="Arrive" itemValue="arrive" />
+                        </p:selectOneRadio>
+                    </p:column>
+                </p:row>
+
+                <!--Departure Airport-->
+                <p:row rendered="#{flightStatusManager.selecteRoute or flightStatusManager.scheduleChoice eq 'depart'}"> 
+                    <p:column colspan="1"><p:outputLabel for="deptLoc" value="From"/></p:column>
+                    <p:column colspan="5">
+                        <p:autoComplete id="deptLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                        value="#{flightStatusManager.deptAirport}" completeMethod="#{flightStatusManager.completeDeptAirport}"
+                                        var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                            <p:column>
+                                <p:outputLabel value="#{airport.city.cityName}" />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="#{airport.airportName}" />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="#{airport.iataCode}" />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="#{airport.country.countryName}" />
+                            </p:column>
+                        </p:autoComplete>
+                    </p:column>
+                </p:row>
+
+                <!--Arrival Airport-->
+                <p:row rendered="#{flightStatusManager.selecteRoute or flightStatusManager.scheduleChoice eq 'arrive'}">
+                    <p:column colspan="1"><p:outputLabel for="arriveLoc" value="To"/></p:column>
+                    <p:column colspan="5">
+                        <p:autoComplete id="arriveLoc" converter="airportConverter" forceSelection="true" required="true" styleClass="bookingAirport"
+                                        value="#{flightStatusManager.arrAirport}" completeMethod="#{flightStatusManager.completeArrAirport}"
+                                        var="airport" itemLabel="#{airport.airportName}" itemValue="#{airport}" >
+                            <p:column>
+                                <p:outputLabel value="#{airport.city.cityName}" />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="#{airport.airportName}" />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="#{airport.iataCode}" />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="#{airport.country.countryName}" />
+                            </p:column>
+                        </p:autoComplete>
+                    </p:column>
+                </p:row>
+
+                <!--Date-->
+                <p:row>
+                    <p:column colspan="1"><p:outputLabel for="date" value="Date"/></p:column>
+                    <p:column colspan="5">
+                        <p:calendar styleClass="fullWidth" id="date" pattern="dd/MM/yyyy" timeZone="GMT+8" value="#{flightStatusManager.date}" />
+                    </p:column>
+                </p:row>
+                
+                <!--Button-->
+                <p:row>
+                    <p:column colspan="6">
+                        <p:commandButton value='search' action="#{flightStatusManager.searchForFlights()}" style="width: 100%;" />
+                    </p:column>
+                </p:row>
+
+            </p:panelGrid>      
+
+
+        </h:form>
+
+    </cc:implementation>
+</html>

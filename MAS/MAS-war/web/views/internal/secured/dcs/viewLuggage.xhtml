@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/DcsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Luggage Information
+        </f:facet>
+
+        <h:form id="myForm">
+            <p:panelGrid columns="4">
+                <p:outputLabel value="Passenger Name: " />
+                <p:outputLabel value="#{luggageManager.passenger.firstName} #{luggageManager.passenger.lastName}" />
+
+                <p:outputLabel value="Passport Number: " />
+                <p:outputLabel value="#{luggageManager.passenger.passportNo}" />
+            </p:panelGrid>
+
+            <p:dataTable id="luggage" var="luggage" value="#{luggageManager.luggageList}" style="margin-bottom:40px" rows="5" tableStyleClass="table-small"
+                         selection="#{luggageManager.selectLuggage}" rowKey="#{luggage.id}"
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                <f:facet name="header">
+                    Luggage Information
+                </f:facet>
+
+                <p:column headerText="Flight No.">
+                    <h:outputText value="#{luggageManager.airTicket.flightSchedBookingClass.flightSchedule.flight.flightNo}" />
+                </p:column>
+
+                <p:column headerText="Origin">
+                    <h:outputText value="#{luggageManager.airTicket.flightSchedBookingClass.flightSchedule.leg.departAirport.iataCode}" />
+                </p:column>
+
+                <p:column headerText="Departure Date">
+                    <h:outputText value="#{luggageManager.airTicket.flightSchedBookingClass.flightSchedule.departDate}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Destination">
+                    <h:outputText value="#{luggageManager.airTicket.flightSchedBookingClass.flightSchedule.leg.arrivalAirport.iataCode}" />
+                </p:column>
+
+                <p:column headerText="Arrival Date">
+                    <h:outputText value="#{luggageManager.airTicket.flightSchedBookingClass.flightSchedule.arrivalDate}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Luggage ID">
+                    <h:outputText value="#{luggage.id}" />
+                </p:column>
+                
+                <p:column headerText="Luggage Weight">
+                    <h:outputText value="#{luggage.realWeight}" />
+                </p:column>
+                
+                <p:column headerText="Luggage Remark">
+                    <h:outputText value="#{luggage.remark}" />
+                </p:column>
+                
+                <p:column selectionMode="multiple" headerText="Remove Luggage" />
+
+                <f:facet name="footer">
+                    <p:commandButton icon="ui-icon-check" value="Remove Luggage" update=":myForm" action="#{luggageManager.removeLuggage}"/>
+                </f:facet>
+
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

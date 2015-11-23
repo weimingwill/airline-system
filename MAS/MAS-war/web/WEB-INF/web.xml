@@ -25,6 +25,12 @@
         <param-name>primefaces.THEME</param-name>
         <param-value>mas</param-value>
     </context-param>
+    
+    <context-param>
+    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+    <param-value>true</param-value>
+</context-param>
+    
     <context-param>
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
@@ -39,7 +45,12 @@
         <web-resource-collection>
             <web-resource-name>Default Secure Pages</web-resource-name>
             <description>Default Secure Pages</description>
-            <url-pattern>/views/secured/common/users/login.xhtml</url-pattern>
+            <url-pattern>/views/internal/secured/common/users/login.xhtml</url-pattern>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>Default Secure Pages</web-resource-name>
+            <description>Default Secure Pages</description>
+            <url-pattern>/views/external/secured/common/users/index.xhtml</url-pattern>
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>

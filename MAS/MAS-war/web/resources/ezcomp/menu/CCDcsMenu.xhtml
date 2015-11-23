@@ -19,10 +19,14 @@
             <p:panelMenu style="width:240px;">
                 <p:submenu label="Check In" expanded="true">
                     <p:menuitem action="#{dcsNavController.toSearchPassenger()}" value="Passenger Checkin"/>
-                    <p:menuitem action="#{dcsNavController.toSearchCheckedInPNR()}" value="Luggage Checkin"/>
+                    <p:menuitem action="#{dcsNavController.toSearchBPForLuggage()}" value="Luggage Checkin"/>
                 </p:submenu>
                 <p:submenu label="Board" expanded="true">
                     <p:menuitem action="#{dcsNavController.toBoardPassenger()}" value="Passenger Boarding"/>
+                </p:submenu>
+                <p:submenu label="Information" expanded="true">
+                    <p:menuitem action="#{dcsNavController.toViewFlightInfo()}" value="View &amp; Update Flight Info"/>
+                    <p:menuitem action="#{dcsNavController.toSearchTicket()}" value="Check Luggage Info"/>
                 </p:submenu>
             </p:panelMenu>
         </h:form>

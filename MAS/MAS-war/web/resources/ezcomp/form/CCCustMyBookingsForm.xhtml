@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="bookingform" style="width: 500px;text-align: center;" >
+            <p:panel header="My Information" styleClass="centeredPanel" >
+                <p:panelGrid columns="2" styleClass="centered">
+                    <p:outputLabel value="Customer Name: "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.title}. #{customerController.firstname} #{customerController.lastname}"/>
+
+                    <p:outputLabel value="Current Login Email: "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
+
+                    <p:outputLabel value="Accumulated Miles: "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                    </p:outputLabel>
+
+                    <p:outputLabel value="Membership Level "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
+
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <p:dataTable value="#{viewBookingBacking.bookingByEmail}" styleClass="centeredPanel" var="booking" tableStyleClass="table-small-font" >
+                <f:facet name="header">
+                    My Booking History
+                </f:facet>
+                <p:column headerText="Created Time">
+                    <p:outputLabel value="#{booking.createdTime}">
+                        <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="ETicket No.">
+                    <p:outputLabel value="#{booking.eTicketNo}" />
+                </p:column>
+
+                <p:column headerText="Reference No.">
+                    <p:outputLabel value="#{booking.referenceNo}" />
+                </p:column>
+
+                <p:column headerText="Price">
+                    <p:outputLabel value="#{booking.price}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Paid" style="width:30px;text-align: center">
+                    <p:outputLabel  value="Yes" rendered="#{booking.paid}" />
+                    <p:outputLabel  value="Not Paid" rendered="#{not booking.paid}" />
+
+                </p:column>
+
+                <p:column headerText="View" style="width:30px;text-align: center">
+                    <p:commandButton  action="#{manageBookingManager.searchForBooking()}" icon="ui-icon-search">
+                        <f:setPropertyActionListener value="#{booking}" target="#{manageBookingManager.booking}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </cc:implementation>
+</html>

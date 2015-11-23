@@ -28,6 +28,7 @@ public class UserConverter implements Converter {
     private SystemUserSessionLocal systemUserSession;
     
    
+    @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
@@ -43,8 +44,9 @@ public class UserConverter implements Converter {
     }
 
    
+    @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if (object != null) {
+        if (object != null&& !(object instanceof String)) {
             return String.valueOf(((SystemUser) object).getUsername());
         } else {
             return null;

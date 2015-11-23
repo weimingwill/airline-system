@@ -1,0 +1,63 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pm="http://primefaces.org/mobile"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <f:view renderKitId="PRIMEFACES_MOBILE"/>
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <h:outputStylesheet name="./css/cssMobile.css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+        <link rel="shortcut icon" type="image/x-icon" href="/MAS-war/resources/images/favicon.ico"/>
+    </h:head>
+
+    <h:body>
+        <p:growl id="messages" showDetail="true" />
+        <pm:page id="searchResult">
+            <h:form>
+
+                <pm:header title="" fixed="true">
+                    <f:facet name="left">
+                        <p:commandButton icon="ui-icon-delete" action="#{crmMobileNavController.redirectToSearchFlight()}"/>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:graphicImage value="/resources/images/logo.png" height="80%" width="auto"/>
+                    </f:facet>
+                </pm:header>
+            </h:form>
+            <h:form id="form">
+                <pm:content>
+                    <h2>#{bookingManager.deptAirport.city.cityName} > #{bookingManager.arrAirport.city.cityName}</h2>
+                    <h3>#{bookingManager.searchDeptDate}</h3>
+                    <p:dataList value="#{bookingManager.flightSchedHelpers}" var="flightSchedHelper" pt:data-inset="true" style="font-size:8px;">
+                        <p:commandLink action="#{bookingManager.toTixFamSelection(flightSchedHelper)}">
+                            <c:set value="#{flightSchedHelper.flightSched}" var="flightSched" />
+
+                            <p:outputLabel styleClass="smallFont boldFont" value="#{flightSched.flight.flightNo}" />
+                            <p:outputLabel styleClass="smallFont" value="#{flightSched.leg.departAirport.airportName} (#{flightSched.leg.departAirport.iataCode})" />
+                            <p:outputLabel styleClass="smallFont fa fa-arrow-down"/>
+                            <p:outputLabel styleClass="smallFont" value="#{flightSched.leg.arrivalAirport.airportName} (#{flightSched.leg.arrivalAirport.iataCode})" />
+                            <p:outputLabel styleClass="smallFont fa fa-arrow-down" rendered="#{not empty flightSchedHelper.nextFlightSched}"/>
+                            <p:outputLabel styleClass="smallFont" value="#{flightSchedHelper.nextFlightSched.leg.arrivalAirport.airportName} (#{flightSchedHelper.nextFlightSched.leg.arrivalAirport.iataCode})" 
+                                           rendered="#{not empty flightSchedHelper.nextFlightSched}"/>
+                            <h:outputText styleClass="fa fa-clock-o smallFont mobileIcon" />
+                            <h:outputText styleClass="smallFont" value="#{flightSched.departDate}">
+                                <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
+                            </h:outputText>
+                            <h:outputText value=" - "/>
+                            <h:outputText styleClass="smallFont" value="#{flightSched.arrivalDate}">
+                                <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
+                            </h:outputText>
+                            <h:outputText styleClass="smallFont" value=" (#{flightSchedHelper.totalDur})" />
+                            <p class="ui-li-aside"><strong>From S$#{bookingManager.getLowestPrice(flightSchedHelper)}</strong></p>
+                        </p:commandLink>
+                    </p:dataList>
+                </pm:content>
+            </h:form>
+        </pm:page>
+
+    </h:body>
+</html>

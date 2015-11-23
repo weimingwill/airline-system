@@ -34,7 +34,8 @@ public class Flight implements Serializable {
     private Integer numOfUnscheduled; //default value is weeklyFrequency
     private Boolean deleted;
     private Double speedFraction;
-
+    private Double flyDistance;
+    
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Route route;
 
@@ -177,5 +178,13 @@ public class Flight implements Serializable {
      */
     public void setNumOfUnscheduled(Integer numOfUnscheduled) {
         this.numOfUnscheduled = numOfUnscheduled;
+    }
+
+    public Double getFlyDistance() {
+        return flyDistance;
+    }
+
+    public void setFlyDistance(Double flyDistance) {
+        this.flyDistance = flyDistance;
     }
 }

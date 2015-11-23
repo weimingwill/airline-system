@@ -13,7 +13,7 @@
             </f:facet>
 
             <p:outputLabel value="Reference ID"/>
-            <p:outputLabel value="#{passengerManager.airTicket.boardingPass.id}"/>
+            <p:outputLabel value="#{passengerManager.pass.id}"/>
             <p:graphicImage value="/resources/images/barcode.png" height="auto" width="50%"/>
             <p:outputLabel value="" />
 
@@ -24,8 +24,8 @@
 
             <p:outputLabel value="Flight"/>
             <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.flightSchedule.flight.flightNo}" />
-            <p:outputLabel value="Seat"/>
-            <p:outputLabel value="#{passengerManager.airTicket.seat.rowNo}#{passengerManager.airTicket.seat.colNo}" />
+            <p:outputLabel value="Cabin Class Name/ Seat No."/>
+            <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.bookingClass.ticketFamily.cabinClass.name}/ #{passengerManager.airTicket.seat.rowNo}#{passengerManager.airTicket.seat.colNo}" />
 
             <p:outputLabel value="Depart"/>
             <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.flightSchedule.leg.departAirport.airportName} ">

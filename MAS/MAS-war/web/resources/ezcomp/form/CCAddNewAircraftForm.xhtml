@@ -61,19 +61,22 @@
 
                 <c:forEach var="aircraftCabinClass" items="#{fleetController.aircraftCabinClassHelpers}" varStatus="status">
                     <p:outputLabel value="#Seats for #{aircraftCabinClass.name} Class:"/>
-                    <p:spinner value="#{aircraftCabinClass.seatQty}" stepFactor="1" min="0">
-                        <p:ajax event="change" listener="#{fleetController.onSeatQtyChange(aircraftCabinClass)}" update="addNewAircraftForm" oncomplete="PF('cabinClassHelperDlg').show()"/>
-                    </p:spinner>
-                    <p:outputLabel value="#Rows:" style="width:20%">
-                        <p:spinner value="#{aircraftCabinClass.numOfRow}" stepFactor="1" min="0">
-                            <p:ajax event="change" listener="#{fleetController.onRowColChange(aircraftCabinClass)}" update="addNewAircraftForm" oncomplete="PF('cabinClassHelperDlg').show()"/>
+                    <p:outputPanel id="aircraftCabinClassConfig#{status.index}">
+                        <p:spinner value="#{aircraftCabinClass.seatQty}" stepFactor="1" min="0" size="3">
+                            <p:ajax event="change" listener="#{fleetController.onSeatQtyChange(aircraftCabinClass)}" update="aircraftCabinClassConfig#{status.index}" oncomplete="PF('cabinClassHelperDlg').show()"/>
                         </p:spinner>
-                    </p:outputLabel>
-                    <p:outputLabel value="#Columns:" style="width:20%">
-                        <p:spinner value="#{aircraftCabinClass.numOfCol}" stepFactor="1" min="0">
-                            <p:ajax event="change" listener="#{fleetController.onRowColChange(aircraftCabinClass)}" update="addNewAircraftForm" oncomplete="PF('cabinClassHelperDlg').show()"/>
-                        </p:spinner>
-                    </p:outputLabel>
+                        <p:outputLabel value=" #Rows:" style="width:20%">
+                            <p:spinner value="#{aircraftCabinClass.numOfRow}" stepFactor="1" min="0" size="2">
+                                <p:ajax event="change" listener="#{fleetController.onRowColChange(aircraftCabinClass)}" update="aircraftCabinClassConfig#{status.index}" oncomplete="PF('cabinClassHelperDlg').show()"/>
+                            </p:spinner>
+                        </p:outputLabel>
+                        <p:outputLabel value=" #Cols:" style="width:20%">
+                            <p:spinner value="#{aircraftCabinClass.numOfCol}" stepFactor="1" min="0" size="2">
+                                <p:ajax event="change" listener="#{fleetController.onRowColChange(aircraftCabinClass)}" update="aircraftCabinClassConfig#{status.index}" oncomplete="PF('cabinClassHelperDlg').show()"/>
+                            </p:spinner>
+                        </p:outputLabel>
+                    </p:outputPanel>
+
                 </c:forEach>
             </p:panelGrid>
             <p:separator/>

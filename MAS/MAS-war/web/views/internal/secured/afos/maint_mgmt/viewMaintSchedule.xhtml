@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:ri="http://xmlns.jcp.org/jsf/composite/ezcomp/ribbon"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../../../../template/AfosTemplate.xhtml">
+
+            <ui:define name="content">
+                <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
+                    <h:form id="form" style="width: 650px">
+                        <ri:CCFlightScheduleFilterRibbon displayActions="false"/>
+                        <pe:timeline id="timeline" value="#{maintTaskManager.model}" var="flightSchedule" varGroup="aircraft" 
+                                     browserTimeZone="GMT+8" widgetVar="timeline"
+                                     start="#{maintTaskManager.timelineStartDate}"
+                                     end="#{maintTaskManager.timelineEndDate}" eventStyle="dot"
+                                     axisOnTop="true" stackEvents="false" showNavigation="true">
+
+                            <f:facet name="group"> 
+                                <p:outputLabel value="#{aircraft.aircraftType.typeCode}" class="label-right"/> 
+                                <p:separator style="border: none" />
+                                <p:outputLabel value="#{aircraft.tailNo}" style="color: #1f3f8c;"/> 
+                            </f:facet>
+                        </pe:timeline>
+                    </h:form>
+                    <h:form id="addNew" style="width: 100%">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:panel header="Add New Maintenance Task">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Start Time: "/>
+                                <p:calendar value="#{maintTaskManager.newMaintSchedule.startTime}" pattern="dd/MM/yyyy HH:mm:ss" mindate="#{maintTaskManager.currentDate}" timeZone="GMT+8" showWeek="true" timeControlType="slider">
+                                    <p:ajax event="dateSelect" update=":addNew:endDate" listener="#{maintTaskManager.setEndDateMin()}"/>
+                                </p:calendar>
+                                <p:outputLabel value="End Time "/>
+                                <p:calendar id="endDate" value="#{maintTaskManager.newMaintSchedule.endTime}" pattern="dd/MM/yyyy HH:mm:ss" mindate="#{maintTaskManager.endTimeMin}" timeZone="GMT+8" showWeek="true" timeControlType="slider"/>
+                                <p:outputLabel value="Check Type: "/>
+                                <p:selectOneRadio id="checkTypeSelect" value="#{maintTaskManager.selectedCheckType}" converter="maintCheckTypeConverter">
+                                    <f:selectItems id="checkType#{checkType.checkType}" value="#{maintTaskManager.checkTypes}" var="checkType" itemLabel="#{checkType.checkType}" itemValue="#{checkType}"/>
+                                </p:selectOneRadio>
+                                <p:outputLabel value="For Aircraft: "/>
+                                <p:selectOneMenu id="aircraft" label="Select aircrafts" value="#{maintTaskManager.selectedAircraft}" filter="true" filterMatchMode="contains" converter="aircraftConverter">
+                                    <f:selectItems value="#{flightScheduleBacking.aircrafts}" var="aircraft" itemLabel="#{aircraft.tailNo}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Flight Crews: "/>
+                                <p:selectManyMenu id="crew" value="#{maintTaskManager.selectedCrews}" converter="maintCrewConverter" filter="true" filterMatchMode="contains" showCheckbox="true" scrollHeight="120">
+                                    <f:selectItems value="#{maintTaskManager.availableCrews}" var="crew" itemLabel="#{crew.name} (#{crew.maintCrewId})" itemValue="#{crew}" />
+                                </p:selectManyMenu>
+                            </p:panelGrid>
+                            <p:separator style="border: none" />
+                            <p:commandButton value="Create New Task" action="#{maintTaskManager.onCreateBtnClick()}"/>
+                        </p:panel>
+                    </h:form>
+                </p:panelGrid>
+
+
+                <style>
+                    .ui-ribbon-group-content{
+                        height: 35px !important;
+                    }
+                    div.maintenance{
+                        border-color: #F03030 !important;
+                        background: #F03030 !important;
+                        color: white !important;
+                    }
+                    div.schedule{
+                        border-color: #1f3f8c !important;
+                        background: #1f3f8c !important;
+                        color: white !important;
+                    }
+                </style>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

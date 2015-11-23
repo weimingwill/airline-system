@@ -5,6 +5,7 @@
  */
 package ams.aps.entity;
 
+import ams.afos.entity.Checklist;
 import ams.ais.entity.FlightScheduleBookingClass;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -36,10 +38,14 @@ public class FlightSchedule implements Serializable {
     private String departGate;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date departDate;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date actualDepartDate;
     private String arrivalTerminal;
     private String arrivalGate;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date arrivalDate;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date actualArrivalDate;
     private Boolean deleted;
     private Boolean completed;
     private Boolean seatAllocated;
@@ -61,7 +67,11 @@ public class FlightSchedule implements Serializable {
     private FlightSchedule preFlightSched;
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private FlightSchedule nextFlightSched;
-
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<FlightScheduleSeat> flightSchedSeats;
+    @ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private List<Checklist> checklists;
+    
     public Long getFlightScheduleId() {
         return flightScheduleId;
     }
@@ -287,6 +297,56 @@ public class FlightSchedule implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<FlightScheduleSeat> getFlightSchedSeats() {
+        return flightSchedSeats;
+    }
+
+    public void setFlightSchedSeats(List<FlightScheduleSeat> flightSchedSeats) {
+        this.flightSchedSeats = flightSchedSeats;
+    }
+
+    /**
+     * @return the actualDepartDate
+     */
+    public Date getActualDepartDate() {
+        return actualDepartDate;
+    }
+
+    /**
+     * @param actualDepartDate the actualDepartDate to set
+     */
+    public void setActualDepartDate(Date actualDepartDate) {
+        this.actualDepartDate = actualDepartDate;
+    }
+
+    /**
+     * @return the actualArrivalDate
+     */
+    public Date getActualArrivalDate() {
+        return actualArrivalDate;
+    }
+
+    /**
+     * @param actualArrivalDate the actualArrivalDate to set
+     */
+    public void setActualArrivalDate(Date actualArrivalDate) {
+        this.actualArrivalDate = actualArrivalDate;
+    }
+
+    /**
+     * @return the checklists
+     */
+    public List<Checklist> getChecklists() {
+        return checklists;
+    }
+
+    /**
+     * @param checklists the checklists to set
+     */
+    public void setChecklists(List<Checklist> checklists) {
+        this.checklists = checklists;
     }
 
 }

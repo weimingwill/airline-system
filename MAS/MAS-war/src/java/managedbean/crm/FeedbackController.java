@@ -10,6 +10,7 @@ import ams.crm.entity.RegCust;
 import ams.crm.session.CustomerExSessionLocal;
 import ams.crm.session.FeedbackSessionLocal;
 import ams.crm.util.exception.NoSuchRegCustException;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +31,7 @@ import managedbean.application.NavigationController;
  */
 @Named(value = "feedbackController")
 @RequestScoped
-public class FeedbackController {
+public class FeedbackController implements Serializable {
     @Inject
     private NavigationController navigationController;
     @Inject

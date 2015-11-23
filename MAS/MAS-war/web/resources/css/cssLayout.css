@@ -178,7 +178,15 @@ tr.hide{
 
 .label{
     font-weight: bold;
-    color: #045491;
+    color: #203b7b;
+}
+
+.label-right{
+    background-color: #1F3F8C;
+    font-weight: bold;
+    color: white;
+    text-align: right;
+    border-radius: 2px;
 }
 
 .table-small{
@@ -426,23 +434,23 @@ permissionLink.a:link, permissionLink.a:visited {
 
 /* Custom styles for the Timeline */  
 div.timeline-frame {  
-    border-color: #5D99C3;  
+    border-color: #1f3f8c;  
     border-radius: 5px;  
 }  
 
 div.timeline-axis {  
-    border-color: #5D99C3;  
-    background-color: #5D99C3;  
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5D99C3', endColorstr='#3A6DA0') alpha(opacity = 100);  
-    background: -webkit-gradient(linear, left top, left bottom, from(#5D99C3), to(#3A6DA0));  
-    background: -moz-linear-gradient(top,  #5D99C3,  #3A6DA0);  
+    border-color: #1f3f8c;  
+    background-color: #1f3f8c;  
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1f3f8c', endColorstr='#1f3f8c') alpha(opacity = 100);  
+    background: -webkit-gradient(linear, left top, left bottom, from(#1f3f8c), to(#1f3f8c));  
+    background: -moz-linear-gradient(top,  #1f3f8c,  #1f3f8c);  
     -khtml-opacity: 1;  
     -moz-opacity: 1;  
     opacity: 1;  
 }  
 
 div.timeline-groups-axis {  
-    border-color: #5D99C3;  
+    border-color: #1f3f8c;  
 }  
 
 div.timeline-groups-axis-onleft {  
@@ -454,7 +462,7 @@ div.timeline-axis-text {
 }  
 
 div.timeline-event {  
-    color: white !important;  
+    color: #1f3f8c !important;  
     border-radius: 5px !important;  
 }  
 
@@ -499,6 +507,16 @@ div.timeline-event-selected {
     vertical-align: top !important;
 }
 
+
+.alignBottom {
+    vertical-align: bottom !important;
+}
+
+.alignMiddle {
+    vertical-align: central !important;
+}
+
+
 .alignCenter {
     text-align: center !important;
 }
@@ -514,4 +532,56 @@ div.timeline-event-selected {
 
 .notificationBar {
     display: block;
+}
+
+.hide-column-names table thead tr {
+    display: none;
+}
+
+.crewDG > .ui-datagrid-content .ui-widget-content > table{
+    font-size: small !important;
+}
+
+.bookingIcon {
+    font-size: 15px !important;
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+    /*margin-top: .625rem;*/
+    color: #007cc0;
+}
+
+.bookingSummaryIcon {
+    font-size: 15px !important;
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+}
+
+.fullWidth{
+    width: 100% !important;
+}
+
+.fullWidth>.ui-inputfield {
+    width: 100% !important;    
+}
+
+.itineraryPanel {
+    margin-bottom: 10px;
+}
+
+.boldFont {
+    font-weight: bold !important;
+}
+
+.textSize{
+    font-size: 18px;
+}
+
+div.ui-input-text {
+    width: 50px !important
+}
+div.ui-input-search {
+    width: 50px !important
+
 }

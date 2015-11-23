@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AfosTemplate.xhtml"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <p:dataTable value="#{flightCrewBacking}" var="pairing">
+
+        </p:dataTable>
+        <pe:timeline id="timeline2" value="#{flightCrewBacking.model}" var="pairing"
+                     browserTimeZone="GMT+8" eventMargin="10" eventMarginAxis="0" widgetVar="timeline"
+                     start="#{flightCrewBacking.timelineStartDate}" editable="true" selectable="true"
+                     end="#{flightCrewBacking.timelineEndDate}" showNavigation="true"
+                     axisOnTop="true" stackEvents="true">
+            <p:ajax event="select" update="swapPairingForm" listener="#{flightCrewBacking.onPairingClick}"/>
+            <p:outputLabel value="#{pairing.pairingCode}"/>
+        </pe:timeline>
+
+        <h:form id="swapPairingForm">
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>
+            <p:panel widgetVar="swapPairingPanel" header="Swap pairings" toggleable="true">
+                <p:outputLabel value="Selected My Pairing:" class="label"/>
+                <p:separator style="border:none"/>
+                <ta:CCPairingTable pairing="#{flightCrewBacking.myPairing}"/>
+                <p:separator style="border:none"/>
+                <p:separator style="border:none"/>
+                <p:outputLabel value="Selected Target Pairing for Swapping:" class="label"/>
+                <ta:CCPairingTable pairing="#{flightCrewBacking.targetPairing}"/>
+                <f:facet name="footer">
+                    <p:commandButton value="Swap" action="#{flightCrewBacking.onSwapBtnClick()}"/>
+                </f:facet>
+            </p:panel>
+        </h:form>
+
+
+        <p:dialog header="Matched Swapping Request Found" widgetVar="matchedReqDialog" id='matchedReqDialog' appendTo="@(body)" modal="true" resizable="false" draggable="false">
+            <h:form>
+                <p:outputLabel value="We have found a matched swapping request. Please confirm your swapping."/>
+                <p:separator style="border:none"/>
+                <p:commandButton value="Confirm" action="#{flightCrewBacking.matchSwappingRequest('M')}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="Cancel" onclick="PF('matchedReqDialog').hide()" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </h:form>
+        </p:dialog>
+        <p:dialog header="Matched Swapping Request Not Found" widgetVar="altReqDialog" id='altReqDialog' appendTo="@(body)" modal="true" resizable="false" draggable="false">
+            <h:form>
+                <p:outputLabel value="Your Chosen Pairing"/>
+                <p:separator style="border:none"/>
+
+                <ta:CCPairingTable pairing="#{flightCrewBacking.myPairing}"/>
+                <p:separator style="border:none"/>
+
+                <p:outputLabel value="Sorry, we did not found any matching swapping request. Please choose an alternative pairing below or send a new swapping request."/>
+                <p:separator style="border:none"/>
+
+                <ui:remove>
+                    <p:selectOneRadio id="customRadio" value="#{flightCrewBacking.selectedSwappingRequest}" layout="custom">
+                        <f:selectItems value="#{flightCrewBacking.altReqs}" var="req"/>
+                    </p:selectOneRadio>
+
+                    <h:panelGrid columns="3" cellpadding="5">
+                        <p:radioButton id="opt1" for="customRadio" itemIndex="0" />
+                        <h:outputLabel for="opt1" value="Red" />
+                        <p:spinner />
+                    </h:panelGrid>
+                </ui:remove>
+
+                <p:dataTable value="#{flightCrewBacking.altReqs}" var="altRequest" rowKey="#{altRequest.id}" selection="#{flightCrewBacking.selectedSwappingRequest}" tableStyleClass="table-small">
+                    <p:column selectionMode="single"/>
+                    <p:column headerText="Alternative Swapping Options">
+                        <ta:CCPairingTable pairing="#{altRequest.chosenPairing}"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton value="Confirm swapping" action="#{flightCrewBacking.matchSwappingRequest('A')}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" oncomplete="PF('altReqDialog').hide()"  rendered="#{not empty flightCrewBacking.altReqs}"/>
+                        <p:commandButton value="Send New Request" action="#{flightCrewBacking.sendSwappingRequest()}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" oncomplete="PF('altReqDialog').hide()">
+                            <p:confirm header="Confirmation" message="Confirm send new swapping request?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        <p:commandButton value="Cancel" onclick="PF('altReqDialog').hide()" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </f:facet>
+                </p:dataTable>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+        </p:dialog>
+
+
+
+    </ui:define>
+
+</ui:composition>

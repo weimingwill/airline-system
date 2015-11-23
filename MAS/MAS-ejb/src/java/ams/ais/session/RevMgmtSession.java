@@ -660,12 +660,17 @@ public class RevMgmtSession implements RevMgmtSessionLocal {
     @Override
     public double calTicketFamilyPrice(Long flightScheduleId, Long ticketFamilyId) {
         double basicCost = calcFlightScheduleBasicCostPerRoundTrip(flightScheduleId);
+        System.out.println("basic cost is" + basicCost);
         double ticketFamilyRuleCost = calTicketFamilyCostBasedOnRule(ticketFamilyId);
+        System.out.println("ticket family rule cost is" + ticketFamilyRuleCost);
         return basicCost + ticketFamilyRuleCost;
     }
 
     //Including cost: fuelCostPerRoundTrip: Fuel cost + purchased/rental cost
     private double calcFlightScheduleBasicCostPerRoundTrip(Long flightScheduleId) {
+        System.out.println("calcFlightFuelCostPerRoundTrip" + calcFlightFuelCostPerRoundTrip(flightScheduleId));
+        System.out.println("calcAircraftCostPerRoundTrip" + calcAircraftCostPerRoundTrip(flightScheduleId));
+
         return calcFlightFuelCostPerRoundTrip(flightScheduleId) + calcAircraftCostPerRoundTrip(flightScheduleId);
     }
 
@@ -676,7 +681,9 @@ public class RevMgmtSession implements RevMgmtSessionLocal {
             Airport departureAirport = flightSchedule.getLeg().getDepartAirport();
             Airport arriveAirport = flightSchedule.getLeg().getArrivalAirport();
             double distance = routePlanningSession.distance(departureAirport, arriveAirport);
-            return distance * calcAircraftFuelCostPerKm(getFlightScheduleAircraft(flightScheduleId).getAircraftId());
+            System.out.println("distance" + distance);
+            System.out.println("calcAircraftFuelCostPerKm" + calcAircraftFuelCostPerKm(getFlightScheduleAircraft(flightScheduleId).getAircraftId()));
+            return (distance/100) * calcAircraftFuelCostPerKm(getFlightScheduleAircraft(flightScheduleId).getAircraftId())/(getFlightScheduleAircraft(flightScheduleId).getAircraftType().getTypicalSeating());
         } catch (NoSuchFlightSchedulException | NoSuchAircraftException e) {
             return 0;
         }
@@ -688,22 +695,34 @@ public class RevMgmtSession implements RevMgmtSessionLocal {
             FlightSchedule flgihtSchedule = getFlightScheduleById(flightScheduleId);
             float weeklyFreq = flgihtSchedule.getFlight().getWeeklyFrequency();
             Aircraft aircraft = getFlightScheduleAircraft(flightScheduleId);
+            int seatQty = getAircraftSeatQty(aircraft);
             float cost = aircraft.getCost();
             float lifetime = aircraft.getLifetime();
             if (cost != 0 && lifetime != 0 && weeklyFreq != 0) {
-                return cost / ((lifetime * (365 / 7)) * weeklyFreq);
+                System.out.println("AircraftCostPerRoundTrip" + (cost / ((lifetime * (365 / 7)) * weeklyFreq * seatQty)));
+                return cost / (((lifetime * (365 / 7)) * weeklyFreq * seatQty)*(getFlightScheduleAircraft(flightScheduleId).getAircraftType().getTypicalSeating())) ;
             }
         } catch (NoSuchFlightSchedulException | NoSuchAircraftException e) {
         }
         return 0;
     }
 
-    //Aircraft fuel cost per km
+    private int getAircraftSeatQty(Aircraft aircraft) {
+        int seatQty = 0;
+        for (AircraftCabinClass ac : aircraft.getAircraftCabinClasses()) {
+            seatQty += ac.getSeatQty();
+        }
+        return seatQty;
+    }
+
+    //Aircraft fuel cost per km per seat
     private float calcAircraftFuelCostPerKm(Long flightScheduleId) {
         try {
             Aircraft aircraft = getFlightScheduleAircraft(flightScheduleId);
+            int seatQty = getAircraftSeatQty(aircraft);
             AircraftType aircraftType = aircraft.getAircraftType();
-            return aircraft.getAvgUnitOilUsage() * aircraftType.getFuelCostPerKm();
+            //modified
+            return (aircraft.getAvgUnitOilUsage() * (seatQty / 100));
         } catch (NoSuchAircraftException e) {
         }
         return 0;

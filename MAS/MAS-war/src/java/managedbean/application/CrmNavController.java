@@ -29,7 +29,7 @@ public class CrmNavController implements Serializable {
     public String redirectToCRM() {
         return CRM_URL + "crmMain.xhtml" + REDIRECT;
     }
-  
+
     public String redirectToViewFeedbacks() {
         return CRM_URL + "customer_management/viewFeedbacks.xhtml" + REDIRECT;
     }
@@ -49,15 +49,15 @@ public class CrmNavController implements Serializable {
     public String redirectToViewRegCustomerParticulars() {
         return CRM_URL + "customer_management/viewRegCustomerParticulars.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToViewCustomerLists() {
         return CRM_URL + "customer_management/viewCustomerList.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToSegmentCustomers() {
         return CRM_URL + "customer_management/segmentCustomers.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToCreateCampaign() {
         return CRM_URL + "campaign_management/createCampaign.xhtml" + REDIRECT;
     }
@@ -65,8 +65,30 @@ public class CrmNavController implements Serializable {
     public String redirectToViewCampaigns() {
         return CRM_URL + "campaign_management/viewCampaigns.xhtml" + REDIRECT;
     }
-    
+
     public String redirectToGenderDistribution() {
         return CRM_URL + "analytics/genderDistribution.xhtml" + REDIRECT;
     }
+
+    public String redirectToCustomerAnalysis() {
+        return CRM_URL + "analytics/customerAnalysis.xhtml" + REDIRECT;
+    }
+
+    public String redirectToMarketingAnalysis() {
+        return CRM_URL + "analytics/marketingAnalysis.xhtml" + REDIRECT;
+    }
+
+    public String redirectToSalesAnalysis() {
+        return CRM_URL + "analytics/salesAnalysis.xhtml" + REDIRECT;
+    }
+
+    public String redirectToBehaviorAnalysis() {
+        return CRM_URL + "analytics/behaviorAnalysis.xhtml" + REDIRECT;
+    }
+
+    public String redirectToViewCustomerList() {
+        return CRM_URL + "campaign_management/viewSelectedCustomerList.xhtml" + REDIRECT;
+
+    }
+
 }

@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/DcsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Flight Information
+        </f:facet>
+
+        <h:form id="myForm">
+            <p:tabView>
+                <p:ajax event="tabChange" listener="#{flightBacking.onTabChange}" update="myForm"/>
+
+                <p:tab id="flight1" title="Departure Within 24h">
+                    <p:dataTable var="flight" value="#{flightBacking.flightsDepart}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
+                                 selection="#{flightBacking.departFlight}" rowKey="#{departFlight.id}"
+                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                        <f:facet name="header">
+                            Departure Flight Information
+                        </f:facet>
+
+                        <p:column headerText="Flight No." sortBy="#{flight.flight.flightNo}" >
+                            <h:outputText value="#{flight.flight.flightNo}" />
+                        </p:column>
+
+                        <p:column headerText="From" sortBy="#{flight.leg.departAirport.airportName}">
+                            <h:outputText value="#{flight.leg.departAirport.airportName}" />
+                        </p:column>
+
+                        <p:column headerText="To" sortBy="#{flight.leg.arrivalAirport.airportName}">
+                            <h:outputText value="#{flight.leg.arrivalAirport.airportName}" />
+                        </p:column>
+
+                        <p:column headerText="Departure Time" sortBy="#{flight.departDate}">
+                            <h:outputText value="#{flight.departDate}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Actual Departure Time" sortBy="#{flight.actualDepartDate}">
+                            <h:outputText value="#{flight.actualDepartDate}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Status" sortBy="#{flightBacking.getFlightStatus(flight.departDate, flight.actualDepartDate)}">
+                            <h:outputText value="#{flightBacking.getFlightStatus(flight.departDate, flight.actualDepartDate)}" />
+                        </p:column>
+                        
+                        <p:column headerText="Departure Terminal" sortBy="#{flight.departTerminal}">
+                            <h:outputText value="#{flight.departTerminal}" />
+                        </p:column>
+
+                        <p:column headerText="Departure Gate" sortBy="#{flight.departGate}">
+                            <h:outputText value="#{flight.departGate}" />
+                        </p:column>
+
+                        <p:column style="width:32px;text-align: center">
+                            <p:commandButton action="#{flightBacking.onEditDFlightBtnClick()}" update="depFlightInfoDlg" icon="fa fa-pencil-square-o" title="Update Flight Information">
+                                <f:setPropertyActionListener value="#{flight}" target="#{flightBacking.selectedFlight}" />
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+                </p:tab>
+
+                <p:tab title="Arrival Within 24h">
+                    <p:dataTable id="flight2" var="flight" value="#{flightBacking.flightsArrival}" style="margin-bottom:40px" rows="10" tableStyleClass="table-small"
+                                 selection="#{flightBacking.arrivalFlight}" rowKey="#{arrivalFlight.id}"
+                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                        <f:facet name="header">
+                            Arrival Flight Information
+                        </f:facet>
+
+                        <p:column headerText="Flight No." sortBy="#{flight.flight.flightNo}" >
+                            <h:outputText value="#{flight.flight.flightNo}" />
+                        </p:column>
+
+                        <p:column headerText="From" sortBy="">
+                            <h:outputText value="#{flight.leg.departAirport.airportName}" />
+                        </p:column>
+
+                        <p:column headerText="To" sortBy="#{flight.leg.arrivalAirport.airportName}">
+                            <h:outputText value="#{flight.leg.arrivalAirport.airportName}" />
+                        </p:column>
+
+                        <p:column headerText="Arrival Time" sortBy="#{flight.arrivalDate}">
+                            <h:outputText value="#{flight.arrivalDate}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Actual Arrival Time" sortBy="#{flight.actualArrivalDate}">
+                            <h:outputText value="#{flight.actualArrivalDate}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
+
+                        
+                        <p:column headerText="Status" sortBy="#{flightBacking.getFlightStatus(flight.arrivalDate, flight.actualArrivalDate)}">
+                            <h:outputText value="#{flightBacking.getFlightStatus(flight.arrivalDate, flight.actualArrivalDate)}" />
+                        </p:column>
+                        
+                        <p:column headerText="Arrival Terminal" sortBy="#{flight.arrivalTerminal}">
+                            <h:outputText value="#{flight.arrivalTerminal}" />
+                        </p:column>
+
+                        <p:column headerText="Arrival Gate" sortBy="#{flight.arrivalGate}">
+                            <h:outputText value="#{flight.arrivalGate}" />
+                        </p:column>
+
+                        <p:column style="width:32px;text-align: center">
+                            <p:commandButton action="#{flightBacking.onEditAFlightBtnClick()}" update="arrFlightInfoDlg" icon="fa fa-pencil-square-o" title="Update Flight Information">
+                                <f:setPropertyActionListener value="#{flight}" target="#{flightBacking.selectedFlight}" />
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+
+
+
+
+
+        </h:form>
+
+        <p:dialog id="depFlightInfoDlg" modal="true" appendTo="@(body)" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="depFlightInfoDlg" resizable="false">
+            <h:form>
+                <p:panelGrid columns="2" style="margin-top:2px">
+                    <p:outputLabel value="Depature Terminal:"/>
+                    <p:inputText value="#{flightBacking.departureTerminal}" label="ter"/>
+
+                    <p:outputLabel value="Depature Gate:"/>
+                    <p:inputText value="#{flightBacking.departureGate}" label="gate"/>
+
+                    <p:outputLabel value="Accatual Departure Time:" for="datetimeD"/>
+                    <p:calendar id="datetimeD" value="#{flightBacking.acctualDepartureDate}" pattern="MM/dd/yyyy HH:mm" />
+
+                    <p:separator/>
+                    <p:commandButton type="submit" action="#{flightBacking.updateDepFlight()}" icon="ui-icon-check" value="Confirm update" update="myForm" oncomplete="PF('myForm:depFlightInfoDlg').hide()"/>
+
+                </p:panelGrid></h:form>
+        </p:dialog>
+        <p:dialog id="arrFlightInfoDlg" modal="true" appendTo="@(body)" header="Flight Information for #{flightBacking.selectedFlight.flight.flightNo}" widgetVar="arrFlightInfoDlg" resizable="false">
+            <h:form>    
+                <p:panelGrid columns="2" style="margin-top:2px">
+                    <p:outputLabel value="Arrival Terminal:"/>
+                    <p:inputText value="#{flightBacking.arrivalTerminal}" label="ter"/>
+
+                    <p:outputLabel value="Arrival Gate:"/>
+                    <p:inputText value="#{flightBacking.arrivalGate}" label="gate"/>
+
+                    <p:outputLabel value="Accatual Arrival Time:" for="datetimeA"/>
+                    <p:calendar id="datetimeA" value="#{flightBacking.acctualArrivalDate}" pattern="MM/dd/yyyy HH:mm" />
+
+                    <p:separator/>
+                    <p:commandButton type="submit" action="#{flightBacking.updateArrFlight()}" icon="ui-icon-check" value="Confirm update" update="myForm" oncomplete="PF('myForm:arrFlightInfoDlg').hide()"/>
+
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

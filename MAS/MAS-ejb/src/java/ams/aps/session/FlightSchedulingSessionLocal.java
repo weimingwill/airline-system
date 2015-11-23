@@ -100,4 +100,12 @@ public interface FlightSchedulingSessionLocal {
     public List<Aircraft> getAllAircrafts();
 
     public List<Aircraft> getAircraftsByAircraftType(String aircraftType);
+    
+    public List<FlightSchedule> getThisFlightFlightSchedules(Flight thisFlight);
+    
+    public List<Flight> getScheduledFlights();
+    
+    public List<FlightSchedule> getAllFutureFlightSchedules();
+    
+    public List<FlightSchedule> getAllPastFlightSchedules();
 }

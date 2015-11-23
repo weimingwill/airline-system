@@ -30,28 +30,28 @@ import org.primefaces.context.RequestContext;
 @Named(value = "flightCrewBiddingManager")
 @SessionScoped
 public class FlightCrewBiddingManager implements Serializable {
-
+    
     @EJB
     private FlightCrewSessionLocal flightCrewSession;
-
+    
     @Inject
     private FlightCrewBacking flightCrewBacking;
-
+    
     @Inject
     private BiddingSessionBacking biddingSessionBacking;
-
+    
     @Inject
     private AfosNavController afosNavController;
-
+    
     @Inject
     private MsgController msgController;
-
+    
     private List<Pairing> availablePairings;
     private List<Pairing> pairingsWithSameCode;
     private List<Pairing> pairingsToBid;
     private Pairing selectedPairing;
     private FlightCrew currentCrew;
-
+    
     private List<BiddingSession> crewBiddingSessions;
     private BiddingSession selectedBiddingSession;
 
@@ -60,32 +60,37 @@ public class FlightCrewBiddingManager implements Serializable {
      */
     public FlightCrewBiddingManager() {
     }
-
+    
     @PostConstruct
     public void init() {
         setCurrentCrew(flightCrewBacking.getCurrFlightCrew());
         System.out.println("Current Crew: " + currentCrew);
-
+        
         if (currentCrew != null) {
             getCrewBiddingSessions(currentCrew);
         }
     }
-
-    public void placeBidForPairings(){
-        flightCrewSession.placeBidForPairings(pairingsToBid, currentCrew);
-        setAvailablePairings(flightCrewSession.getAllEligiblePairings(selectedBiddingSession, currentCrew));
+    
+    public void placeBidForPairings() {
+        if (pairingsToBid == null || pairingsToBid.isEmpty()) {
+            msgController.addErrorMessage("Pairing is not select!");
+        } else {
+            flightCrewSession.placeBidForPairings(pairingsToBid, currentCrew);
+            setAvailablePairings(flightCrewSession.getAllEligiblePairings(selectedBiddingSession, currentCrew));
+            msgController.addMessage("Bids placed!");
+        }
     }
     
     public void getCrewBiddingSessions(FlightCrew flightCrew) {
         setCrewBiddingSessions(flightCrewSession.getEligibleBiddingSessions(flightCrew));
     }
-
+    
     public void getSessionAvailablePairings() {
         System.out.println("selectedBiddingSession:" + selectedBiddingSession);
         System.out.println("parings: " + selectedBiddingSession.getPairings());
         setAvailablePairings(flightCrewSession.getAllEligiblePairings(selectedBiddingSession, currentCrew));
     }
-
+    
     public String onContinueToBiddingBtnClick() {
         if (selectedBiddingSession != null) {
             getSessionAvailablePairings();
@@ -101,30 +106,31 @@ public class FlightCrewBiddingManager implements Serializable {
             return "";
         }
     }
-
+    
     public void onViewPairingBtnClick() {
         System.out.println("selectedPairing: " + selectedPairing);
     }
-
+    
     public void onBidBtnClick() {
         System.out.println("selectedPairing: " + selectedPairing);
         setPairingWithSamePairingCode(selectedPairing);
     }
-
+    
     private void setPairingWithSamePairingCode(Pairing selectedPairing) {
         List<Pairing> outputList = new ArrayList();
-        for(Pairing thisPairing : availablePairings){
-            if(selectedPairing.getPairingCode().equals(thisPairing.getPairingCode())){
+        for (Pairing thisPairing : availablePairings) {
+            if (selectedPairing.getPairingCode().equals(thisPairing.getPairingCode())) {
                 outputList.add(thisPairing);
             }
         }
         setPairingsWithSameCode(outputList);
     }
     
-    public String convertDateFormat(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd");	
+    public String convertDateFormat(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd");        
         return sdf.format(date);
     }
+
     /**
      * @return the pairingsWithSameCode
      */

@@ -58,6 +58,10 @@ public class PassengerManager implements Serializable {
 
     private Seat seat;
     private List<Seat> seats;
+    private List<Integer> rows;
+    private List<String> cols;
+    private Integer row;
+    private String col;
 
     private AirTicket selectedTicket;
     private AirTicket airTicket;
@@ -86,6 +90,7 @@ public class PassengerManager implements Serializable {
             return "";
         } else {
             setAirtickets(checkInSession.getFSforCheckin(passportNo));
+            setAirticketsUpdated(new ArrayList());
             if (!airtickets.isEmpty()) {
 
                 Calendar cal = Calendar.getInstance();
@@ -113,9 +118,30 @@ public class PassengerManager implements Serializable {
     }
 
     public String getAvailableSeats() {
-        List<Seat> ss = checkInSession.getSeatsByTicket(selectedTicket);
-        if (ss != null) {
-            setSeats(ss);
+        System.err.println("selectedTicket " + airTicket);
+        List<Seat> ss = checkInSession.getSeatsByTicket(airTicket);
+        row = null;
+        col = null;
+        cols = new ArrayList<>();
+        rows = new ArrayList<>();
+        System.out.println(ss.size());
+        if (!ss.isEmpty()) {
+            List<Seat> toBeRemoved = new ArrayList();
+            toBeRemoved.addAll(ss);
+            for (Seat s : ss) {
+                if (s.getReserved() == true) {
+                    toBeRemoved.remove(s);
+                }
+            }
+            setSeats(toBeRemoved);
+            rows = new ArrayList<>();
+            for (Seat s : seats) {
+                if (!rows.contains(s.getRowNo())) {
+                    rows.add(s.getRowNo());
+
+                }
+            }
+            System.out.println("rows: " + rows);
             return dcsNavController.toSelectSeat();
         } else {
             msgController.addErrorMessage("No seats available");
@@ -124,20 +150,34 @@ public class PassengerManager implements Serializable {
     }
 
     public void onRowChange() {
+        col = null;
+        cols = new ArrayList<>();
+        for (Seat s : seats) {
+            if (s.getRowNo() == row) {
+                cols.add(s.getColNo());
+            }
+        }
     }
 
-    public void selectSeat() {
+    public String selectSeat() {
         System.out.println("passport = " + passportNo);
+        if (row != null && col != null && !col.equals("")) {
+            seat = new Seat();
+            seat.setRowNo(row);
+            seat.setColNo(col);
+        }
+
         if (seat == null) {
             msgController.addErrorMessage("Seat not selected!");
+            return "";
         } else {
             if (checkInSession.selectSeat(airTicket.getId(), seat)) {
                 msgController.addMessage("Select a seat successfully!");
-                seat = null;
-                airTicket = null;
+                checkPassenger();
             } else {
                 msgController.addErrorMessage("Failed to select seat!");
             }
+            return dcsNavController.toCheckInPassenger();
         }
     }
 
@@ -145,6 +185,7 @@ public class PassengerManager implements Serializable {
 //        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 //        RequestContext context = RequestContext.getCurrentInstance();
 //        context.execute("window.open('" + request.getContextPath() + dcsNavController.toBoardingPass() + "', '_blank')");
+        pass = new BoardingPass();
         if (airTicket == null) {
             msgController.addErrorMessage("No PNR selected!");
         } else {
@@ -152,12 +193,12 @@ public class PassengerManager implements Serializable {
             if (pass == null) {
                 msgController.addErrorMessage("Check-in error!");
             } else {
+                System.out.println("BP ID: " + pass.getId());
                 msgController.addMessage("Check in completed!");
                 boardingDate = pass.getBoardingTime();
                 HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
                 RequestContext context = RequestContext.getCurrentInstance();
                 context.update(":myForm:ticket");
-                context.execute("PF('luggageDlg').show()");
                 context.execute("window.open('" + request.getContextPath() + dcsNavController.toBoardingPass() + "', '_blank')");
             }
         }
@@ -173,10 +214,17 @@ public class PassengerManager implements Serializable {
 
     public String boardPassenger() {
         try {
+            cleanSession();
             airTicket = checkInSession.getAirTicketByPassID(boardingPassNo);
-            passenger = airTicket.getCustomer();
-            pass = airTicket.getBoardingPass();
-            return dcsNavController.toConfirmBoarding();
+            if (airTicket.getStatus().equals("Boarded")) {
+                msgController.addErrorMessage("Passenger has been boarded!");
+                return "";
+            } else {
+                passenger = airTicket.getCustomer();
+                pass = airTicket.getBoardingPass();
+                System.out.println("Air Ticket ID: " + airTicket.getId());
+                return dcsNavController.toConfirmBoarding();
+            }
         } catch (NoSuchBoardingPassException e) {
             cleanSession();
             msgController.addErrorMessage("No such boarding pass found!");
@@ -198,7 +246,6 @@ public class PassengerManager implements Serializable {
     }
 
     private void cleanSession() {
-
         setAirTicketsSelected(new ArrayList());
         setAirtickets(new ArrayList());
         setAirticketsUpdated(new ArrayList());
@@ -207,6 +254,10 @@ public class PassengerManager implements Serializable {
         setPassportNo("");
         setAirTicket(new AirTicket());
         setBoardingDate(new Date());
+        setRow(null);
+        setCol(null);
+        setRows(new ArrayList<>());
+        setCols(new ArrayList<>());
     }
 
     public Seat getSeatbyID(long id) {
@@ -402,4 +453,59 @@ public class PassengerManager implements Serializable {
         this.seat = seat;
     }
 
+    /**
+     * @return the rows
+     */
+    public List<Integer> getRows() {
+        return rows;
+    }
+
+    /**
+     * @param rows the rows to set
+     */
+    public void setRows(List<Integer> rows) {
+        this.rows = rows;
+    }
+
+    /**
+     * @return the cols
+     */
+    public List<String> getCols() {
+        return cols;
+    }
+
+    /**
+     * @param cols the cols to set
+     */
+    public void setCols(List<String> cols) {
+        this.cols = cols;
+    }
+
+    /**
+     * @return the row
+     */
+    public Integer getRow() {
+        return row;
+    }
+
+    /**
+     * @param row the row to set
+     */
+    public void setRow(Integer row) {
+        this.row = row;
+    }
+
+    /**
+     * @return the col
+     */
+    public String getCol() {
+        return col;
+    }
+
+    /**
+     * @param col the col to set
+     */
+    public void setCol(String col) {
+        this.col = col;
+    }
 }

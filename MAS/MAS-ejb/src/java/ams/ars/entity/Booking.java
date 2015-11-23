@@ -39,12 +39,15 @@ public class Booking implements Serializable {
     private String referenceNo;
     private String email;
     private String eTicketNo;
+    
     @Embedded
     private Phone phoneNo;
     private Double price;
+    private Double promoPrice;
     private Boolean paid;
     private String channel;
-
+    private Boolean claimed;
+    
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private BookingTrans bookingTrans;
 
@@ -176,5 +179,21 @@ public class Booking implements Serializable {
      */
     public void seteTicketNo(String eTicketNo) {
         this.eTicketNo = eTicketNo;
+    }
+
+    public Boolean getClaimed() {
+        return claimed;
+    }
+
+    public void setClaimed(Boolean claimed) {
+        this.claimed = claimed;
+    }
+
+    public Double getPromoPrice() {
+        return promoPrice;
+    }
+
+    public void setPromoPrice(Double promoPrice) {
+        this.promoPrice = promoPrice;
     }
 }

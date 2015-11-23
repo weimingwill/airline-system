@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmExTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:fo="http://xmlns.jcp.org/jsf/composite/ezcomp/form"
+                xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu">
+
+    <ui:define name="title">
+        Redeem Miles
+    </ui:define>
+
+    <ui:define name="content">
+        <me:CCCustAccountMgmtMenu />
+
+        <pa:CCCustInfoPanel />
+        <fo:CCCustRedeemPointForm />
+        <fo:CCCustClaimForm />
+        <fo:CCCustMembershipUpgradeForm />
+
+        <p:dialog id="claimDialog" header="Claim Booking: #{viewBookingBacking.bookingReferenceNo}"  widgetVar="claimDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form>
+                <p:panel id="claimDetail">
+                    <p:panelGrid>
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Booking Created Time: " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewBookingBacking.selectedBooking.createdTime}" >
+                                    <f:convertDateTime  timeZone="GMT+8" pattern="yyyy.MM.dd 'at' HH:mm" />
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Booking Reference No. " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewBookingBacking.selectedBooking.referenceNo}" >
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Booking Price " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewBookingBacking.selectedBooking.price}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Flying Distance: " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewBookingBacking.actualDistance}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Claim Points " />
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{viewBookingBacking.actualPointClaim}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </h:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <!--</ui:repeat>-->
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton value="Claim" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{viewBookingBacking.claimMiles()}" oncomplete="PF('claimDialog').hide()" update="messages"/>
+
+            </h:form>
+        </p:dialog>
+
+
+        <p:dialog id="redeemDialog"  header="The total points you need for this selection is" widgetVar="redeemDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form>
+                <p:panel id="redemptionDetail">
+
+                    <p:panelGrid>
+                        <!--<ui:repeat var="cc" value="{cabinClassController.selectedCabinClass}" >-->
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Actual Miles (in miles) " />
+                            </p:column>
+
+                            <p:column>
+                                <h:outputLabel value="#{milesRedemptionBacking.calculatedMiles}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </h:outputLabel>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>  
+                            <p:column>
+                                <p:outputLabel value="Miles Needed for Redemption (in miles) " />
+                            </p:column>
+
+                            <p:column>
+                                <h:outputLabel value="#{milesRedemptionBacking.actualPointNeed}" >
+                                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                                </h:outputLabel>
+                            </p:column>
+                        </p:row>
+
+                        <!--</ui:repeat>-->
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton value="Redeem" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{milesRedemptionBacking.mileRedemption()}" oncomplete="PF('redeemDialog').hide()" update="messages"/>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="upgradeSilverDialog"  header="The following action allows you to become Elite Silver Member" widgetVar="upgradeSilverDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form>
+                <p:panel id="upgradeSilverDetail">
+
+                    <p:panelGrid>
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Membership Class:" />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="Elite Silver" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>  
+                            <p:column>
+                                <p:outputLabel value="Annual Fee: " />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="S$ 8000 / Year" />
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton value="Payment" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{customerController.updateSilverMembership()}" oncomplete="PF('upgradeSilverDialog').hide()" update="messages"/>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="upgradeGoldDialog"  header="The following action allows you to become Elite Gold Member" widgetVar="upgradeGoldDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form>
+                <p:panel id="upgradeGoldDetail">
+
+                    <p:panelGrid>
+                        <p:row> 
+                            <p:column>
+                                <p:outputLabel value="Membership Class:" />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="Elite Gold" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>  
+                            <p:column>
+                                <p:outputLabel value="Annual Fee: " />
+                            </p:column>
+
+                            <p:column>
+                                <p:outputLabel value="S$ 20,000 / Year" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton value="Payment" style="width: 200px;text-align: center;"  action="#{navigationController.redirectToCurrentPage()}" actionListener="#{customerController.updateGoldMembership()}" oncomplete="PF('upgradeGoldDialog').hide()" update="messages"/>
+
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+
+</ui:composition>

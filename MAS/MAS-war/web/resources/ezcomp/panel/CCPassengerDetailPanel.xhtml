@@ -8,15 +8,15 @@
 
     <!-- INTERFACE -->
     <cc:interface>
-        <cc:attribute name="customer" required="true"/>
+        <cc:attribute name="customerHelper" required="true"/>
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <c:set value="#{cc.attrs.customer}" var="customer" />
+        <c:set value="#{cc.attrs.customerHelper.customer}" var="customer" />
         <p:panelGrid columns="2">
             <p:outputLabel for="title" value="Title"/>
-            <p:selectOneMenu id="title" value="#{customer.title}" >
+            <p:selectOneMenu id="title" value="#{customer.title}" style="width: 100%;" >
                 <f:selectItems value="#{bookingBacking.titles}" />
             </p:selectOneMenu>
             <p:outputLabel for="firstName" value="First Name" />

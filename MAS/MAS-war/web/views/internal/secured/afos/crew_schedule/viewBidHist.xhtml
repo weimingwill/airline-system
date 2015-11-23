@@ -8,8 +8,12 @@
 
     <ui:define name="content">
         <h:form>
-            <p:dataTable id="BiddingHistTable" widgetVar="BiddingHistTable" var="pairingFlightCrew" value="#{flightCrewBacking.histBids}" rows="10" tableStyleClass="table-small-font" rowKey="#{pairingFlightCrew.pairingCrewId}"
-                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15,20">
+            <p:dataTable id="BiddingHistTable" widgetVar="BiddingHistTable" var="pairingFlightCrew" value="#{flightCrewBacking.histBids}" rows="6" tableStyleClass="table-small-font" rowKey="#{pairingFlightCrew.pairingCrewId}"
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="6,12,18">
+                <f:facet name="header">
+                    <p:outputLabel value="Bidding Result for Next Month"/>
+                </f:facet>
+
                 <p:columnGroup type="header">
                     <p:row>
                         <p:column headerText="Pairing Code"/>
@@ -39,10 +43,13 @@
                 </p:column>
                 <p:column>
                     <h:outputText value="#{pairingFlightCrew.pairing.cabinCrewQuota}" />
-                    
+
                 </p:column>
                 <p:column>
-                    <h:outputText value="#{pairingFlightCrew.status}" style="color: #FFA500; font-weight: bold"/>
+                    <h:outputText value="#{pairingFlightCrew.status}" style="color: #FFA500; font-weight: bold" rendered="#{pairingFlightCrew.status == 'In Progress'}"/>
+                    <h:outputText value="#{pairingFlightCrew.status}" style="color: #136e13; font-weight: bold" rendered="#{pairingFlightCrew.status == 'Success'}"/>
+                    <h:outputText value="#{pairingFlightCrew.status}" style="color: #D20005; font-weight: bold" rendered="#{pairingFlightCrew.status == 'Failed'}"/>
+
                     <p:subTable value="#{pairingFlightCrew.pairing.flightDuties}" var="duty">
                         <p:column>
                             <h:outputText value="#{duty.id}" />
@@ -65,6 +72,9 @@
                         </p:column>
                     </p:subTable>
                 </p:column>
+                <f:facet name="footer">
+                    <p:outputLabel value=""/>
+                </f:facet>
             </p:dataTable>
         </h:form>
     </ui:define>

@@ -15,6 +15,9 @@ import ams.crm.entity.Customer;
 import ams.dcs.entity.CheckInLuggage;
 import ams.dcs.entity.Luggage;
 import ams.dcs.util.exception.BoardingErrorException;
+import ams.dcs.util.exception.FlightScheduleNotUpdatedException;
+import ams.dcs.util.exception.LuggageNotRomovedException;
+import ams.dcs.util.exception.NoSuchAirTicketException;
 import ams.dcs.util.exception.NoSuchBoardingPassException;
 import ams.dcs.util.exception.NoSuchPNRException;
 import java.util.Date;
@@ -38,15 +41,19 @@ public interface CheckInSessionLocal {
 
     public BoardingPass checkInPassenger(AirTicket ticket);
 
-    public Double calculateLuggagePrice(AirTicket airTicket, List<CheckInLuggage> luggageList);
+    public double calculateLuggagePrice(AirTicket airTicket, double totalWeight);
+    
+    public double calculateLuggageWeight(AirTicket airTicket);
 
     public boolean checkInLuggage(AirTicket airticket, List<CheckInLuggage> luggageList, Double price);
 
     public AirTicket getAirTicketByPassID(long passID) throws NoSuchBoardingPassException;
+    
+    public AirTicket getAirTicketByID(long ticketID) throws NoSuchAirTicketException;
 
     public void boardPassenger(AirTicket airTicket) throws BoardingErrorException;
     
-    public AirTicket searchTicketByID(long ticketID)throws NoSuchPNRException;
+    public AirTicket searchTicketByID(long ticketID) throws NoSuchPNRException;
     
     public List<Seat> getSeatsByTicket(AirTicket airTicket);
     
@@ -55,4 +62,13 @@ public interface CheckInSessionLocal {
     public List<Integer> getRowList();
     
     public List<String> getColList();
+    
+    public void updateFlightSchedule(FlightSchedule fs) throws FlightScheduleNotUpdatedException;
+    
+    public List<FlightSchedule> getFlightSchedulesForDeparture();
+    
+    public List<FlightSchedule> getFlightSchedulesForArrival();
+    
+    public void removeLuggage(AirTicket airTicket, List<CheckInLuggage> luggages) throws LuggageNotRomovedException;
+    
 }

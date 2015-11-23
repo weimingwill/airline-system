@@ -74,6 +74,9 @@ public class UserController implements Serializable {
     private String address;
     private String department;
     private String phone;
+    private List<SystemUser> filteredUsers;
+
+   
 
     public UserController() {
     }
@@ -301,7 +304,18 @@ public class UserController implements Serializable {
         }
         return navigationController.redirectToViewAllUsers();
     }
-
+    
+//    public String updateUserPayroll() throws NoSuchUsernameException {
+//        try {
+//            systemUserSession.updateUserPayroll(selectedUser.getUsername(),selectedUser.getSalary());
+//            msgController.addMessage("Update user payroll successfully!");
+//        } catch (NoSuchUsernameException ex) {
+//            msgController.addErrorMessage(ex.getMessage());
+//            return navigationController.redirectToCurrentPage();
+//        }
+//        return navigationController.redirectToCurrentPage();
+//    }
+    
 //
 //Getter and Setter
 //
@@ -406,6 +420,8 @@ public class UserController implements Serializable {
     }
 
     public SystemUser getSelectedUser() {
+        
+        System.out.println("Selected user is "+selectedUser);
         return selectedUser;
     }
 
@@ -467,6 +483,14 @@ public class UserController implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+    
+     public List<SystemUser> getFilteredUsers() {
+        return filteredUsers;
+    }
+
+    public void setFilteredUsers(List<SystemUser> filteredUsers) {
+        this.filteredUsers = filteredUsers;
     }
 
 }

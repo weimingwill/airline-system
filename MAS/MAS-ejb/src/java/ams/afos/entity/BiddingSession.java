@@ -32,6 +32,8 @@ public class BiddingSession implements Serializable {
     private String status;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date startTime;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date endTime;
     private Double remainingHrs;
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdTime;
@@ -157,6 +159,20 @@ public class BiddingSession implements Serializable {
      */
     public void setFlightCrews(List<FlightCrew> flightCrews) {
         this.flightCrews = flightCrews;
+    }
+
+    /**
+     * @return the endTime
+     */
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    /**
+     * @param endTime the endTime to set
+     */
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
 }

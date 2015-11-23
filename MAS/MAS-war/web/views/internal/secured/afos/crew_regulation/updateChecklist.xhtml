@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AfosTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <p:panelGrid columnClasses="alignTop, alignTop" columns="2">
+            <h:form id="checklistTable">
+                <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                <p:dataTable value="#{flightCrewReportingBacking.selectedChecklist.checklistItems}" emptyMessage="There is no Checklist associated with this flight" var="checklistItem" rowIndexVar="index" tableStyleClass="table-small">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{flightCrewReportingBacking.selectedChecklist.type} Checklist for #{flightCrewReportingBacking.selectedFlightSchedule.flight.flightNo}"/>
+                    </f:facet>
+                    <p:column headerText="S/N" style='width: 20px;  text-align: center'>
+                        <h:outputText value="#{index +1}" />
+                    </p:column>
+
+                    <p:column headerText="Title">
+                        <p:outputLabel value="#{checklistItem.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Description">
+                        <p:outputLabel value="#{checklistItem.description}"/>
+                    </p:column>
+
+                    <p:column headerText="Check" style="text-align: center">
+                        <p:inputSwitch value="#{checklistItem.itemValue}" converter="checklistItemValueConverter" onLabel="Checked" offLabel="To Do" rendered="#{checklistItem.itemValue == 0 || empty checklistItem.itemValue}"/>
+                        <p:outputLabel value="Checked" rendered="#{checklistItem.itemValue == 1}" style="color: #136e13; font-weight: bold" />
+                    </p:column>
+
+                    <p:column headerText="Remark">
+                        <p:inputText value="#{checklistItem.remark}"/>
+                    </p:column>
+
+                    <f:facet name="footer" >
+                        <p:outputLabel value="(Note: click on cell to edit)"/>
+                    </f:facet>
+                </p:dataTable>
+                <p:separator style="border:none" />
+                <p:commandButton value="Update" actionListener="#{flightCrewReportingBacking.updateChecklist()}"/>
+                <p:commandButton value="Save &amp; Exits" action="#{flightCrewReportingBacking.onSaveBtnClick()}" actionListener="#{flightCrewReportingBacking.updateChecklist()}"/>
+            </h:form>
+
+            <h:form>
+                <p:panel header="Flight Information">
+                    <p:panelGrid columns="2" columnClasses="label-right">
+                        <p:outputLabel value="Flight"/>
+                        <p:outputLabel value="#{flightCrewReportingBacking.selectedFlightSchedule.flight.flightNo}"/>
+                        <p:outputLabel value="Origin"/>
+                        <p:outputLabel value="#{flightCrewReportingBacking.selectedFlightSchedule.leg.departAirport.airportName}"/>
+                        <p:outputLabel value="Departure Time"/>
+                        <p:outputLabel value="#{flightCrewReportingBacking.selectedFlightSchedule.departDate}">
+                            <f:convertDateTime pattern="E, dd/MM/yyyy 'at' HH:ss:mm z" timeZone="GMT+8"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Destination"/>
+                        <p:outputLabel value="#{flightCrewReportingBacking.selectedFlightSchedule.leg.arrivalAirport.airportName}"/>
+                        <p:outputLabel value="Arrival Time"/>
+                        <p:outputLabel value="#{flightCrewReportingBacking.selectedFlightSchedule.arrivalDate}">
+                            <f:convertDateTime pattern="E, dd/MM/yyyy 'at' HH:ss:mm z" timeZone="GMT+8"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Aircraft Type"/>
+                        <p:outputLabel value="#{flightCrewReportingBacking.selectedFlightSchedule.aircraft.aircraftType.typeCode}"/>
+                        <p:outputLabel value="Aircraft"/>
+                        <p:outputLabel value="#{flightCrewReportingBacking.selectedFlightSchedule.aircraft.tailNo}"/>
+                    </p:panelGrid>
+                </p:panel>
+            </h:form>
+        </p:panelGrid>
+    </ui:define>
+
+</ui:composition>

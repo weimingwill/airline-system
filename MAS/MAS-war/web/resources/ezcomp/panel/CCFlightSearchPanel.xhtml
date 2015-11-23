@@ -95,13 +95,13 @@
                     <!--Departure Date & Arrival Date-->
                     <p:row>
                         <p:column colspan="3">
-                            <p:calendar id="deptDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
+                            <p:calendar id="deptDate" pages="2" pattern="dd/MM/yyyy" timeZone="GMT+8"
                                         value="#{bookingManager.deptDate}" mindate="#{bookingManager.deptDate}" >
                                 <p:ajax event="dateSelect" update="arriveDate" listener="#{bookingManager.onDeptDateChange()}" />
                             </p:calendar>
                         </p:column>
                         <p:column colspan="3">
-                            <p:calendar id="arriveDate" pages="3" pattern="dd/MM/yyyy" timeZone="GMT+8"
+                            <p:calendar id="arriveDate" pages="2" pattern="dd/MM/yyyy" timeZone="GMT+8"
                                         value="#{bookingManager.arrDate}" mindate="#{bookingManager.deptDate}" />
                         </p:column>
 
@@ -151,8 +151,8 @@
                     </p:row>
                     <p:row>
                         <p:column colspan="6"><p:outputLabel for="cabinClass" value="Cabin Class"/></p:column>    
-                        <p:column colspan="4"><p:outputLabel for="promoCode" value="Promo Code"/></p:column>    
-                        <p:column colspan="2"><p:outputLabel value=""/></p:column>    
+                        <p:column colspan="4"><p:outputLabel value="Promo Code"/></p:column>    
+                        <p:column colspan="2"></p:column>
                     </p:row>
 
                     <p:row>
@@ -161,8 +161,8 @@
                                 <f:selectItems value="#{bookingManager.cabinClses}" var="cabinCls" itemLabel="#{cabinCls.name}" itemValue="#{cabinCls}" />
                             </p:selectOneMenu>
                         </p:column>
-                        <p:column colspan="4"><p:inputText id="promoCode" /></p:column>
-                        <p:column colspan="2"><p:commandButton value="Search" action="#{bookingManager.searchFlights()}" update="messages" /></p:column>  
+                        <p:column colspan="4"><p:inputText value="#{bookingManager.promoCode}"/></p:column>    
+                        <p:column colspan="2"><p:commandButton value="Search" action="#{bookingManager.searchFlights(bookingManager.sources.get(0))}" update="messages" /></p:column>  
                     </p:row>
 
                 </p:panelGrid>

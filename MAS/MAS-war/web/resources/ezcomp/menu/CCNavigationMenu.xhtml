@@ -29,12 +29,11 @@
                     </c:forEach>
                 </p:submenu>
 
-                <p:menuitem value="CRM" url="#{crmNavController.redirectToCRM()}" icon="fa fa-home" styleClass="navMenuItem"></p:menuitem>
-
                 <p:submenu label="Setting" icon="fa fa-cog" rendered="#{loginController.loggedIn}">
                     <p:menuitem  value="Profile" url="#{navigationController.redirectToViewUserProfile()}" />
                     <p:menuitem  value="Change password" url="#{navigationController.redirectToChangePassword()}" />
                 </p:submenu>
+                
                 <f:facet name="options">
                     <p:outputLabel value="Welcome: #{loginController.username} [#{userController.department}]! " rendered="#{loginController.loggedIn}"/>
                     <p:commandButton action="#{navigationController.redirectToLogin()}" value="Login" rendered="#{not loginController.loggedIn}" icon="ui-icon-extlink" styleClass="navBtn"></p:commandButton>

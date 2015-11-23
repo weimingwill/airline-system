@@ -14,18 +14,18 @@
         <h:form>
             <p:menu toggleable="true" style="width:200px;">
                 <p:submenu label="Product Design">
-                    <p:menuitem value="Product Design" action="#{navigationController.redirectToProductDesign()}" />
-                    <p:menuitem value="Create Cabin Class" action="#{navigationController.redirectToCreateCabinClass()}"/>
-                    <p:menuitem value="View all Cabin Class" action="#{navigationController.redirectToViewAllCabinClass()}"/>
-                    <p:menuitem value="Create New Rule" action="#{navigationController.redirectToCreateRule()}"/>
-                    <p:menuitem value="View all Rules" action="#{navigationController.redirectToViewAllRules()}"/>
-                    <p:menuitem value="Create New Ticket Family" action="#{navigationController.redirectToCreateTicketFamily()}"/>
-                    <p:menuitem value="View all Ticket Families" action="#{navigationController.redirectToViewAllTicketFamily()}"/>
+                    <p:menuitem value="Product Design" action="#{navigationController.redirectToProductDesign()}" rendered="#{loginController.loggedIn}" />
+                    <p:menuitem value="Create Cabin Class" action="#{navigationController.redirectToCreateCabinClass()}" rendered="#{loginController.loggedIn}"/>
+                    <p:menuitem value="View all Cabin Class" action="#{navigationController.redirectToViewAllCabinClass()}" rendered="#{loginController.loggedIn}"/>
+                    <p:menuitem value="Create New Rule" action="#{navigationController.redirectToCreateRule()}" rendered="#{loginController.loggedIn}"/>
+                    <p:menuitem value="View all Rules" action="#{navigationController.redirectToViewAllRules()}" rendered="#{loginController.loggedIn}"/>
+                    <p:menuitem value="Create New Ticket Family" action="#{navigationController.redirectToCreateTicketFamily()}" rendered="#{loginController.loggedIn}"/>
+                    <p:menuitem value="View all Ticket Families" action="#{navigationController.redirectToViewAllTicketFamily()}" rendered="#{loginController.loggedIn}"/>
                 </p:submenu>
                 <p:submenu label="Revenue Management">
-                    <p:menuitem value="View Flight Schedule" action="#{navigationController.redirectToViewFlightSchedule()}" />
-                    <p:menuitem value="Create booking class" action="#{navigationController.redirectToCreateBookingClass()}" />
-                    <p:menuitem value="View booking class" action="#{navigationController.redirectToViewAllBookingClass()}" />
+                    <p:menuitem value="View Flight Schedule" action="#{navigationController.redirectToViewFlightSchedule()}" rendered="#{loginController.loggedIn}"/>
+                    <p:menuitem value="Create booking class" action="#{navigationController.redirectToCreateBookingClass()}" rendered="#{loginController.loggedIn}"/>
+                    <p:menuitem value="View booking class" action="#{navigationController.redirectToViewAllBookingClass()}" rendered="#{loginController.loggedIn}"/>
                 </p:submenu>
 
             </p:menu>
