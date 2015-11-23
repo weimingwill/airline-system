@@ -33,9 +33,13 @@
             </p:tab>
 
             <p:tab title="Check-in">
-                <h:panelGrid columns="2" cellpadding="10">
-                    <h:outputText value="After a break of more than 15 years..." />
-                </h:panelGrid>
+                <h:form>
+                    <p:panelGrid columns="1" style="margin: 0 auto">
+                        <p:outputLabel value="Please Enter Your Passport Number: *" />
+                        <p:inputText value="#{passengerManager.passportNo}" required="true" label="passport"/>
+                        <p:commandButton value="Check-In Online" update="messages" action="#{passengerManager.checkPassenger()}"/>
+                    </p:panelGrid>
+                </h:form>
             </p:tab>
 
             <p:tab title="Flight Status">

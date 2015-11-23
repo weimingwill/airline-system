@@ -8,7 +8,9 @@ package managedbean.application;
 import java.io.Serializable;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import managedbean.dcs.LuggageManager;
 import managedbean.dcs.PassengerManager;
 
@@ -18,10 +20,12 @@ import managedbean.dcs.PassengerManager;
  */
 @Named(value = "dcsNavController")
 @RequestScoped
-public class DcsNavController implements Serializable{
+public class DcsNavController implements Serializable {
 
     private final String REDIRECT = "?faces-redirect=true";
     private final String DCS_URL = "/views/internal/secured/dcs/";
+    private final String CRM_URL = "/views/external/unsecured/crm_web/";
+
     @Inject
     private PassengerManager passengerManager;
 
@@ -40,11 +44,23 @@ public class DcsNavController implements Serializable{
     }
 
     public String toCheckInPassenger() {
-        return DCS_URL + "checkInPassenger.xhtml" + REDIRECT;
+        String returnString;
+        if (getCurrURI().contains(CRM_URL)) {
+            returnString = CRM_URL + "online_checkin/checkinOnline.xhtml" + REDIRECT;
+        } else {
+            returnString = DCS_URL + "checkInPassenger.xhtml" + REDIRECT;
+        }
+        return returnString;
     }
 
     public String toSelectSeat() {
-        return DCS_URL + "selectSeat.xhtml" + REDIRECT; //not implemented yet
+        String returnString;
+        if (getCurrURI().contains(CRM_URL)) {
+            returnString = CRM_URL + "online_checkin/selectSeat.xhtml" + REDIRECT;
+        } else {
+            returnString = DCS_URL + "selectSeat.xhtml" + REDIRECT;
+        }
+        return returnString;
     }
 
     public String toCheckInLuggage() {
@@ -87,5 +103,16 @@ public class DcsNavController implements Serializable{
     public String toSearchTicket() {
         luggageManager.cleanVariables();
         return DCS_URL + "searchTicket.xhtml" + REDIRECT;
+    }
+
+    public String toSelfSearchPassenger() {
+        passengerManager.init();
+        return DCS_URL + "searchPassenger.xhtml" + REDIRECT;
+    }
+
+    public String getCurrURI() {
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String uri = request.getRequestURI();
+        return uri;
     }
 }

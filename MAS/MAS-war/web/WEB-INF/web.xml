@@ -2,7 +2,7 @@
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Development<!--Change to Production after complete--></param-value>
+        <param-value>Production<!--Change to Production after complete--></param-value>
     </context-param>
     <!--Starting JSF-->
     <servlet>
@@ -40,7 +40,7 @@
         <welcome-file>views/internal/secured/common/users/login.xhtml</welcome-file>
     </welcome-file-list>
     <!--Set SSL Protection-->
-    <security-constraint>
+<!--    <security-constraint>
         <display-name>SSL Protection</display-name>
         <web-resource-collection>
             <web-resource-name>Default Secure Pages</web-resource-name>
@@ -55,7 +55,7 @@
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
-    </security-constraint>
+    </security-constraint>-->
     <ejb-local-ref>
         <ejb-ref-name>systemUserSession</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>

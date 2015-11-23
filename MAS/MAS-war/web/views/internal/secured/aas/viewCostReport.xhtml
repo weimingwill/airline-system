@@ -16,7 +16,9 @@
         <h:form>
             <p:commandButton action="#{aasNavController.redirectToReportDashboard()}" value="Return to report dashboard" update="messages" style="width:300px"/>
             <p:separator/>
-            <pe:documentViewer height="800" value="#{reportController.content}"/>  
+
+            <pe:documentViewer height="800" library="report" name="CostReport.pdf"/>
+            
         </h:form>
     </ui:define>
 </ui:composition>

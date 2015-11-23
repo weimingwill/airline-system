@@ -62,6 +62,7 @@ public class reportController implements Serializable {
     private DashboardModel reportDashboard;
     private File file;
     private static final String FILE_PATH = "/Users/Lewis/airline-system/MAS/";
+    private static final String reportUrl = "MAS-war/web/resources/report/";
     private String selectedReportType;
 
     /**
@@ -81,19 +82,15 @@ public class reportController implements Serializable {
                 System.out.println("reportController is started");
                 createReportDashboard();
                 break;
-            case "viewCostReport":
-                setPDFContent("CostReport.pdf");
-                break;
-            case "viewFinancialReport":
-                setPDFContent("FinancialAccountingReport.pdf");
-                break;
         }
 
     }
 
     public void setPDFContent(String name) {
         try {
-            content = new DefaultStreamedContent(new FileInputStream(new File(name).getAbsoluteFile()), "application/pdf");
+            System.out.println("File :" + new File(name).getAbsoluteFile().getName());
+            File pdf = new File(name);
+            content = new DefaultStreamedContent(new FileInputStream(pdf), "application/pdf", name);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(reportController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -131,7 +128,7 @@ public class reportController implements Serializable {
             System.out.println("step 1 done");
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
             System.out.println("step 2 done");
-            JasperExportManager.exportReportToPdfFile(jasperPrint, "RevenueReport.pdf");
+            JasperExportManager.exportReportToPdfFile(jasperPrint, FILE_PATH + reportUrl + "RevenueReport.pdf");
             System.out.println("Report is generated");
 
         } catch (JRException ex) {
@@ -150,13 +147,13 @@ public class reportController implements Serializable {
 
         try {
             List<InputStream> pdfs = new ArrayList<InputStream>();
-            pdfs.add(new FileInputStream(new File("FeulCostReport.pdf").getAbsolutePath()));
-            pdfs.add(new FileInputStream(new File("FleetCostReport.pdf").getAbsolutePath()));
-            pdfs.add(new FileInputStream(new File("FlightOperationCostReport.pdf").getAbsolutePath()));
-            pdfs.add(new FileInputStream(new File("PayrollReport.pdf").getAbsolutePath()));
-            pdfs.add(new FileInputStream(new File("MarketingCostReport.pdf").getAbsolutePath()));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "FeulCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "FleetCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "FlightOperationCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "PayrollReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "MarketingCostReport.pdf"));
 
-            OutputStream output = new FileOutputStream(new File("CostReport.pdf").getAbsolutePath());
+            OutputStream output = new FileOutputStream(FILE_PATH + reportUrl + "CostReport.pdf");
             concatPDFs(pdfs, output, true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -171,14 +168,15 @@ public class reportController implements Serializable {
 
         try {
             List<InputStream> pdfs = new ArrayList<InputStream>();
-            pdfs.add(new FileInputStream(new File("FeulCostReport.pdf").getAbsolutePath()));
-            pdfs.add(new FileInputStream(new File("FleetCostReport.pdf").getAbsolutePath()));
-            pdfs.add(new FileInputStream(new File("FlightOperationCostReport.pdf").getAbsolutePath()));
-            pdfs.add(new FileInputStream(new File("PayrollReport.pdf").getAbsolutePath()));
-            pdfs.add(new FileInputStream(new File("MarketingCostReport.pdf").getAbsolutePath()));
-            pdfs.add(new FileInputStream(new File("RevenueReport.pdf").getAbsolutePath()));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "FeulCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "FleetCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "FlightOperationCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "PayrollReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "MarketingCostReport.pdf"));
+            pdfs.add(new FileInputStream(FILE_PATH + reportUrl + "RevenueReport.pdf"));
+
             System.out.println("P1");
-            OutputStream output = new FileOutputStream(new File("FinancialAccountingReport.pdf").getAbsolutePath());
+            OutputStream output = new FileOutputStream(FILE_PATH + reportUrl + "FinancialAccountingReport.pdf");
             System.out.println("P2");
             concatPDFs(pdfs, output, true);
             System.out.println("P3");
@@ -199,7 +197,7 @@ public class reportController implements Serializable {
             System.out.println("step 1 done");
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
             System.out.println("step 2 done");
-            JasperExportManager.exportReportToPdfFile(jasperPrint, "FeulCostReport.pdf");
+            JasperExportManager.exportReportToPdfFile(jasperPrint, FILE_PATH + reportUrl + "FeulCostReport.pdf");
             System.out.println("Report is generated");
 
         } catch (JRException ex) {
@@ -219,7 +217,7 @@ public class reportController implements Serializable {
             System.out.println("step 1 done");
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
             System.out.println("step 2 done");
-            JasperExportManager.exportReportToPdfFile(jasperPrint, "FleetCostReport.pdf");
+            JasperExportManager.exportReportToPdfFile(jasperPrint, FILE_PATH + reportUrl + "FleetCostReport.pdf");
             System.out.println("Report is generated");
 
         } catch (JRException ex) {
@@ -239,7 +237,7 @@ public class reportController implements Serializable {
             System.out.println("step 1 done");
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
             System.out.println("step 2 done");
-            JasperExportManager.exportReportToPdfFile(jasperPrint, "FlightOperationCostReport.pdf");
+            JasperExportManager.exportReportToPdfFile(jasperPrint, FILE_PATH + reportUrl + "FlightOperationCostReport.pdf");
             System.out.println("Report is generated");
 
         } catch (JRException ex) {
@@ -259,7 +257,7 @@ public class reportController implements Serializable {
             System.out.println("step 1 done");
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
             System.out.println("step 2 done");
-            JasperExportManager.exportReportToPdfFile(jasperPrint, "PayrollReport.pdf");
+            JasperExportManager.exportReportToPdfFile(jasperPrint, FILE_PATH + reportUrl + "PayrollReport.pdf");
             System.out.println("Report is generated");
 
         } catch (JRException ex) {
@@ -279,7 +277,7 @@ public class reportController implements Serializable {
             System.out.println("step 1 done");
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), connection);
             System.out.println("step 2 done");
-            JasperExportManager.exportReportToPdfFile(jasperPrint, "MarketingCostReport.pdf");
+            JasperExportManager.exportReportToPdfFile(jasperPrint, FILE_PATH + reportUrl + "MarketingCostReport.pdf");
             System.out.println("Report is generated");
 
         } catch (JRException ex) {
