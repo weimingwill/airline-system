@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:panel header="Special Meal">
+            <p:panelGrid>
+                <c:forEach items="#{bookingManager.bookingHelper.customers}" var="custHelper">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel styleClass="fa fa-user bookingIcon" />
+                            <p:outputLabel value="#{custHelper.customer.lastName} #{custHelper.customer.firstName}" />
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{custHelper.meal}" converter="addOnConverter" >
+                                <p:ajax listener="#{bookingManager.onMealSelected()}" update=":summary:summaryForm" />
+                                <f:selectItem itemLabel="Select meal" itemValue="" />
+                                <f:selectItems value="#{bookingBacking.meals}" var="meal" itemValue="#{meal}" itemLabel="#{meal.description}" />
+                            </p:selectOneMenu>                            
+                        </p:column>
+                    </p:row>
+                </c:forEach>
+            </p:panelGrid>
+        </p:panel>
+
+        <p:panel header="Extra luggage">
+            <p:panelGrid>
+                <c:forEach items="#{bookingManager.bookingHelper.customers}" var="custHelper">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel styleClass="fa fa-user bookingIcon" />
+                            <p:outputLabel value="#{custHelper.customer.lastName} #{custHelper.customer.firstName}" />
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{custHelper.luggage}" converter="luggageConverter" >
+                                <p:ajax listener="#{bookingManager.onLuggageSelected()}" update=":summary:summaryForm" />
+                                <f:selectItem itemLabel="Select extra luggage" itemValue="" />
+                                <f:selectItems value="#{bookingBacking.luggages}" var="luggage" itemValue="#{luggage}" itemLabel="Extra #{luggage.maxWeight}kg, price: S$#{luggage.price}"  />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                </c:forEach>
+            </p:panelGrid>
+        </p:panel>
+
+        <p:panel header="Travel insurance">
+            <p:panelGrid>
+                <c:forEach items="#{bookingManager.bookingHelper.customers}" var="custHelper">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel styleClass="fa fa-user bookingIcon" />
+                            <p:outputLabel value="#{custHelper.customer.lastName} #{custHelper.customer.firstName}" />
+                        </p:column>
+                        <p:column styleClass="alignMiddle">
+                            <p:selectBooleanCheckbox value="#{custHelper.insurance}" rendered="#{not bookingManager.isChangeAddOn or not custHelper.insurance}">
+                                <p:ajax listener="#{bookingManager.onInsuranceSelected()}" update=":summary:summaryForm" />
+                                <p:ajax update="messages"/>
+                            </p:selectBooleanCheckbox>
+                            <p:selectBooleanCheckbox disabled="true" value="#{custHelper.insurance}" rendered="#{bookingManager.isChangeAddOn and custHelper.insurance}">
+                                <p:ajax listener="#{bookingManager.onInsuranceSelected()}" update=":summary:summaryForm" />
+                                <p:ajax update="messages"/>
+                            </p:selectBooleanCheckbox>
+                            <p:outputLabel value="Buy travel insurance with only S$#{bookingBacking.travelInsurance.price}" />
+                        </p:column>
+                    </p:row>
+                </c:forEach>
+            </p:panelGrid>
+        </p:panel>
+    </cc:implementation>
+</html>

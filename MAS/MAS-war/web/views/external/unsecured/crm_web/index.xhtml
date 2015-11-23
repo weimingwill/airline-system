@@ -5,31 +5,39 @@
                 template="./../../../../template/CrmExTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:fo="http://xmlns.jcp.org/jsf/composite/ezcomp/form">
+                xmlns:fo="http://xmlns.jcp.org/jsf/composite/ezcomp/form"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel">
 
     <ui:define name="title">
         Home
     </ui:define>
 
     <ui:define name="content">
-        <!--            <me:CCWebFunNavMenu /> -->
-
-
         <p:tabView style="width: 490px; opacity: 0.95">
 
             <p:tab title="Book A Flight" >
-                <fo:CCFlightSearchIndexForm />
+                <h:form id="form">
+                    <p:panelGrid style="width: 445px;">
+                        <pa:CCFlightSearchIndexPanel />
+                        <p:row>
+                            <p:column colspan="6">
+                                <p:commandButton value="Search" action="#{bookingManager.searchFlights(bookingManager.sources.get(0))}" update="messages" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </h:form>
             </p:tab>
-
 
             <p:tab title="Manage Booking">
                 <fo:CCManageBookingForm />
             </p:tab>
+
             <p:tab title="Check-in">
                 <h:panelGrid columns="2" cellpadding="10">
                     <h:outputText value="After a break of more than 15 years..." />
                 </h:panelGrid>
             </p:tab>
+
             <p:tab title="Flight Status">
                 <fo:CCFlightStatusSearchForm />
             </p:tab>

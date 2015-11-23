@@ -1,19 +1,17 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./../../../../../template/CrmExTemplate.xhtml"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <ui:define name="title">
-        Account Summary
-    </ui:define>
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
 
-    <ui:define name="content" >
-        <me:CCCustAccountMgmtMenu />
-
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
         <h:form id="accountSummary" style="width: 500px;text-align: center;" >
             <p:panel header="Account Summary" styleClass="centeredPanel">
                 <p:panelGrid columns="2" styleClass="centered">
@@ -60,6 +58,7 @@
                 <p:column headerText="Paid" style="width:30px;text-align: center">
                     <p:outputLabel  value="Yes" rendered="#{booking.paid}" />
                     <p:outputLabel  value="Not Paid" rendered="#{not booking.paid}" />
+
                 </p:column>
 
                 <p:column headerText="View" style="width:30px;text-align: center">
@@ -71,7 +70,12 @@
 
 
             <p:panel header="Feedbacks" styleClass="centeredPanel">
+                <!--                        <h:form>-->
                 <p:dataTable value="#{customerController.feedbacks}" var="feedback" style="margin-bottom:40px" rows="5" tableStyleClass="table-small-font">
+                    <!--                                         paginator="true"
+                                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15">-->
+
                     <p:column headerText="Feedback Subject">
                         <p:outputLabel value="#{feedback.subject}"/>
                     </p:column>
@@ -87,51 +91,13 @@
                             <f:setPropertyActionListener value="#{feedback}" target="#{feedbackBacking.selectFeedback}" />
                         </p:commandButton>
                     </p:column>
+
+
                 </p:dataTable> 
+
+                <!--                        </h:form>-->
             </p:panel>
 
         </h:form>
-
-        <p:dialog id="feedbackDialog" header="View Feedback:  #{feedbackBacking.selectFeedback.subject}"  widgetVar="feedbackDialog" modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
-
-            <h:form>
-                <p:panel id="feedbackDetail">
-                    <p:panelGrid>
-
-                        <p:row> 
-                            <p:column>
-                                <p:outputLabel value="Feedback Subject: " />
-                            </p:column>
-                            <p:column>
-                                <p:outputLabel value="#{feedbackBacking.selectFeedback.subject}" >
-                                </p:outputLabel>
-                            </p:column>
-                        </p:row>
-                        <p:row> 
-                            <p:column>
-                                <p:outputLabel value="Feedback Status: " />
-                            </p:column>
-                            <p:column>
-                                <p:outputLabel value="#{feedbackBacking.selectFeedback.status}" >
-                                </p:outputLabel>
-                            </p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Feedback Content: " />
-                            </p:column>
-                            <p:column>
-                                <h:outputText escape="false" value="#{feedbackBacking.selectFeedback.content}" />
-                            </p:column>
-                        </p:row>
-
-                        <!--</ui:repeat>-->
-                    </p:panelGrid>
-                </p:panel>
-
-            </h:form>
-        </p:dialog>
-
-    </ui:define>
-
-</ui:composition>
+    </cc:implementation>
+</html>

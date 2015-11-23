@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="feedbackForm" style="width: 500px;text-align: center;" >
+            <p:panel header="Customer Feedback Form" styleClass="centeredPanel">
+                <p:panel header="Personal information">
+                    <p:panelGrid columns="2" styleClass="centered">
+
+                        <p:outputLabel for="firstname" value="First/Given Name" />
+                        <p:outputLabel id="firstname" class="userProfileInput"  value="#{feedbackController.regCust.firstName}"/>
+
+                        <p:outputLabel for="lastname" value="Last/Family Name"/>
+                        <p:outputLabel id="lastname" class="userProfileInput"  value="#{feedbackController.regCust.lastName}"/>           
+
+                        <p:outputLabel for="email" value="Email"/>
+                        <p:outputLabel id="email" class="userProfileInput"  value="#{feedbackController.regCust.email}"/> 
+
+                    </p:panelGrid>
+                </p:panel>
+                <p:panel header="Feedback Session" >
+                    <p:panelGrid columns="2" styleClass="centered">
+                        <p:outputLabel for="subject" value="Feedback Subject"/>
+                        <p:inputText id="subject" class="userProfileInput"  value="#{feedbackController.newFeedback.subject}"/>
+                    </p:panelGrid>
+                    <h:form>           
+                        <p:editor id="editor" widgetVar="editorWidget" value="#{feedbackController.newFeedback.content}" width="440" />
+
+                        <h:panelGrid columns="2" style="margin-top: 10px">
+                            <p:commandButton value="Submit"  action="#{feedbackController.createrFeedback()}" update="messages" icon="ui-icon-disk" />
+
+                            <p:commandButton value="Clear" type="button" onclick="PF('editorWidget').clear();" icon="ui-icon-close" />
+                        </h:panelGrid>
+
+
+                    </h:form> 
+                </p:panel>
+            </p:panel>
+        </h:form>
+    </cc:implementation>
+</html>

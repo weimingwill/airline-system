@@ -52,51 +52,10 @@
         </p:panelGrid>
 
         <!--Passenger details-->
-        <p:panelGrid styleClass="fullWidth itineraryPanel">
-            <p:row styleClass="ui-widget-header">
-                <p:column colspan="2" rowspan="2">Passenger Name</p:column>
-                <p:column colspan="6" styleClass="alignCenter">Special Needs</p:column>
-            </p:row>
-            <p:row styleClass="ui-widget-header">
-                <p:column colspan="2">Meal(s)</p:column>
-                <p:column colspan="2">Extra Luggage(s)</p:column>
-                <p:column colspan="2">Travel Insurance</p:column>
-            </p:row>
-            <c:forEach items="#{custHelpers}" var="customerHelper">
-                <p:row>
-                    <p:column colspan="2">#{customerHelper.customer.firstName} #{customerHelper.customer.lastName}</p:column>
-                    <p:column colspan="2">
-                        <p:outputLabel styleClass="fa fa-remove" rendered="#{empty customerHelper.meal.description}" />
-                        <p:outputLabel styleClass="#{customerHelper.meal.description}" rendered="#{not empty customerHelper.meal.description}" />
-                    </p:column>
-                    <p:column colspan="2">
-                        <p:outputLabel styleClass="fa fa-remove" rendered="#{empty customerHelper.luggage.maxWeight}" />
-                        <p:outputLabel value="Extra luggage #{customerHelper.luggage.maxWeight} kg" rendered="#{not empty customerHelper.luggage.maxWeight}" />
-                    </p:column>
-                    <p:column colspan="2">                    
-                        <p:outputLabel styleClass="fa fa-check" rendered="#{customerHelper.insurance}" />
-                        <p:outputLabel styleClass="fa fa-remove" rendered="#{not customerHelper.insurance}" />
-                    </p:column>
-                </p:row>
-            </c:forEach>
-        </p:panelGrid>
+        <pa:CCPassengerAddOnPanel custHelpers="#{custHelpers}" />
 
         <!--Contact details-->
-        <p:panelGrid styleClass="fullWidth itineraryPanel">
-            <f:facet name="header">
-                <p:row>
-                    <p:column colspan="2">Contact details</p:column>
-                </p:row>
-            </f:facet>
-            <p:row>
-                <p:column>Phone number</p:column>
-                <p:column>#{booking.phoneNo.countryCode} #{booking.phoneNo.areaCode} #{booking.phoneNo.number}</p:column>
-            </p:row>
-            <p:row>
-                <p:column>Email</p:column>
-                <p:column>#{booking.email}</p:column>
-            </p:row>
-        </p:panelGrid>
+        <pa:CCCustContactDetailPanel booking="#{booking}" />
 
         <!--Pricing details-->
         <p:panelGrid styleClass="fullWidth itineraryPanel">

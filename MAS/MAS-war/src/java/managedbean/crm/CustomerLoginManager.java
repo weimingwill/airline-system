@@ -41,7 +41,40 @@ public class CustomerLoginManager implements Serializable {
     private CustomerExSessionLocal customerSession;
 
     private String email;
-    
+    private String password;
+    private boolean loggedIn = false;
+
+    /**
+     * Creates a new instance of LoginManager
+     */
+    public CustomerLoginManager() {
+    }
+
+    public String doLogout() {
+        loggedIn = false;
+        email = null;
+        msgController.addMessage(UserMsg.LOGIN_OUT_MSG);
+        return crmExNavController.redirectToCrmEx();
+    }
+
+    public String doLogin() throws NoSuchRegCustException, InvalidPasswordException, InterruptedException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        try {
+            customerSession.doLogin(email, password);
+            loggedIn = true;
+            msgController.addMessage(CrmMsg.LOGIN_SUCCESS_MSG);
+
+        } catch (NoSuchRegCustException | InvalidPasswordException ex) {
+            msgController.addErrorMessage(ex.getMessage());
+            return crmExNavController.redirectToAccountSummary();
+        }
+
+        Map<String, Object> sessionMap = externalContext.getSessionMap();
+        sessionMap.put("email", email);
+        externalContext.getFlash().setKeepMessages(true);
+        return crmExNavController.redirectToAccountSummary();
+    }
 
     public String getEmail() {
         return email;
@@ -58,85 +91,13 @@ public class CustomerLoginManager implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+
     public boolean isLoggedIn() {
         return loggedIn;
     }
 
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
-    }
-    
-    private String password;
-    private boolean loggedIn=false;
-//    private int countTrial = 0;
-//    private JsfCaptcha captcha;
-//    private String captchaCode;
-
-    
-
-    /**
-     * Creates a new instance of LoginManager
-     */
-    public CustomerLoginManager() {
-    }
-    public String doLogout() {
-        loggedIn = false;
-        
-        email = null;
-        msgController.addMessage(UserMsg.LOGIN_OUT_MSG);
-        return crmExNavController.redirectToCustomerLogin();
-    }
-    public String doLogin() throws NoSuchRegCustException, InvalidPasswordException, InterruptedException {
-//        CountdownHelper countdownHelper = new CountdownHelper(registrationSession);
-//     
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        try {
-
-            customerSession.doLogin(email, password);
-            loggedIn = true;
-            msgController.addMessage(CrmMsg.LOGIN_SUCCESS_MSG);
-
-        } catch (NoSuchRegCustException | InvalidPasswordException ex) {
-            msgController.addErrorMessage(ex.getMessage());
-            return navigationController.redirectToCurrentPage();
-        }
-        
-        Map<String, Object> sessionMap = externalContext.getSessionMap();
-        sessionMap.put("email", email);
-        externalContext.getFlash().setKeepMessages(true);
-        return crmExNavController.redirectToMainPage();
-//        try {
-//
-//            if (!customerSession.getRegCustByEmail(email).getActivated()) {
-//                msgController.addErrorMessage(CrmMsg.NEED_ACTIVATION_ERROR);
-//                return navigationController.redirectToCurrentPage();
-//            }
-//        } catch (NoSuchRegCustException ex) {
-//            msgController.addErrorMessage(ex.getMessage());
-//            return navigationController.redirectToCurrentPage();
-//        }
-
-//       
-//        CryptographicHelper cryptographicHelper = new CryptographicHelper();
-//        try {
-//            customerSession.doLogin(email, password);
-//        } catch (NoSuchRegCustException | InvalidPasswordException ex) {
-//            msgController.addErrorMessage(ex.getMessage());
-//            countTrial++;
-//            if (countTrial > 2) {
-//                if (!isAdmin()) {
-//                    systemUserSession.lockUser(username);
-//                    System.out.println("locked user " + username);
-//                }1
-//
-//                countdownHelper.unlockUserCountDown(1800 * 1000, username); //Unlock user after 30mins
-//                countTrial = 0;
-//            }
-//            return navigationController.redirectToCurrentPage();
-//        }
-        
-////        captchaCode = null;
     }
 
 }

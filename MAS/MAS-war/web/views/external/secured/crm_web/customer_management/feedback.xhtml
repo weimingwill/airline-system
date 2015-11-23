@@ -4,19 +4,19 @@
                 template="./../../../../../template/CrmExTemplate.xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:me="http://xmlns.jcp.org/jsf/composite/ezcomp/menu">
 
     <ui:define name="title">
         Feedback Form
     </ui:define>
 
     <ui:define name="content">
-        <h:form id="RegistrationForm" style="width: 500px;text-align: center;" >
-            <p:panel header="Customer Feedback Form" styleClass="centeredPanel">
+        <me:CCCustAccountMgmtMenu />
 
+        <h:form id="feedbackForm" style="width: 500px;text-align: center;" >
+            <p:panel header="Customer Feedback Form" styleClass="centeredPanel">
                 <p:panel header="Personal information">
                     <p:panelGrid columns="2" styleClass="centered">
-
 
                         <p:outputLabel for="firstname" value="First/Given Name" />
                         <p:outputLabel id="firstname" class="userProfileInput"  value="#{feedbackController.regCust.firstName}"/>
@@ -27,9 +27,7 @@
                         <p:outputLabel for="email" value="Email"/>
                         <p:outputLabel id="email" class="userProfileInput"  value="#{feedbackController.regCust.email}"/> 
 
-
                     </p:panelGrid>
-
                 </p:panel>
                 <p:panel header="Feedback Session" >
                     <p:panelGrid columns="2" styleClass="centered">
@@ -44,8 +42,6 @@
 
                             <p:commandButton value="Clear" type="button" onclick="PF('editorWidget').clear();" icon="ui-icon-close" />
                         </h:panelGrid>
-
-
                     </h:form> 
                 </p:panel>
             </p:panel>
