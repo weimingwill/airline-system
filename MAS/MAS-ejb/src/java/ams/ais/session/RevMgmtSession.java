@@ -688,22 +688,32 @@ public class RevMgmtSession implements RevMgmtSessionLocal {
             FlightSchedule flgihtSchedule = getFlightScheduleById(flightScheduleId);
             float weeklyFreq = flgihtSchedule.getFlight().getWeeklyFrequency();
             Aircraft aircraft = getFlightScheduleAircraft(flightScheduleId);
+            int seatQty = getAircraftSeatQty(aircraft);
             float cost = aircraft.getCost();
             float lifetime = aircraft.getLifetime();
             if (cost != 0 && lifetime != 0 && weeklyFreq != 0) {
-                return cost / ((lifetime * (365 / 7)) * weeklyFreq);
+                return cost / ((lifetime * (365 / 7)) * weeklyFreq * seatQty);
             }
         } catch (NoSuchFlightSchedulException | NoSuchAircraftException e) {
         }
         return 0;
     }
 
-    //Aircraft fuel cost per km
+    private int getAircraftSeatQty(Aircraft aircraft) {
+        int seatQty = 0;
+        for (AircraftCabinClass ac : aircraft.getAircraftCabinClasses()) {
+            seatQty += ac.getSeatQty();
+        }
+        return seatQty;
+    }
+
+    //Aircraft fuel cost per km per seat
     private float calcAircraftFuelCostPerKm(Long flightScheduleId) {
         try {
             Aircraft aircraft = getFlightScheduleAircraft(flightScheduleId);
+            int seatQty = getAircraftSeatQty(aircraft);
             AircraftType aircraftType = aircraft.getAircraftType();
-            return aircraft.getAvgUnitOilUsage() * aircraftType.getFuelCostPerKm();
+            return (aircraft.getAvgUnitOilUsage() * aircraftType.getFuelCostPerKm()) / seatQty;
         } catch (NoSuchAircraftException e) {
         }
         return 0;
