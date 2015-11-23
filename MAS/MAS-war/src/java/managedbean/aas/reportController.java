@@ -6,11 +6,14 @@
 package managedbean.aas;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -43,6 +46,7 @@ import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
 import org.primefaces.model.DefaultDashboardModel;
+import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 /**
@@ -360,6 +364,23 @@ public class reportController implements Serializable{
     public void onPrerender(ComponentSystemEvent event) throws IOException {
         System.out.println(new File(".").getCanonicalPath());
         file = new File(FILE_PATH + "MAS-war/web/resources/cost_report/CostReport.pdf");
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();  
+  
+            Document document = new Document();
+            
+            PdfWriter.getInstance(document, out);  
+            document.open();
+  
+            for (int i = 0; i < 50; i++) {  
+                document.add(new Paragraph("All work and no play makes Jack a dull boy"));  
+            }  
+              
+            document.close();  
+            content = new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf");  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
     }
 
     public AasNavController getAasNavController() {

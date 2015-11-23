@@ -15,7 +15,7 @@
 	</style>
 	<subDataset name="PieChartDataset" uuid="59ad426d-8694-4a95-a7d5-ab5477d1db89"/>
 	<parameter name="IMG_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["/Users/Lewis/airline-system/MAS/MAS-war/src/java/reports/silver.png"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["silver.png"]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT

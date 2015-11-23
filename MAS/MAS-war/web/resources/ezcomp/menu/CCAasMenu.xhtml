@@ -11,11 +11,16 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
+
         <h:form>
-            <p:menu toggleable="true" style="width:200px;">
-                <p:menuitem action="#{aasNavController.redirectToReportDashboard()}" value="Report Dashboard" />
-                <p:menuitem action="#{aasNavController.redirectToCrewPayroll()}" value="Crew Payroll"/>
-            </p:menu>
+            <p:panelMenu style="width:200px;">
+                <p:submenu label="Reporting" expanded="true" rendered="#{loginController.loggedIn}">
+                    <p:menuitem action="#{aasNavController.redirectToReportDashboard()}" value="Report Dashboard" />
+                </p:submenu>
+                <p:submenu label="Payroll" expanded="true" rendered="#{loginController.loggedIn}">
+                    <p:menuitem action="#{aasNavController.redirectToCrewPayroll()}" value="Crew Payroll"/>
+                </p:submenu>
+            </p:panelMenu>
         </h:form>
     </cc:implementation>
 </html>
