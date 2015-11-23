@@ -6,10 +6,14 @@
 package managedbean.crm;
 
 import ams.crm.entity.Feedback;
+import ams.crm.entity.Membership;
 import ams.crm.entity.RegCust;
 import ams.crm.entity.helper.Phone;
+import ams.crm.session.BookingSession;
+import ams.crm.session.BookingSessionLocal;
 import ams.crm.session.CustomerExSessionLocal;
 import ams.crm.util.exception.ExistSuchRegCustException;
+import ams.crm.util.exception.NoSuchBookingException;
 import ams.crm.util.exception.NoSuchRegCustException;
 import java.io.Serializable;
 import java.util.Date;
@@ -40,10 +44,15 @@ public class CustomerController implements Serializable {
     private MsgController msgController;
     
     @Inject
-    private RedeemMilesBacking redeemMilesBacking;
+    private MilesRedemptionBacking milesRedemptionBacking;
+    
+    @Inject
+    private ViewBookingBacking viewBookingBacking;
  
     @EJB
     private CustomerExSessionLocal customerSession;
+    @EJB
+    private BookingSessionLocal bookingSession;
    
     private String email;
     private String password;
@@ -79,6 +88,18 @@ public class CustomerController implements Serializable {
     @Temporal(value = TemporalType.DATE)
     private Date passportIssueDate;
     private List<Feedback> feedbacks;
+    private Membership membership;
+    private String membershipName;
+
+    public String getMembershipName() {
+        return membershipName;
+    }
+
+    public void setMembershipName(String membershipName) {
+        this.membershipName = membershipName;
+    }
+
+    
     
     public CustomerController() {
     }
@@ -105,14 +126,29 @@ public class CustomerController implements Serializable {
     }
     
     public String updateMiles() throws NoSuchRegCustException{
-        customerSession.updateMiles(email,accMiles-redeemMilesBacking.getSelectedMilesRedemption().getMiles());
+        customerSession.updateMiles(email,accMiles-milesRedemptionBacking.getActualPointNeed());
+        System.out.print("actualmiles deduct"+milesRedemptionBacking.getActualPointNeed());
         return navigationController.redirectToCurrentPage();
     }
     
-    public String claimMiles() throws NoSuchRegCustException{
-        customerSession.updateMiles(email,accMiles+redeemMilesBacking.getSelectedMilesRedemption().getMiles());
+    
+     public String claimMiles() throws NoSuchRegCustException, NoSuchBookingException{
+        customerSession.updateMiles(email,accMiles+viewBookingBacking.getActualPointClaim());
+        customerSession.updateValue(email,custValue+viewBookingBacking.getActualPointClaim());
+        bookingSession.claimBooking(viewBookingBacking.getBookingReferenceNo()); 
         return navigationController.redirectToCurrentPage();
     }
+     
+     public String updateSilverMembership() throws NoSuchRegCustException{
+         membershipName="Elite Silver";
+         customerSession.upgradeMembership(email,membershipName);
+         return navigationController.redirectToCurrentPage();
+     }
+     public String updateGoldMembership() throws NoSuchRegCustException{
+          membershipName="Elite Gold";
+         customerSession.upgradeMembership(email,membershipName);
+         return navigationController.redirectToCurrentPage();
+     }
     public void initializeCustomer() {
         try {
             RegCust regCust = getRegCustByEmail();
@@ -147,6 +183,7 @@ public class CustomerController implements Serializable {
             numofFlights=regCust.getNumOfFlights();
             membershipId=regCust.getMembershipId();
             feedbacks=regCust.getFeedbacks();
+            membership=regCust.getMembership();
             
             
         } catch (NoSuchRegCustException ex) {
@@ -177,6 +214,7 @@ public class CustomerController implements Serializable {
             numofFlights=null;
             membershipId=null;
             feedbacks=null;
+            membership=null;
         }
     }
     
@@ -416,5 +454,12 @@ public class CustomerController implements Serializable {
 
     public void setFeedbacks(List<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
+    }
+    public Membership getMembership() {
+        return membership;
+    }
+
+    public void setMembership(Membership membership) {
+        this.membership = membership;
     }
 }

@@ -8,6 +8,7 @@
 
     <!-- INTERFACE -->
     <cc:interface>
+        <cc:attribute name="flightSchedule" required="true" />
         <cc:attribute name="flightSchedBookingClsHelper" required="true" />
     </cc:interface>
 
@@ -15,27 +16,27 @@
     <cc:implementation>
         <c:set value="#{cc.attrs.flightSchedBookingClsHelper}" var="fbHelper" />
         <c:set value="#{cc.attrs.flightSchedBookingClsHelper.flightSchedBookingCls}" var="fb" />
-        <c:set value="#{cc.attrs.flightSchedBookingClsHelper.flightSchedBookingCls.flightSchedule}" var="flightSchedule" />
+        <c:set value="#{cc.attrs.flightSchedule}" var="flightSchedule" />
         <p:panelGrid>
 
             <p:row>
                 <p:column>
-                    <p:outputLabel value="OUTBOUND FLIGHT" />
+                    <p:outputLabel styleClass="boldFont" value="OUTBOUND FLIGHT" />
                 </p:column>
                 <p:column>
                     <p:outputLabel value="#{fbHelper.cabinClass.name} #{fbHelper.ticketFamily.name}" />
                 </p:column>
                 <p:column>
                     <p:outputLabel value="S$" />
-                    <p:outputLabel value="#{fbHelper.price}" >
-                        <f:convertNumber maxFractionDigits="1" />
+                    <p:outputLabel value="#{fbHelper.price * (bookingManager.adultNo + bookingManager.childrenNo)}" >
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                     </p:outputLabel>
                 </p:column>
                 <p:column><p:outputLabel value="" /></p:column>
                 <p:column><p:outputLabel value="Total price" /></p:column>
                 <p:column rowspan="4">
-                    <p:commandButton value="Continue" update="messages" action="#{crmExNavController.redirectToLoginBooking()}" rendered="#{not loginController.loggedIn}" />
-                    <p:commandButton value="Continue" update="messages" action="#{arsNavController.redirectToPassengerInfo()}" rendered="#{loginController.loggedIn}" />
+                    <p:commandButton value="Continue" update="messages" action="#{crmExNavController.redirectToLoginBooking()}" rendered="#{not customerLoginManager.loggedIn}" />
+                    <p:commandButton value="Continue" update="messages" action="#{bookingManager.toEnterPassengerDetails()}" rendered="#{customerLoginManager.loggedIn}" />
                 </p:column>
             </p:row>
 
@@ -55,9 +56,9 @@
                 </p:column>
                 <p:column></p:column>
                 <p:column rowspan="2">
-                    <p:outputLabel value="S$" />
-                    <p:outputLabel value="#{fb.price}" >
-                        <f:convertNumber maxFractionDigits="1" />
+                    <p:outputLabel styleClass="boldFont" value="S$" />
+                    <p:outputLabel styleClass="boldFont" value="#{fbHelper.price * (bookingManager.adultNo + bookingManager.childrenNo)}" >
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
                     </p:outputLabel>
                 </p:column>
             </p:row>

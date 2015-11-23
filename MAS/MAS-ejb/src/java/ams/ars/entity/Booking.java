@@ -39,6 +39,7 @@ public class Booking implements Serializable {
     private String referenceNo;
     private String email;
     private String eTicketNo;
+    
     @Embedded
     private Phone phoneNo;
     private Double price;

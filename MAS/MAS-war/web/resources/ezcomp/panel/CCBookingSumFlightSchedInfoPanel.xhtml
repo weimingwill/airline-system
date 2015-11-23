@@ -9,58 +9,54 @@
     <!-- INTERFACE -->
     <cc:interface>
         <cc:attribute name="flightSchedule" required="true"/>
-        <cc:attribute name="fbHelper" required="true"/>
+        <cc:attribute name="fb" required="true"/>
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <c:set value="#{cc.attrs.flightSchedule}" var="flightSched"/>
-        <c:set value="#{cc.attrs.fbHelper}" var="fbHelper"/>
-        <p:panelGrid>
-            <p:row>
-                <p:column colspan="2">
-                    <p:outputLabel value="#{flightSched.departDate}">
-                        <f:convertDateTime pattern="dd MMM yyyy" timeZone="GMT+8" />
-                    </p:outputLabel>
-                </p:column>
-                <p:column><p:outputLabel value=""/></p:column>
-                <p:column colspan="2">
-                    <p:outputLabel value="#{flightSched.arrivalDate}">
-                        <f:convertDateTime pattern="dd MMM yyyy" timeZone="GMT+8" />
-                    </p:outputLabel>
-                </p:column>
+        <c:set value="#{cc.attrs.fb}" var="fb"/>
 
-                <p:column>
-                    <p:outputLabel value="#{fbHelper.cabinClass.name} #{fbHelper.ticketFamily.name}" />
-                </p:column>
+        <p:row>
+            <p:column rowspan="2">#{flightSched.flight.flightNo}</p:column>
+            <p:column>
+                <p:outputLabel value="#{flightSched.departDate}">
+                    <f:convertDateTime pattern="dd MMM yyyy" timeZone="GMT+8" />
+                </p:outputLabel>
+            </p:column>
+            <p:column rowspan="2">
+                <p:outputLabel value="#{flightSched.departDate}">
+                    <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
+                </p:outputLabel>
+            </p:column>
+            <p:column rowspan="2"><p:outputLabel styleClass="fa fa-arrow-right alignCenter" /></p:column>
+            <p:column>
+                <p:outputLabel value="#{flightSched.arrivalDate}">
+                    <f:convertDateTime pattern="dd MMM yyyy" timeZone="GMT+8" />
+                </p:outputLabel>
+            </p:column>
+            <p:column rowspan="2">
+                <p:outputLabel value="#{flightSched.arrivalDate}">
+                    <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
+                </p:outputLabel>
+            </p:column>
+            <p:column rowspan="2">#{flightSched.aircraft.tailNo}</p:column>
+            <p:column>
+                <p:outputLabel value="#{fb.bookingClass.ticketFamily.cabinClass.name}" />
+            </p:column>
 
-            </p:row>
-            <p:row>
-                <p:column rowspan="2">
-                    <p:outputLabel value="#{flightSched.departDate}">
-                        <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
-                    </p:outputLabel>
-                </p:column>
-                <p:column rowspan="2">
-                    <p:outputLabel value="#{flightSched.leg.departAirport.city.cityName}, #{flightSched.leg.departAirport.country.isoCode}" />
-                </p:column>
-                <p:column rowspan="2"><p:outputLabel styleClass="fa fa-arrow-right alignCenter" /></p:column>
-                <p:column rowspan="2">
-                    <p:outputLabel value="#{flightSched.arrivalDate}">
-                        <f:convertDateTime pattern="HH:mm" timeZone="GMT+8" />
-                    </p:outputLabel>
-                </p:column>
-                <p:column rowspan="2">
-                    <p:outputLabel value=" #{flightSched.leg.arrivalAirport.city.cityName}, #{flightSched.leg.arrivalAirport.country.isoCode}" />
-                </p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="2">
+                <p:outputLabel value="#{flightSched.leg.departAirport.city.cityName}, #{flightSched.leg.departAirport.country.isoCode}" />
+            </p:column>
 
-                <p:column>
-                    <p:outputLabel value="#{flightSched.flight.flightNo}" />
-                </p:column>
-            </p:row>
-            <p:row>
-                <p:column><p:outputLabel value="Operated by Merlion Airline" /></p:column>
-            </p:row>
-        </p:panelGrid>
+            <p:column colspan="2">
+                <p:outputLabel value="#{flightSched.leg.arrivalAirport.city.cityName}, #{flightSched.leg.arrivalAirport.country.isoCode}" />
+            </p:column>
+            <p:column>
+                <p:outputLabel value="#{fb.bookingClass.ticketFamily.name}" />
+            </p:column>
+        </p:row>
     </cc:implementation>
 </html>

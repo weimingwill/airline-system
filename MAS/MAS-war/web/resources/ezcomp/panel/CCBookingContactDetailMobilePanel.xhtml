@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="booking" required="true" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set value="#{cc.attrs.booking}" var="booking" />
+        <p:panel header="Contact detail" style="margin-bottom: 10px;">
+            <p:panelGrid columns="2">
+                <p:outputLabel styleClass="smallFont" value="Phone number" />
+                <p:outputLabel styleClass="smallFont" value="#{booking.phoneNo.countryCode} #{booking.phoneNo.areaCode} #{booking.phoneNo.number}"/>
+                <p:outputLabel styleClass="smallFont" value="Email" />
+                <p:outputLabel styleClass="smallFont" value="#{booking.email}"/>
+            </p:panelGrid>
+        </p:panel>
+    </cc:implementation>
+</html>

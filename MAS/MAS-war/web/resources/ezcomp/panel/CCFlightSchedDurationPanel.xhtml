@@ -7,6 +7,7 @@
     <!-- INTERFACE -->
     <cc:interface>
         <cc:attribute name="time" required="true" />
+        <cc:attribute name="isDirect" required="true" />
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
@@ -18,8 +19,14 @@
                 </p:column>
             </p:row>
             <p:row>
-                <p:column>
+                <p:column styleClass="alignCenter">
                     <p:outputLabel value="#{cc.attrs.time}"/>                                        
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="alignCenter">
+                    <p:outputLabel value="Direct" rendered="#{cc.attrs.isDirect eq 'true'}"/>                                        
+                    <p:outputLabel value="Stop over" rendered="#{cc.attrs.isDirect ne 'true'}"/>                                        
                 </p:column>
             </p:row>
         </p:panelGrid>

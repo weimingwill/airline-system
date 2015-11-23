@@ -508,6 +508,15 @@ div.timeline-event-selected {
 }
 
 
+.alignBottom {
+    vertical-align: bottom !important;
+}
+
+.alignMiddle {
+    vertical-align: central !important;
+}
+
+
 .alignCenter {
     text-align: center !important;
 }
@@ -525,11 +534,54 @@ div.timeline-event-selected {
     display: block;
 }
 
-
 .hide-column-names table thead tr {
     display: none;
 }
 
 .crewDG > .ui-datagrid-content .ui-widget-content > table{
     font-size: small !important;
+}
+
+.bookingIcon {
+    font-size: 15px !important;
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+    /*margin-top: .625rem;*/
+    color: #007cc0;
+}
+
+.bookingSummaryIcon {
+    font-size: 15px !important;
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+}
+
+.fullWidth{
+    width: 100% !important;
+}
+
+.fullWidth>.ui-inputfield {
+    width: 100% !important;    
+}
+
+.itineraryPanel {
+    margin-bottom: 10px;
+}
+
+.boldFont {
+    font-weight: bold !important;
+}
+
+.textSize{
+    font-size: 18px;
+}
+
+div.ui-input-text {
+    width: 50px !important
+}
+div.ui-input-search {
+    width: 50px !important
+
 }

@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pm="http://primefaces.org/mobile"
+      xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel">
+    <f:view renderKitId="PRIMEFACES_MOBILE"/>
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <h:outputStylesheet name="./css/cssMobile.css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+        <link rel="shortcut icon" type="image/x-icon" href="/MAS-war/resources/images/favicon.ico"/>
+    </h:head>
+
+    <h:body>
+        <p:growl id="messages" showDetail="true" />
+        <pm:page id="bookingSummary">
+            <h:form>
+                <pm:header title="" fixed="true">
+                    <f:facet name="left">
+                        <p:commandButton icon="ui-icon-back" action="#{crmMobileNavController.redirectToPassengerInfo()}" />
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:graphicImage value="/resources/images/logo.png" height="80%" width="auto"/>
+                    </f:facet>
+                </pm:header>
+            </h:form>
+            <h:form id="form">
+                <pm:content>
+                    <h2>#{bookingManager.deptAirport.city.cityName} > #{bookingManager.arrAirport.city.cityName}</h2>
+                    <h3>#{bookingManager.searchDeptDate}</h3>
+
+                    <p:panel header="Departure" style="margin-bottom: 10px;">
+                        <p:outputLabel styleClass="smallFont boldFont" value="#{bookingManager.selectedFlightSchedHelper.flightSched.departDate}">
+                            <f:convertDateTime pattern="EEE dd MMM yyyy" timeZone="GMT+8" />
+                        </p:outputLabel>
+                        <p:outputLabel styleClass="smallFont" value="Flight No: #{bookingManager.selectedFlightSchedHelper.flightSched.flight.flightNo}" />
+                        <p:outputLabel styleClass="smallFont" value="Aircraft: #{bookingManager.selectedFlightSchedHelper.flightSched.aircraft.tailNo}" />
+                        <br/>
+                        <pa:CCFlightSchedDetailMobilePanel flightSched="#{bookingManager.selectedFlightSchedHelper.flightSched}" />
+                        <br/>
+                        <pa:CCFlightSchedDetailMobilePanel flightSched="#{bookingManager.selectedFlightSchedHelper.nextFlightSched}" 
+                                                           rendered="#{not empty bookingManager.selectedFlightSchedHelper.nextFlightSched}" />
+                    </p:panel>                   <pa:CCPassengerDetailMobilePanel customerHelpers="#{bookingManager.bookingHelper.customers}" />
+                    <pa:CCBookingContactDetailMobilePanel booking="#{bookingManager.bookingHelper.booking}" />
+                    <pa:CCBookingPriceMobilePanel/>
+                    <h:form id="form">
+                        <p:commandButton value="Confirm and Payment" action="#{bookingManager.bookingFlight(bookingManager.sources.get(1))}" update="messages"/>
+                    </h:form>
+                </pm:content>
+            </h:form>
+
+        </pm:page>
+    </h:body>
+</html>

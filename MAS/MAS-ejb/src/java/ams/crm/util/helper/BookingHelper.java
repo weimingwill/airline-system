@@ -7,7 +7,7 @@ package ams.crm.util.helper;
 
 import ams.ais.entity.FlightScheduleBookingClass;
 import ams.ars.entity.Booking;
-import ams.crm.entity.Customer;
+import ams.ars.entity.PricingItem;
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,12 +17,17 @@ import java.util.List;
  */
 public class BookingHelper implements Serializable{
     private Booking booking;
-    private List<Customer> adults;
-    private List<Customer> children;
+    private List<CustomerHelper> customers;
+    private List<CustomerHelper> adults;
+    private List<CustomerHelper> children;
     private String channel;
     private List<FlightScheduleBookingClass> flightSchedBookingClses;
     
+    private List<PricingItem> pricingItems;
 
+    private double totalPrice;
+    private String promoCode;
+    
     public Booking getBooking() {
         return booking;
     }
@@ -31,19 +36,19 @@ public class BookingHelper implements Serializable{
         this.booking = booking;
     }
 
-    public List<Customer> getAdults() {
-        return adults;
+    public List<CustomerHelper> getCustomers() {
+        return customers;
     }
 
-    public void setAdults(List<Customer> adults) {
-        this.adults = adults;
+    public void setCustomers(List<CustomerHelper> customers) {
+        this.customers = customers;
     }
 
-    public List<Customer> getChildren() {
+    public List<CustomerHelper> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Customer> children) {
+    public void setChildren(List<CustomerHelper> children) {
         this.children = children;
     }
 
@@ -63,5 +68,36 @@ public class BookingHelper implements Serializable{
         this.flightSchedBookingClses = flightSchedBookingClses;
     }
 
-   
+    public List<PricingItem> getPricingItems() {
+        return pricingItems;
+    }
+
+    public void setPricingItems(List<PricingItem> pricingItems) {
+        this.pricingItems = pricingItems;
+    }
+
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public List<CustomerHelper> getAdults() {
+        return adults;
+    }
+
+    public void setAdults(List<CustomerHelper> adults) {
+        this.adults = adults;
+    }
+
+    public String getPromoCode() {
+        return promoCode;
+    }
+
+    public void setPromoCode(String promoCode) {
+        this.promoCode = promoCode;
+    }
 }

@@ -40,8 +40,16 @@ public class ArsNavController implements Serializable {
         return ARS_URL + "flight_booking/passengerInfo.xhtml" + REDIRECT;
     }
     
+    public String redirectToAddOnServices() {
+        return ARS_URL + "flight_booking/addOnServices.xhtml" + REDIRECT;
+    }
+    
     public String redirectToBookingSummary() {
         return ARS_URL + "flight_booking/bookingSummary.xhtml" + REDIRECT;
+    } 
+    
+    public String redirectToItinerary() {
+        return ARS_URL + "flight_booking/itinerary.xhtml" + REDIRECT;
     } 
     
     

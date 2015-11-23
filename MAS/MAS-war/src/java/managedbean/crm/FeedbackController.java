@@ -31,7 +31,7 @@ import managedbean.application.NavigationController;
  */
 @Named(value = "feedbackController")
 @RequestScoped
-public class FeedbackController implements Serializable{
+public class FeedbackController implements Serializable {
     @Inject
     private NavigationController navigationController;
     @Inject
