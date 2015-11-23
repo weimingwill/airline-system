@@ -156,7 +156,7 @@ public class FlightStatusManager implements Serializable {
             flightSchedHelpers = new ArrayList<>();
             inDirectFlightSchedMaps = new HashMap<>();
             if (selecteRoute) {
-                flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, date, inDirectFlightSchedMaps, FlightSchedStatus.METHOD_FLIGHT_STATUS);
+                flightScheds = bookingSession.searchForOneWayFlights(deptAirport, arrAirport, date, inDirectFlightSchedMaps, FlightSchedStatus.METHOD_FLIGHT_STATUS, "");
             } else {
                 if ("depart".equals(scheduleChoice)) {
                     flightScheds = bookingSession.searchFlightStatusByFlightNo(flightNo, date, deptAirport, scheduleChoice, inDirectFlightSchedMaps);

@@ -162,7 +162,7 @@
                             </p:selectOneMenu>
                         </p:column>
                         <p:column colspan="4"><p:inputText value="#{bookingManager.promoCode}"/></p:column>    
-                        <p:column colspan="2"><p:commandButton value="Search" action="#{bookingManager.searchFlights(bookingManager.sources.get(0))}" update="messages" /></p:column>  
+                        <p:column colspan="2"><p:commandButton value="Search" action="#{bookingManager.searchFlights(bookingManager.sources.get(0),ChannelHelper.ARS)}" update="messages" /></p:column>  
                     </p:row>
 
                 </p:panelGrid>
