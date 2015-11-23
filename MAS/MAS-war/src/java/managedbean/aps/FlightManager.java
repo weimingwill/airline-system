@@ -137,11 +137,13 @@ public class FlightManager implements Serializable {
         flight.setWeeklyFrequency(weeklyFreq);
         flight.setNumOfUnscheduled(unScheduled);
         flight.setCompleted(Boolean.TRUE);
+        flight.setFlyDistance(routeHelper.getTotalDistance());
         flight.getReturnedFlight().setAircraftTypes(selectedModels);
         flight.getReturnedFlight().setSpeedFraction(speedFraction);
         flight.getReturnedFlight().setWeeklyFrequency(weeklyFreq);
         flight.getReturnedFlight().setNumOfUnscheduled(unScheduled);
         flight.getReturnedFlight().setCompleted(Boolean.TRUE);
+        flight.getReturnedFlight().setFlyDistance(returnRouteHelper.getTotalDistance());
         return updateFlight(flight);
     }
     
