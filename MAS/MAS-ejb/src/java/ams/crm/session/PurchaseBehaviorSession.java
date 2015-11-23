@@ -43,7 +43,7 @@ public class PurchaseBehaviorSession implements PurchaseBehaviorSessionLocal {
             List<AirTicket> ats = b.getAirTickets();
             for (AirTicket at : ats) {
                 String cabinClass = at.getFlightSchedBookingClass().getBookingClass().getTicketFamily().getCabinClass().getName();
-                if (cabinClass.equals("Business") || cabinClass.equals("Merlion Sky Palace")) {
+                if (cabinClass.equals("Business") || cabinClass.equals("Merlion Sky Palace (First)")) {
                     count++;
                 }
             }

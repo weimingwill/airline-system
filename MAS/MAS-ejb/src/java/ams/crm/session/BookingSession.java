@@ -161,7 +161,7 @@ public class BookingSession implements BookingSessionLocal {
     }
 
     @Override
-    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps, String method)
+    public List<FlightSchedule> searchForOneWayFlights(Airport deptAirport, Airport arrAirport, Date deptDate, Map<Long, FlightSchedule> flightSchedMaps, String method, String channel)
             throws NoSuchFlightSchedulException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(deptDate);
@@ -169,8 +169,8 @@ public class BookingSession implements BookingSessionLocal {
         Date date = calendar.getTime();
         DateHelper.setToEndOfDay(calendar);
         Date nextDate = calendar.getTime();
-        List<FlightSchedule> directFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, true, method);
-        List<FlightSchedule> inDirectFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, false, method);
+        List<FlightSchedule> directFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, true, method, channel);
+        List<FlightSchedule> inDirectFlightScheds = getFlights(deptAirport, arrAirport, date, nextDate, false, method, channel);
 
         if (directFlightScheds.isEmpty() && inDirectFlightScheds.isEmpty()) {
             throw new NoSuchFlightSchedulException(ApsMsg.NO_SUCH_FLIGHT_SHCEDULE_ERROR);
@@ -185,15 +185,16 @@ public class BookingSession implements BookingSessionLocal {
         return flightSchedules;
     }
 
-    private List<FlightSchedule> getFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate, boolean isDirect, String method) {
+    private List<FlightSchedule> getFlights(Airport deptAirport, Airport arrAirport, Date date, Date nextDate, boolean isDirect, String method, String channel) {
         Query query;
         if (FlightSchedStatus.METHOD_BOOKING.equals(method)) {
             if (isDirect) {
-                query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f.status <> :inStatus");
+                query = em.createQuery("SELECT f FROM FlightSchedule f, FlightScheduleBookingClass fb WHERE fb.flightSchedule.flightScheduleId = f.flightScheduleId AND fb.bookingClass.channel = :inChannel AND f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f.status <> :inStatus");
             } else {
-                query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2 WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE AND f.status = :inStatus");
+                query = em.createQuery("SELECT f FROM FlightSchedule f, FlightSchedule f2, FlightScheduleBookingClass fb, FlightScheduleBookingClass fb2 WHERE fb.flightSchedule.flightScheduleId = f.flightScheduleId AND fb.bookingClass.channel = :inChannel AND fb2.flightSchedule.flightScheduleId = f2.flightScheduleId AND fb2.bookingClass.channel = :inChannel AND f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = f2.leg.departAirport.airportName AND f2.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE AND f2.deleted = FALSE AND f.status <> :inStatus");
             }
             query.setParameter("inStatus", FlightSchedStatus.ARRIVE);
+            query.setParameter("inChannel", channel);
         } else {
             if (isDirect) {
                 query = em.createQuery("SELECT f FROM FlightSchedule f WHERE f.leg.departAirport.airportName = :inDeptAirport AND f.leg.arrivalAirport.airportName = :inArrAirport AND f.departDate BETWEEN :inDate AND :inNextDate AND f.deleted = FALSE");

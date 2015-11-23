@@ -22,6 +22,8 @@
                     </p:commandLink>
                 </p:menuitem>
                 <p:menuitem value="My Account" url="#{crmExNavController.redirectToAccountSummary()}" icon="ui-icon-home"  styleClass="navBtn" rendered="#{customerLoginManager.loggedIn}"/>
+                <p:menuitem value="Book a Flight" url="#{crmExNavController.redirectToCrmEx()}" icon="fa fa-plane"  styleClass="navBtn"/>
+
                 <p:menuitem value="General Information" url="#{crmExNavController.redirectToGeneralInformation()}" icon="ui-icon-document"  styleClass="navBtn"/>
 
 

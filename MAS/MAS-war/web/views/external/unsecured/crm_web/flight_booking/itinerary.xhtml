@@ -21,7 +21,8 @@
                         <pa:CCFlightSearchIndexPanel />
                         <p:row>
                             <p:column colspan="6">
-                                <p:commandButton value="Search" action="#{arsNavController.redirectToSearchFlightResult()}" actionListener="#{bookingManager.searchFlights(bookingManager.sources.get(0))}" update="messages" />
+                                <p:commandButton value="Search" action="#{arsNavController.redirectToSearchFlightResult()}" 
+                                                 actionListener="#{bookingManager.searchFlights(bookingManager.sources.get(0),ChannelHelper.ARS)}" update="messages" />
                             </p:column>
                         </p:row>
                     </p:panelGrid>
