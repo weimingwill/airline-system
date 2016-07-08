@@ -1,0 +1,14 @@
+/MAS/nbproject/private/
+/MAS/MAS-ejb/nbproject/private/
+/MAS/MAS-war/nbproject/private/
+/MAS/MAS-ejb/build/
+/MAS/MAS-ejb/dist/
+/MAS/MAS-war/build/
+/MAS/dist/
+/MAS/build/
+/MAS/MAS-war/dist/
+MAS/MAS-war/web/resources/cost_report/CostReport.pdf
+MAS/MAS-war/web/resources/cost_report/FlightOperationCostReport.pdf
+MAS/MAS-war/web/resources/cost_report/PayrollReport.pdf
+MAS/MAS-war/web/resources/financial_report/FinancialAccountingReport.pdf
+MAS/MAS-war/web/resources/revenue_report/RevenueReport.pdf

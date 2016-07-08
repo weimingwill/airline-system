@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="totalPrice" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:panel header="Price break down" style="margin-bottom: 10px;">
+            <p:panelGrid columns="2">
+                 <p:outputLabel styleClass="smallFont boldFont" value="Item" />
+                <p:outputLabel styleClass="smallFont boldFont" value="Price(S$)"/>
+                
+                <p:outputLabel styleClass="smallFont" value="Fare fee" />
+                <p:outputLabel styleClass="smallFont" value="#{bookingManager.farePrice}">
+                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                </p:outputLabel>
+
+                <c:forEach items="#{bookingBacking.pricingItems}" var="pricingItem">
+                    <p:outputLabel styleClass="smallFont" value="#{pricingItem.name}" />
+                    <p:outputLabel styleClass="smallFont" value="#{bookingManager.farePrice * pricingItem.price}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                    </p:outputLabel>
+                </c:forEach>
+
+                <p:outputLabel styleClass="smallFont boldFont" value="Grant Total" />
+                <p:outputLabel styleClass="smallFont boldFont" value="#{bookingManager.bookingHelper.totalPrice}" rendered="#{empty cc.attrs.totalPrice}">
+                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                </p:outputLabel>
+                
+                <p:outputLabel styleClass="smallFont boldFont" value="#{cc.attrs.totalPrice}" rendered="#{not empty cc.attrs.totalPrice}">
+                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                </p:outputLabel>
+
+            </p:panelGrid>
+        </p:panel>
+    </cc:implementation>
+</html>

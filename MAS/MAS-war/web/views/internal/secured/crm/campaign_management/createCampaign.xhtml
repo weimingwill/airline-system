@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="title">
+        Create Campaign
+    </ui:define>
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Create new marketing campaign 
+        </f:facet>
+        <h:form id="form">
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Name: "/>
+                <p:inputText value="#{campaignController.campaignName}"/>
+                <p:outputLabel value="Type: "/>
+                <p:selectOneMenu id="type" value="#{campaignController.campaignType}" style="width:200px">
+                    <f:selectItem itemLabel="Select campaign type" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{campaignController.campaignTypes}" var="type" itemLabel="#{type}" itemValue="#{type}"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel value="Description: "/>
+                <p:inputTextarea value="#{campaignController.campaignDescription}" rows="6" cols="33" />
+                <p:outputLabel for="startDate" value="Start time:" />
+                <p:calendar id="startDate" value="#{campaignController.startTime}" />
+                <p:outputLabel for="endDate" value="End time:" />
+                <p:calendar id="endDate" value="#{campaignController.endTime}" />
+                <p:outputLabel value="Budget: "/>
+                <p:inputText value="#{campaignController.budget}"/>
+                <p:outputLabel value="Promotion code: "/>
+                <p:inputText value="#{campaignController.promotionCode}"/>
+                
+                
+                <p:outputLabel value="Promotion code type: "/>
+                <p:selectOneMenu id="promotionCodeType" value="#{campaignController.promotionCodeType}" style="width:200px">
+                    <f:selectItem itemLabel="Select a code type" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{campaignController.promotionCodeTypes}" var="promotionCodeType" itemLabel="#{promotionCodeType}" itemValue="#{promotionCodeType}"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel value="Promotion value: "/>
+                <p:inputText value="#{campaignController.promotionValue}"/>
+                <p:outputLabel value="Promotion percentage: "/>
+                <p:inputText value="#{campaignController.promotionPercentage}"/>
+                
+                <p:outputLabel value="Targeted customer list: "/>
+                <p:selectOneMenu id="customerList" value="#{campaignController.selectedCustomerList}" converter="customerListConverter" style="width:200px">
+                    <f:selectItem itemLabel="Select a customer list" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{campaignController.customerLists}" var="customerList" itemLabel="#{customerList.name}" itemValue="#{customerList}"/>
+                </p:selectOneMenu>
+                
+ 
+            </p:panelGrid>
+
+            <p:separator/>
+            <p:commandButton action="#{campaignController.createCampaign()}" value="Create" update="messages" />
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

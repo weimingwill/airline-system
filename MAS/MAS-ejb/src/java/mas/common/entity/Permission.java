@@ -6,10 +6,15 @@
 package mas.common.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 /**
  *
@@ -20,22 +25,29 @@ public class Permission implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long permissionId;
+    private String system;
     private String systemModule;
-    private String title;
+    private Boolean deleted;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "permissions")
+    private List<SystemRole> systemRoles = new ArrayList<>();   
 
-    public Long getId() {
-        return id;
+    public String getPermissionName(){
+        return this.system + ":" + this.systemModule;
+    }
+    
+    public Long getPermissionId() {
+        return permissionId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPermissionId(Long permissionId) {
+        this.permissionId = permissionId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (permissionId != null ? permissionId.hashCode() : 0);
         return hash;
     }
 
@@ -46,7 +58,7 @@ public class Permission implements Serializable {
             return false;
         }
         Permission other = (Permission) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.permissionId == null && other.permissionId != null) || (this.permissionId != null && !this.permissionId.equals(other.permissionId))) {
             return false;
         }
         return true;
@@ -54,34 +66,39 @@ public class Permission implements Serializable {
 
     @Override
     public String toString() {
-        return "mas.common.entity.Access[ id=" + id + " ]";
+        return "mas.common.entity.Access[ permissionId=" + permissionId + " ]";
     }
 
-    /**
-     * @return the systemModule
-     */
     public String getSystemModule() {
         return systemModule;
     }
 
-    /**
-     * @param systemModule the systemModule to set
-     */
     public void setSystemModule(String systemModule) {
         this.systemModule = systemModule;
     }
 
-    /**
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
+    public String getSystem() {
+        return system;
     }
 
-    /**
-     * @param title the title to set
-     */
-    public void setTitle(String title) {
-        this.title = title;
+    public void setSystem(String system) {
+        this.system = system;
     }
+    
+    public List<SystemRole> getSystemRoles() {
+        return systemRoles;
+    }
+
+    public void setSystemRoles(List<SystemRole> systemRoles) {
+        this.systemRoles = systemRoles;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }    
+    
 }

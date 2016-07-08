@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmExTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="title">
+        Manage Booking
+    </ui:define>
+
+    <ui:define name="content">
+        <p:panelGrid columns="2" columnClasses="alignTop,alignTop" style="width: 80%">
+            <p:row>
+                <p:column>
+                    <pa:CCBookingItineraryPanel booking="#{manageBookingManager.booking}" customerHelpers="#{manageBookingManager.custHelpers}" farePrice="#{manageBookingManager.farePrice}" />
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:form>
+                        <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="2">Change booking</p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column>
+                                <h:graphicImage value="./../../../../../resources/images/changeFlight.gif" style="vertical-align:middle" alt="change flight"/> 
+                            </p:column>
+                            <p:column>
+                                <p:commandLink value="Change flight" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:graphicImage value="./../../../../../resources/images/changeSeat.gif" style="vertical-align:middle" alt="select seat"/> 
+                            </p:column>
+                            <p:column>
+                                <p:commandLink value="Select seats" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:graphicImage value="./../../../../../resources/images/changeAddon.gif" style="vertical-align:middle" alt="change add-on"/> 
+                            </p:column>
+                            <p:column>
+                                <p:commandLink value="Change add-ons" action="#{manageBookingManager.toChangeAddOn()}" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    </h:form>
+                </p:column>
+            </p:row>
+
+        </p:panelGrid>
+    </ui:define>
+
+</ui:composition>

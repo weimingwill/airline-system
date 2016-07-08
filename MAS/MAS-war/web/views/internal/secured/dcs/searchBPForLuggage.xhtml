@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/DcsTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+
+        <f:facet name="header">
+            Check In Luggage By Searching for Passenger Boarding Pass
+        </f:facet>
+
+        <h:form>
+            <p:panelGrid columns="1" style="margin: 0 auto">
+                <p:outputLabel value="Enter Boarding Pass No.: *" />
+                <p:inputText value="#{luggageManager.passID}" required="true" label="pass"/>
+                <p:commandButton value="Check in luggage" update="messages" action="#{luggageManager.searchPass()}"/>
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

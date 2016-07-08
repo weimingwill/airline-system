@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AfosTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+
+
+        <p:tabView id="tabView">
+            <p:tab title="Flight Duty" id="flightDutyTab">
+                <h:form>
+                    <p:growl showDetail="true" autoUpdate="true"/>
+                    <p:dataTable id="flight-duty-table" widgetVar="flightDutyTable" var="flightDuty" value="#{biddingSessionBacking.flightDuties}" rows="10" tableStyleClass="table-small" rowKey="#{flightDuty.id}"
+                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15,20"
+                                 selectionMode="single" selection="#{biddingSessionBacking.selectedFlightDuty}">
+
+                        <p:column headerText="ID">
+                            <h:outputText value="#{flightDuty.id}" />
+                        </p:column>
+                        <p:column headerText="Flight">
+                            <h:outputText value="#{flightDuty.flightSchedules.get(0).getFlight().getFlightNo()}" />
+                        </p:column>
+                        <p:column headerText="Cockpit Crew Quota">
+                            <h:outputText value="#{flightDuty.cockpitCrewQuota}" />
+                        </p:column>
+                        <p:column headerText="Cabin Crew Quota">
+                            <h:outputText value="#{flightDuty.cabinCrewQuota}" />
+                        </p:column>
+                        <p:column headerText="flying Distance (Km)">
+                            <h:outputText value="#{flightDuty.flyingDistInKm}">
+                                <f:convertNumber maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="flying Time (Hr)">
+                            <h:outputText value="#{flightDuty.flyingTimeInHrs}" >
+                                <f:convertNumber maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Sit Time (Hr)">
+                            <h:outputText value="#{flightDuty.sitTimeInHrs}" >
+                                <f:convertNumber maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Report Location">
+                            <h:outputText value="#{flightDuty.reportLoc.city.cityName}" />
+                        </p:column>
+                        <p:column headerText="Report Time">
+                            <h:outputText value="#{flightDuty.reportTime}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:SS:mm" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Dismiss Location">
+                            <h:outputText value="#{flightDuty.dismissLoc.city.cityName}" />
+                        </p:column>
+                        <p:column headerText="Dismiss Time">
+                            <h:outputText value="#{flightDuty.dismissTime}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton value="Generate Flight Duty" actionListener="#{biddingSessionBacking.generateFlightDuty()}" update="flight-duty-table"/>
+                        </f:facet>
+                    </p:dataTable>
+
+                </h:form>
+            </p:tab>
+            <p:tab title="Flight Pairing">
+                <h:form>
+                    <p:growl showDetail="true" autoUpdate="true"/>
+                    <p:dataTable id="flight-pairing-table" widgetVar="flightPairingTable" var="flightPairing" value="#{biddingSessionBacking.pairings}" rows="5" tableStyleClass="table-small-font" rowKey="#{flightPairing.pairingId}"
+                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15"
+                                 selectionMode="single" selection="#{biddingSessionBacking.selectedPairing}">
+
+                        <p:subTable value="#{flightPairing}" var="pairings">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column headerText="Pairing Code"/>
+                                    <p:column headerText="Layover Time (Hrs)"/>
+                                    <p:column headerText="Cockpit Crew Quota"/>
+                                    <p:column headerText="Cabin Crew Quota" colspan="2"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Duty ID"/>
+                                    <p:column headerText="Report Location"/>
+                                    <p:column headerText="Report Time"/>
+                                    <p:column headerText="Dismiss Location"/>
+                                    <p:column headerText="Dismiss Time"/>
+                                </p:row>
+
+                            </p:columnGroup>
+                            <p:column>
+                                <h:outputText value="#{pairings.pairingCode}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{pairings.layoverTime}">
+                                    <f:convertNumber maxFractionDigits="2"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{pairings.cockpitCrewQuota}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{pairings.cabinCrewQuota}" />
+                            </p:column>
+                            <p:column>
+                                <p:subTable value="#{flightPairing.flightDuties}" var="duty">
+                                    <p:column>
+                                        <h:outputText value="#{duty.id}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.reportLoc.city.cityName}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.reportTime}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.dismissLoc.city.cityName}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.dismissTime}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                                        </h:outputText>
+                                    </p:column>
+                                </p:subTable>
+                            </p:column>
+                        </p:subTable>
+                        <f:facet name="footer">
+                            <p:commandButton value="Generate Pairings" actionListener="#{biddingSessionBacking.generatePairings()}" update="flight-pairing-table"/>
+                        </f:facet>
+                    </p:dataTable>
+                </h:form>
+            </p:tab>
+            <p:tab title="Bidding Session">
+                <h:form>
+                    <p:growl showDetail="true" autoUpdate="true"/>
+                    <p:dataTable id="bidding-session-table" widgetVar="biddingSessionTable" var="biddingSession" value="#{biddingSessionBacking.biddingSessions}" rows="5" tableStyleClass="table-small-font" rowKey="#{biddingSession.id}"
+                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,15"
+                                 selection="#{biddingSessionBacking.selectedBiddingSession}">
+                        <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                        <p:column headerText="Session ID">
+                            <h:outputText value="#{biddingSession.id}"/>
+                        </p:column>
+                        <p:column headerText="Start Time">
+                            <h:outputText value="#{biddingSession.startTime}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Remaining Time">
+                            <h:outputText value="#{biddingSession.remainingHrs/24} days">
+                                <f:convertNumber maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Status">
+                            <h:outputText value="#{biddingSession.status}"/>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Generate FA Bidding Session" actionListener="#{biddingSessionBacking.generateBiddingSession('FA')}" update="bidding-session-table"/>
+                            <p:commandButton value="Generate PL Bidding Session" actionListener="#{biddingSessionBacking.generateBiddingSession('PL')}" update="bidding-session-table"/>
+                            <p:commandButton value="Close Session" actionListener="#{biddingSessionBacking.closeBiddingSession()}" update="bidding-session-table"/>
+                        </f:facet>
+                    </p:dataTable>
+                    <!--<p:commandButton value="Generate PL Bidding Session" actionListener="{biddingSessionBacking.generateBiddingSession('PL')}"/>-->
+                </h:form>
+            </p:tab>
+        </p:tabView>
+
+
+    </ui:define>
+
+</ui:composition>

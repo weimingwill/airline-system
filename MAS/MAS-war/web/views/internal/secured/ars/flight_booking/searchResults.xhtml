@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="./../../../../../template/ArsTemplate.xhtml"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Search Result
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <pa:CCFlightSearchPanel />
+            <pa:CCFlightSearchResultPanel />
+        </h:form>
+
+        <h:form id="barForm">
+            <p:panelGrid rendered="#{not empty bookingManager.selectedFbHelper}">
+                <p:row styleClass="ui-widget-header">
+                    <p:column colspan="2">
+                        <p:outputLabel value="Outbound Flight: " />
+                        <p:outputLabel value="#{bookingManager.selectedFlightSched.flight.flightNo} " />
+                    </p:column>
+
+                    <p:column>
+                        <p:outputLabel value="#{bookingManager.selectedFbHelper.cabinClass.name} #{bookingManager.selectedFbHelper.ticketFamily.name}" /> 
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Total Price" />
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column rowspan="3">
+                        <pa:CCFlightSchedInfoPanel flightSched="#{bookingManager.selectedFlightSched}" airport="#{bookingManager.selectedFlightSched.leg.departAirport}" date="#{bookingManager.selectedFlightSched.departDate}" />
+                    </p:column>
+
+                    <p:column rowspan="3">
+                        <p:outputLabel styleClass="fa fa-arrow-right alignCenter" />
+                    </p:column>
+
+                    <p:column rowspan="3">
+                        <pa:CCFlightSchedInfoPanel flightSched="#{bookingManager.selectedFlightSched}" airport="#{bookingManager.selectedFlightSched.leg.arrivalAirport}" date="#{bookingManager.selectedFlightSched.arrivalDate}" 
+                                                   rendered="#{empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>
+                        <pa:CCFlightSchedInfoPanel flightSched="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}" airport="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched).leg.arrivalAirport}" 
+                                                   date="#{bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched).arrivalDate}" 
+                                                   rendered="#{not empty bookingManager.getMappedFlightSched(bookingManager.selectedFlightSched)}"/>
+                    </p:column>
+
+                    <p:column>
+                        <p:outputLabel styleClass="boldFont" value="S$" />
+                        <p:outputLabel styleClass="boldFont" value="#{bookingManager.selectedFbHelper.price * (bookingManager.adultNo + bookingManager.childrenNo)}" >
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel styleClass="smallFont" value="(for all passengers)" />
+                    </p:column>
+
+                    <p:column>
+                        <p:commandButton value="Continue" update="messages" action="#{arsNavController.redirectToPassengerInfo()}" actionListener="#{bookingManager.toEnterPassengerDetails()}"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../template/BoardingPassTemplate.xhtml"   
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+
+        <p:panelGrid columns="4" style="margin-top:10px" layout="grid" >
+            <f:facet name="header">
+                <p:graphicImage value="/resources/images/boardingpass.png" height="auto" width="40%" style="margin-right: 700"/>
+            </f:facet>
+
+            <p:outputLabel value="Reference ID"/>
+            <p:outputLabel value="#{passengerManager.pass.id}"/>
+            <p:graphicImage value="/resources/images/barcode.png" height="auto" width="50%"/>
+            <p:outputLabel value="" />
+
+            <p:outputLabel value="Name"/>
+            <p:outputLabel value="#{passengerManager.passenger.firstName}/#{passengerManager.passenger.lastName}"/>
+            <p:outputLabel value="Passport"/>
+            <p:outputLabel value="#{passengerManager.passenger.passportNo}"/>
+
+            <p:outputLabel value="Flight"/>
+            <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.flightSchedule.flight.flightNo}" />
+            <p:outputLabel value="Cabin Class Name/ Seat No."/>
+            <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.bookingClass.ticketFamily.cabinClass.name}/ #{passengerManager.airTicket.seat.rowNo}#{passengerManager.airTicket.seat.colNo}" />
+
+            <p:outputLabel value="Depart"/>
+            <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.flightSchedule.leg.departAirport.airportName} ">
+                <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.flightSchedule.departDate}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:outputLabel>
+            <p:outputLabel style="font-weight: bold;" value="Gate"/>
+            <p:outputLabel style="font-weight: bold;" value="#{passengerManager.airTicket.flightSchedBookingClass.flightSchedule.departGate}" />
+
+            <p:outputLabel value="Arrival"/>
+            <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.flightSchedule.leg.arrivalAirport.airportName} ">
+                <p:outputLabel value="#{passengerManager.airTicket.flightSchedBookingClass.flightSchedule.arrivalDate}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:outputLabel>
+            <p:outputLabel style="font-weight: bold;" value="Boarding Time" />
+            <p:outputLabel style="font-weight: bold;" value="#{passengerManager.boardingDate}">
+                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT+8"/>
+            </p:outputLabel>
+
+        </p:panelGrid>
+
+    </ui:define>
+
+</ui:composition>

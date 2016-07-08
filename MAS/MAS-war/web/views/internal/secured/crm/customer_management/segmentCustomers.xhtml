@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Customer segmentation
+    </ui:define>
+
+    <ui:define name="content">
+        <f:facet name="header">
+            Customer Segmentation Criteria
+        </f:facet>
+        <h:form id="filterForm">         
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="gender" value="Gender:" />
+                <p:selectOneRadio id="gender" value="#{customerManager.gender}">
+                    <f:selectItem itemLabel="Female" itemValue="Female" />
+                    <f:selectItem itemLabel="Male" itemValue="Male" />
+                </p:selectOneRadio>
+            </h:panelGrid>
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="nationality" value="Nationality: " />
+                <p:selectOneMenu id="nationality" value="#{customerManager.nationality}" style="width:180px">
+                    <f:selectItem itemLabel="Select nationality" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{customerManager.nationalities}" />
+                </p:selectOneMenu>
+            </h:panelGrid>
+
+
+            <p:growl id="growl" showDetail="true" />
+
+            <h:panelGrid columns="1" style="margin-bottom: 10px">
+                <h:outputText id="displayRange" value="Age between #{customerManager.minAge} and #{customerManager.maxAge} years old" />
+                <p:slider for="lowerAgeLimit,higherAgeLimit" display="displayRange" style="width: 400px" range="true" displayTemplate="Between {min} and {max}" />
+            </h:panelGrid>
+            <h:inputHidden id="lowerAgeLimit" value="#{customerManager.minAge}" />
+            <h:inputHidden id="higherAgeLimit" value="#{customerManager.maxAge}" />
+            <p:separator />
+
+            <p:commandButton value="Submit" actionListener="#{customerManager.segmentCustomers()}" update="form"/>
+
+        </h:form>
+
+        <h:form id="form"> 
+            <p:dataTable id="customer-table" var="customer" value="#{customerManager.willingRegCusts}" rows="10" selectionMode="single" selection="#{customerManager.selectedCustomer}" 
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="10,15" rowKey="#{customer.id}" tableStyleClass="table-small">
+                <p:messages autoUpdate="true"/>
+                <f:facet name="header">
+                    <p:outputLabel value="Customer List"/>
+                </f:facet>
+
+                <p:column headerText="Id" sortBy="#{customer.id}">
+                    <h:outputText value="#{customer.id}" />
+                </p:column>
+
+                <p:column headerText="Title" sortBy="#{customer.title}">
+                    <h:outputText value="#{customer.title}" />
+                </p:column>
+
+                <p:column headerText="Last Name" sortBy="#{customer.lastName}">
+                    <h:outputText value="#{customer.lastName}" />
+                </p:column>
+
+                <p:column headerText="First Name" sortBy="#{customer.firstName}">
+                    <h:outputText value="#{customer.firstName}" />
+                </p:column>
+
+                <p:column headerText="Type" sortBy="#{customer.DType}">
+                    <h:outputText value="#{customer.DType}" />
+                </p:column>            
+
+                <p:column headerText="Passport Number" sortBy="#{customer.passportNo}">
+                    <h:outputText value="#{customer.passportNo}" />
+                </p:column>
+                <p:column headerText="Nationality" sortBy="#{customer.nationality}">
+                    <h:outputText value="#{customer.nationality}" />
+                </p:column>
+
+                <p:column headerText="Gender" sortBy="#{customer.gender}">
+                    <h:outputText value="#{customer.gender}" />
+                </p:column>
+
+                <p:column headerText="Date of Birth">
+                    <p:outputLabel value="#{customer.dob}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Passport Expire Date">
+                    <p:outputLabel value="#{customer.passportExpDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Passport Issue Date">
+                    <p:outputLabel value="#{customer.passportIssueDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                
+                <p:column headerText="Willingness of receiving promotion info" sortBy="#{customer.promoPref}">
+                    <h:outputText value="#{customer.promoPref}" />
+                </p:column>  
+
+                <f:facet name="footer" >
+                    <p:commandButton action="#{customerManager.toViewCustomerParticulars()}" value="View Particulars" update="messages" />
+                    <p:commandButton action="#{customerManager.toCreateFeedback()}" value="Yield Management" update="messages" />
+                    <p:commandButton action="#{customerManager.toSegmentCustomers()}" value="Customer segmentation" update="messages" />
+                    <p:commandButton action="#{customerManager.createCustomerList()}" value="Save as list" update="messages" />
+
+                    <p:commandButton value="Reset" actionListener="#{customerManager.resetSegmentCustomers()}" update="form" process="@this">
+                        <p:resetInput target="form" />
+                    </p:commandButton>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

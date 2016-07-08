@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="customerHelpers" required="true" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:forEach items="#{cc.attrs.customerHelpers}" var="customerHelper" varStatus="index">
+            <p:panel header="Passenger #{index.index + 1}" style="margin-bottom: 10px;">
+                <p:panelGrid columns="2">
+                    <c:set var="customer" value="#{customerHelper.customer}" />
+                    <p:outputLabel styleClass="smallFont" value="Name" />
+                    <p:outputLabel styleClass="smallFont" value="#{customer.title} #{customer.firstName} #{customer.lastName}"/>
+                    <p:outputLabel styleClass="smallFont" value="Gender" />
+                    <p:outputLabel styleClass="smallFont" value="#{customer.gender}"/>
+                    <p:outputLabel styleClass="smallFont" value="Date Of Birth" />
+                    <p:outputLabel styleClass="smallFont" value="#{customer.dob}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8" />
+                    </p:outputLabel>
+                    <p:outputLabel styleClass="smallFont" value="Nationality" />
+                    <p:outputLabel styleClass="smallFont" value="#{customer.nationality}" />
+                    <p:outputLabel styleClass="smallFont" value="Passport No" />
+                    <p:outputLabel styleClass="smallFont" value="#{customer.passportNo}" />
+
+                    <p:outputLabel styleClass="smallFont" value="Passport Issue Date" />
+                    <p:outputLabel styleClass="smallFont" value="#{customer.passportIssueDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8" />
+                    </p:outputLabel>
+                    <p:outputLabel styleClass="smallFont" value="Passport Expire Date" />
+                    <p:outputLabel styleClass="smallFont" value="#{customer.passportExpDate}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8" />
+                    </p:outputLabel>
+                </p:panelGrid>
+            </p:panel>
+        </c:forEach>
+    </cc:implementation>
+</html>

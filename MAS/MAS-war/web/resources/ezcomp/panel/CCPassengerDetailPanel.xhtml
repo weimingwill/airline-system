@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="customerHelper" required="true"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set value="#{cc.attrs.customerHelper.customer}" var="customer" />
+        <p:panelGrid columns="2">
+            <p:outputLabel for="title" value="Title"/>
+            <p:selectOneMenu id="title" value="#{customer.title}" style="width: 100%;" >
+                <f:selectItems value="#{bookingBacking.titles}" />
+            </p:selectOneMenu>
+            <p:outputLabel for="firstName" value="First Name" />
+            <p:inputText id="firstName" value="#{customer.firstName}" required="true" />
+
+            <p:outputLabel for="lastName" value="Last Name"/>
+            <p:inputText id="lastName" value="#{customer.lastName}" required="true" />
+
+            <p:outputLabel for="gender" value="Gender"/>
+            <p:selectOneRadio id="gender" required="true" requiredMessage="Please Select Gender" value="#{customer.gender}">
+                <f:selectItem itemLabel="Male" itemValue="Male" />
+                <f:selectItem itemLabel="Female" itemValue="Female" />
+            </p:selectOneRadio>
+
+            <p:outputLabel for="dob" value="Date of birth" />
+            <p:calendar id="dob" value="#{customer.dob}" navigator="true" timeZone="GMT+8" pattern="dd/MM/yyyy" yearRange="c-100:c+0" />
+            
+            <p:outputLabel for="nationality" value="Nationality"/>
+            <p:inputText id="nationality" value="#{customer.nationality}" />
+
+            <p:outputLabel for="passportNo" value="Passport Number"/>
+            <p:inputText id="passportNo" value="#{customer.passportNo}" required="true" />
+                        
+            <p:outputLabel for="passportIssueDate" value="Passport Issue Date"/>
+            <p:calendar id="passportIssueDate" value="#{customer.passportIssueDate}" navigator="true" timeZone="GMT+8" pattern="dd/MM/yyyy" yearRange="c-100:c+100" />
+            
+            <p:outputLabel for="passportExpDate" value="Passport Expire Date"/>
+            <p:calendar id="passportExpDate" value="#{customer.passportExpDate}" navigator="true" timeZone="GMT+8" pattern="dd/MM/yyyy" yearRange="c-100:c+100" />
+
+        </p:panelGrid>
+
+    </cc:implementation>
+</html>

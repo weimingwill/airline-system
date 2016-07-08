@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        View all customers 
+    </ui:define>
+
+    <ui:define name="content">
+
+        <p:growl id="msgs" showDetail="true" />
+
+        <p:tabView>
+            <p:tab title="Search by Passport Number">
+                <h:form id="searchForm1">
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:panel id = "searchForm1">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Passport Number"/>
+                            <p:inputText id="passportNo" value="#{customerManager.passportNo}" />
+                        </p:panelGrid>
+                        <p:commandButton value="Search" actionListener="#{customerManager.searchCustomerByPassportNo()}" update="form"/>
+                        <p:commandButton value="Reset" actionListener="#{customerManager.resetSearchCustomer()}" update="searchForm1,form" process="@this">
+                            <p:resetInput target="searchForm1" />
+                        </p:commandButton>
+                    </p:panel>
+                </h:form>
+            </p:tab>
+
+            <p:tab title="Search by Name">
+                <h:form id="searchForm2">
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+
+                    <p:panel id = "searchForm2">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Last Name"/>
+                            <p:inputText id="lastName" value="#{customerManager.lastName}" required="true" />
+                            <p:outputLabel value="First Name"/>
+                            <p:inputText id="firstName" value="#{customerManager.firstName}" required="true" />
+                        </p:panelGrid>
+                        <p:commandButton value="Search" actionListener="#{customerManager.searchCustomerByName()}" update="form"/>
+                        <p:commandButton value="Reset" actionListener="#{customerManager.resetSearchCustomer()}" update="searchForm2,form" process="@this">
+                            <p:resetInput target="searchForm2" />
+                        </p:commandButton>
+                    </p:panel>
+                </h:form>
+            </p:tab>
+            <p:tab title="Search by Membership ID ">
+                <h:form id="searchForm3">
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+
+                    <p:panel id = "searchForm3">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Membership ID"/>
+                            <p:inputText id="membershipId" value="#{customerManager.membershipId}" required="true" />
+                        </p:panelGrid>
+                        <p:commandButton value="Search" actionListener="#{customerManager.searchCustomerByMembershipId()}" update="form"/>
+                        <p:commandButton value="Reset" actionListener="#{customerManager.resetSearchCustomer()}" update="searchForm3,form" process="@this">
+                            <p:resetInput target="searchForm3" />
+                        </p:commandButton>
+                    </p:panel>
+                </h:form>
+            </p:tab>
+        </p:tabView>
+
+
+        <h:form id="form"> 
+            <p:dataTable id="customer-table" var="customer" value="#{customerManager.customers}" rows="10" selectionMode="single" selection="#{customerManager.selectedCustomer}" 
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="10,15" rowKey="#{customer.id}" tableStyleClass="table-small">
+                <p:messages autoUpdate="true"/>
+                <f:facet name="header">
+                    <p:outputLabel value="Customer List"/>
+                </f:facet>
+
+                <p:column headerText="Id" sortBy="#{customer.id}">
+                    <h:outputText value="#{customer.id}" />
+                </p:column>
+
+                <p:column headerText="Title" sortBy="#{customer.title}">
+                    <h:outputText value="#{customer.title}" />
+                </p:column>
+
+                <p:column headerText="Last Name" sortBy="#{customer.lastName}">
+                    <h:outputText value="#{customer.lastName}" />
+                </p:column>
+
+                <p:column headerText="First Name" sortBy="#{customer.firstName}">
+                    <h:outputText value="#{customer.firstName}" />
+                </p:column>
+
+                <p:column headerText="Type" sortBy="#{customer.DType}">
+                    <h:outputText value="#{customer.DType}" />
+                </p:column>            
+
+                <p:column headerText="Passport Number" sortBy="#{customer.passportNo}">
+                    <h:outputText value="#{customer.passportNo}" />
+                </p:column>
+                <p:column headerText="Nationality" sortBy="#{customer.nationality}">
+                    <h:outputText value="#{customer.nationality}" />
+                </p:column>
+
+                <p:column headerText="Gender" sortBy="#{customer.gender}">
+                    <h:outputText value="#{customer.gender}" />
+                </p:column>
+
+                <p:column headerText="Date of Birth">
+                    <p:outputLabel value="#{customer.dob}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Passport Expire Date">
+                    <p:outputLabel value="#{customer.passportExpDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Passport Issue Date">
+                    <p:outputLabel value="#{customer.passportIssueDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <f:facet name="footer" >
+                    <p:commandButton action="#{customerManager.toViewCustomerParticulars()}" value="View Particulars" update="messages" />
+                    <p:commandButton action="#{customerManager.toSegmentCustomers()}" value="Customer segmentation" update="messages" />
+                    <p:commandButton value="Reset" actionListener="#{customerManager.resetCustomer()}" update="form" process="@this">
+                        <p:resetInput target="form" />
+                    </p:commandButton>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

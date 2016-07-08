@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="title">
+        Gender distribution
+    </ui:define>
+
+    <ui:define name="content">
+
+        <p:panelGrid columns="2" layout="grid">            
+            <p:chart type="bar" model="#{analyticsController.barChartModel}" style="height:300px;width:400px"/>
+            <p:chart type="pie" model="#{analyticsController.pieChartModel}" style="width:400px;height:300px" />
+            <p:chart type="metergauge" model="#{analyticsController.customerNo}" style="width:400px;height:250px" />
+            <p:chart type="metergauge" model="#{analyticsController.memberNo}" style="width:400px;height:250px" />
+            <p:chart type="line" model="#{analyticsController.monthlySalesLineChart}" style="width:640px;height:300px;"/>
+
+        </p:panelGrid>
+
+        <h:panelGrid columns="2" columnClasses="left,right" style="width:100%">
+            <p:chart type="bar" model="#{analyticsController.animatedModel1}" style="width:800px;" />
+        </h:panelGrid>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="./../../../../template/DdsTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel">
+
+    <ui:define name="title">
+        Search for flights
+    </ui:define>
+
+    <ui:define name="content">
+        <p:panel header="Book A Flight"  style="margin-left: 100px;margin-top: 30px;width: 420px; opacity: 0.95">
+            <h:form id="form">
+                <p:panelGrid>
+                    <pa:CCFlightSearchIndexPanel />
+                    <p:row>
+                        <p:column colspan="6">
+                            <p:commandButton value="Search" action="#{ddsNavController.redirectToSearchFlightResult()}" actionListener="#{bookingManager.searchFlights(bookingManager.sources.get(0))}" update="messages" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

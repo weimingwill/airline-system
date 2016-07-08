@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="./../../../../template/CrmExTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:fo="http://xmlns.jcp.org/jsf/composite/ezcomp/form"
+                xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel">
+
+    <ui:define name="title">
+        Home
+    </ui:define>
+
+    <ui:define name="content">
+        <p:tabView style="width: 490px; opacity: 0.95">
+
+            <p:tab title="Book A Flight" >
+                <h:form id="form">
+                    <p:panelGrid style="width: 445px;">
+                        <pa:CCFlightSearchIndexPanel />
+                        <p:row>
+                            <p:column colspan="6">
+                                <p:commandButton value="Search" action="#{bookingManager.searchFlights(bookingManager.sources.get(0), ChannelHelper.ARS)}" update="messages" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </h:form>
+            </p:tab>
+
+            <p:tab title="Manage Booking">
+                <fo:CCManageBookingForm />
+            </p:tab>
+
+            <p:tab title="Check-in">
+                <h:form>
+                    <p:panelGrid columns="1" style="margin: 0 auto">
+                        <p:outputLabel value="Please Enter Your Passport Number: *" />
+                        <p:inputText value="#{passengerManager.passportNo}" required="true" label="passport"/>
+                        <p:commandButton value="Check-In Online" update="messages" action="#{passengerManager.checkPassenger()}"/>
+                    </p:panelGrid>
+                </h:form>
+            </p:tab>
+
+            <p:tab title="Flight Status">
+                <fo:CCFlightStatusSearchForm />
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+</ui:composition>

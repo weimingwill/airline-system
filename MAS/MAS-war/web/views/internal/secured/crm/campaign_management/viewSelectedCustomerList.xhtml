@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        View customer list
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:dataTable var="selectedCust" value="#{campaignController.selectedCusts}">
+                <p:column headerText="Last Name">
+                    <h:outputText value="#{selectedCust.lastName}" />
+                </p:column>
+
+                <p:column headerText="First Name">
+                    <h:outputText value="#{selectedCust.firstName}" />
+                </p:column>
+
+                <p:column headerText="Email">
+                    <h:outputText value="#{selectedCust.email}" />
+                </p:column>
+            </p:dataTable>
+            <p:commandButton action="#{campaignController.sendEmail()}" value="Send email" update="messages"/>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

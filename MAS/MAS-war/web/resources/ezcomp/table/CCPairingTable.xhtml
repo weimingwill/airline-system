@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="pairing" required="true"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:panelGrid>
+            <p:row>
+                <p:column class="ui-widget-header">
+                    <p:outputLabel value="Pairing ID"/>
+                </p:column>
+                <p:column class="ui-widget-header">
+                    <p:outputLabel value="Pairing Code"/>
+                </p:column>
+                <p:column class="ui-widget-header">
+                    <p:outputLabel value="Start Date"/>
+                </p:column>
+                <p:column class="ui-widget-header">
+                    <p:outputLabel value="End Date"/>
+                </p:column>
+                <p:column class="ui-widget-header">
+                    <p:outputLabel value="Layover Time (hrs)"/>
+                </p:column>
+                <p:column class="ui-widget-header" rendered="#{flightCrewBacking.currCrew.position.type == 'FA'}">
+                    <p:outputLabel value="Cabin Crew Quota"/>
+                </p:column>
+                <p:column class="ui-widget-header" rendered="#{flightCrewBacking.currCrew.position.type == 'PL'}">
+                    <p:outputLabel value="Cockpit Crew Quota"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="#{cc.attrs.pairing.pairingId}"/>
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{cc.attrs.pairing.pairingCode}"/>
+                </p:column>
+                <p:column >
+                    <p:outputLabel value="#{flightCrewBacking.getPairingStartDate(cc.attrs.pairing)}">
+                        <f:convertDateTime pattern="dd/MM/yyyy 'at' HH:mm:ss zzz" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column >
+                    <p:outputLabel value="#{flightCrewBacking.getPairingEndDate(cc.attrs.pairing)}">
+                        <f:convertDateTime pattern="dd/MM/yyyy 'at' HH:mm:ss zzz" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column >
+                    <p:outputLabel value="#{cc.attrs.pairing.layoverTime}">
+                        <f:convertNumber maxFractionDigits="2"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column rendered="#{flightCrewBacking.currCrew.position.type == 'FA'}">
+                    <p:outputLabel value="#{cc.attrs.pairing.cabinCrewQuota}"/>
+                </p:column>
+                <p:column rendered="#{flightCrewBacking.currCrew.position.type == 'PL'}">
+                    <p:outputLabel value="#{cc.attrs.pairing.cockpitCrewQuota}"/>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+    </cc:implementation>
+</html>

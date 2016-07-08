@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pm="http://primefaces.org/mobile"
+                template="./../../../../../template/mobile/CrmMainTemplate.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="content">
+        <h:form>
+            <!--Departure airport-->
+            <pm:field>
+                <p:outputLabel for="deptLoc" value="From" />
+                <p:selectOneMenu id="deptLoc" converter="airportConverter" required="true" filter="true" filterMatchMode="contains"
+                                 value="#{bookingManager.deptAirport}" >
+                    <f:selectItems var="airport"  value="#{bookingManager.allAirports}" itemValue="#{airport}" 
+                                   itemLabel="#{airport.city.cityName}, #{airport.country.countryName}"  />
+                </p:selectOneMenu>
+            </pm:field>
+
+            <!--Arrive airport-->
+            <pm:field>
+                <p:outputLabel for="arriveLoc" value="To" />
+                <p:selectOneMenu id="arriveLoc" converter="airportConverter" value="#{bookingManager.arrAirport}"
+                                 filter="true" filterMatchMode="contains" required="true"  >
+                    <f:selectItems var="airport"  value="#{bookingManager.allAirports}" itemValue="#{airport}"
+                                   itemLabel="#{airport.city.cityName}, #{airport.country.countryName}"   />
+                </p:selectOneMenu>
+            </pm:field>
+
+            <pm:field>
+                <p:selectOneRadio id="console" styleClass="radioChoice" value="#{bookingManager.choice}">
+                    <p:ajax listener="#{bookingManager.onChoiceSelectd()}"  />
+                    <f:selectItem itemLabel="Return" itemValue="return" />
+                    <f:selectItem itemLabel="One-Way" itemValue="oneway" />
+                </p:selectOneRadio>
+            </pm:field>
+
+            <!--Departure Date & Arrival Date-->
+            <pm:field>
+                <p:outputLabel for="deptDate" value="Departure Date"/>
+                <p:calendar id="deptDate" pattern="dd/MM/yyyy" timeZone="GMT+8" value="#{bookingManager.deptDate}">
+                    <p:ajax event="dateSelect"  listener="#{bookingManager.onDeptDateChange()}" />
+                </p:calendar>
+            </pm:field>
+            <pm:field>
+                <p:outputLabel for="arriveDate" value="Arrival Date" rendered="#{bookingManager.arrDateShow}" />
+                <p:calendar id="arriveDate" pattern="dd/MM/yyyy" timeZone="GMT+8"
+                            value="#{bookingManager.arrDate}" mindate="#{bookingManager.deptDate}" rendered="#{bookingManager.arrDateShow}" />
+            </pm:field>
+
+            <!--Cabin Class-->
+            <pm:field>
+                <p:outputLabel value="Cabin Class: "/>
+                <p:selectOneMenu value="#{bookingManager.selectedCabinCls}" converter="cabinClassConverter">
+                    <f:selectItems value="#{bookingManager.cabinClses}" var="cabinCls" itemLabel="#{cabinCls.name}" itemValue="#{cabinCls}" />
+                </p:selectOneMenu>
+            </pm:field>
+
+            <!--Number of adult-->
+            <pm:field>
+                <p:outputLabel value="Adult" />
+                <p:selectOneMenu value="#{bookingManager.adultNo}">
+                    <c:forEach begin="1" end="10" varStatus="index">
+                        <f:selectItem itemLabel="#{index.index}" itemValue="#{index.index}" />
+                    </c:forEach>
+                </p:selectOneMenu>
+                <p:outputLabel value="12+ years" />
+            </pm:field>
+
+            <!--Number of children-->
+            <pm:field>
+                <p:outputLabel value="Children" />
+                <p:selectOneMenu value="#{bookingManager.childrenNo}">
+                    <c:forEach begin="0" end="9" varStatus="index">
+                        <f:selectItem itemLabel="#{index.index}" itemValue="#{index.index}" />
+                    </c:forEach>
+                </p:selectOneMenu>
+                <p:outputLabel value="2-11 years" />
+            </pm:field>
+
+            <pm:field>
+                <p:outputLabel for="promoCode" value="Promo Code"/>
+                <p:inputText id="promoCode" value="#{bookingManager.promoCode}"/>
+            </pm:field>
+
+            <pm:field>
+                <p:commandButton value="Search" action="#{bookingManager.searchFlights(bookingManager.sources.get(1),ChannelHelper.ARS)}" update="messages" />
+            </pm:field>             
+        </h:form>
+    </ui:define>
+
+    <ui:define name="page">
+        <pm:page id="searchResults">
+            <h:form>
+            <pm:header title="Search results">
+                <f:facet name="left">
+                    <p:commandButton id="btn-dynamic" value="" icon="ui-icon-close" type="button"/>
+                </f:facet>
+                <f:facet name="right">
+                    <p:graphicImage value="/resources/images/logo.png" height="80%" width="auto"/>
+                </f:facet>
+            </pm:header>
+                
+                </h:form>
+        </pm:page>
+    </ui:define>
+</ui:composition>

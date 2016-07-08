@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AfosTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:dataTable id="availablePairingTable" widgetVar="availablePairingTable" var="flightPairing" value="#{flightCrewBiddingManager.availablePairings}" rows="4" tableStyleClass="table-small-font" rowKey="#{flightPairing.pairingId}"
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="4,8,12"
+                         selectionMode="single" selection="#{flightCrewBiddingManager.selectedPairing}">
+                <f:facet name="header">
+                    <p:outputLabel value="Please click button in the table to bid for pairings"/>
+                </f:facet>
+                <p:subTable value="#{flightPairing}" var="pairings">
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="Pairing Code"/>
+                            <p:column headerText="Layover Time (Hrs)"/>
+                            <p:column headerText="Cockpit Crew Quota"/>
+                            <p:column headerText="Cabin Crew Quota"/>
+                            <p:column/>
+                        </p:row>
+                        <p:row>
+                            <p:column headerText="Duty ID"/>
+                            <p:column headerText="Report Location"/>
+                            <p:column headerText="Report Time"/>
+                            <p:column headerText="Dismiss Location"/>
+                            <p:column headerText="Dismiss Time"/>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column>
+                        <h:outputText value="#{pairings.pairingCode}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{pairings.layoverTime}">
+                            <f:convertNumber maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{pairings.cockpitCrewQuota}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{pairings.cabinCrewQuota}" />
+                    </p:column>
+                    <p:column>
+
+                        <p:commandButton action="#{flightCrewBiddingManager.onBidBtnClick()}" oncomplete="PF('samePairingCodePairingsDlg').show()" update="samePairingCodePairingsDlg" icon="fa fa-check-square-o" title="Place Bid">
+                            <f:setPropertyActionListener value="#{flightPairing}" target="#{flightCrewBiddingManager.selectedPairing}" />
+                        </p:commandButton>
+                        <p:subTable value="#{flightPairing.flightDuties}" var="duty">
+                            <p:column>
+                                <h:outputText value="#{duty.id}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{duty.reportLoc.city.cityName}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{duty.reportTime}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{duty.dismissLoc.city.cityName}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{duty.dismissTime}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:subTable>
+                    </p:column>
+
+                </p:subTable>
+                <f:facet name="footer">
+                    <p:outputLabel value=""/>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog header="Pairings with the same pairing code: #{flightCrewBiddingManager.selectedPairing.pairingCode}" id="samePairingCodePairingsDlg" widgetVar="samePairingCodePairingsDlg" appendTo="@(body)" resizable="false" modal="true">
+            <h:form>
+                <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
+                    <p:dataTable id="samePairingCodeTable" widgetVar="samePairingCodeTable" var="flightPairing" value="#{flightCrewBiddingManager.pairingsWithSameCode}" rows="3" tableStyleClass="table-small" rowKey="#{flightPairing.pairingId}"
+                                 paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="4,8,12">
+
+                        <p:subTable value="#{flightPairing}" var="pairings">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column headerText="Pairing Code"/>
+                                    <p:column headerText="Layover Time (Hrs)"/>
+                                    <p:column headerText="Cockpit Crew Quota"/>
+                                    <p:column headerText="Cabin Crew Quota"/>
+                                    <p:column/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Duty ID"/>
+                                    <p:column headerText="Report Location"/>
+                                    <p:column headerText="Report Time"/>
+                                    <p:column headerText="Dismiss Location"/>
+                                    <p:column headerText="Dismiss Time"/>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column>
+                                <h:outputText value="#{pairings.pairingCode}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{pairings.layoverTime}">
+                                    <f:convertNumber maxFractionDigits="2"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{pairings.cockpitCrewQuota}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{pairings.cabinCrewQuota}" />
+                            </p:column>
+                            <p:column>
+                                <p:subTable value="#{flightPairing.flightDuties}" var="duty">
+                                    <p:column>
+                                        <h:outputText value="#{duty.id}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.reportLoc.city.cityName}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.reportTime}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.dismissLoc.city.cityName}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{duty.dismissTime}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+8"/>
+                                        </h:outputText>
+                                    </p:column>
+                                </p:subTable>
+                            </p:column>
+
+                        </p:subTable>
+                    </p:dataTable>
+                    <p:panel header="Please select pairings on specific dates">
+                        <p:selectManyMenu converter="pairingConverter" id="menu" value="#{flightCrewBiddingManager.pairingsToBid}" label="Pairings on Dates"
+                                          filter="true" filterMatchMode="startsWith" showCheckbox="true" style="width: 100%">
+                            <f:selectItems value="#{flightCrewBiddingManager.pairingsWithSameCode}" var="thisPairing" itemLabel="#{flightCrewBiddingManager.convertDateFormat(thisPairing.flightDuties.get(0).reportTime)}"/>
+                        </p:selectManyMenu>
+                        <p:separator/>
+                        <p:commandButton value="Confirm Bid" actionListener="#{flightCrewBiddingManager.placeBidForPairings()}" oncomplete="PF('samePairingCodePairingsDlg').hide()" update=":form:availablePairingTable"/>
+                        <p:commandButton value="Cancel" oncomplete="PF('samePairingCodePairingsDlg').hide()" />
+                    </p:panel>
+                </p:panelGrid>
+
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
+<!--<p:commandButton action="{flightCrewBiddingManager.onViewPairingBtnClick()}" icon="fa fa-search" title="View Pairing Details">
+ <f:setPropertyActionListener value="{flightPairing}" target="{flightCrewBiddingManager.selectedPairing}" />
+</p:commandButton>-->

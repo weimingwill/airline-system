@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AisTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="title">
+        View seat reallocation history
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+        <p:dataTable value="#{seatReallocationController.allSeatReAllocationHistorys}" var="seatAllocationHistory">
+            <p:column headerText="Reallocate time">
+                <p:outputLabel value="#{seatAllocationHistory.allocateTime}">
+                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" timeZone="GMT+8"/>
+                </p:outputLabel>
+            </p:column>
+            
+            <p:column headerText="Original seat number ">
+                <p:outputLabel value="#{seatAllocationHistory.seatNoBefore}"/>
+            </p:column>
+
+            <p:column headerText="Adjusted seat number">
+                <p:outputLabel value="#{seatAllocationHistory.seatNoAfter}" />
+            </p:column>
+        </p:dataTable>
+
+        <p:commandButton value="Back to Yield Management" action="#{navigationController.redirectToYieldManagement()}"  />
+     </h:form>
+    </ui:define>
+
+</ui:composition>

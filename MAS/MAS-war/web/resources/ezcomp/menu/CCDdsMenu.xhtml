@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="navigationMenu">
+            <p:menubar style="font-size: larger" styleClass="navigationMenu">
+                <p:menuitem value="Merline Airline" url="#{ddsNavController.redirectToDDS()}">
+                    <p:commandLink action="#{ddsNavController.redirectToDDS()}">
+                        <p:graphicImage value="/resources/images/logo.png" height="45px" width="auto"/>
+                    </p:commandLink>
+                </p:menuitem>
+                <p:menuitem value="Book flight" url="#{ddsNavController.redirectToDDS()}" icon="ui-icon-home"  styleClass="navBtn"/>
+            </p:menubar>
+        </h:form>        
+    </cc:implementation>
+</html>

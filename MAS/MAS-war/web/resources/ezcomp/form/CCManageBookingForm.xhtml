@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="mgmtBookingForm">
+            <p:selectOneRadio id="searchBy" styleClass="radioChoice" value="#{manageBookingManager.searchBy}">
+                <p:ajax update="mgmtBookingForm" listener="#{manageBookingManager.onSearchBySelected()}"/>
+                <f:selectItem itemLabel="Booking Reference" itemValue="bookingRef" />
+                <f:selectItem itemLabel="E-Ticket Number" itemValue="eTicketNo" />
+            </p:selectOneRadio>
+
+            <p:panelGrid>
+                <p:row rendered="#{manageBookingManager.selectBookingRef}"> 
+                    <p:column><p:outputLabel for="bookingRef" value="Booking Reference"/></p:column>
+                    <p:column>
+                        <p:inputText styleClass="fullWidth" id="bookingRef" value="#{manageBookingManager.bookingRef}" />
+                    </p:column>
+                </p:row>
+                <p:row rendered="#{not manageBookingManager.selectBookingRef}"> 
+                    <p:column><p:outputLabel for="eTicket" value="E-Ticket Number"/></p:column>
+                    <p:column>
+                        <p:inputText styleClass="fullWidth" id="eTicket" value="#{manageBookingManager.ticketNo}" />
+                    </p:column>
+                </p:row>
+                <p:row> 
+                    <p:column><p:outputLabel for="lastName" value="Last/Family Name"/></p:column>
+                    <p:column>
+                        <p:inputText styleClass="fullWidth" id="lastName" value="#{manageBookingManager.lastName}" />
+                    </p:column>
+                </p:row>
+                <p:row> 
+                    <p:column colspan="2" styleClass="alignCenter">
+                        <p:commandButton value="Manage Booking" action="#{manageBookingManager.searchForBooking()}" styleClass="fullWidth" />
+                    </p:column>
+                </p:row>
+                <p:row> 
+                    <p:column colspan="2" styleClass="alignCenter">OR</p:column>
+                </p:row>
+                <p:row> 
+                    <p:column colspan="2" styleClass="alignCenter">
+                        <p:commandButton value="Login" oncomplete="PF('loginDialog').show()" styleClass="fullWidth" />
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+
+        <p:dialog id="loginDialog"  header="Login" widgetVar="loginDialog" position="500,180"
+                  modal="true" appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false">
+            <h:form>
+
+                <pa:CCCustomerLoginPanel />
+                <p:commandButton action="#{crmExNavController.redirectToBookingManagement()}" actionListener="#{customerLoginManager.doLogin()}" 
+                                 oncomplete="PF('loginDialog').hide()" value="Login" update="messages" />
+            </h:form>
+
+        </p:dialog>
+    </cc:implementation>
+</html>

@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="Upgradeform" style="width: 500px;text-align: center;" >
+            <p:panel header="Upgrade Section" styleClass="centeredPanel">
+                <p:panelGrid columns="3" style="width: 450px;" >
+                    <p:outputLabel for="membershipStandard1" value="Upgrade to Elite Silver"/>
+                    <p:outputLabel id="membershipStandard1" class="userProfileInput"  value="S$ 8,000 / Year" />
+
+                    <p:column headerText="Upgrade" style="width:45px;text-align: center">
+                        <p:commandButton disabled="true" value="Upgrade" update="upgradeSilverDialog"  oncomplete="PF('upgradeSilverDialog').show()" icon="ui-icon-arrow-1-n"
+                                         rendered="#{customerController.membership.name eq 'Elite Silver' or customerController.membership.name eq 'Elite Gold'}"/>
+                        <p:commandButton value="Upgrade" update="upgradeSilverDialog"  oncomplete="PF('upgradeSilverDialog').show()" icon="ui-icon-arrow-1-n"
+                                         rendered="#{customerController.membership.name eq 'Elite Bronze'}"/>
+                    </p:column>
+
+                    <p:outputLabel for="membershipStandard2" value="Upgrade to Elite Gold"/>
+                    <p:outputLabel id="membershipStandard2" class="userProfileInput"  value="S$ 20,000 / Year" />
+                    <p:column headerText="Upgrade" style="width:45px;text-align: center">
+                        <p:commandButton disabled="true" value="Upgrade" update="upgradeGoldDialog"  oncomplete="PF('upgradeGoldDialog').show()" icon="ui-icon-arrow-1-n"
+                                         rendered="#{customerController.membership.name eq 'Elite Gold'}"/>
+                        <p:commandButton value="Upgrade" update="upgradeGoldDialog"  oncomplete="PF('upgradeGoldDialog').show()" icon="ui-icon-arrow-1-n"
+                                         rendered="#{customerController.membership.name eq 'Elite Silver' or customerController.membership.name eq 'Elite Bronze'}" />
+                    </p:column>
+
+                </p:panelGrid>
+
+            </p:panel>
+        </h:form>
+
+    </cc:implementation>
+</html>

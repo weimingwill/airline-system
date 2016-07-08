@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="summaryForm">
+            <p:panelGrid style="width: 100%;">
+                <f:facet name="header">
+                    <p:row><p:column colspan="4">Your selection</p:column></p:row>
+                    <p:row><p:column colspan="4">Flights</p:column></p:row>
+                </f:facet>
+                <p:row>
+                    <p:column rowspan="2">
+                        <p:outputLabel styleClass="fa fa-plane bookingIcon" />
+                    </p:column>
+                    <p:column colspan="3">
+                        <p:outputLabel value="#{bookingManager.deptAirport.city.cityName} - #{bookingManager.arrAirport.city.cityName}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        <p:outputLabel value="#{bookingManager.deptDate}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+8" />
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <p:outputLabel styleClass="fa fa-user bookingIcon" />
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Adult(s)"/>
+                    </p:column>
+                    <p:column styleClass="alignRight">#{bookingManager.adultNo}</p:column>
+                </p:row>
+
+                <p:row rendered="#{not empty bookingManager.bookingHelper.children}">
+                    <p:column>
+                        <p:outputLabel styleClass="fa fa-user bookingIcon" />
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Children"/>
+                    </p:column>
+                    <p:column styleClass="alignRight">#{bookingManager.childrenNo}</p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="4">
+                        <p:outputLabel styleClass="fa fa-caret-right" />
+                        <p:commandLink value="Show details" />
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="4">
+                        <p:outputLabel styleClass="fa fa-caret-right" />
+                        <p:commandLink value="Baggage informations" />
+                    </p:column>
+                </p:row>
+
+                <p:row styleClass="ui-widget-header alignCenter" >
+                    <p:column colspan="4">Basic price break down</p:column>
+                </p:row>
+                
+                <c:forEach items="#{bookingBacking.pricingItems}" var="pricingItem">
+                <p:row>
+                    <p:column colspan="2">#{pricingItem.name}</p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="S$" />
+                        <p:outputLabel value="#{bookingManager.selectedFbHelper.price * pricingItem.price * (bookingManager.adultNo + bookingManager.childrenNo)}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>   
+                </p:row>
+            </c:forEach>
+                
+                <p:row>
+                    <p:column colspan="2"><p:outputLabel value="Fare fee"/></p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="S$" />
+                        <p:outputLabel value="#{bookingManager.selectedFbHelper.price * (bookingManager.adultNo + bookingManager.childrenNo)}">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+
+                <p:row styleClass="ui-widget-header" rendered="#{not empty bookingManager.selectedMeals or not empty bookingManager.selectedLuggages or bookingManager.selectedNumOfInsurance gt 0}">
+                    <p:column colspan="4">Options</p:column>
+                </p:row>
+                <!--Meals-->
+                <c:forEach items="#{bookingManager.selectedMeals}" var="meal">
+                    <p:row>
+                        <p:column rowspan="2">
+                            <p:outputLabel styleClass="fa fa-coffee bookingIcon" />
+                        </p:column>
+                        <p:column colspan="3">
+                            <p:outputLabel value="Meal(s)"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="#{meal}" />
+                        </p:column>
+                        <p:column styleClass="alignRight">#{bookingManager.selectedMealMap.get(meal)}</p:column>
+                    </p:row>
+                </c:forEach>
+
+                <p:row rendered="#{not empty bookingManager.selectedMeals}">
+                    <p:column colspan="2"><p:outputLabel value="Price"/></p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="S$" />
+                        <p:outputLabel value="0">
+                            <f:convertNumber maxFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+
+                <!--Luggage-->
+                <c:forEach items="#{bookingManager.selectedLuggages}" var="luggage">
+                    <p:row>
+                        <p:column rowspan="2">
+                            <p:outputLabel styleClass="fa fa-suitcase bookingIcon" />
+                        </p:column>
+                        <p:column colspan="3">
+                            <p:outputLabel value="Extra luggage(s)"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="Extra #{luggage}kg" />
+                        </p:column>
+                        <p:column styleClass="alignRight">#{bookingManager.selectedLuggageMap.get(luggage)}</p:column>
+
+                    </p:row>
+                </c:forEach>
+
+                <p:row rendered="#{not empty bookingManager.selectedLuggages}">
+                    <p:column colspan="2"><p:outputLabel value="Price"/></p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="S$" />
+                        <p:outputLabel value="#{bookingManager.luggagePrice}">
+                            <f:convertNumber maxFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+
+                <!--Insurance-->
+                <p:row rendered="#{bookingManager.selectedNumOfInsurance gt 0}">
+                    <p:column>
+                        <p:outputLabel styleClass="fa fa-user-plus bookingIcon" />
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Travel Insurance"/>
+                    </p:column>
+                    <p:column styleClass="alignRight">#{bookingManager.selectedNumOfInsurance}</p:column>
+                </p:row>
+
+                <p:row rendered="#{bookingManager.selectedNumOfInsurance gt 0}">
+                    <p:column colspan="2"><p:outputLabel value="Price"/></p:column>
+                    <p:column colspan="2" styleClass="alignRight">
+                        <p:outputLabel value="S$" />
+                        <p:outputLabel value="#{bookingManager.selectedIsurancePrice}">
+                            <f:convertNumber maxFractionDigits="2"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+
+
+                <f:facet name="footer">
+                    <p:row>
+                        <p:column colspan="2"><p:outputLabel value="Grant total"/></p:column>
+                        <p:column colspan="2" styleClass="alignRight">
+                            <p:outputLabel value="S$" />
+                            <p:outputLabel value="#{bookingManager.bookingHelper.totalPrice}">
+                                <f:convertNumber maxFractionDigits="2"/>
+                            </p:outputLabel>
+                        </p:column>
+                    </p:row>
+                </f:facet>
+            </p:panelGrid>
+        </h:form>
+    </cc:implementation>
+</html>

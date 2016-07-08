@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/CrmTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        View campaigns
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form"> 
+            <p:dataTable id="campaign-table" var="campaign" value="#{campaignController.campaigns}" rows="10" selectionMode="single" selection="#{campaignController.selectedCampaign}" 
+                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="10,15" rowKey="#{campaign.id}" tableStyleClass="table-small">
+                <p:messages autoUpdate="true"/>
+                <f:facet name="header">
+                    <p:outputLabel value="Campaign List"/>
+                </f:facet>
+
+                <p:column headerText="Id" sortBy="#{campaign.id}">
+                    <h:outputText value="#{campaign.id}" />
+                </p:column>
+
+                <p:column headerText="Name" sortBy="#{campaign.name}">
+                    <h:outputText value="#{campaign.name}" />
+                </p:column>
+
+                <p:column headerText="Type" sortBy="#{campaign.type}">
+                    <h:outputText value="#{campaign.type}" />
+                </p:column>
+
+                <p:column headerText="Description" sortBy="#{campaign.description}">
+                    <h:outputText value="#{campaign.description}" />
+                </p:column>
+
+                <p:column headerText="Start time" sortBy="#{campaign.startTime}">
+                    <p:outputLabel value="#{campaign.startTime}">
+                        <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="End time" sortBy="#{campaign.endTime}">
+                    <p:outputLabel value="#{campaign.endTime}">
+                        <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Budget" sortBy="#{campaign.budget}">
+                    <p:outputLabel value="#{campaign.budget}"/>
+                </p:column>
+
+                <p:column headerText="Revenue" sortBy="#{campaign.revenue}">
+                    <p:outputLabel value="#{campaign.revenue}"/>
+                </p:column>
+
+                <p:column headerText="Audience size" sortBy="#{campaign.audienceSize}">
+                    <p:outputLabel value="#{campaign.audienceSize}"/>
+                </p:column>
+
+                <p:column headerText="Respondent number" sortBy="#{campaign.responderNo}">
+                    <p:outputLabel value="#{campaign.responderNo}"/>
+                </p:column>
+
+                <p:column headerText="Campaign result" sortBy="#{campaign.campaignResult}">
+                    <p:outputLabel value="#{campaign.campaignResult}"/>
+                </p:column>
+
+                <p:rowExpansion>
+
+                </p:rowExpansion>
+
+                <f:facet name="footer" >                    
+                    <p:commandButton value="View details" action="#{campaignController.getCustomerListNameofSelectedCampaign()}" oncomplete="PF('campaignDialog').show()" update="campaignDialog">
+                    </p:commandButton>
+
+                    <p:commandButton action="#{campaignController.toCreateCampaign()}" value="Create new campaign" update="messages" />
+
+
+                    <p:commandButton action="#{campaignController.sendEmail()}" value="Send email" update="messages" />
+                    <p:commandButton value="Reset" actionListener="#{customerManager.resetSearchCustomer()}" update="form" process="@this">
+                        <p:resetInput target="form" />
+                    </p:commandButton>
+                </f:facet>
+
+
+
+
+            </p:dataTable>
+        </h:form>
+
+
+        <p:dialog id="campaignDialog" header="Campaign details" widgetVar="campaignDialog" resizable="false">
+            <h:form>
+                <h:panelGrid id="campaignDetails" columns="2" cellpadding="5">
+                    <h:outputLabel for="id" value="Campaign ID:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaign.id}" />
+
+                    <h:outputLabel for="name" value="Name:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaign.name}" />
+
+                    <h:outputLabel for="type" value="Type:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaign.type}" />
+
+                    <h:outputLabel for="description" value="Description:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaign.description}" />
+
+                    <p:outputLabel value="Start time:" />
+                    <p:outputLabel value="#{campaignController.selectedCampaign.startTime}">
+                        <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+
+
+                    <p:outputLabel value="End time:" />
+                    <p:outputLabel value="#{campaignController.selectedCampaign.endTime}">
+                        <f:convertDateTime pattern="dd.MM.yyyy" timeZone="GMT+8"/>
+                    </p:outputLabel>
+
+                    <h:outputLabel for="budget" value="Budget:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaign.budget}" />
+
+                    <h:outputLabel for="revenue" value="Revenue:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaign.revenue}" />
+
+                    <h:outputLabel for="audienceSize" value="Audience size:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaign.audienceSize}" />
+
+                    <h:outputLabel for="responderNo" value="Respondent number:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaign.responderNo}" />
+
+                    <h:outputLabel for="campaignResult" value="Campaign result:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaign.campaignResult}" />
+
+                    <h:outputLabel for="customerList" value="Customer List:" />
+                    <h:outputLabel value="#{campaignController.selectedCampaignCustomerListName}" />
+                </h:panelGrid>
+                <p:commandButton value="View customer list" action="#{campaignController.redirectToViewCustomerList()}">
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

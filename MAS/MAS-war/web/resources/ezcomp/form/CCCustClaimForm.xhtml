@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="Claimform" style="width: 500px;text-align: center;" >
+            <p:panel header="Claim Section" styleClass="centeredPanel" >
+                <p:panelGrid columns="2" style="width: 400px;" >
+                    <p:outputLabel for="bookingRefenceNo" value="Booking Reference No."/>
+                    <p:inputText id="bookingRefenceNo" class="userProfileInput"  value="#{viewBookingBacking.bookingReferenceNo}"  placeholder="Refence No."/>
+
+                </p:panelGrid>
+                <p:column headerText="Check" style="width:45px;text-align: center">
+                    <p:commandButton value="Check" update="claimDialog,messages" actionListener="#{viewBookingBacking.checkBookingReference()}" oncomplete="PF('claimDialog').show()" icon="ui-icon-calculator"/>
+                </p:column>
+            </p:panel>
+        </h:form>
+    </cc:implementation>
+</html>

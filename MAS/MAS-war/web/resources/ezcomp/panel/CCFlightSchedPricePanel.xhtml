@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="flightSchedule" required="true" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set value="#{cc.attrs.flightSchedule}" var="flightSched" />
+        <p:column colspan="#{bookingManager.getFlightSchedLowestTixFams().size()}">
+            <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFbHelper}" layout="custom">
+                <p:ajax oncomplete="PF('bar').show()" event="change" update="bar,form"/>
+                <f:selectItems value="#{bookingManager.getFlightSchedBookingCls(flightSched)}" var="fb" itemLabel="#{fb}" itemValue="#{fb}"/>
+            </p:selectOneRadio>
+
+            <p:dataGrid styleClass="alignCenter" value="#{bookingManager.getFlightSchedBookingCls(flightSched)}" var="fbHelper" columns="#{bookingManager.getFlightSchedLowestTixFams().size()}" rowIndexVar="index">
+                <p:panelGrid styleClass="alignCenter" style="width: 100%;">
+                    <p:row>
+                        <p:column>
+                            <p:radioButton for=":form:priceRadio" itemIndex="#{index}" rendered="#{fbHelper.available}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="S$" rendered="#{fbHelper.available}"/>
+                            <p:outputLabel value="#{fbHelper.flightSchedBookingCls.price}" rendered="#{fbHelper.available}">
+                                <f:convertNumber maxFractionDigits="1" /> 
+                            </p:outputLabel>
+                            <p:outputLabel value="Not available" rendered="#{not fbHelper.available}" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel styleClass="priceTag" value="#{fbHelper.remainedSeatQty} Seat(s) Left" rendered="#{not fbHelper.showLeftSeatQty}" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dataGrid>
+        </p:column>
+    </cc:implementation>
+</html>

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/AfosTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table">
+
+    <ui:define name="content">
+        <h:form id="createChecklistForm">
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>
+            <ta:FlightTable selection="#{flightDutyBacking.selectedFlight}" selectionMode="single" displayFooter="true" header=" Please select flights to create checklist"/>
+            <p:separator/>
+            <p:commandButton value="Create/Edit" action="#{flightDutyBacking.onCreateBtnClick()}"/>
+        </h:form>
+
+        <p:dialog header="Select a Template" id="templateDlg" widgetVar="templateDlg" resizable="false" closeOnEscape="true" >
+            <h:form>
+                <p:dataGrid id="checklistTemplates" widgetVar="checklistTemplates" var="template" value="#{flightDutyBacking.templates}" rows="3" styleClass="table-small"
+                            paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="3,6">
+                    <p:panel header="Template: #{template.id}" style="text-align:center">
+                        <p:panelGrid columns="1" style="width:100%">
+                            <p:commandButton value="Choose Template" action="#{flightDutyBacking.onUseTemplateBtnClick()}">
+                                <f:setPropertyActionListener value="#{template}" target="#{flightDutyBacking.selectedTemplate}" />
+                            </p:commandButton>
+                        </p:panelGrid>
+                    </p:panel>
+                </p:dataGrid>
+                <p:commandButton value="Continue Without Template" action="#{flightDutyBacking.proceedToCreateFlight()}"/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog widgetVar="flightScheduleDlg" id="flightScheduleDlg" header="Flight Schedules for #{flightDutyBacking.selectedFlight.flightNo}/#{flightDutyBacking.selectedFlight.returnedFlight.flightNo}" modal="true" appendTo="@(body)" resizable="false">
+            <h:form>
+                <ta:CCFlightScheduleTable/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog widgetVar="checklistDlg" id="checklistDlg" header="#{flightDutyBacking.selectedTypeForChlt} for #{flightDutyBacking.selectedFlightForChlt.flightNo}/#{flightDutyBacking.selectedFlightForChlt.returnedFlight.flightNo}" modal="true" appendTo="@(body)" resizable="false">
+            <p:panelGrid>
+                <p:row>
+                    <p:column class="ui-widget-header">
+                        <p:outputLabel value="S/N" />
+                    </p:column>
+                    <p:column class="ui-widget-header">
+                        <p:outputLabel value="Name" class="ui-widget-header"/>
+                    </p:column>
+                    <p:column class="ui-widget-header">
+                        <p:outputLabel value="Description" class="ui-widget-header"/>
+                    </p:column>
+                </p:row>
+
+                <ui:repeat value="#{flightDutyBacking.flightChecklist.checklistItems}" var="item" varStatus="status">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{status.index+1}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{item.name}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{item.description} "/>
+                        </p:column>
+                    </p:row>
+                </ui:repeat>
+            </p:panelGrid>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

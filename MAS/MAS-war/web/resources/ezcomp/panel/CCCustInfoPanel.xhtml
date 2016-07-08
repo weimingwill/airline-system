@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form style="width: 500px;text-align: center;">
+            <p:panel header="My Information" styleClass="centeredPanel">
+                <p:panelGrid columns="2" styleClass="centered">
+                    <p:outputLabel value="Customer Name: "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.title} #{customerController.firstname} #{customerController.lastname}"/>
+
+                    <p:outputLabel value="Current Login Email: "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.email}"/>
+
+                    <p:outputLabel value="Accumulated Miles: "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.accMiles}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+                    </p:outputLabel>
+
+                    <p:outputLabel value="Membership Level "/>
+                    <p:outputLabel class="userProfileInput"  value="#{customerController.membership.name}"/>
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </cc:implementation>
+</html>

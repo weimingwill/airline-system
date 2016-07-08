@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="aircraftType" required="true"/>
+        <cc:attribute name="disabled"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:messages autoUpdate="true"/>
+        <c:set var="selectedAircraftType" value="#{cc.attrs.aircraftType}"/>
+        <p:panelGrid>
+            <p:row>
+                <p:column colspan="2" styleClass="ui-widget-header">
+                    <p:outputLabel value="General"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Type Code"/>
+                </p:column>
+                <p:column>
+                    <p:inputText value="#{selectedAircraftType.typeCode}" required="true" disabled="#{cc.attrs.disabled}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Type Family"/>
+                </p:column>
+                <p:column>
+                    <p:inputText value="#{selectedAircraftType.typeFamily}" required="true" disabled="#{cc.attrs.disabled}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Manufactured By"/>
+                </p:column>
+                <p:column>
+                    <p:inputText value="#{selectedAircraftType.mfdBy}" required="true" disabled="#{cc.attrs.disabled}"/>
+                </p:column>
+            </p:row>
+
+            <p:row>
+                <p:column colspan="2" styleClass="ui-widget-header">
+                    <p:outputLabel value="Cost"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Approximate Cost (Million USD)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText value="#{selectedAircraftType.approxCost}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Fuel Cost (USD/km)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText value="#{selectedAircraftType.fuelCostPerKm}"/>
+                </p:column>
+            </p:row>
+            
+            <p:row>
+                <p:column colspan="2" styleClass="ui-widget-header">
+                    <p:outputLabel value="Performance"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Max Range (km)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.rangeInKm}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Max Mach Number"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.maxMachNo}"/>
+                </p:column>
+            </p:row>
+
+            <p:row>
+                <p:column colspan="2" styleClass="ui-widget-header">
+                    <p:outputLabel value="Specifications"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="2" styleClass="ui-widget-subheader">
+                    <p:outputLabel value="Weight"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Max Takeoff Weight (T)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.maxTakeOffWeight}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Max Zero Fuel Weight (T)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.maxZeroFuelWeight}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Max Landing Weight (T)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.maxLandingWeight}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Max Ramp Weight (T)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.maxRampWeight}"/>
+                </p:column>
+            </p:row>
+
+            <p:row>
+                <p:column colspan="2" styleClass="ui-widget-subheader">
+                    <p:outputLabel value="Capacity"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Max Payload (T)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.maxPayload}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Max Fuel Capacity (L)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.maxFuelCapacity}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Typical Seating"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.typicalSeating}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Max Seating"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.maxSeating}"/>
+                </p:column>
+            </p:row>
+
+            <p:row>
+                <p:column colspan="2" styleClass="ui-widget-header">
+                    <p:outputLabel value="Dimension"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Cabin L,W,H (m)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.cabinLength}"/>
+                    <p:inputText type="number" value="#{selectedAircraftType.cabinWidth}"/>
+                    <p:inputText type="number" value="#{selectedAircraftType.cabinHeight}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Exterior L,W,H (m)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.overallLengthInM}"/>
+                    <p:inputText type="number" value="#{selectedAircraftType.wingspanInM}"/>
+                    <p:inputText type="number" value="#{selectedAircraftType.heightInM}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Track (m)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.trackInM}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel value="Wheelbase (m)"/>
+                </p:column>
+                <p:column>
+                    <p:inputText type="number" value="#{selectedAircraftType.wheelbaseInM}"/>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <p:separator/>
+    </cc:implementation>
+</html>

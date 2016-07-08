@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ti="http://xmlns.jcp.org/jsf/composite/ezcomp/tile"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <span id="#{cc.clientId}">
+        </span>
+        <!--<cc:attribute name="id" />-->
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dataGrid columns="4" layout="grid" styleClass="unscheduledFlight" value="#{flightScheduleManager.unscheduledFlights}"
+                    rows="8" paginator="true" rowIndexVar="index" var="flight" id="unscheduledFlights"
+                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    rowsPerPageTemplate="4, 8" style="text-align: center">
+            <f:facet name="header">
+                Selected unscheduled flight
+            </f:facet>
+            <p:panelGrid styleClass="unscheduledFlightPanelGrid" style="width:100%;">
+                <p:row>
+                    <p:column>
+                        <p:panel header="Weekly Frequency: #{flight.weeklyFrequency} Unscheduled Flights: #{flight.numOfUnscheduled}">
+
+                            <ti:CCFlightTile aircraft="#{flight.flightNo}" index="#{index}"
+                                             deptAirport="#{flightScheduleManager.getRouteHelper(flight).getOrigin().icaoCode}"
+                                             deptAirportName="#{flightScheduleManager.getRouteHelper(flight).getOrigin().airportName}"
+                                             arriveAirport="#{flightScheduleManager.getRouteHelper(flight).getDestination().icaoCode}"
+                                             arriveAirportName="#{flightScheduleManager.getRouteHelper(flight).getDestination().airportName}"
+                                             flyingHours="#{flightScheduleManager.getRouteHelper(flight).getTotalDuration()}" />        
+                            
+                        </p:panel>
+                    </p:column>
+                </p:row>
+
+            </p:panelGrid>
+
+
+        </p:dataGrid>
+
+        
+    </cc:implementation>
+</html>

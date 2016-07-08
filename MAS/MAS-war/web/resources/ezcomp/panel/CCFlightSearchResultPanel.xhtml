@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:pa="http://xmlns.jcp.org/jsf/composite/ezcomp/panel"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+
+        <h2>#{bookingManager.deptAirport.city.cityName} > #{bookingManager.arrAirport.city.cityName}</h2>
+
+        <p:panelGrid id="flights">
+            <!--Header-->
+            <p:row>
+                <p:column colspan="3" rowspan="2">
+                    <p:outputLabel value="Sort by: " />
+                    <p:commandButton value="Departure time" />
+                    <p:commandButton value="Arrival time" />
+                    <p:commandButton value="Duration" />
+                </p:column>
+                <c:forEach items="#{bookingManager.tixFams}" var="tixFam">
+                    <p:column colspan="1" styleClass="alignCenter" >#{tixFam.cabinClass.name}</p:column>
+                </c:forEach>
+            </p:row>
+            <p:row>
+                <c:forEach items="#{bookingManager.tixFams}" var="tixFam">
+                    <p:column colspan="1" styleClass="alignCenter" >#{tixFam.name}</p:column>
+                </c:forEach>
+            </p:row>
+
+            <p:row>
+                <p:column>Departure</p:column>
+                <p:column><p:outputLabel value="" /></p:column>
+                <p:column>Arrival</p:column>
+            </p:row>
+            <p:row>
+                <c:forEach items="#{bookingManager.tixFams}" var="tixFam">
+                    <p:column colspan="1"><p:outputLabel value="" /></p:column>
+                </c:forEach>
+            </p:row>
+
+            <!--Flight Schedules-->
+            <c:forEach items="#{bookingManager.flightSchedHelpers}" var="flightSchedHelper" varStatus="i" >
+                <c:set value="#{flightSchedHelper.flightSched}" var="flightSched" />
+                <p:row>
+                    <p:column>
+                        <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.departAirport}" date="#{flightSched.departDate}" />
+                    </p:column>
+                    <p:column>
+                        <pa:CCFlightSchedDurationPanel isDirect="true" time="#{flightSchedHelper.totalDur}"
+                                                       rendered="#{empty flightSchedHelper.nextFlightSched}"/>
+                        <pa:CCFlightSchedDurationPanel isDirect="false" time="#{flightSchedHelper.totalDur}"
+                                                       rendered="#{not empty flightSchedHelper.nextFlightSched}"/>
+                    </p:column>
+                    <p:column>
+                        <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.arrivalAirport}" date="#{flightSched.arrivalDate}" 
+                                                   rendered="#{empty flightSchedHelper.nextFlightSched}"/>
+                        <pa:CCFlightSchedInfoPanel flightSched="#{flightSchedHelper.nextFlightSched}" airport="#{flightSchedHelper.nextFlightSched.leg.arrivalAirport}" date="#{flightSchedHelper.nextFlightSched.arrivalDate}" 
+                                                   rendered="#{not empty flightSchedHelper.nextFlightSched}"/>
+                    </p:column>
+
+                    <p:column colspan="#{bookingManager.tixFams.size()}">
+                        <p:selectOneRadio id="priceRadio" styleClass="radioChoice" value="#{bookingManager.selectedFb}" converter="flightSchedBookingClsConverter" layout="grid" columns="#{bookingManager.tixFams.size()}">
+                            <p:ajax event="change" update="barForm" listener="#{bookingManager.onFlightSchedRadioSelected()}"/>
+                            <f:selectItems value="#{flightSchedHelper.flightSchedBookingClses}" var="fb" itemValue="#{fb}"
+                                           itemLabel="S$#{bookingManager.getFbHelperByFb(fb).price}"/>
+                        </p:selectOneRadio>
+
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>&nbsp;</p:column>
+                    <p:column>&nbsp;</p:column>
+                    <p:column styleClass="alignRight">
+                        <p:commandLink value="More details" oncomplete="PF('flightSchedDetail').show()" actionListener="#{bookingBacking.onFlightScheduleClicked(flightSched)}" update="flightSchedDetail" />
+                    </p:column>
+                    <p:column>&nbsp;</p:column>
+                    <p:column>&nbsp;</p:column>
+                </p:row>
+            </c:forEach>
+        </p:panelGrid>
+
+        <p:dialog id="flightSchedDetail" widgetVar="flightSchedDetail" header="Flight Details" showEffect="clip" hideEffect="clip" width="500px;">
+            <p:panelGrid>
+                <c:set var="flightSched" value="#{bookingBacking.flightSchedule}" />
+                <p:row>
+                    <p:column>
+                        <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.departAirport}" date="#{flightSched.departDate}" />
+                    </p:column>
+                    <p:column>
+                        <pa:CCFlightSchedDurationPanel isDirect="true" time="#{bookingManager.getFlightSchedTotalDur(flightSched)}"/>
+                    </p:column>
+                    <p:column>
+                        <pa:CCFlightSchedInfoPanel flightSched="#{flightSched}" airport="#{flightSched.leg.arrivalAirport}" date="#{flightSched.arrivalDate}" />
+                    </p:column>
+                </p:row>
+                <p:row rendered="#{not empty bookingManager.getMappedFlightSched(flightSched)}">
+                    <c:set var="nextFlightsched" value="#{bookingManager.getMappedFlightSched(flightSched)}" />
+                    <p:column>
+                        <pa:CCFlightSchedInfoPanel flightSched="#{nextFlightsched}" airport="#{nextFlightsched.leg.departAirport}" date="#{nextFlightsched.departDate}" />
+                    </p:column>
+                    <p:column>
+                        <pa:CCFlightSchedDurationPanel isDirect="true" time="#{bookingManager.getFlightSchedTotalDur(nextFlightsched)}"/>
+                    </p:column>
+                    <p:column>
+                        <pa:CCFlightSchedInfoPanel flightSched="#{nextFlightsched}" airport="#{nextFlightsched.leg.arrivalAirport}" date="#{nextFlightsched.arrivalDate}" />
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </p:dialog>
+    </cc:implementation>
+</html>

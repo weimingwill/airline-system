@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../../../template/WorkspaceTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        View all users
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <p:panel header="View Users">
+                <p:dataTable value="#{userController.allUsers}" var="user" tableStyleClass="table-small-font"
+                             paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" rowKey="#{aircraft.aircraftId}" rows="3">
+                    <p:column headerText="Username">
+                        <p:outputLabel value="#{user.username}"/>
+                    </p:column>
+
+                    <p:column headerText="Email">
+                        <p:outputLabel value="#{user.email}" />
+                    </p:column>
+
+                    <p:column headerText="Role">
+                        <p:dataTable value="#{userController.getUserRolesByUsername(user.username)}" var="role" tableStyleClass="table-small">
+                            <p:column>
+                                <p:outputLabel value="#{role.roleName}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+
+
+                    <p:column headerText="Permissions">
+                        <p:dataTable value="#{userController.getUserPermissions(user.username)}" var="permission" tableStyleClass="table-small">
+                            <p:column>
+                                <p:outputLabel value="#{permission.permissionName}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+
+                    <p:column style="width:32px;text-align: center">
+                        <p:commandButton class="actionButton" action="#{userController.deleteUser(user.username)}" icon="ui-icon-close" update="messages">
+                            <p:confirm header="Confirmation" message="Are you sure to delete the user?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                    <p:column style="width:32px;text-align: center"  rendered="#{!user.getLocked()}">
+                        <p:commandButton class="actionButton" action="#{userController.lockUser(user.username)}" icon="ui-icon-locked" update="messages" >
+                            <p:confirm header="Confirmation" message="Are you sure to lock the user?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                    <p:column style="width:32px;text-align: center"  rendered="#{user.getLocked()}">
+                        <p:commandButton class="actionButton" action="#{userController.unlockUser(user.username)}" icon="ui-icon-unlocked" update="messages">
+                            <p:confirm header="Confirmation" message="Are you sure to unlock the user?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

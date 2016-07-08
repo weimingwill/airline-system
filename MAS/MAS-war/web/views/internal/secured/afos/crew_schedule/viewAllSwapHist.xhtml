@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:ta="http://xmlns.jcp.org/jsf/composite/ezcomp/table"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../../../../template/AfosTemplate.xhtml">
+
+            <ui:define name="content">
+                <h:form id="swappingReqForm">
+                    <p:dataTable id="swappingReqTable" var="swapReq" value="#{flightCrewBacking.crewSwappingRequests}" rows="3" tableStyleClass="table-small"
+                                 paginator="true" rowsPerPageTemplate="3,6,9"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                        <f:facet name="header">
+                            <p:outputLabel value="Crew Swapping Requests"/>
+                        </f:facet>
+                        <p:column>
+                            <p:outputLabel value="Swap From: #{swapReq.sender.flightCrewID}" class="label"/>
+                            <ta:CCPairingTable pairing="#{swapReq.chosenPairing}"/>
+                            <p:outputLabel value="Swap To: #{swapReq.receiver.flightCrewID}" class="label"/>
+                            <ta:CCPairingTable pairing="#{swapReq.targetPairing}"/>
+                        </p:column>
+                        <p:column headerText="Status">
+                            <p:outputLabel value="#{swapReq.status}" style="color: #e17009; font-weight: bold" rendered="#{swapReq.status == 'Pending'}"/>
+                            <p:outputLabel value="#{swapReq.status}" style="color: #136e13; font-weight: bold" rendered="#{swapReq.status == 'Swapped'}"/>
+                            <p:outputLabel value="#{swapReq.status}" style="color: #D20005; font-weight: bold" rendered="#{swapReq.status == 'Cancelled' || swapReq.status == 'Canceled'}"/>
+                            <p:outputLabel value="#{swapReq.status}" style="color: #1F3F8C; font-weight: bold" rendered="#{swapReq.status == 'Expired'}"/>
+                        </p:column>
+                        <p:column headerText="Create Time">
+                            <p:outputLabel value="#{swapReq.createdTime}">
+                                <f:convertDateTime timeZone="GMT+8" pattern="dd/MM/yyy HH:ss:mm"/>
+                            </p:outputLabel>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="custHelpers" required="true" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <c:set var="custHelpers" value="#{custHelpers}" />
+        <p:panelGrid styleClass="fullWidth itineraryPanel">
+            <p:row styleClass="ui-widget-header">
+                <p:column colspan="2" rowspan="2">Passenger Name</p:column>
+                <p:column colspan="6" styleClass="alignCenter">Special Needs</p:column>
+            </p:row>
+            <p:row styleClass="ui-widget-header">
+                <p:column colspan="2">Meal(s)</p:column>
+                <p:column colspan="2">Extra Luggage(s)</p:column>
+                <p:column colspan="2">Travel Insurance</p:column>
+            </p:row>
+            <c:forEach items="#{custHelpers}" var="customerHelper">
+                <p:row>
+                    <p:column colspan="2">#{customerHelper.customer.firstName} #{customerHelper.customer.lastName}</p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel styleClass="fa fa-remove" rendered="#{empty customerHelper.meal.description}" />
+                        <p:outputLabel styleClass="#{customerHelper.meal.description}" rendered="#{not empty customerHelper.meal.description}" />
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel styleClass="fa fa-remove" rendered="#{empty customerHelper.luggage.maxWeight}" />
+                        <p:outputLabel value="Extra luggage #{customerHelper.luggage.maxWeight} kg" rendered="#{not empty customerHelper.luggage.maxWeight}" />
+                    </p:column>
+                    <p:column colspan="2">                    
+                        <p:outputLabel styleClass="fa fa-check" rendered="#{customerHelper.insurance}" />
+                        <p:outputLabel styleClass="fa fa-remove" rendered="#{not customerHelper.insurance}" />
+                    </p:column>
+                </p:row>
+            </c:forEach>
+        </p:panelGrid>
+    </cc:implementation>
+</html>
